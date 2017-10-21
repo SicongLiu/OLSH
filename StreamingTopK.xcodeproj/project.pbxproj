@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		56CCA1331F9AC55D00D76952 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56CCA1321F9AC55D00D76952 /* main.cpp */; };
+		56CCA13A1F9AC64800D76952 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56CCA1391F9AC64800D76952 /* driver.cpp */; };
+		56CCA13D1F9ACD4C00D76952 /* TopKIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56CCA13C1F9ACD4C00D76952 /* TopKIndex.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,9 @@
 /* Begin PBXFileReference section */
 		56CCA12F1F9AC55D00D76952 /* StreamingTopK */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = StreamingTopK; sourceTree = BUILT_PRODUCTS_DIR; };
 		56CCA1321F9AC55D00D76952 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		56CCA1391F9AC64800D76952 /* driver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = driver.cpp; sourceTree = "<group>"; };
+		56CCA13B1F9ACC9F00D76952 /* TopKIndex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TopKIndex.h; sourceTree = "<group>"; };
+		56CCA13C1F9ACD4C00D76952 /* TopKIndex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TopKIndex.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +63,9 @@
 			isa = PBXGroup;
 			children = (
 				56CCA1321F9AC55D00D76952 /* main.cpp */,
+				56CCA1391F9AC64800D76952 /* driver.cpp */,
+				56CCA13B1F9ACC9F00D76952 /* TopKIndex.h */,
+				56CCA13C1F9ACD4C00D76952 /* TopKIndex.cpp */,
 			);
 			path = StreamingTopK;
 			sourceTree = "<group>";
@@ -119,7 +127,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56CCA13D1F9ACD4C00D76952 /* TopKIndex.cpp in Sources */,
 				56CCA1331F9AC55D00D76952 /* main.cpp in Sources */,
+				56CCA13A1F9AC64800D76952 /* driver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
