@@ -1,0 +1,98 @@
+This is the output from user_eg2_r.c
+
+It shows how qhull() may be called from an application using qhull's
+static, reentrant library.  user_eg2 is not part of qhull itself.  If it
+appears accidently, please remove user_eg2_r.c from your project.  If it fails
+immediately, user_eg2_r.c was incorrectly linked to the non-reentrant library.
+Also try 'user_eg2 T1 2>&1'
+
+
+compute triangulated convex hull of cube after rotating input
+
+8 vertices and 12 facets with normals:
+    -0     -0     -1 
+    -0     -0     -1 
+     0     -1      0 
+     0     -1      0 
+     1     -0     -0 
+     1     -0     -0 
+    -1     -0     -0 
+    -1     -0     -0 
+     0      1     -0 
+     0      1     -0 
+    -0     -0      1 
+    -0     -0      1 
+
+add points in a diamond
+9 vertices and 14 facets
+10 vertices and 16 facets
+11 vertices and 16 facets
+12 vertices and 16 facets
+13 vertices and 14 facets
+14 vertices and 12 facets
+
+14 vertices and 12 facets with normals:
+  0.71  -0.71     -0 
+ -0.71  -0.71      0 
+ -0.71   0.71     -0 
+  0.71   0.71     -0 
+ -0.71     -0  -0.71 
+    -0   0.71  -0.71 
+     0  -0.71  -0.71 
+  0.71      0  -0.71 
+    -0  -0.71   0.71 
+ -0.71      0   0.71 
+  0.71      0   0.71 
+    -0   0.71   0.71 
+
+compute 2-d Delaunay triangulation
+seed: 1519066151
+
+8 vertices and 12 facets with normals:
+ -0.38  -0.76  -0.53 
+  0.96  -0.18   -0.2 
+ -0.32  -0.26   0.91 
+  -0.2  -0.17   0.96 
+ -0.64    0.4  -0.65 
+  -0.2  -0.75  -0.63 
+   0.9  -0.27  -0.33 
+  0.42   0.09   -0.9 
+ 0.041   0.98  -0.18 
+ -0.32   0.69  -0.65 
+  0.64   0.53  -0.55 
+  0.39   0.43  -0.82 
+
+add points to triangulation
+added point p8:        -1  -0.7369    1.543
+9 points, 0 extra points, 9 vertices, and 14 facets in total
+added point p9:    0.5112  -0.0827   0.2682
+10 points, 0 extra points, 10 vertices, and 16 facets in total
+added point p10:   0.06553  -0.5621   0.3202
+11 points, 0 extra points, 11 vertices, and 18 facets in total
+added point p11:   -0.9059   0.3577   0.9486
+12 points, 0 extra points, 12 vertices, and 20 facets in total
+added point p12:    0.3586   0.8694   0.8844
+13 points, 0 extra points, 13 vertices, and 22 facets in total
+added point p13:    -0.233  0.03883   0.0558
+14 points, 0 extra points, 14 vertices, and 24 facets in total
+
+find Delaunay triangle closest to [0.5, 0.5, ...]
+ 0.20  0.61 
+ 0.55  0.09 
+ 0.87  0.74 
+
+compute halfspace intersection about the origin for a diamond
+
+add halfspaces for cube to intersection
+added offset -1 and normal    1.732        0        0
+8 points, 1 extra points, 9 vertices, and 9 facets in total
+added offset -1 and normal   -1.732        0        0
+8 points, 2 extra points, 10 vertices, and 12 facets in total
+added offset -1 and normal        0    1.732        0
+8 points, 3 extra points, 11 vertices, and 15 facets in total
+added offset -1 and normal        0   -1.732        0
+8 points, 4 extra points, 12 vertices, and 18 facets in total
+added offset -1 and normal        0        0    1.732
+8 points, 5 extra points, 13 vertices, and 21 facets in total
+added offset -1 and normal        0        0   -1.732
+8 points, 6 extra points, 14 vertices, and 24 facets in total

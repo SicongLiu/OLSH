@@ -1,0 +1,473 @@
+============================================
+== make qtest ==============================
+============================================
+-n == 
+Mon Feb 19 10:47:29 MST 2018
+
+============================================
+== Test non-reentrant qset.c with mem.c ====
+============================================
+bin/testqset 10000
+
+
+Not testing qh_setduplicate and qh_setfree2.
+  These routines use heap-allocated set contents.  See qhull tests.
+
+memory statistics:
+     53 quick allocations
+      9 short allocations
+   8334 long allocations
+     61 short frees
+   8334 long frees
+     40 bytes of short memory in use
+    272 bytes of short memory in freelists
+ 130752 bytes of dropped short memory
+      0 bytes of unused short memory (estimated)
+ 211096 bytes of long memory allocated (max, except for input)
+      0 bytes of long memory in use (in 0 pieces)
+ 131064 bytes of short memory buffers (minus links)
+  65536 bytes per short memory buffer (initially 131072 bytes)
+   1148 calls to qh_setlarger
+5.5e+02     average copy size
+  freelists(bytes->count): 16->0 24->2 32->2 40->4
+
+
+testqset: OK
+
+
+============================================
+== Test reentrant qset_r.c with mem_r.c ====
+============================================
+bin/testqset_r 10000
+
+
+Not testing qh_setduplicate and qh_setfree2.
+  These routines use heap-allocated set contents.  See qhull tests.
+
+memory statistics:
+     53 quick allocations
+      9 short allocations
+   8334 long allocations
+     61 short frees
+   8334 long frees
+     40 bytes of short memory in use
+    272 bytes of short memory in freelists
+ 130752 bytes of dropped short memory
+      0 bytes of unused short memory (estimated)
+ 211096 bytes of long memory allocated (max, except for input)
+      0 bytes of long memory in use (in 0 pieces)
+ 131064 bytes of short memory buffers (minus links)
+  65536 bytes per short memory buffer (initially 131072 bytes)
+   1148 calls to qh_setlarger
+5.5e+02     average copy size
+  freelists(bytes->count): 16->0 24->2 32->2 40->4
+
+
+testqset_r: OK
+
+
+============================================
+== Run the qhull smoketest ====
+============================================
+bin/rbox D4 | bin/qhull Tv
+
+Convex hull of 50 points in 4-d:
+
+  Number of vertices: 50
+  Number of facets: 260
+
+Statistics for: rbox D4 | qhull Tv
+
+  Number of points processed: 50
+  Number of hyperplanes created: 712
+  Number of distance tests for qhull: 1433
+  CPU seconds to compute hull (after input): 0.000506
+
+============================================
+== make test ===============================
+============================================
+
+==============================
+========= rbox/qhull =======
+==============================
+bin/rbox D4 | bin/qhull Tv
+
+Convex hull of 50 points in 4-d:
+
+  Number of vertices: 50
+  Number of facets: 260
+
+Statistics for: rbox D4 | qhull Tv
+
+  Number of points processed: 50
+  Number of hyperplanes created: 712
+  Number of distance tests for qhull: 1433
+  CPU seconds to compute hull (after input): 0.000505
+
+
+==============================
+========= qconvex ============
+==============================
+bin/rbox 10 | bin/qconvex Tv 
+
+Convex hull of 10 points in 3-d:
+
+  Number of vertices: 10
+  Number of facets: 16
+
+Statistics for: rbox 10 | qconvex Tv
+
+  Number of points processed: 10
+  Number of hyperplanes created: 27
+  Number of distance tests for qhull: 44
+  CPU seconds to compute hull (after input): 9.7e-05
+
+
+==============================
+========= qdelaunay ==========
+==============================
+bin/rbox 10 | bin/qdelaunay Tv 
+
+Delaunay triangulation by the convex hull of 10 points in 4-d:
+
+  Number of input sites: 10
+  Number of Delaunay regions: 15
+
+Statistics for: rbox 10 | qdelaunay Tv
+
+  Number of points processed: 10
+  Number of hyperplanes created: 48
+  Number of facets in hull: 25
+  Number of distance tests for qhull: 69
+  CPU seconds to compute hull (after input): 0.000103
+
+
+==============================
+========= qhalf ==============
+==============================
+bin/rbox 10 | bin/qconvex FQ FV n Tv | bin/qhalf Tv
+
+Halfspace intersection by the convex hull of 16 points in 3-d:
+
+  Number of halfspaces: 16
+  Number of non-redundant halfspaces: 16
+  Number of intersection points: 10
+  Number of non-simplicial intersection points: 10
+
+Statistics for: rbox 10 | qconvex FQ FV n Tv | qhalf Tv
+
+  Number of points processed: 16
+  Number of hyperplanes created: 29
+  Number of distance tests for qhull: 100
+  Number of distance tests for merging: 342
+  Number of distance tests for checking: 156
+  Number of merged facets: 18
+  CPU seconds to compute hull (after input): 0.00018
+
+
+==============================
+========= qvoronoi ===========
+==============================
+bin/rbox 10 | bin/qvoronoi Tv
+
+Voronoi diagram by the convex hull of 10 points in 4-d:
+
+  Number of Voronoi regions: 10
+  Number of Voronoi vertices: 15
+
+Statistics for: rbox 10 | qvoronoi Tv
+
+  Number of points processed: 10
+  Number of hyperplanes created: 48
+  Number of facets in hull: 25
+  Number of distance tests for qhull: 69
+  CPU seconds to compute hull (after input): 0.000101
+
+
+==============================
+========= user_eg ============
+==============================
+bin/user_eg
+This is the output from user_eg_r.c
+
+It shows how qhull() may be called from an application using the qhull
+reentrant library.  user_eg is not part of qhull itself.  If it appears
+accidently, please remove user_eg_r.c from your project.  If it fails
+immediately, user_eg_r.c was incorrectly linked to the non-reentrant library.
+Also try 'user_eg T1 2>&1'
+
+
+compute convex hull of cube after rotating input
+input
+    -1     -1     -1 
+     1     -1     -1 
+    -1      1     -1 
+     1      1     -1 
+    -1     -1      1 
+     1     -1      1 
+    -1      1      1 
+     1      1      1 
+
+8 vertices and 6 facets with normals:
+    -0     -0     -1 
+     0     -1      0 
+     1     -0     -0 
+    -1     -0     -0 
+     0      1     -0 
+    -0     -0      1 
+
+compute 3-d Delaunay triangulation
+seed: 1519062449
+input
+ 0.487  0.186 -0.578 
+ 0.268 -0.179  0.629 
+ 0.838 -0.309  0.694 
+ 0.142 -0.943 -0.592 
+ 0.399   0.77 -0.483 
+ 0.847 -0.958  0.198 
+-0.159 -0.957  0.566 
+-0.311 0.00379  -0.36 
+
+8 vertices and 16 facets with normals:
+ -0.81   0.22  -0.21    0.5 
+ -0.28   0.36   0.21   0.87 
+  -0.4   0.21   -0.1   0.89 
+  0.96   0.17   -0.2 0.0079 
+ -0.29    0.1  -0.95 0.0087 
+  0.62 0.0032  -0.72   0.32 
+  0.73  -0.33 -0.019  -0.59 
+  0.36  -0.65   0.52  -0.42 
+  0.42  -0.54  -0.15  -0.71 
+  0.52  -0.54  -0.13  -0.66 
+  0.29   0.53   0.14  -0.78 
+  0.74    0.4   0.21  -0.49 
+ 0.078  -0.72  0.013  -0.69 
+  0.27  -0.75  0.062  -0.61 
+ -0.69   0.53   0.45   0.19 
+ -0.45   0.56   0.59   0.37 
+
+find 3-d Delaunay triangle closest to [0.5, 0.5, ...]
+ 0.27 -0.18  0.63 
+ 0.49  0.19 -0.58 
+ 0.84 -0.31  0.69 
+ 0.40  0.77 -0.48 
+
+Compute a new triangulation as a separate instance of Qhull
+seed: 1519062450
+input
+ 0.487  0.449  0.933 
+-0.815  0.886 -0.933 
+ 0.932 -0.951 0.0527 
+0.0109 -0.176  0.447 
+0.0611  0.839 -0.377 
+-0.0936  0.385  0.213 
+ 0.608 -0.823 -0.599 
+-0.937 -0.818 -0.499 
+
+8 vertices and 17 facets with normals:
+ -0.16  -0.11   0.53   0.83 
+ -0.78    0.2    0.6 0.0088 
+  0.15  -0.38  -0.56   0.73 
+ -0.27  -0.55   0.78  0.085 
+ -0.76   0.12   0.64 -0.024 
+  0.88   0.13 -0.013  -0.46 
+-0.094  -0.92  0.084  -0.38 
+ -0.21  -0.34  -0.64  -0.65 
+  0.85  0.081  -0.12   -0.5 
+ -0.46  0.021   -0.7  -0.54 
+ -0.17 -0.081  -0.88  -0.43 
+ -0.19  -0.15  -0.79  -0.57 
+ -0.39   0.82   0.41  -0.11 
+  0.76    0.5  -0.22   0.35 
+  0.75    0.4  -0.45   0.27 
+  0.88   0.19 -0.082  -0.42 
+  0.87   0.15  -0.15  -0.45 
+
+Free memory allocated by the new instance of Qhull, and redisplay the old results.
+
+
+
+8 vertices and 16 facets with normals:
+ -0.81   0.22  -0.21    0.5 
+ -0.28   0.36   0.21   0.87 
+  -0.4   0.21   -0.1   0.89 
+  0.96   0.17   -0.2 0.0079 
+ -0.29    0.1  -0.95 0.0087 
+  0.62 0.0032  -0.72   0.32 
+  0.73  -0.33 -0.019  -0.59 
+  0.36  -0.65   0.52  -0.42 
+  0.42  -0.54  -0.15  -0.71 
+  0.52  -0.54  -0.13  -0.66 
+  0.29   0.53   0.14  -0.78 
+  0.74    0.4   0.21  -0.49 
+ 0.078  -0.72  0.013  -0.69 
+  0.27  -0.75  0.062  -0.61 
+ -0.69   0.53   0.45   0.19 
+ -0.45   0.56   0.59   0.37 
+
+compute halfspace intersection about the origin for a diamond
+input as halfspace coefficients + offsets
+    -1     -1     -1     -1 
+     1     -1     -1     -1 
+    -1      1     -1     -1 
+     1      1     -1     -1 
+    -1     -1      1     -1 
+     1     -1      1     -1 
+    -1      1      1     -1 
+     1      1      1     -1 
+3
+6
+     0      0     -1 
+     0     -1      0 
+     1      0      0 
+    -1      0      0 
+     0      1      0 
+     0      0      1 
+
+8 vertices and 6 facets with normals:
+    -0     -0     -1 
+     0     -1      0 
+     1     -0     -0 
+    -1     -0     -0 
+     0      1     -0 
+    -0     -0      1 
+
+==============================
+========= user_eg2 ===========
+==============================
+bin/user_eg2
+This is the output from user_eg2_r.c
+
+It shows how qhull() may be called from an application using qhull's
+static, reentrant library.  user_eg2 is not part of qhull itself.  If it
+appears accidently, please remove user_eg2_r.c from your project.  If it fails
+immediately, user_eg2_r.c was incorrectly linked to the non-reentrant library.
+Also try 'user_eg2 T1 2>&1'
+
+
+compute triangulated convex hull of cube after rotating input
+
+8 vertices and 12 facets with normals:
+    -0     -0     -1 
+    -0     -0     -1 
+     0     -1      0 
+     0     -1      0 
+     1     -0     -0 
+     1     -0     -0 
+    -1     -0     -0 
+    -1     -0     -0 
+     0      1     -0 
+     0      1     -0 
+    -0     -0      1 
+    -0     -0      1 
+
+add points in a diamond
+9 vertices and 14 facets
+10 vertices and 16 facets
+11 vertices and 16 facets
+12 vertices and 16 facets
+13 vertices and 14 facets
+14 vertices and 12 facets
+
+14 vertices and 12 facets with normals:
+  0.71  -0.71     -0 
+ -0.71  -0.71      0 
+ -0.71   0.71     -0 
+  0.71   0.71     -0 
+ -0.71     -0  -0.71 
+    -0   0.71  -0.71 
+     0  -0.71  -0.71 
+  0.71      0  -0.71 
+    -0  -0.71   0.71 
+ -0.71      0   0.71 
+  0.71      0   0.71 
+    -0   0.71   0.71 
+
+compute 2-d Delaunay triangulation
+seed: 1519062449
+
+8 vertices and 12 facets with normals:
+  0.22   0.12   0.97 
+-0.048  -0.74  -0.67 
+ -0.95   0.28  -0.13 
+ -0.14  -0.66  -0.74 
+  0.23   0.13   0.96 
+   0.7  -0.22  -0.68 
+  0.92   0.38   0.13 
+  0.68   0.52  -0.51 
+ -0.11   0.18  -0.98 
+  0.25   0.64  -0.73 
+ -0.53   0.62  -0.57 
+-0.007   0.92  -0.39 
+
+add points to triangulation
+added point p8:        -1  -0.7369    1.543
+9 points, 0 extra points, 9 vertices, and 14 facets in total
+added point p9:    0.5112  -0.0827   0.2682
+10 points, 0 extra points, 10 vertices, and 16 facets in total
+added point p10:   0.06553  -0.5621   0.3202
+11 points, 0 extra points, 11 vertices, and 18 facets in total
+added point p11:   -0.9059   0.3577   0.9486
+12 points, 0 extra points, 12 vertices, and 20 facets in total
+added point p12:    0.3586   0.8694   0.8844
+13 points, 0 extra points, 13 vertices, and 22 facets in total
+added point p13:    -0.233  0.03883   0.0558
+14 points, 0 extra points, 14 vertices, and 24 facets in total
+
+find Delaunay triangle closest to [0.5, 0.5, ...]
+ 0.69  0.14 
+ 0.40  0.77 
+ 0.49  0.19 
+
+compute halfspace intersection about the origin for a diamond
+
+add halfspaces for cube to intersection
+added offset -1 and normal    1.732        0        0
+8 points, 1 extra points, 9 vertices, and 9 facets in total
+added offset -1 and normal   -1.732        0        0
+8 points, 2 extra points, 10 vertices, and 12 facets in total
+added offset -1 and normal        0    1.732        0
+8 points, 3 extra points, 11 vertices, and 15 facets in total
+added offset -1 and normal        0   -1.732        0
+8 points, 4 extra points, 12 vertices, and 18 facets in total
+added offset -1 and normal        0        0    1.732
+8 points, 5 extra points, 13 vertices, and 21 facets in total
+added offset -1 and normal        0        0   -1.732
+8 points, 6 extra points, 14 vertices, and 24 facets in total
+
+==============================
+========= user_eg3 ===========
+==============================
+bin/user_eg3 rbox "10 D2"  "2 D2" qhull "s p" facets
+
+Facets created by Qhull::runQhull()
+- f1
+    - flags: top simplicial
+    - normal:  0.118775 0.992921
+    - offset:  -0.420323
+    - vertices: p4(v1) p1(v0)
+    - neighboring facets: f6 f4
+- f4
+    - flags: top simplicial
+    - normal:  0.997793 -0.0664014
+    - offset:  -0.353096
+    - vertices: p8(v4) p4(v1)
+    - neighboring facets: f1 f5
+- f5
+    - flags: bottom simplicial
+    - normal:  0.694945 -0.719063
+    - offset:  -0.34263
+    - vertices: p8(v4) p0(v2)
+    - neighboring facets: f7 f4
+- f6
+    - flags: bottom simplicial
+    - normal:  -0.991816 -0.127679
+    - offset:  -0.364442
+    - vertices: p10(v5) p1(v0)
+    - neighboring facets: f1 f7
+- f7
+    - flags: top simplicial
+    - normal:  -0.821881 -0.569659
+    - offset:  -0.301939
+    - vertices: p10(v5) p0(v2)
+    - neighboring facets: f5 f6
