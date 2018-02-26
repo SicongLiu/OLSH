@@ -9,7 +9,7 @@ import math
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
-data_file_path = '/Users/sicongliu/Desktop/StreamingTopK/qhull/bin/data_sample/data_ICDE_2010'
+data_file_path = '/Users/sliu104/Desktop/StreamingTopK/qhull/bin/data_sample/data_ICDE_2010'
 f = open(data_file_path, 'r')
 lines = f.readlines()
 
