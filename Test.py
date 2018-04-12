@@ -85,15 +85,28 @@ print '----- log function ------------'
 print math.log(math.e)
 
 print '----- plot histogram ------------'
-my_array = [0.1, 0.5, 0.6, 0.7]
-print 'Array to be ploted: ', my_array
-plt.hist(my_array)
-plt.title("Gaussian Histogram")
-plt.xlabel("Value")
-plt.ylabel("Frequency")
+my_array = [1.3691350682185257, 0.8214810409311155]
 
-fig = plt.gcf()
+xx = np.arange(1,len(my_array)+1, 1)
+print xx
+print 'Array to be ploted: ', my_array
+
+fig = plt.figure()
+# plt.plot(my_array)
+plt.ylim([0, 2])
+plt.plot(xx, my_array)
+
+plt.title("Gaussian Histogram")
+
+plt.xlabel("Pi_Value")
+plt.ylabel("Percentage")
+
+# fig_name = 'test_plot.png'
+# fig = plt.gcf()
+
 plt.show()
+# plt.savefig('books_read.png')
+# fig.savefig('books_read.png')
 
 # plot_url = py.plot_mpl(fig, filename='mpl-basic-histogram')
 
