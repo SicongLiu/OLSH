@@ -115,18 +115,18 @@ void initHashFunctions(PRNearNeighborStructT nnStruct){
     for(IntT j = 0; j < nnStruct->hfTuplesLength; j++){
       // vector a
       for(IntT d = 0; d < nnStruct->dimension; d++){
- #ifdef USE_L1_DISTANCE
- 	lshFunctions[i][j].a[d] = genCauchyRandom();
- #else
+#ifdef USE_L1_DISTANCE
+	lshFunctions[i][j].a[d] = genCauchyRandom();
+#else
 	lshFunctions[i][j].a[d] = genGaussianRandom();
- #endif
+#endif
       }
       // b
- #ifdef PERFORM_NEYSHABUR_MIPS
+#ifdef PERFORM_NEYSHABUR_MIPS
       lshFunctions[i][j].b = 0;
- #else
+#else
       lshFunctions[i][j].b = genUniformRandom(0, nnStruct->parameterW);
- #endif
+#endif
     }
   }
 
