@@ -57,7 +57,7 @@ inline PPointT readPoint(FILE *fileHandle, int num_of_dimensions)
 
 // Read data from Qhull format
 // data line by line, type-real
-void readDataSetFromFile(PPointT *dataSetPoints, FILE *fileHandle, int num_of_points, int num_of_dimensions)
+PPointT* readDataSetFromFile(PPointT *dataSetPoints, FILE *fileHandle, int num_of_points, int num_of_dimensions)
 {
     FAILIF(NULL == (dataSetPoints = (PPointT*)MALLOC(num_of_points * sizeof(PPointT))));
     for(IntT i = 0; i < num_of_points; i++)
@@ -65,6 +65,7 @@ void readDataSetFromFile(PPointT *dataSetPoints, FILE *fileHandle, int num_of_po
         dataSetPoints[i] = readPoint(fileHandle, num_of_dimensions);
         dataSetPoints[i]->index = i;
     }
+    return dataSetPoints;
 }
 
 
@@ -88,6 +89,24 @@ int compareInt32T(const void *a, const void *b){
     return (*x > *y) - (*x < *y);
 }
 
+/** flushing nnStructs to file
+    return: 0 -- success
+            1 -- failure
+ */
+int save_nnStructs_To_File(PRNearNeighborStructT* nnStructs, int nRadii, const char* file_name)
+{
+    printf("Flushing nnStructs to file... \n");
+    int flag = 0;
+    FILE *nnStruct_File = fopen(file_name, "w");
+    for(int nns = 0; nns < nRadii; nns++)
+    {
+        fprintf(nnStruct_File, "\n", nnStructs[nns] );
+    }
+    fclose(nnStruct_File);
+    return flag;
+}
+
+
 /*
  The main entry to LSH package. Depending on the command line
  parameters, the function computes the R-NN data structure optimal
@@ -102,6 +121,13 @@ int main(int nargs, char **args)
         exit(1);
     }
     
+    printf("****************************************************************** .\n");
+    printf("Total number of arguments: %d .\n", nargs);
+    for(int nnp = 0; nnp < nargs; nnp++)
+    {
+        printf("Argument - %d, %s \n", nnp, args[nnp]);
+    }
+    printf("****************************************************************** .\n");
     successProbability = atof(args[1]);
     
     // The data set containing all the points.
@@ -127,6 +153,7 @@ int main(int nargs, char **args)
     RealT thresholdR = strtod(args[2], endPtr);
     if (thresholdR == 0 || endPtr[1] == args[2])
     {
+        printf("There is a file specifying multiple R's .\n");
         // The value for R is not specified, instead there is a file
         // specifying multiple R's.
         thresholdR = 0;
@@ -152,6 +179,7 @@ int main(int nargs, char **args)
     }
     else
     {
+        printf("Setting default number of radii .\n");
         // set default number of radii
         nRadii = 1;
         FAILIF(NULL == (listOfRadii = (RealT*)MALLOC(nRadii * sizeof(RealT))));
@@ -174,8 +202,11 @@ int main(int nargs, char **args)
     fscanf(pFile, "%d\n", &nPoints);
     ASSERT(nPoints > 0);
     printf("Number of Dimension: %d, number of Points: %d. \n", pointsDimension, nPoints);
-    readDataSetFromFile(dataSetPoints, pFile, nPoints, pointsDimension);
+    dataSetPoints = readDataSetFromFile(dataSetPoints, pFile, nPoints, pointsDimension);
+    
     fclose(pFile);
+    printf("Reading data done... \n");
+    
     
     if (nPoints > MAX_N_POINTS)
     {
@@ -193,8 +224,9 @@ int main(int nargs, char **args)
     // computing the optimal parameters in later phase
     ////////////////////////////////////////////////////////////////////////
     
-    if ((nargs < 6) || (strcmp("-c", args[6]) == 0))
+    if ((nargs <= 6) || (nargs >=7) && (strcmp("-c", args[6]) == 0))
     {
+        printf("Preparing to load sample queries (for learning/tuning parameters)... \n");
         // Generate a sample query set.
         FILE *queryFile = fopen(args[4], "rt");
         FAILIF(pFile == NULL);
@@ -205,6 +237,7 @@ int main(int nargs, char **args)
         
         if (strcmp(args[4], ".") == 0 || queryFile == NULL || nQueries <= 0)
         {
+            printf("Choosing several dataset points as sample query points");
             // Choose several data set points for the sample query points.
             for(IntT i = 0; i < nSampleQueries; i++)
             {
@@ -213,6 +246,7 @@ int main(int nargs, char **args)
         }
         else
         {
+            printf("Choosing several actual query points as sample query points .\n");
             // Choose several actual query points for the sample query points.
             nSampleQueries = MIN(nSampleQueries, nQueries);
             Int32T sampleIndeces[nSampleQueries];
@@ -245,6 +279,7 @@ int main(int nargs, char **args)
             fclose(queryFile);
         }
         
+        printf("Sorting sample query points according to their distance to NN... \n");
         // Compute the array sampleQBoundaryIndeces that specifies how to
         // segregate the sample query points according to their distance
         // to NN.
@@ -257,6 +292,7 @@ int main(int nargs, char **args)
                                listOfRadii,
                                sampleQBoundaryIndeces);
     }
+    printf("Sampling queries done... \n");
     
     ////////////////////////////////////////////////////////////////////////
     // learn and/or set optimal parameters
@@ -270,6 +306,7 @@ int main(int nargs, char **args)
         // learn optimal parameters
         if (strcmp("-c", args[6]) == 0)
         {
+            printf("Learning Optimal Parameters. No parameters input file given. \n");
             // Only compute the R-NN DS parameters and output them to stdout.
             
             printf("%d\n", nRadii);
@@ -305,6 +342,7 @@ int main(int nargs, char **args)
         // queries on the constructed data structure.
         else if (strcmp("-p", args[6]) == 0)
         {
+            printf("Loading parameters from input file. \n");
             if (nargs < 7)
             {
                 usage(args[0]);
@@ -334,6 +372,7 @@ int main(int nargs, char **args)
         }
         else
         {
+            printf("Shitty option selected, said Silvestro .\n");
             // Wrong option.
             usage(args[0]);
             exit(1);
@@ -341,6 +380,7 @@ int main(int nargs, char **args)
     }
     else
     {
+        printf("Not enough arguments to decide what to use, now perform Self-Tuning-Parameters .\n");
         FAILIF(NULL == (nnStructs = (PRNearNeighborStructT*)MALLOC(nRadii * sizeof(PRNearNeighborStructT))));
         // Determine the R-NN DS parameters, construct the DS and run the queries.
         transformMemRatios();
@@ -357,6 +397,11 @@ int main(int nargs, char **args)
                                                                  (MemVarT)((availableTotalMemory - totalAllocatedMemory) * memRatiosForNNStructs[i]));
         }
     }
+    
+    // nnStructs contain the indices of interest for LSH
+    // saving nnStructs to file
+    const char* nnStructs_file_name = "nn_Structs_file.txt";
+    int return_flag = save_nnStructs_To_File(nnStructs, nRadii, nnStructs_file_name);
     
     DPRINTF1("X\n");
     
@@ -380,7 +425,7 @@ int main(int nargs, char **args)
     fscanf(queryFile, "%d\n", &query_pointsDimension);
     fscanf(queryFile, "%d\n", &nQueries);
     printf("Number of Query Dimension: %d, Number of Query Points: %d. \n", query_pointsDimension, nQueries);
-    readDataSetFromFile(query_data_Points, queryFile, nQueries, query_pointsDimension);
+    query_data_Points = readDataSetFromFile(query_data_Points, queryFile, nQueries, query_pointsDimension);
     fclose(queryFile);
     
     for(IntT i = 0; i < nQueries; i++)
