@@ -109,8 +109,10 @@ PRNearNeighborStructT initSelfTunedRNearNeighborWithDataSet(RealT thresholdR,
 
   // Init the R-NN data structure.
   if (optParameters.typeHT != HT_HYBRID_CHAINS){
+      printf("Constructing LSH with function initLSH() ... \n");
     nnStruct = initLSH(optParameters, nPoints);
   }else{
+      printf("Constructing LSH with function initLSH_WithDataSet() ... \n");
     printRNNParameters(DEBUG_OUTPUT, optParameters);
     nnStruct = initLSH_WithDataSet(optParameters, nPoints, dataSet);
   }

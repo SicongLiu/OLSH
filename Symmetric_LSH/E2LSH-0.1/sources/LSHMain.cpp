@@ -93,16 +93,90 @@ int compareInt32T(const void *a, const void *b){
     return: 0 -- success
             1 -- failure
  */
-int save_nnStructs_To_File(PRNearNeighborStructT* nnStructs, int nRadii, const char* file_name)
+int save_nnStructs_To_File(PRNearNeighborStructT nnStructs, int nRadii, const char* file_name)
 {
     printf("Flushing nnStructs to file... \n");
     int flag = 0;
     FILE *nnStruct_File = fopen(file_name, "w");
+    fprintf(nnStruct_File, "%s \n", "Flushing nnStructs to file..." );
     for(int nns = 0; nns < nRadii; nns++)
     {
-        fprintf(nnStruct_File, "\n", nnStructs[nns] );
+        fprintf(nnStruct_File, "%s \n", nnStructs[nns] );
     }
     fclose(nnStruct_File);
+    return flag;
+}
+
+/** flushing nnStructs to file, structure defined in BucketHashing.h
+        return: 0 -- success
+                1 -- failure
+ */
+int save_nnStructs_hashedBuckets_To_File(PRNearNeighborStructT nnStructs, int nRadii, const char* file_name)
+{
+    printf("Flushing hashedBuckets to file... \n");
+    int flag = 0;
+    PUHashStructureT* current_hashedBuckets = nnStructs->hashedBuckets;
+    FILE *hashedBuckets_File = fopen(file_name, "w");
+    fprintf(hashedBuckets_File, "%s \n", "Flushing hashedBuckets to file..." );
+    unsigned long hashedBuckets_size = sizeof(nnStructs->hashedBuckets);
+    for(int i=0; i<hashedBuckets_size; i++)
+    {
+        fprintf(hashedBuckets_File, "Current hash bucket index: %d .\n", i);
+        fprintf(hashedBuckets_File, "typeHT: %d \n", current_hashedBuckets[i]->typeHT);
+        fprintf(hashedBuckets_File, "hashTableSize: %ul \n", current_hashedBuckets[i]->hashTableSize);
+        fprintf(hashedBuckets_File, "nHashedBuckets: %ul \n", current_hashedBuckets[i]->nHashedBuckets);
+        fprintf(hashedBuckets_File, "nHashedPoints: %ul \n", current_hashedBuckets[i]->nHashedPoints);
+        
+        fprintf(hashedBuckets_File, "\n \n \n");
+    }
+    
+    fclose(hashedBuckets_File);
+    return flag;
+}
+
+/** flushing optimal parameters (can ge accessed through nnStructs) to file
+    return: 0 -- success
+            1 -- failure
+ */
+int save_nnStructs_parameters_To_File(PRNearNeighborStructT nnStructs, int nRadii, const char* file_name)
+{
+    printf("Flushing optimal parameters to file... \n");
+    int flag = 0;
+    FILE *parameter_File = fopen(file_name, "w");
+    fprintf(parameter_File, "%s \n", "Flushing nnStructs to file..." );
+    fprintf(parameter_File, "dimension of points: %d \n", nnStructs->dimension);
+    fprintf(parameter_File, "parameter K of the algorithm: %d \n", nnStructs->parameterK);
+    fprintf(parameter_File, "parameter L of the algorithm: %d \n", nnStructs->parameterL);
+    fprintf(parameter_File, "parameter W of the algorithm: %f \n", nnStructs->parameterW);
+    fprintf(parameter_File, "parameter T of the algorithm: %d \n", nnStructs->parameterT);
+    fprintf(parameter_File, "parameter R of the algorithm: %f \n", nnStructs->parameterR);
+    fprintf(parameter_File, "parameter R^2 of the algorithm: %f \n", nnStructs->parameterR2);
+    
+    fprintf(parameter_File, "\n \n \n");
+    fprintf(parameter_File, "UseUfunctions (Whether to use <u> hash functions instead of usual <g>)? (boolean): %d \n", nnStructs->useUfunctions);
+    fprintf(parameter_File, "Number of tuples of hash functions used (nHFTuples): %d \n", nnStructs->nHFTuples);
+    fprintf(parameter_File, "How many LSH functions each of the tuple has (hfTuplesLength): %d \n", nnStructs->hfTuplesLength);
+    fprintf(parameter_File, "Number of points (nPoints): %d \n", nnStructs->nPoints);
+    fprintf(parameter_File, "The size of the array <points>: %d \n", nnStructs->pointsArraySize);
+    fprintf(parameter_File, "Reporting Results (boolean): %d \n", nnStructs->reportingResult);
+    fprintf(parameter_File, "The size of <markedPoints> and of <markedPointsIndeces>: %d \n", nnStructs->sizeMarkedPoints);
+    
+    fprintf(parameter_File, "\n \n \n");
+    fprintf(parameter_File, "The size of lshFunctions (row): %lu \n", sizeof(nnStructs->lshFunctions));
+    fprintf(parameter_File, "The size of lshFunctions (column): %lu \n", sizeof(nnStructs->lshFunctions[0]));
+    
+    fprintf(parameter_File, "\n \n \n");
+    fprintf(parameter_File, "The size of precomputedHashesOfULSHs (row): %lu \n", sizeof(nnStructs->precomputedHashesOfULSHs));
+    fprintf(parameter_File, "The size of precomputedHashesOfULSHs (column): %lu \n", sizeof(nnStructs->precomputedHashesOfULSHs[0]));
+    
+    fprintf(parameter_File, "\n \n \n");
+    fprintf(parameter_File, "The size of hashedBuckets: %lu \n", sizeof(nnStructs->hashedBuckets));
+    
+    fprintf(parameter_File, "\n \n \n");
+    fprintf(parameter_File, "The size of pointULSHVectors (row): %lu \n", sizeof(nnStructs->pointULSHVectors));
+    fprintf(parameter_File, "The size of pointULSHVectors (column): %lu \n", sizeof(nnStructs->pointULSHVectors[0]));
+    
+    fclose(parameter_File);
     return flag;
 }
 
@@ -398,10 +472,16 @@ int main(int nargs, char **args)
         }
     }
     
+    
+    // in our test case size(nnStructs) = 1
     // nnStructs contain the indices of interest for LSH
     // saving nnStructs to file
-    const char* nnStructs_file_name = "nn_Structs_file.txt";
-    int return_flag = save_nnStructs_To_File(nnStructs, nRadii, nnStructs_file_name);
+    
+    // const char* nnStructs_file_name = "nn_Structs_file.txt";
+    // int return_flag_nnStructs = save_nnStructs_To_File(*nnStructs, nRadii, nnStructs_file_name);
+    
+    const char* nnStructs_parameters_file_name = "optimal_parameters.txt";
+    int return_flag_parameters = save_nnStructs_parameters_To_File(*nnStructs, nRadii, nnStructs_parameters_file_name);
     
     DPRINTF1("X\n");
     

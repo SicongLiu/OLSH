@@ -217,88 +217,106 @@ void preparePointAdding(PRNearNeighborStructT nnStruct, PUHashStructureT uhash, 
 // the points <dataSet> will be contained in the resulting DS).
 // Currenly only type HT_HYBRID_CHAINS is supported for this
 // operation.
-PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T nPoints, PPointT *dataSet){
-  ASSERT(algParameters.typeHT == HT_HYBRID_CHAINS);
-  ASSERT(dataSet != NULL);
-  ASSERT(USE_SAME_UHASH_FUNCTIONS);
-
-  PRNearNeighborStructT nnStruct = initializePRNearNeighborFields(algParameters, nPoints);
-
-  // Set the fields <nPoints> and <points>.
-  nnStruct->nPoints = nPoints;
-  for(Int32T i = 0; i < nPoints; i++){
-    nnStruct->points[i] = dataSet[i];
-  }
-  
-  // initialize second level hashing (bucket hashing)
-  FAILIF(NULL == (nnStruct->hashedBuckets = (PUHashStructureT*)MALLOC(nnStruct->parameterL * sizeof(PUHashStructureT))));
-  Uns32T *mainHashA = NULL, *controlHash1 = NULL;
-  PUHashStructureT modelHT = newUHashStructure(HT_LINKED_LIST, nPoints, nnStruct->parameterK, FALSE, mainHashA, controlHash1, NULL);
-  
-  Uns32T **(precomputedHashesOfULSHs[nnStruct->nHFTuples]);
-  for(IntT l = 0; l < nnStruct->nHFTuples; l++){
-    FAILIF(NULL == (precomputedHashesOfULSHs[l] = (Uns32T**)MALLOC(nPoints * sizeof(Uns32T*))));
-    for(IntT i = 0; i < nPoints; i++){
-      FAILIF(NULL == (precomputedHashesOfULSHs[l][i] = (Uns32T*)MALLOC(N_PRECOMPUTED_HASHES_NEEDED * sizeof(Uns32T))));
+PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T nPoints, PPointT *dataSet)
+{
+    ASSERT(algParameters.typeHT == HT_HYBRID_CHAINS);
+    ASSERT(dataSet != NULL);
+    ASSERT(USE_SAME_UHASH_FUNCTIONS);
+    
+    PRNearNeighborStructT nnStruct = initializePRNearNeighborFields(algParameters, nPoints);
+    
+    // Set the fields <nPoints> and <points>.
+    nnStruct->nPoints = nPoints;
+    for(Int32T i = 0; i < nPoints; i++)
+    {
+        nnStruct->points[i] = dataSet[i];
     }
-  }
-
-  for(IntT i = 0; i < nPoints; i++){
-    preparePointAdding(nnStruct, modelHT, dataSet[i]);
-    for(IntT l = 0; l < nnStruct->nHFTuples; l++){
-      for(IntT h = 0; h < N_PRECOMPUTED_HASHES_NEEDED; h++){
-	precomputedHashesOfULSHs[l][i][h] = nnStruct->precomputedHashesOfULSHs[l][h];
-      }
+    
+    // initialize second level hashing (bucket hashing)
+    FAILIF(NULL == (nnStruct->hashedBuckets = (PUHashStructureT*)MALLOC(nnStruct->parameterL * sizeof(PUHashStructureT))));
+    Uns32T *mainHashA = NULL, *controlHash1 = NULL;
+    PUHashStructureT modelHT = newUHashStructure(HT_LINKED_LIST, nPoints, nnStruct->parameterK, FALSE, mainHashA, controlHash1, NULL);
+    
+    Uns32T **(precomputedHashesOfULSHs[nnStruct->nHFTuples]);
+    for(IntT l = 0; l < nnStruct->nHFTuples; l++)
+    {
+        FAILIF(NULL == (precomputedHashesOfULSHs[l] = (Uns32T**)MALLOC(nPoints * sizeof(Uns32T*))));
+        for(IntT i = 0; i < nPoints; i++)
+        {
+            FAILIF(NULL == (precomputedHashesOfULSHs[l][i] = (Uns32T*)MALLOC(N_PRECOMPUTED_HASHES_NEEDED * sizeof(Uns32T))));
+        }
     }
-  }
-
-  //DPRINTF("Allocated memory(modelHT and precomputedHashesOfULSHs just a.): %lld\n", totalAllocatedMemory);
-
-  // Initialize the counters for defining the pair of <u> functions used for <g> functions.
-  IntT firstUComp = 0;
-  IntT secondUComp = 1;
-  for(IntT i = 0; i < nnStruct->parameterL; i++){
-    // build the model HT.
-    for(IntT p = 0; p < nPoints; p++){
-      // Add point <dataSet[p]> to modelHT.
-      if (!nnStruct->useUfunctions) {
-	// Use usual <g> functions (truly independent; <g>s are precisly
-	// <u>s).
-	addBucketEntry(modelHT, 1, precomputedHashesOfULSHs[i][p], NULL, p);
-      } else {
-	// Use <u> functions (<g>s are pairs of <u> functions).
-	addBucketEntry(modelHT, 2, precomputedHashesOfULSHs[firstUComp][p], precomputedHashesOfULSHs[secondUComp][p], p);
-      }
+    
+    for(IntT i = 0; i < nPoints; i++)
+    {
+        preparePointAdding(nnStruct, modelHT, dataSet[i]);
+        for(IntT l = 0; l < nnStruct->nHFTuples; l++)
+        {
+            // N_PRECOMPUTED_HASHES_NEEDED -- defined in BucketHashing.h
+            // line 122: #define N_PRECOMPUTED_HASHES_NEEDED (UHF_NUMBER_OF_HASHES * 2)
+            // line 110: UHF_NUMBER_OF_HASHES = 2 -- Two hash functions used: main one and a control one
+            for(IntT h = 0; h < N_PRECOMPUTED_HASHES_NEEDED; h++)
+            {
+                precomputedHashesOfULSHs[l][i][h] = nnStruct->precomputedHashesOfULSHs[l][h];
+            }
+        }
     }
-
-    //ASSERT(nAllocatedGBuckets <= nPoints);
-    //ASSERT(nAllocatedBEntries <= nPoints);
-
-    // compute what is the next pair of <u> functions.
-    secondUComp++;
-    if (secondUComp == nnStruct->nHFTuples) {
-      firstUComp++;
-      secondUComp = firstUComp + 1;
+    
+    //DPRINTF("Allocated memory(modelHT and precomputedHashesOfULSHs just a.): %lld\n", totalAllocatedMemory);
+    
+    // Initialize the counters for defining the pair of <u> functions used for <g> functions.
+    IntT firstUComp = 0;
+    IntT secondUComp = 1;
+    for(IntT i = 0; i < nnStruct->parameterL; i++)
+    {
+        // build the model HT.
+        for(IntT p = 0; p < nPoints; p++)
+        {
+            // Add point <dataSet[p]> to modelHT.
+            if (!nnStruct->useUfunctions)
+            {
+                // Use usual <g> functions (truly independent; <g>s are precisly
+                // <u>s).
+                addBucketEntry(modelHT, 1, precomputedHashesOfULSHs[i][p], NULL, p);
+            }
+            else
+            {
+                // Use <u> functions (<g>s are pairs of <u> functions).
+                addBucketEntry(modelHT, 2, precomputedHashesOfULSHs[firstUComp][p], precomputedHashesOfULSHs[secondUComp][p], p);
+            }
+        }
+        
+        //ASSERT(nAllocatedGBuckets <= nPoints);
+        //ASSERT(nAllocatedBEntries <= nPoints);
+        
+        // compute what is the next pair of <u> functions.
+        secondUComp++;
+        if (secondUComp == nnStruct->nHFTuples)
+        {
+            firstUComp++;
+            secondUComp = firstUComp + 1;
+        }
+        
+        // copy the model HT into the actual (packed) HT. copy the uhash function too.
+        nnStruct->hashedBuckets[i] = newUHashStructure(algParameters.typeHT, nPoints, nnStruct->parameterK, TRUE, mainHashA, controlHash1, modelHT);
+        
+        // clear the model HT for the next iteration.
+        clearUHashStructure(modelHT);
     }
-
-    // copy the model HT into the actual (packed) HT. copy the uhash function too.
-    nnStruct->hashedBuckets[i] = newUHashStructure(algParameters.typeHT, nPoints, nnStruct->parameterK, TRUE, mainHashA, controlHash1, modelHT);
-
-    // clear the model HT for the next iteration.
-    clearUHashStructure(modelHT);
-  }
-
-  freeUHashStructure(modelHT, FALSE); // do not free the uhash functions since they are used by nnStruct->hashedBuckets[i]
-
-  // freeing precomputedHashesOfULSHs
-  for(IntT l = 0; l < nnStruct->nHFTuples; l++){
-    for(IntT i = 0; i < nPoints; i++){
-      FREE(precomputedHashesOfULSHs[l][i]);
+    
+    freeUHashStructure(modelHT, FALSE); // do not free the uhash functions since they are used by nnStruct->hashedBuckets[i]
+    
+    // freeing precomputedHashesOfULSHs
+    for(IntT l = 0; l < nnStruct->nHFTuples; l++)
+    {
+        for(IntT i = 0; i < nPoints; i++)
+        {
+            FREE(precomputedHashesOfULSHs[l][i]);
+        }
+        FREE(precomputedHashesOfULSHs[l]);
     }
-    FREE(precomputedHashesOfULSHs[l]);
-  }
-
-  return nnStruct;
+    
+    return nnStruct;
 }
 
 
