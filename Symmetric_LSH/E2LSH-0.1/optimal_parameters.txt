@@ -1,7 +1,7 @@
 Flushing nnStructs to file... 
 dimension of points: 2 
-parameter K of the algorithm: 2 
-parameter L of the algorithm: 6 
+parameter K of the algorithm: 4 
+parameter L of the algorithm: 10 
 parameter W of the algorithm: 4.000000 
 parameter T of the algorithm: 4 
 parameter R of the algorithm: 1.000000 
@@ -9,9 +9,9 @@ parameter R^2 of the algorithm: 1.000000
 
  
  
-UseUfunctions (Whether to use <u> hash functions instead of usual <g>)? (boolean): 1 
-Number of tuples of hash functions used (nHFTuples): 4 
-How many LSH functions each of the tuple has (hfTuplesLength): 1 
+UseUfunctions (Whether to use <u> hash functions instead of usual <g>)? (boolean): 0 
+Number of tuples of hash functions used (nHFTuples): 10 
+How many LSH functions each of the tuple has (hfTuplesLength): 4 
 Number of points (nPoints): 4 
 The size of the array <points>: 4 
 Reporting Results (boolean): 1 
@@ -19,19 +19,3 @@ The size of <markedPoints> and of <markedPointsIndeces>: 4
 
  
  
-The size of lshFunctions (row): 8 
-The size of lshFunctions (column): 8 
-
- 
- 
-The size of precomputedHashesOfULSHs (row): 8 
-The size of precomputedHashesOfULSHs (column): 8 
-
- 
- 
-The size of hashedBuckets: 8 
-
- 
- 
-The size of pointULSHVectors (row): 8 
-The size of pointULSHVectors (column): 8 
