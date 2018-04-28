@@ -65,225 +65,265 @@ inline void addPointToGBucket(PUHashStructureT uhash, PGBucketT bucket/*, PPoint
   bucket->firstEntry.nextEntry = bucketEntry;
 }
 
+//////////////////////////////////////////////////////////////////////
+// Sicong & Silvestro: This is essentially the core function
 // Creates a new UH structure (initializes the hash table and the hash
 // functions used). If <typeHT>==HT_PACKED or HT_HYBRID_CHAINS, then
 // <modelHT> gives the sizes of all the static arrays that are
 // used. Otherwise parameter <modelHT> is not used.
+//////////////////////////////////////////////////////////////////////
+
 PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucketVectorLength, BooleanT useExternalUHFs, Uns32T *(&mainHashA), Uns32T *(&controlHash1), PUHashStructureT modelHT){
-  PUHashStructureT uhash;
-  FAILIF(NULL == (uhash = (PUHashStructureT)MALLOC(sizeof(UHashStructureT))));
-  uhash->typeHT = typeHT;
-  uhash->hashTableSize = hashTableSize;
-  uhash->nHashedBuckets = 0;
-  uhash->nHashedPoints = 0;
-  uhash->unusedPGBuckets = NULL;
-  uhash->unusedPBucketEntrys = NULL;
-
-  uhash->prime = UH_PRIME_DEFAULT;
-  uhash->hashedDataLength = bucketVectorLength;
-
-  uhash->chainSizes = NULL;
-  uhash->bucketPoints.pointsArray = NULL;
-  uhash->hybridChainsStorage = NULL;
-
-  Int32T totalN = 0;
-  Int32T indexInStorage = 0;
-  Int32T lastIndexInSt = 0;
-  switch (typeHT) {
-  case HT_LINKED_LIST:
-    FAILIF(NULL == (uhash->hashTable.llHashTable = (PGBucketT*)MALLOC(hashTableSize * sizeof(PGBucketT))));
+    PUHashStructureT uhash;
+    FAILIF(NULL == (uhash = (PUHashStructureT)MALLOC(sizeof(UHashStructureT))));
+    uhash->typeHT = typeHT;
+    uhash->hashTableSize = hashTableSize;
+    uhash->nHashedBuckets = 0;
+    uhash->nHashedPoints = 0;
+    uhash->unusedPGBuckets = NULL;
+    uhash->unusedPBucketEntrys = NULL;
+    
+    uhash->prime = UH_PRIME_DEFAULT;
+    uhash->hashedDataLength = bucketVectorLength;
+    
     uhash->chainSizes = NULL;
-    for(Int32T i = 0; i < hashTableSize; i++){
-      uhash->hashTable.llHashTable[i] = NULL;
-    }
-    break;
-  case HT_STATISTICS:
-    ASSERT(FALSE); // Not supported
-    FAILIF(NULL == (uhash->hashTable.linkHashTable = (LinkPackedGBucketT**)MALLOC(hashTableSize * sizeof(LinkPackedGBucketT*))));
-    FAILIF(NULL == (uhash->chainSizes = (IntT*)(MALLOC(hashTableSize * sizeof(IntT)))));
-    FAILIF(NULL == (uhash->bucketPoints.pointsList = (PointsListEntryT*)MALLOC(hashTableSize * sizeof(PointsListEntryT))));
-    for(Int32T i = 0; i < hashTableSize; i++){
-      uhash->chainSizes[i] = CHAIN_INIT_SIZE;
-      FAILIF(NULL == (uhash->hashTable.linkHashTable[i] = (LinkPackedGBucketT*)MALLOC(uhash->chainSizes[i] * sizeof(LinkPackedGBucketT))) && (uhash->chainSizes[i] > 0));
-      if (uhash->chainSizes[i] > 0) {
-	// the first bucket is empty
-	uhash->hashTable.linkHashTable[i][0].indexStart = INDEX_START_EMPTY; 
-      }
-    }
-    break;
-  case HT_PACKED:
-    ASSERT(FALSE); // Not supported
-//     ASSERT(modelHT != NULL);
-//     ASSERT(modelHT->typeHT == HT_STATISTICS);
-//     ASSERT(modelHT->nHashedPoints == hashTableSize); // TODO
-//     FAILIF(NULL == (uhash->hashTable.packedHashTable = (PackedGBucketT**)MALLOC(hashTableSize * sizeof(PackedGBucketT*))));
-//     FAILIF(NULL == (uhash->chainSizes = (IntT*)(MALLOC(hashTableSize * sizeof(IntT)))));
-//     FAILIF(NULL == (uhash->bucketPoints.pointsArray = (PPointT*)MALLOC(hashTableSize * sizeof(PPointT))));
-//     totalN = 0; // total number of points hashed so far.
-//     for(Int32T i = 0; i < hashTableSize; i++){
-
-//       // TODO: NOT TESTED AT ALL
-
-//       // count first size of the chain:
-//       IntT j;
-//       for(j = 0; j < modelHT->chainSizes[i] && modelHT->hashTable.linkHashTable[i][j].indexStart != INDEX_START_EMPTY; j++)
-// 	;
-//       uhash->chainSizes[i] = j;
-
-//       if (j == 0){
-// 	uhash->hashTable.packedHashTable[i] = NULL;
-// 	continue;
-//       }
-
-//       // allocate memory for the chain
-//       FAILIF(NULL == (uhash->hashTable.packedHashTable[i] = (PackedGBucketT*)MALLOC(uhash->chainSizes[i] * sizeof(PackedGBucketT))));
-
-//       // copy each bucket in the chain:
-//       for(j = 0; j < uhash->chainSizes[i]; j++){
-// 	// "general" info for the bucket
-// 	uhash->hashTable.packedHashTable[i][j].controlValue1 = modelHT->hashTable.linkHashTable[i][j].controlValue1;
-// 	uhash->hashTable.packedHashTable[i][j].indexStart = totalN;
-	
-// 	Int32T p = modelHT->hashTable.linkHashTable[i][j].indexStart;
-// 	ASSERT(p != INDEX_START_EMPTY);
-// 	IntT count = 0;
-// 	while(p != INDEX_START_EMPTY){
-// 	  uhash->bucketPoints.pointsArray[totalN] = modelHT->bucketPoints.pointsList[p].point;
-// 	  totalN++;
-// 	  count++;
-// 	  p = modelHT->bucketPoints.pointsList[p].nextPoint;
-// 	}
-// 	uhash->hashTable.packedHashTable[i][j].nPointsInBucket = count;
-//       }
-//     }
-    break;
-  case HT_HYBRID_CHAINS:
-    ASSERT(modelHT != NULL);
-    ASSERT(modelHT->typeHT == HT_LINKED_LIST);
-    FAILIF(NULL == (uhash->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(hashTableSize * sizeof(PHybridChainEntryT))));
-    FAILIF(NULL == (uhash->hybridChainsStorage = (HybridChainEntryT*)MALLOC((modelHT->nHashedPoints + modelHT->nHashedBuckets) * sizeof(HybridChainEntryT))));
+    uhash->bucketPoints.pointsArray = NULL;
+    uhash->hybridChainsStorage = NULL;
     
-    // the index of the first unoccupied entry in <uhash->hybridChainsStorage>.
-    indexInStorage = 0; 
+    Int32T totalN = 0;
+    Int32T indexInStorage = 0;
+    Int32T lastIndexInSt = 0;
     
-    // the index of the last unoccupied entry in <uhash->hybridChainsStorage>
-    // (the entries of <uhash->hybridChainsStorage> are filled from start and from end:
-    // at the beginning we fill the normal buckets with their points;
-    // at the end we fill the "overflow" points of buckets (additional points of buckets that have
-    // more than MAX_NONOVERFLOW_POINTS_PER_BUCKET points).
-    lastIndexInSt = modelHT->nHashedPoints + modelHT->nHashedBuckets - 1; 
-
-    for(Int32T i = 0; i < hashTableSize; i++){
-      PGBucketT bucket = modelHT->hashTable.llHashTable[i];
-      if (bucket != NULL){
-	uhash->hashTable.hybridHashTable[i] = uhash->hybridChainsStorage + indexInStorage; // the position where the bucket starts
-      }else{
-	uhash->hashTable.hybridHashTable[i] = NULL;
-      }
-      while(bucket != NULL){
-	// Compute number of points in the current bucket.
-	Int32T nPointsInBucket = 1;
-	PBucketEntryT bucketEntry = bucket->firstEntry.nextEntry;
-	while(bucketEntry != NULL){
-	  nPointsInBucket++;
-	  bucketEntry = bucketEntry->nextEntry;
-	}
-
-
-	// Copy the points from the bucket to the new HT.
-	ASSERT(nPointsInBucket > 0);
-	
-	uhash->hybridChainsStorage[indexInStorage].controlValue1 = bucket->controlValue1;
-	indexInStorage++;
-	uhash->hybridChainsStorage[indexInStorage].point.isLastBucket = (bucket->nextGBucketInChain == NULL ? 1 : 0);
-	uhash->hybridChainsStorage[indexInStorage].point.bucketLength = (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET ?
-									 nPointsInBucket : 
-									 0); // 0 means there are "overflow" points
-	uhash->hybridChainsStorage[indexInStorage].point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
-	uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;
-	indexInStorage++;
-
-	// Store all other points in the storage
-	Uns32T currentIndex = indexInStorage; // index where the "current" point will be stored.
-	Uns32T nOverflow = 0;
-	Uns32T overflowStart = lastIndexInSt;
-	if (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET){
-	  indexInStorage = indexInStorage + nPointsInBucket - 1;
-	}else{
-	  // bucket too large.
-	  // store the overflow points at the end of the array <uhash->hybridChainsStorage>.
-	  nOverflow = nPointsInBucket - MAX_NONOVERFLOW_POINTS_PER_BUCKET;
-	  overflowStart = lastIndexInSt - nOverflow + 1;
-	  lastIndexInSt = overflowStart - 1;
-
-	  // specify the offset of the start of overflow points in the
-	  // fields <bucketLength> of points 2, 3, ... of the space
-	  // immediately after the bucket.
-	  Uns32T value = overflowStart - (currentIndex - 1 + MAX_NONOVERFLOW_POINTS_PER_BUCKET);
-	  for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++){
-	    uhash->hybridChainsStorage[currentIndex + j].point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
-	    value = value >> N_BITS_FOR_BUCKET_LENGTH;
-	  }
-
-	  // update <indexInStorage>
-	  indexInStorage = indexInStorage + MAX_NONOVERFLOW_POINTS_PER_BUCKET - 1;
-	  ASSERT(indexInStorage <= lastIndexInSt + 1);
-
-	  //FAILIFWR(nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET, "Too many points in a bucket -- feature not implemented yet. Try to lower N_BITS_PER_POINT_INDEX as much as possible.");// TODO: not implemented yet
-	}
-
-	bucketEntry = bucket->firstEntry.nextEntry;
-	while(bucketEntry != NULL){
-	  uhash->hybridChainsStorage[currentIndex].point.pointIndex = bucketEntry->pointIndex;
-	  uhash->hybridChainsStorage[currentIndex].point.isLastPoint = 0;
-	  bucketEntry = bucketEntry->nextEntry;
-
-	  currentIndex++;
-	  if (currentIndex == indexInStorage && nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET){
-	    // finished the normal alloted space -> going to the space reserved at end of the table.
-	    currentIndex = overflowStart;
-	  }
-	}
-
-	// set the <isLastBucket> field of the last point = 1.
-	uhash->hybridChainsStorage[currentIndex - 1].point.isLastPoint = 1;
-	
-	bucket = bucket->nextGBucketInChain;
-	//ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
-      }
+    // defined in BucketHashing.h
+    switch (typeHT)
+    {
+        case HT_LINKED_LIST:
+            FAILIF(NULL == (uhash->hashTable.llHashTable = (PGBucketT*)MALLOC(hashTableSize * sizeof(PGBucketT))));
+            uhash->chainSizes = NULL;
+            for(Int32T i = 0; i < hashTableSize; i++)
+            {
+                uhash->hashTable.llHashTable[i] = NULL;
+            }
+            break;
+        case HT_STATISTICS:
+            ASSERT(FALSE); // Not supported
+            FAILIF(NULL == (uhash->hashTable.linkHashTable = (LinkPackedGBucketT**)MALLOC(hashTableSize * sizeof(LinkPackedGBucketT*))));
+            FAILIF(NULL == (uhash->chainSizes = (IntT*)(MALLOC(hashTableSize * sizeof(IntT)))));
+            FAILIF(NULL == (uhash->bucketPoints.pointsList = (PointsListEntryT*)MALLOC(hashTableSize * sizeof(PointsListEntryT))));
+            for(Int32T i = 0; i < hashTableSize; i++)
+            {
+                uhash->chainSizes[i] = CHAIN_INIT_SIZE;
+                FAILIF(NULL == (uhash->hashTable.linkHashTable[i] = (LinkPackedGBucketT*)MALLOC(uhash->chainSizes[i] * sizeof(LinkPackedGBucketT))) && (uhash->chainSizes[i] > 0));
+                if (uhash->chainSizes[i] > 0)
+                {
+                    // the first bucket is empty
+                    uhash->hashTable.linkHashTable[i][0].indexStart = INDEX_START_EMPTY;
+                }
+            }
+            break;
+        case HT_PACKED:
+            ASSERT(FALSE); // Not supported
+            //     ASSERT(modelHT != NULL);
+            //     ASSERT(modelHT->typeHT == HT_STATISTICS);
+            //     ASSERT(modelHT->nHashedPoints == hashTableSize); // TODO
+            //     FAILIF(NULL == (uhash->hashTable.packedHashTable = (PackedGBucketT**)MALLOC(hashTableSize * sizeof(PackedGBucketT*))));
+            //     FAILIF(NULL == (uhash->chainSizes = (IntT*)(MALLOC(hashTableSize * sizeof(IntT)))));
+            //     FAILIF(NULL == (uhash->bucketPoints.pointsArray = (PPointT*)MALLOC(hashTableSize * sizeof(PPointT))));
+            //     totalN = 0; // total number of points hashed so far.
+            //     for(Int32T i = 0; i < hashTableSize; i++){
+            
+            //       // TODO: NOT TESTED AT ALL
+            
+            //       // count first size of the chain:
+            //       IntT j;
+            //       for(j = 0; j < modelHT->chainSizes[i] && modelHT->hashTable.linkHashTable[i][j].indexStart != INDEX_START_EMPTY; j++)
+            // 	;
+            //       uhash->chainSizes[i] = j;
+            
+            //       if (j == 0){
+            // 	uhash->hashTable.packedHashTable[i] = NULL;
+            // 	continue;
+            //       }
+            
+            //       // allocate memory for the chain
+            //       FAILIF(NULL == (uhash->hashTable.packedHashTable[i] = (PackedGBucketT*)MALLOC(uhash->chainSizes[i] * sizeof(PackedGBucketT))));
+            
+            //       // copy each bucket in the chain:
+            //       for(j = 0; j < uhash->chainSizes[i]; j++){
+            // 	// "general" info for the bucket
+            // 	uhash->hashTable.packedHashTable[i][j].controlValue1 = modelHT->hashTable.linkHashTable[i][j].controlValue1;
+            // 	uhash->hashTable.packedHashTable[i][j].indexStart = totalN;
+            
+            // 	Int32T p = modelHT->hashTable.linkHashTable[i][j].indexStart;
+            // 	ASSERT(p != INDEX_START_EMPTY);
+            // 	IntT count = 0;
+            // 	while(p != INDEX_START_EMPTY){
+            // 	  uhash->bucketPoints.pointsArray[totalN] = modelHT->bucketPoints.pointsList[p].point;
+            // 	  totalN++;
+            // 	  count++;
+            // 	  p = modelHT->bucketPoints.pointsList[p].nextPoint;
+            // 	}
+            // 	uhash->hashTable.packedHashTable[i][j].nPointsInBucket = count;
+            //       }
+            //     }
+            break;
+        case HT_HYBRID_CHAINS:
+            ASSERT(modelHT != NULL);
+            ASSERT(modelHT->typeHT == HT_LINKED_LIST);
+            
+            printf("********************************************************************** .\n");
+            printf("check point in newUHashStructure, HT_HYBRID_CHAINS .\n");
+            printf(" hastable size: %d, nHashedPoint: %d,  nHashedBuckets : %d, sizeof(HybridChainEntryT) : %d .\n", hashTableSize, modelHT->nHashedPoints, modelHT->nHashedBuckets, sizeof(HybridChainEntryT));
+            printf("********************************************************************** .\n");
+            
+            // allocate space for each points
+            FAILIF(NULL == (uhash->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(hashTableSize * sizeof(PHybridChainEntryT))));
+            FAILIF(NULL == (uhash->hybridChainsStorage = (HybridChainEntryT*)MALLOC((modelHT->nHashedPoints + modelHT->nHashedBuckets) * sizeof(HybridChainEntryT))));
+            
+            // the index of the first unoccupied entry in <uhash->hybridChainsStorage>.
+            indexInStorage = 0;
+            
+            // the index of the last unoccupied entry in <uhash->hybridChainsStorage>
+            // (the entries of <uhash->hybridChainsStorage> are filled from start and from end:
+            // at the beginning we fill the normal buckets with their points;
+            // at the end we fill the "overflow" points of buckets (additional points of buckets that have
+            // more than MAX_NONOVERFLOW_POINTS_PER_BUCKET points).
+            lastIndexInSt = modelHT->nHashedPoints + modelHT->nHashedBuckets - 1;
+            
+            for(Int32T i = 0; i < hashTableSize; i++) // iterate each point within one layer (hashTableSize == #  of points)
+            {
+                PGBucketT bucket = modelHT->hashTable.llHashTable[i];
+                if (bucket != NULL)
+                {
+                    uhash->hashTable.hybridHashTable[i] = uhash->hybridChainsStorage + indexInStorage; // the position where the bucket starts
+                }
+                else
+                {
+                    uhash->hashTable.hybridHashTable[i] = NULL;
+                }
+                while(bucket != NULL)
+                {
+                    // Compute number of points in the current bucket.
+                    Int32T nPointsInBucket = 1;
+                    PBucketEntryT bucketEntry = bucket->firstEntry.nextEntry;
+                    while(bucketEntry != NULL)
+                    {
+                        nPointsInBucket++;
+                        bucketEntry = bucketEntry->nextEntry;
+                    }
+                    
+                    
+                    // Copy the points from the bucket to the new HT.
+                    ASSERT(nPointsInBucket > 0);
+                    
+                    uhash->hybridChainsStorage[indexInStorage].controlValue1 = bucket->controlValue1;
+                    indexInStorage++;
+                    uhash->hybridChainsStorage[indexInStorage].point.isLastBucket = (bucket->nextGBucketInChain == NULL ? 1 : 0);
+                    uhash->hybridChainsStorage[indexInStorage].point.bucketLength = (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET ?
+                                                                                     nPointsInBucket :
+                                                                                     0); // 0 means there are "overflow" points
+                    uhash->hybridChainsStorage[indexInStorage].point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
+                    uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;
+                    indexInStorage++;
+                    
+                    // Store all other points in the storage
+                    Uns32T currentIndex = indexInStorage; // index where the "current" point will be stored.
+                    Uns32T nOverflow = 0;
+                    Uns32T overflowStart = lastIndexInSt;
+                    if (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET)
+                    {
+                        indexInStorage = indexInStorage + nPointsInBucket - 1;
+                    }
+                    else
+                    {
+                        // bucket too large.
+                        // store the overflow points at the end of the array <uhash->hybridChainsStorage>.
+                        nOverflow = nPointsInBucket - MAX_NONOVERFLOW_POINTS_PER_BUCKET;
+                        overflowStart = lastIndexInSt - nOverflow + 1;
+                        lastIndexInSt = overflowStart - 1;
+                        
+                        // specify the offset of the start of overflow points in the
+                        // fields <bucketLength> of points 2, 3, ... of the space
+                        // immediately after the bucket.
+                        Uns32T value = overflowStart - (currentIndex - 1 + MAX_NONOVERFLOW_POINTS_PER_BUCKET);
+                        for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
+                        {
+                            uhash->hybridChainsStorage[currentIndex + j].point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
+                            value = value >> N_BITS_FOR_BUCKET_LENGTH;
+                        }
+                        
+                        // update <indexInStorage>
+                        indexInStorage = indexInStorage + MAX_NONOVERFLOW_POINTS_PER_BUCKET - 1;
+                        ASSERT(indexInStorage <= lastIndexInSt + 1);
+                        
+                        //FAILIFWR(nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET, "Too many points in a bucket -- feature not implemented yet. Try to lower N_BITS_PER_POINT_INDEX as much as possible.");// TODO: not implemented yet
+                    }
+                    
+                    bucketEntry = bucket->firstEntry.nextEntry;
+                    while(bucketEntry != NULL)
+                    {
+                        uhash->hybridChainsStorage[currentIndex].point.pointIndex = bucketEntry->pointIndex;
+                        uhash->hybridChainsStorage[currentIndex].point.isLastPoint = 0;
+                        bucketEntry = bucketEntry->nextEntry;
+                        
+                        currentIndex++;
+                        if (currentIndex == indexInStorage && nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET)
+                        {
+                            // finished the normal alloted space -> going to the space reserved at end of the table.
+                            currentIndex = overflowStart;
+                        }
+                    }
+                    
+                    // set the <isLastBucket> field of the last point = 1.
+                    uhash->hybridChainsStorage[currentIndex - 1].point.isLastPoint = 1;
+                    
+                    bucket = bucket->nextGBucketInChain;
+                    //ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
+                } // end of while
+            } // end of for
+            ASSERT(indexInStorage == lastIndexInSt + 1);
+            uhash->nHashedPoints = modelHT->nHashedPoints;
+            uhash->nHashedBuckets = modelHT->nHashedBuckets;
+            break;
+        default:
+            ASSERT(FALSE);
+    } // end of switch from line 99
+    
+    // Initializing the main hash function.
+    if (!useExternalUHFs)
+    {
+        FAILIF(NULL == (uhash->mainHashA = (Uns32T*)MALLOC(uhash->hashedDataLength * sizeof(Uns32T))));
+        for(IntT i = 0; i < uhash->hashedDataLength; i++)
+        {
+            uhash->mainHashA[i] = genRandomUns32(1, MAX_HASH_RND);
+        }
+        mainHashA = uhash->mainHashA;
     }
-    ASSERT(indexInStorage == lastIndexInSt + 1);
-    uhash->nHashedPoints = modelHT->nHashedPoints;
-    uhash->nHashedBuckets = modelHT->nHashedBuckets;
-    break;
-  default:
-    ASSERT(FALSE);
-  }
-
-  // Initializing the main hash function.
-  if (!useExternalUHFs){
-    FAILIF(NULL == (uhash->mainHashA = (Uns32T*)MALLOC(uhash->hashedDataLength * sizeof(Uns32T))));
-    for(IntT i = 0; i < uhash->hashedDataLength; i++){
-      uhash->mainHashA[i] = genRandomUns32(1, MAX_HASH_RND);
+    else
+    {
+        uhash->mainHashA = mainHashA;
     }
-    mainHashA = uhash->mainHashA;
-  } else {
-    uhash->mainHashA = mainHashA;
-  }
-
-  // Initializing the control hash functions.
-  if (!useExternalUHFs){
-    FAILIF(NULL == (uhash->controlHash1 = (Uns32T*)MALLOC(uhash->hashedDataLength * sizeof(Uns32T))));
-    for(IntT i = 0; i < uhash->hashedDataLength; i++){
-      uhash->controlHash1[i] = genRandomUns32(1, MAX_HASH_RND);
+    
+    // Initializing the control hash functions.
+    if (!useExternalUHFs)
+    {
+        FAILIF(NULL == (uhash->controlHash1 = (Uns32T*)MALLOC(uhash->hashedDataLength * sizeof(Uns32T))));
+        for(IntT i = 0; i < uhash->hashedDataLength; i++)
+        {
+            uhash->controlHash1[i] = genRandomUns32(1, MAX_HASH_RND);
+        }
+        controlHash1 = uhash->controlHash1;
     }
-    controlHash1 = uhash->controlHash1;
-  } else {
-    uhash->controlHash1 = controlHash1;
-  }
-
-  return uhash;
+    else
+    {
+        uhash->controlHash1 = controlHash1;
+    }
+    
+    return uhash;
 }
+
+
+
 
 // Removes all the buckets/points from the hash table. Used only for
 // HT_LINKED_LIST.
@@ -500,106 +540,122 @@ inline Uns32T combinePrecomputedHashes(Uns32T *firstBucketVector, Uns32T *second
   }
 }
 
+
+
 // Adds the bucket entry (a point <point>) to the bucket defined by
 // bucketVector in the uh structure with number uhsNumber. If no such
 // bucket exists, then it is first created.
-void addBucketEntry(PUHashStructureT uhash, IntT nBucketVectorPieces, Uns32T firstBucketVector[], Uns32T secondBucketVector[]/*, PPointT point*/ , Int32T pointIndex){
-  CR_ASSERT(uhash != NULL);
-  // CR_ASSERT(bucketVector != NULL);
-
-  Uns32T hIndex;
-  Uns32T control1;
-
-  if (!USE_PRECOMPUTED_HASHES){
-    // if not using the same hash functions across multiple
-    // UHashStructureT, then we need to compute explicitly the hases.
-    Uns32T *tempVector[2];
-    tempVector[0] = firstBucketVector;
-    tempVector[1] = secondBucketVector;
-    hIndex = computeUHashFunction(uhash->mainHashA, tempVector, nBucketVectorPieces, uhash->hashedDataLength, uhash->prime, uhash->hashTableSize);
-    control1 = computeBlockProductModDefaultPrime(uhash->controlHash1, tempVector, nBucketVectorPieces, uhash->hashedDataLength);
-  } else {
-    // if using the same hash functions across multiple
-    // UHashStructureT, then we can use the (possibly partially)
-    // precomputed hash values.
-    CR_ASSERT(uhash->prime == UH_PRIME_DEFAULT);
-    hIndex = combinePrecomputedHashes(firstBucketVector, secondBucketVector, nBucketVectorPieces, UHF_MAIN_INDEX) % uhash->hashTableSize;
-    control1 = combinePrecomputedHashes(firstBucketVector, secondBucketVector, nBucketVectorPieces, UHF_CONTROL1_INDEX);
-  }
-
-  PGBucketT p;
-  BooleanT found;
-  Int32T j;
-  Int32T temp;
-  switch (uhash->typeHT) {
-  case HT_LINKED_LIST:
-    p = uhash->hashTable.llHashTable[hIndex];
-    while(p != NULL && 
-	  (p->controlValue1 != control1)) {
-      p = p->nextGBucketInChain;
-    }
-    if (p == NULL) {
-      // new bucket to add to the hash table
-      uhash->nHashedBuckets++;
-      uhash->hashTable.llHashTable[hIndex] = newGBucket(uhash,
-							control1, 
-							pointIndex, 
-							uhash->hashTable.llHashTable[hIndex]);
-    } else {
-      // add this bucket entry to the existing bucket
-      addPointToGBucket(uhash, p, pointIndex);
-    }
-    break;
-  case HT_PACKED:
-//     // The bucket should already exist.
-//     IntT i;
-//     for(i = 0; i < uhash->chainSizes[hIndex] && uhash->hashTable.packedHashTable[hIndex][i].nPointsInBucket > 0; i++){
-//       if (uhash->hashTable.packedHashTable[hIndex][i].controlValue1 == control1){
-// 	break;
-//       }
-//     }
-//     uhash->hashTable.packedHashTable[hIndex][i].nPointsInBucket++;
-    break;
-  case HT_STATISTICS:
-    ASSERT(FALSE);
-//     uhash->bucketPoints.pointsList[uhash->nHashedPoints].point = point;
-//     found = FALSE;
-//     for(j = 0; j < uhash->chainSizes[hIndex] && uhash->hashTable.linkHashTable[hIndex][j].indexStart != INDEX_START_EMPTY; j++){
-//       if (uhash->hashTable.linkHashTable[hIndex][j].controlValue1 == control1){
-// 	found = TRUE;
-// 	break;
-//       }
-//     }
-//     if (!found) {
-//       // new bucket
-//       if (j >= uhash->chainSizes[hIndex]) {
-// 	// dont have enough space in pREALLOCated memory.
-// 	if (uhash->chainSizes[hIndex] > 0) {
-// 	  uhash->chainSizes[hIndex] = CEIL(uhash->chainSizes[hIndex] * CHAIN_RESIZE_RATIO);
-// 	}else{
-// 	  uhash->chainSizes[hIndex] = 1;
-// 	}
-// 	uhash->hashTable.linkHashTable[hIndex] = (LinkPackedGBucketT*)REALLOC(uhash->hashTable.linkHashTable[hIndex], uhash->chainSizes[hIndex] * sizeof(LinkPackedGBucketT));
-// 	uhash->hashTable.linkHashTable[hIndex][j].controlValue1 = control1;
-//       }
-//       uhash->hashTable.linkHashTable[hIndex][j].controlValue1 = control1;
-//       uhash->hashTable.linkHashTable[hIndex][j].indexStart = INDEX_START_EMPTY;
-//       uhash->nHashedBuckets++;
-//       if (j + 1 < uhash->chainSizes[hIndex]){
-// 	uhash->hashTable.linkHashTable[hIndex][j + 1].indexStart = INDEX_START_EMPTY;
-//       }
-//     }
+void addBucketEntry(PUHashStructureT uhash, IntT nBucketVectorPieces, Uns32T firstBucketVector[], Uns32T secondBucketVector[]/*, PPointT point*/ , Int32T pointIndex)
+{
+    CR_ASSERT(uhash != NULL);
+    // CR_ASSERT(bucketVector != NULL);
     
-//     temp = uhash->hashTable.linkHashTable[hIndex][j].indexStart;
-//     uhash->hashTable.linkHashTable[hIndex][j].indexStart = uhash->nHashedPoints;
-//     uhash->bucketPoints.pointsList[uhash->nHashedPoints].nextPoint = temp;
-
-    break;
-  default:
-    ASSERT(FALSE);
-  }
-  uhash->nHashedPoints++;
+    Uns32T hIndex;
+    Uns32T control1;
+    
+    
+    // USE_PRECOMPUTED_HASHES defined in BucketHashing.h
+    if (!USE_PRECOMPUTED_HASHES)
+    {
+        // if not using the same hash functions across multiple
+        // UHashStructureT, then we need to compute explicitly the hases.
+        Uns32T *tempVector[2];
+        tempVector[0] = firstBucketVector;
+        tempVector[1] = secondBucketVector;
+        hIndex = computeUHashFunction(uhash->mainHashA, tempVector, nBucketVectorPieces, uhash->hashedDataLength, uhash->prime, uhash->hashTableSize);
+        control1 = computeBlockProductModDefaultPrime(uhash->controlHash1, tempVector, nBucketVectorPieces, uhash->hashedDataLength);
+    }
+    else
+    {
+        // if using the same hash functions across multiple
+        // UHashStructureT, then we can use the (possibly partially)
+        // precomputed hash values.
+        CR_ASSERT(uhash->prime == UH_PRIME_DEFAULT);
+        hIndex = combinePrecomputedHashes(firstBucketVector, secondBucketVector, nBucketVectorPieces, UHF_MAIN_INDEX) % uhash->hashTableSize;
+        control1 = combinePrecomputedHashes(firstBucketVector, secondBucketVector, nBucketVectorPieces, UHF_CONTROL1_INDEX);
+    }
+    
+    PGBucketT p;
+    BooleanT found;
+    Int32T j;
+    Int32T temp;
+    switch (uhash->typeHT)
+    {
+        case HT_LINKED_LIST:
+            p = uhash->hashTable.llHashTable[hIndex];
+            while(p != NULL &&
+                  (p->controlValue1 != control1))
+            {
+                p = p->nextGBucketInChain;
+            }
+            if (p == NULL)
+            {
+                // new bucket to add to the hash table
+                uhash->nHashedBuckets++;
+                uhash->hashTable.llHashTable[hIndex] = newGBucket(uhash,
+                                                                  control1,
+                                                                  pointIndex,
+                                                                  uhash->hashTable.llHashTable[hIndex]);
+            }
+            else
+            {
+                // add this bucket entry to the existing bucket
+                addPointToGBucket(uhash, p, pointIndex);
+            }
+            break;
+        case HT_PACKED:
+            //     // The bucket should already exist.
+            //     IntT i;
+            //     for(i = 0; i < uhash->chainSizes[hIndex] && uhash->hashTable.packedHashTable[hIndex][i].nPointsInBucket > 0; i++){
+            //       if (uhash->hashTable.packedHashTable[hIndex][i].controlValue1 == control1){
+            // 	break;
+            //       }
+            //     }
+            //     uhash->hashTable.packedHashTable[hIndex][i].nPointsInBucket++;
+            break;
+        case HT_STATISTICS:
+            ASSERT(FALSE);
+            //     uhash->bucketPoints.pointsList[uhash->nHashedPoints].point = point;
+            //     found = FALSE;
+            //     for(j = 0; j < uhash->chainSizes[hIndex] && uhash->hashTable.linkHashTable[hIndex][j].indexStart != INDEX_START_EMPTY; j++){
+            //       if (uhash->hashTable.linkHashTable[hIndex][j].controlValue1 == control1){
+            // 	found = TRUE;
+            // 	break;
+            //       }
+            //     }
+            //     if (!found) {
+            //       // new bucket
+            //       if (j >= uhash->chainSizes[hIndex]) {
+            // 	// dont have enough space in pREALLOCated memory.
+            // 	if (uhash->chainSizes[hIndex] > 0) {
+            // 	  uhash->chainSizes[hIndex] = CEIL(uhash->chainSizes[hIndex] * CHAIN_RESIZE_RATIO);
+            // 	}else{
+            // 	  uhash->chainSizes[hIndex] = 1;
+            // 	}
+            // 	uhash->hashTable.linkHashTable[hIndex] = (LinkPackedGBucketT*)REALLOC(uhash->hashTable.linkHashTable[hIndex], uhash->chainSizes[hIndex] * sizeof(LinkPackedGBucketT));
+            // 	uhash->hashTable.linkHashTable[hIndex][j].controlValue1 = control1;
+            //       }
+            //       uhash->hashTable.linkHashTable[hIndex][j].controlValue1 = control1;
+            //       uhash->hashTable.linkHashTable[hIndex][j].indexStart = INDEX_START_EMPTY;
+            //       uhash->nHashedBuckets++;
+            //       if (j + 1 < uhash->chainSizes[hIndex]){
+            // 	uhash->hashTable.linkHashTable[hIndex][j + 1].indexStart = INDEX_START_EMPTY;
+            //       }
+            //     }
+            
+            //     temp = uhash->hashTable.linkHashTable[hIndex][j].indexStart;
+            //     uhash->hashTable.linkHashTable[hIndex][j].indexStart = uhash->nHashedPoints;
+            //     uhash->bucketPoints.pointsList[uhash->nHashedPoints].nextPoint = temp;
+            
+            break;
+        default:
+            ASSERT(FALSE);
+    }
+    uhash->nHashedPoints++;
 }
+
+
+
 
 // Returns the bucket defined by the vector <bucketVector> in the UH
 // structure number <uhsNumber>.

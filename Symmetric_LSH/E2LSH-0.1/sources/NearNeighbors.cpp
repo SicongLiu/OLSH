@@ -117,7 +117,12 @@ PRNearNeighborStructT initSelfTunedRNearNeighborWithDataSet(RealT thresholdR,
     {
         printf("Constructing LSH with function initLSH_WithDataSet() ... \n");
         printRNNParameters(DEBUG_OUTPUT, optParameters);
+        
+        ////////////////////////////////////////////////////////////////////////
         // function initLSH_WithDataSet in LocalitySensitiveHashing.cpp
+        // Currenly only type HT_HYBRID_CHAINS is supported for this
+        // operation.
+        ////////////////////////////////////////////////////////////////////////
         nnStruct = initLSH_WithDataSet(optParameters, nPoints, dataSet);
     }
 

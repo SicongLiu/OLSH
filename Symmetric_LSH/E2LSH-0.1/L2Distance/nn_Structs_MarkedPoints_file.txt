@@ -1,7 +1,7 @@
 Flushing MarkedPoints/MarkedPointsIndices to file... 
 markedPoints 	markedPointsIndeces 
 0 	0 
-0 	-805306368 
-0 	-1488516025 
-0 	-2147481603 
-0 	1953500094 
+0 	-1073741824 
+0 	-915075971 
+0 	-1342175233 
+0 	-1756361732 

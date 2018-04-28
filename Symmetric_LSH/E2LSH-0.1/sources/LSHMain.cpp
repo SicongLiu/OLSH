@@ -107,6 +107,36 @@ int compareInt32T(const void *a, const void *b){
     return flag;
 }*/
 
+
+/** flushing hashtable (defined in BucketHashing) to file
+        return: 0 -- success
+                1 -- failure
+ */
+int save_hashTable_To_File(PRNearNeighborStructT nnStructs, int nRadii, const char* file_name)
+{
+    printf("Flushing HashTable (using BucketHashing) to file... \n");
+    int flag = 0;
+    FILE *hashTable_File = fopen(file_name, "w");
+    PUHashStructureT* current_hashedBuckets = nnStructs->hashedBuckets;
+    fprintf(hashTable_File, "%s \n", "Flushing HashTable to file..." );
+    unsigned long hashedBuckets_size = sizeof(nnStructs->hashedBuckets)/sizeof(nnStructs->hashedBuckets[0]);
+    for(int i=0; i<hashedBuckets_size; i++)
+    {
+        HybridChainEntryT *hybridChainsStorage = current_hashedBuckets[i]->hybridChainsStorage;
+        PHybridChainEntryT *hybridHashTable = current_hashedBuckets[i]->hashTable.hybridHashTable;
+        printf("control value from pointer : %d .\n", (*hybridHashTable)->controlValue1);
+        printf("control value from struct : %d .\n", hybridChainsStorage->controlValue1);
+        
+        printf("size1 : %d, size2 : %d, number of table: %d . \n", sizeof(hybridHashTable), sizeof(PHybridChainEntryT), sizeof(hybridHashTable)/sizeof(PHybridChainEntryT));
+        printf("size1 : %d, size2 : %d, number of complex structure: %d .\n", sizeof(hybridChainsStorage), sizeof(HybridChainEntryT), sizeof(hybridChainsStorage)/sizeof(HybridChainEntryT));
+    }
+    
+    fclose(hashTable_File);
+    
+    
+    return flag;
+}
+
 /** flushing nnStructs to file, structure defined in BucketHashing.h
         return: 0 -- success
                 1 -- failure
@@ -124,10 +154,58 @@ int save_nnStructs_hashedBuckets_To_File(PRNearNeighborStructT nnStructs, int nR
     {
         fprintf(hashedBuckets_File, "Current iteration index: %d .\n", i);
         fprintf(hashedBuckets_File, "typeHT: %d \n", current_hashedBuckets[i]->typeHT);
+        fprintf(hashedBuckets_File, "Prime Number Used: %d \n", current_hashedBuckets[i]->prime);
         fprintf(hashedBuckets_File, "hashTableSize: %d \n", current_hashedBuckets[i]->hashTableSize);
         fprintf(hashedBuckets_File, "nHashedBuckets: %d \n", current_hashedBuckets[i]->nHashedBuckets);
         fprintf(hashedBuckets_File, "nHashedPoints: %d \n", current_hashedBuckets[i]->nHashedPoints);
         
+        /////////////////////////////////////////////////////////////////////////////
+        if(current_hashedBuckets[i]->bucketPoints.pointsList == NULL)
+        {
+            printf("******************** \n");
+            printf("bucketPoints.pointsList is null .\n");
+            printf("******************** \n");
+        }
+        if(current_hashedBuckets[i]->bucketPoints.pointsArray == NULL)
+        {
+            printf("******************** \n");
+            printf("bucketPoints.pointsArray is null .\n");
+            printf("******************** \n");
+        }
+        
+        /////////////////////////////////////////////////////////////////////////////
+        if(current_hashedBuckets[i]->hashTable.llHashTable == NULL)
+        {
+            printf("******************** \n");
+            printf("hashTable.llHashTable is null .\n");
+            printf("******************** \n");
+        }
+        if(current_hashedBuckets[i]->hashTable.packedHashTable == NULL)
+        {
+            printf("******************** \n");
+            printf("hashTable.packedHashTable is null .\n");
+            printf("******************** \n");
+        }
+        if(current_hashedBuckets[i]->hashTable.linkHashTable == NULL)
+        {
+            printf("******************** \n");
+            printf("hashTable.linkHashTable is null .\n");
+            printf("******************** \n");
+        }
+        if(current_hashedBuckets[i]->hashTable.hybridHashTable == NULL)
+        {
+            printf("******************** \n");
+            printf("hashTable.hybridHashTable is null .\n");
+            printf("******************** \n");
+        }
+        
+        /////////////////////////////////////////////////////////////////////////////
+        if(current_hashedBuckets[i]->hybridChainsStorage == NULL)
+        {
+            printf("******************** \n");
+            printf("hybridChainsStorage is null .\n");
+            printf("******************** \n");
+        }
         // The sizes of each of the chains of the hashtable (used only when
         // typeHT=HT_PACKED or HT_STATISTICS.
         if(current_hashedBuckets[i]->chainSizes == NULL)
@@ -135,7 +213,7 @@ int save_nnStructs_hashedBuckets_To_File(PRNearNeighborStructT nnStructs, int nR
             printf("typeHT indicates this is a linked-list .\n");
             fprintf(hashedBuckets_File, " \n typeHT indicates this is a linked-list .\n");
             /////////////////////////////////////////////////////////////////////////////
-            // To-DO:
+            // To-Do:
             // output the hashed LinkedList to file
             /////////////////////////////////////////////////////////////////////////////
         }
@@ -249,7 +327,7 @@ int save_nnStructs_pointULSHVectors_To_File(PRNearNeighborStructT nnStructs, int
     int flag = 0;
     unsigned int** pointULSHVectors = nnStructs->pointULSHVectors;
     FILE *pointULSHVectors_File = fopen(file_name, "w");
-    fprintf(pointULSHVectors_File, "%s \n", "Flushing LSHFunction to file..." );
+    fprintf(pointULSHVectors_File, "%s \n", "Flushing pointULSHVectors to file..." );
     Int32T lsh_tables = nnStructs->parameterL;
     Int32T lsh_functions_per_table = nnStructs->parameterK;
     
@@ -644,6 +722,10 @@ int main(int nargs, char **args)
         for(IntT i = 0; i < nRadii; i++)
         {
             // XXX: segregate the sample queries...
+            // function initSelfTunedRNearNeighborWithDataSet () use
+            // function initLSH_WithDataSet(), defined in LocalitySensitiveHashing.cpp
+            // Currenly only type HT_HYBRID_CHAINS is supported for this
+            // operation.
             nnStructs[i] = initSelfTunedRNearNeighborWithDataSet(listOfRadii[i],
                                                                  successProbability,
                                                                  nPoints,
@@ -663,6 +745,10 @@ int main(int nargs, char **args)
     ////////////////////////////////////////////////////////////////////////
     // saving nnStruct to files
     ////////////////////////////////////////////////////////////////////////
+    
+    const char* nnStructs_HashTable_file_name = "HashTable_file.txt";
+    int return_flag_HashTable_nnStructs = save_hashTable_To_File(*nnStructs, nRadii, nnStructs_HashTable_file_name);
+    
     
     const char* nnStructs_MarkedPoints_file_name = "nn_Structs_MarkedPoints_file.txt";
     int return_flag_MarkedPoints_nnStructs = save_nnStructs_MarkedPoints_To_File(*nnStructs, nRadii, nnStructs_MarkedPoints_file_name);

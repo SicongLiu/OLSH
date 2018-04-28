@@ -2,7 +2,6 @@ Flushing hashedBuckets to file...
 Union bucketPoints not flushed... 
 Current iteration index: 0 .
 typeHT: 3 
-Prime Number Used: -5 
 hashTableSize: 5 
 nHashedBuckets: 1 
 nHashedPoints: 5 
