@@ -396,7 +396,9 @@ RNNParametersT computeOptimalParameters(RealT R,
 #else  
   optParameters.parameterR2 = SQR(R);
 #endif
-  optParameters.useUfunctions = TRUE; // TODO: could optimize here:
+  // turn off optimization by Sicong & Silvestro
+  optParameters.useUfunctions = FALSE;
+  // optParameters.useUfunctions = TRUE; // TODO: could optimize here:
 				      // maybe sometimes, the old way
 				      // was better.
   optParameters.parameterW = PARAMETER_W_DEFAULT;

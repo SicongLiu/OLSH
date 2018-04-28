@@ -115,18 +115,18 @@ void initHashFunctions(PRNearNeighborStructT nnStruct){
     for(IntT j = 0; j < nnStruct->hfTuplesLength; j++){
       // vector a
       for(IntT d = 0; d < nnStruct->dimension; d++){
- #ifdef USE_L1_DISTANCE
- 	lshFunctions[i][j].a[d] = genCauchyRandom();
- #else
+// #ifdef USE_L1_DISTANCE
+//  	lshFunctions[i][j].a[d] = genCauchyRandom();
+// #else
 	lshFunctions[i][j].a[d] = genGaussianRandom();
- #endif
+// #endif
       }
       // b
- #ifdef PERFORM_NEYSHABUR_MIPS
-      lshFunctions[i][j].b = 0;
- #else
+// #ifdef PERFORM_NEYSHABUR_MIPS
+//       lshFunctions[i][j].b = 0;
+//  #else
       lshFunctions[i][j].b = genUniformRandom(0, nnStruct->parameterW);
- #endif
+//  #endif
     }
   }
 
@@ -221,7 +221,7 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
 {
     ASSERT(algParameters.typeHT == HT_HYBRID_CHAINS);
     ASSERT(dataSet != NULL);
-    ASSERT(USE_SAME_UHASH_FUNCTIONS);
+    ASSERT(USE_SAME_UHASH_FUNCTIONS); // defined in BucketHashing.h
     
     PRNearNeighborStructT nnStruct = initializePRNearNeighborFields(algParameters, nPoints);
     
@@ -235,6 +235,12 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
     // initialize second level hashing (bucket hashing)
     FAILIF(NULL == (nnStruct->hashedBuckets = (PUHashStructureT*)MALLOC(nnStruct->parameterL * sizeof(PUHashStructureT))));
     Uns32T *mainHashA = NULL, *controlHash1 = NULL;
+    printf("********************************************************************** .\n");
+    printf("check point in initLSH_WithDataSet before newUHashStructure.\n");
+    printf(" HT_LINKED_LIST: %d,  nPoints : %d, parameterK: %d mainHashA : %d, controlHash1 : %d nnStruct->useUfunctions: %d N_PRECOMPUTED_HASHES_NEEDED: %d .\n", HT_LINKED_LIST, nPoints, nnStruct->parameterK, mainHashA, controlHash1, nnStruct->useUfunctions, N_PRECOMPUTED_HASHES_NEEDED);
+    printf("********************************************************************** .\n");
+    
+    // call newUHashStructure to first initialize hash-structure -- newUHashStructure in BucketHashing.cpp
     PUHashStructureT modelHT = newUHashStructure(HT_LINKED_LIST, nPoints, nnStruct->parameterK, FALSE, mainHashA, controlHash1, NULL);
     
     Uns32T **(precomputedHashesOfULSHs[nnStruct->nHFTuples]);
@@ -250,7 +256,7 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
     for(IntT i = 0; i < nPoints; i++)
     {
         preparePointAdding(nnStruct, modelHT, dataSet[i]);
-        for(IntT l = 0; l < nnStruct->nHFTuples; l++)
+        for(IntT l = 0; l < nnStruct->nHFTuples; l++) // number of hashtables/hash-layers
         {
             // N_PRECOMPUTED_HASHES_NEEDED -- defined in BucketHashing.h
             // line 122: #define N_PRECOMPUTED_HASHES_NEEDED (UHF_NUMBER_OF_HASHES * 2)
@@ -267,6 +273,16 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
     // Initialize the counters for defining the pair of <u> functions used for <g> functions.
     IntT firstUComp = 0;
     IntT secondUComp = 1;
+    
+    
+    
+    
+    
+    printf("********************************************************************** .\n");
+    printf("check point in initLSH_WithDataSet before addBucketEntry.\n");
+    printf(" modelHT-typeHT: %d, USE_PRECOMPUTED_HASHES: %d \n", modelHT->typeHT, USE_PRECOMPUTED_HASHES);
+    printf("********************************************************************** .\n");
+    
     for(IntT i = 0; i < nnStruct->parameterL; i++)
     {
         // build the model HT.
@@ -275,8 +291,10 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
             // Add point <dataSet[p]> to modelHT.
             if (!nnStruct->useUfunctions)
             {
+                /////////////////////////////////////////////////////////////////
                 // Use usual <g> functions (truly independent; <g>s are precisly
                 // <u>s).
+                /////////////////////////////////////////////////////////////////
                 addBucketEntry(modelHT, 1, precomputedHashesOfULSHs[i][p], NULL, p);
             }
             else
@@ -438,11 +456,11 @@ inline void computeULSH(PRNearNeighborStructT nnStruct, IntT gNumber, RealT *poi
     for(IntT d = 0; d < nnStruct->dimension; d++){
       value += point[d] * nnStruct->lshFunctions[gNumber][i].a[d];
     }
-#ifdef PERFORM_NEYSHABUR_MIPS
-    vectorValue[i] = (Uns32T)((value>=0)?1:-1);
-#else
+// #ifdef PERFORM_NEYSHABUR_MIPS
+//     vectorValue[i] = (Uns32T)((value>=0)?1:-1);
+// #else
     vectorValue[i] = (Uns32T)(FLOOR_INT32((value + nnStruct->lshFunctions[gNumber][i].b) / nnStruct->parameterW) /* - MIN_INT32T*/);
-#endif
+// #endif
   }
 }
 
@@ -556,11 +574,11 @@ inline BooleanT isDistanceSqrLeq(IntT dimension, PPointT p1, PPointT p2, RealT t
   TIMEV_START(timeDistanceComputation);
   for (IntT i = 0; i < dimension; i++){
     RealT temp = p1->coordinates[i] - p2->coordinates[i];
-#ifdef USE_L1_DISTANCE
-    result += ABS(temp);
-#else
+// #ifdef USE_L1_DISTANCE
+//    result += ABS(temp);
+// #else
     result += SQR(temp);
-#endif
+// #endif
     if (result > threshold){
       // TIMEV_END(timeDistanceComputation);
       return 0;
