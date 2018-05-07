@@ -495,24 +495,29 @@ inline void computeULSH(PRNearNeighborStructT nnStruct, IntT gNumber, RealT *poi
     }
 }
 
-inline void preparePointAdding(PRNearNeighborStructT nnStruct, PUHashStructureT uhash, PPointT point){
+inline void preparePointAdding(PRNearNeighborStructT nnStruct, PUHashStructureT uhash, PPointT point)
+{
     ASSERT(nnStruct != NULL);
     ASSERT(uhash != NULL);
     ASSERT(point != NULL);
     
     TIMEV_START(timeComputeULSH);
-    for(IntT d = 0; d < nnStruct->dimension; d++){
+    for(IntT d = 0; d < nnStruct->dimension; d++)
+    {
         nnStruct->reducedPoint[d] = point->coordinates[d] / nnStruct->parameterR;
     }
     
     // Compute all ULSH functions.
-    for(IntT i = 0; i < nnStruct->nHFTuples; i++){
+    for(IntT i = 0; i < nnStruct->nHFTuples; i++)
+    {
         computeULSH(nnStruct, i, nnStruct->reducedPoint, nnStruct->pointULSHVectors[i]);
     }
     
     // Compute data for <precomputedHashesOfULSHs>.
-    if (USE_SAME_UHASH_FUNCTIONS) {
-        for(IntT i = 0; i < nnStruct->nHFTuples; i++){
+    if (USE_SAME_UHASH_FUNCTIONS)
+    {
+        for(IntT i = 0; i < nnStruct->nHFTuples; i++)
+        {
             precomputeUHFsForULSH(uhash, nnStruct->pointULSHVectors[i], nnStruct->hfTuplesLength, nnStruct->precomputedHashesOfULSHs[i]);
         }
     }
@@ -566,18 +571,23 @@ void addNewPointToPRNearNeighborStruct(PRNearNeighborStructT nnStruct, PPointT p
     IntT secondUComp = 1;
     
     TIMEV_START(timeBucketIntoUH);
-    for(IntT i = 0; i < nnStruct->parameterL; i++){
-        if (!nnStruct->useUfunctions) {
+    for(IntT i = 0; i < nnStruct->parameterL; i++)
+    {
+        if (!nnStruct->useUfunctions)
+        {
             // Use usual <g> functions (truly independent; <g>s are precisly
             // <u>s).
             addBucketEntry(nnStruct->hashedBuckets[i], 1, nnStruct->precomputedHashesOfULSHs[i], NULL, nnStruct->nPoints - 1);
-        } else {
+        }
+        else
+        {
             // Use <u> functions (<g>s are pairs of <u> functions).
             addBucketEntry(nnStruct->hashedBuckets[i], 2, nnStruct->precomputedHashesOfULSHs[firstUComp], nnStruct->precomputedHashesOfULSHs[secondUComp], nnStruct->nPoints - 1);
             
             // compute what is the next pair of <u> functions.
             secondUComp++;
-            if (secondUComp == nnStruct->nHFTuples) {
+            if (secondUComp == nnStruct->nHFTuples)
+            {
                 firstUComp++;
                 secondUComp = firstUComp + 1;
             }
@@ -587,10 +597,12 @@ void addNewPointToPRNearNeighborStruct(PRNearNeighborStructT nnStruct, PPointT p
     TIMEV_END(timeBucketIntoUH);
     
     // Check whether the vectors <nearPoints> & <nearPointsIndeces> is still big enough.
-    if (nnStruct->nPoints > nnStruct->sizeMarkedPoints) {
+    if (nnStruct->nPoints > nnStruct->sizeMarkedPoints)
+    {
         nnStruct->sizeMarkedPoints = 2 * nnStruct->nPoints;
         FAILIF(NULL == (nnStruct->markedPoints = (BooleanT*)REALLOC(nnStruct->markedPoints, nnStruct->sizeMarkedPoints * sizeof(BooleanT))));
-        for(IntT i = 0; i < nnStruct->sizeMarkedPoints; i++){
+        for(IntT i = 0; i < nnStruct->sizeMarkedPoints; i++)
+        {
             nnStruct->markedPoints[i] = FALSE;
         }
         FAILIF(NULL == (nnStruct->markedPointsIndeces = (Int32T*)REALLOC(nnStruct->markedPointsIndeces, nnStruct->sizeMarkedPoints * sizeof(Int32T))));
@@ -598,19 +610,22 @@ void addNewPointToPRNearNeighborStruct(PRNearNeighborStructT nnStruct, PPointT p
 }
 
 // Returns TRUE iff |p1-p2|_2^2 <= threshold
-inline BooleanT isDistanceSqrLeq(IntT dimension, PPointT p1, PPointT p2, RealT threshold){
+inline BooleanT isDistanceSqrLeq(IntT dimension, PPointT p1, PPointT p2, RealT threshold)
+{
     RealT result = 0;
     nOfDistComps++;
     
     TIMEV_START(timeDistanceComputation);
-    for (IntT i = 0; i < dimension; i++){
+    for (IntT i = 0; i < dimension; i++)
+    {
         RealT temp = p1->coordinates[i] - p2->coordinates[i];
         // #ifdef USE_L1_DISTANCE
         //    result += ABS(temp);
         // #else
         result += SQR(temp);
         // #endif
-        if (result > threshold){
+        if (result > threshold)
+        {
             // TIMEV_END(timeDistanceComputation);
             return 0;
         }
@@ -646,7 +661,8 @@ inline BooleanT isDistanceSqrLeq(IntT dimension, PPointT p1, PPointT p2, RealT t
 // size of <result>, then the <result> is resized (to up to twice the
 // number of returned points). The return value is the number of
 // points found.
-Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, PPointT query, PPointT *(&result), Int32T &resultSize){
+Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, PPointT query, PPointT *(&result), Int32T &resultSize)
+{
     ASSERT(nnStruct != NULL);
     ASSERT(query != NULL);
     ASSERT(nnStruct->reducedPoint != NULL);
@@ -654,7 +670,8 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
     
     PPointT point = query;
     
-    if (result == NULL){
+    if (result == NULL)
+    {
         resultSize = RESULT_INIT_SIZE;
         FAILIF(NULL == (result = (PPointT*)MALLOC(resultSize * sizeof(PPointT))));
     }
@@ -662,15 +679,18 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
     preparePointAdding(nnStruct, nnStruct->hashedBuckets[0], point);
     
     Uns32T precomputedHashesOfULSHs[nnStruct->nHFTuples][N_PRECOMPUTED_HASHES_NEEDED];
-    for(IntT i = 0; i < nnStruct->nHFTuples; i++){
-        for(IntT j = 0; j < N_PRECOMPUTED_HASHES_NEEDED; j++){
+    for(IntT i = 0; i < nnStruct->nHFTuples; i++)
+    {
+        for(IntT j = 0; j < N_PRECOMPUTED_HASHES_NEEDED; j++)
+        {
             precomputedHashesOfULSHs[i][j] = nnStruct->precomputedHashesOfULSHs[i][j];
         }
     }
     TIMEV_START(timeTotalBuckets);
     
     BooleanT oldTimingOn = timingOn;
-    if (noExpensiveTiming) {
+    if (noExpensiveTiming)
+    {
         timingOn = FALSE;
     }
     
@@ -681,20 +701,25 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
     Int32T nNeighbors = 0;// the number of near neighbors found so far.
     Int32T nMarkedPoints = 0;// the number of marked points
     
-    for(IntT i = 0; i < nnStruct->parameterL; i++){
+    for(IntT i = 0; i < nnStruct->parameterL; i++)
+    {
         TIMEV_START(timeGetBucket);
         GeneralizedPGBucket gbucket;
-        if (!nnStruct->useUfunctions) {
+        if (!nnStruct->useUfunctions)
+        {
             // Use usual <g> functions (truly independent; <g>s are precisly
             // <u>s).
             gbucket = getGBucket(nnStruct->hashedBuckets[i], 1, precomputedHashesOfULSHs[i], NULL);
-        } else {
+        }
+        else
+        {
             // Use <u> functions (<g>s are pairs of <u> functions).
             gbucket = getGBucket(nnStruct->hashedBuckets[i], 2, precomputedHashesOfULSHs[firstUComp], precomputedHashesOfULSHs[secondUComp]);
             
             // compute what is the next pair of <u> functions.
             secondUComp++;
-            if (secondUComp == nnStruct->nHFTuples) {
+            if (secondUComp == nnStruct->nHFTuples)
+            {
                 firstUComp++;
                 secondUComp = firstUComp + 1;
             }
@@ -707,22 +732,27 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
         switch (nnStruct->hashedBuckets[i]->typeHT){
             case HT_LINKED_LIST:
                 bucket = gbucket.llGBucket;
-                if (bucket != NULL){
+                if (bucket != NULL)
+                {
                     // circle through the bucket and add to <result> the points that are near.
                     PBucketEntryT bucketEntry = &(bucket->firstEntry);
                     //TIMEV_START(timeCycleProc);
-                    while (bucketEntry != NULL){
+                    while (bucketEntry != NULL)
+                    {
                         //TIMEV_END(timeCycleProc);
                         //ASSERT(bucketEntry->point != NULL);
                         //TIMEV_START(timeDistanceComputation);
                         Int32T candidatePIndex = bucketEntry->pointIndex;
                         PPointT candidatePoint = nnStruct->points[candidatePIndex];
-                        if (isDistanceSqrLeq(nnStruct->dimension, point, candidatePoint, nnStruct->parameterR2) && nnStruct->reportingResult){
+                        if (isDistanceSqrLeq(nnStruct->dimension, point, candidatePoint, nnStruct->parameterR2) && nnStruct->reportingResult)
+                        {
                             //TIMEV_END(timeDistanceComputation);
-                            if (nnStruct->markedPoints[candidatePIndex] == FALSE) {
+                            if (nnStruct->markedPoints[candidatePIndex] == FALSE)
+                            {
                                 //TIMEV_START(timeResultStoring);
                                 // a new R-NN point was found (not yet in <result>).
-                                if (nNeighbors >= resultSize){
+                                if (nNeighbors >= resultSize)
+                                {
                                     // run out of space => resize the <result> array.
                                     resultSize = 2 * resultSize;
                                     result = (PPointT*)REALLOC(result, resultSize * sizeof(PPointT));
@@ -734,7 +764,9 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
                                 nMarkedPoints++;
                                 //TIMEV_END(timeResultStoring);
                             }
-                        }else{
+                        }
+                        else
+                        {
                             //TIMEV_END(timeDistanceComputation);
                         }
                         //TIMEV_START(timeCycleProc);
@@ -773,20 +805,25 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
                 //       }
                 break;
             case HT_HYBRID_CHAINS:
-                if (gbucket.hybridGBucket != NULL){
+                if (gbucket.hybridGBucket != NULL)
+                {
                     PHybridChainEntryT hybridPoint = gbucket.hybridGBucket;
                     Uns32T offset = 0;
-                    if (hybridPoint->point.bucketLength == 0){
+                    if (hybridPoint->point.bucketLength == 0)
+                    {
                         // there are overflow points in this bucket.
                         offset = 0;
-                        for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++){
+                        for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
+                        {
                             offset += ((Uns32T)((hybridPoint + 1 + j)->point.bucketLength) << (j * N_BITS_FOR_BUCKET_LENGTH));
                         }
                     }
                     Uns32T index = 0;
                     BooleanT done = FALSE;
-                    while(!done){
-                        if (index == MAX_NONOVERFLOW_POINTS_PER_BUCKET){
+                    while(!done)
+                    {
+                        if (index == MAX_NONOVERFLOW_POINTS_PER_BUCKET)
+                        {
                             //CR_ASSERT(hybridPoint->point.bucketLength == 0);
                             index = index + offset;
                         }
@@ -794,28 +831,34 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
                         CR_ASSERT(candidatePIndex >= 0 && candidatePIndex < nnStruct->nPoints);
                         done = (hybridPoint + index)->point.isLastPoint == 1 ? TRUE : FALSE;
                         index++;
-                        if (nnStruct->markedPoints[candidatePIndex] == FALSE){
+                        if (nnStruct->markedPoints[candidatePIndex] == FALSE)
+                        {
                             // mark the point first.
                             nnStruct->markedPointsIndeces[nMarkedPoints] = candidatePIndex;
                             nnStruct->markedPoints[candidatePIndex] = TRUE; // do not include more points with the same index
                             nMarkedPoints++;
                             
                             PPointT candidatePoint = nnStruct->points[candidatePIndex];
-                            if (isDistanceSqrLeq(nnStruct->dimension, point, candidatePoint, nnStruct->parameterR2) && nnStruct->reportingResult){
+                            if (isDistanceSqrLeq(nnStruct->dimension, point, candidatePoint, nnStruct->parameterR2) && nnStruct->reportingResult)
+                            {
                                 //if (nnStruct->markedPoints[candidatePIndex] == FALSE) {
                                 // a new R-NN point was found (not yet in <result>).
                                 //TIMEV_START(timeResultStoring);
-                                if (nNeighbors >= resultSize){
+                                if (nNeighbors >= resultSize)
+                                {
                                     // run out of space => resize the <result> array.
                                     resultSize = 2 * resultSize;
                                     PPointT* newResult = (PPointT*)REALLOC(result,
                                                                            resultSize * sizeof(PPointT));
                                     
-                                    if(!newResult){
+                                    if(!newResult)
+                                    {
                                         fprintf(stderr, "OMG we could not realloc");
                                         fflush(stderr);
                                         exit(1);
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         result = newResult;
                                     }
                                 }
@@ -827,7 +870,9 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
                                 //nMarkedPoints++;
                                 //}
                             }
-                        }else{
+                        }
+                        else
+                        {
                             // the point was already marked (& examined)
                         }
                     }
@@ -842,7 +887,8 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
     timingOn = oldTimingOn;
     TIMEV_END(timeTotalBuckets);
     // we need to clear the array nnStruct->nearPoints for the next query.
-    for(Int32T i = 0; i < nMarkedPoints; i++){
+    for(Int32T i = 0; i < nMarkedPoints; i++)
+    {
         ASSERT(nnStruct->markedPoints[nnStruct->markedPointsIndeces[i]] == TRUE);
         nnStruct->markedPoints[nnStruct->markedPointsIndeces[i]] = FALSE;
     }
