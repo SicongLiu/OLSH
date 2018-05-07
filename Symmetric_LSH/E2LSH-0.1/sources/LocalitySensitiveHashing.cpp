@@ -120,23 +120,29 @@ RNNParametersT readRNNParameters(FILE *input){
 // Creates the LSH hash functions for the R-near neighbor structure
 // <nnStruct>. The functions fills in the corresponding field of
 // <nnStruct>.
-void initHashFunctions(PRNearNeighborStructT nnStruct){
+void initHashFunctions(PRNearNeighborStructT nnStruct)
+{
     ASSERT(nnStruct != NULL);
     LSHFunctionT **lshFunctions;
     // allocate memory for the functions
     FAILIF(NULL == (lshFunctions = (LSHFunctionT**)MALLOC(nnStruct->nHFTuples * sizeof(LSHFunctionT*))));
-    for(IntT i = 0; i < nnStruct->nHFTuples; i++){
+    for(IntT i = 0; i < nnStruct->nHFTuples; i++)
+    {
         FAILIF(NULL == (lshFunctions[i] = (LSHFunctionT*)MALLOC(nnStruct->hfTuplesLength * sizeof(LSHFunctionT))));
-        for(IntT j = 0; j < nnStruct->hfTuplesLength; j++){
+        for(IntT j = 0; j < nnStruct->hfTuplesLength; j++)
+        {
             FAILIF(NULL == (lshFunctions[i][j].a = (RealT*)MALLOC(nnStruct->dimension * sizeof(RealT))));
         }
     }
     
     // initialize the LSH functions
-    for(IntT i = 0; i < nnStruct->nHFTuples; i++){
-        for(IntT j = 0; j < nnStruct->hfTuplesLength; j++){
+    for(IntT i = 0; i < nnStruct->nHFTuples; i++)
+    {
+        for(IntT j = 0; j < nnStruct->hfTuplesLength; j++)
+        {
             // vector a
-            for(IntT d = 0; d < nnStruct->dimension; d++){
+            for(IntT d = 0; d < nnStruct->dimension; d++)
+            {
                 // #ifdef USE_L1_DISTANCE
                 //      lshFunctions[i][j].a[d] = genCauchyRandom();
                 // #else
@@ -145,9 +151,9 @@ void initHashFunctions(PRNearNeighborStructT nnStruct){
             }
             // b
             // #ifdef PERFORM_NEYSHABUR_MIPS
-            //       lshFunctions[i][j].b = 0;
+                   lshFunctions[i][j].b = 0;
             //  #else
-            lshFunctions[i][j].b = genUniformRandom(0, nnStruct->parameterW);
+            // lshFunctions[i][j].b = genUniformRandom(0, nnStruct->parameterW);
             //  #endif
         }
     }
@@ -488,9 +494,9 @@ inline void computeULSH(PRNearNeighborStructT nnStruct, IntT gNumber, RealT *poi
             value += point[d] * nnStruct->lshFunctions[gNumber][i].a[d];
         }
         // #ifdef PERFORM_NEYSHABUR_MIPS
-        //     vectorValue[i] = (Uns32T)((value>=0)?1:-1);
+             vectorValue[i] = (Uns32T)((value>=0)?1:-1);
         // #else
-        vectorValue[i] = (Uns32T)(FLOOR_INT32((value + nnStruct->lshFunctions[gNumber][i].b) / nnStruct->parameterW) /* - MIN_INT32T*/);
+        // vectorValue[i] = (Uns32T)(FLOOR_INT32((value + nnStruct->lshFunctions[gNumber][i].b) / nnStruct->parameterW) /* - MIN_INT32T*/);
         // #endif
     }
 }
