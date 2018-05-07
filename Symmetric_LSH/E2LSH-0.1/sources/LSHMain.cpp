@@ -746,8 +746,10 @@ int main(int nargs, char **args)
     // saving nnStruct to files
     ////////////////////////////////////////////////////////////////////////
     
-    const char* nnStructs_HashTable_file_name = "HashTable_file.txt";
-    int return_flag_HashTable_nnStructs = save_hashTable_To_File(*nnStructs, nRadii, nnStructs_HashTable_file_name);
+    
+    // cancel operation -> saving hashtable to file
+    // const char* nnStructs_HashTable_file_name = "HashTable_file.txt";
+    // int return_flag_HashTable_nnStructs = save_hashTable_To_File(*nnStructs, nRadii, nnStructs_HashTable_file_name);
     
     
     const char* nnStructs_MarkedPoints_file_name = "nn_Structs_MarkedPoints_file.txt";
