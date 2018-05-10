@@ -77,16 +77,16 @@ if __name__ == '__main__':
 
     file_count = 5
     # k = 10
-    # k = 4
-    k = 3
+    k = 4
+    # k = 3
     # k = 2
     # k = 1
 
-    # root_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/DATA/2D_data'
-    # MY_AFF_NAME = '2d_test'
+    root_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/DATA/Data_With_Boundaries/2D_data'
+    MY_AFF_NAME = '2d_test'
 
-    root_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/DATA/4D_data'
-    MY_AFF_NAME = '4d_test'
+    # root_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/DATA/4D_data'
+    # MY_AFF_NAME = '4d_test'
 
     # root_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/DATA/6D_data'
     # MY_AFF_NAME = '6d_test'

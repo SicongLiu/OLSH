@@ -10,12 +10,12 @@ nHashedPoints: 5
  typeHT indicates this is a linked-list .
 ******************** 
 Number of main hash functions: 2 
-mainHash index: 0, value: 239749738 .
-mainHash index: 1, value: 25923559 .
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
 ******************** 
 Number of control hash functions: 2 
-mainHash index: 0, value: 338235134 .
-mainHash index: 1, value: 254207096 .
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
 Hash data length: 2 
 
  

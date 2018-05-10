@@ -488,9 +488,11 @@ inline void computeULSH(PRNearNeighborStructT nnStruct, IntT gNumber, RealT *poi
     CR_ASSERT(point != NULL);
     CR_ASSERT(vectorValue != NULL);
     
-    for(IntT i = 0; i < nnStruct->hfTuplesLength; i++){
+    for(IntT i = 0; i < nnStruct->hfTuplesLength; i++)
+    {
         RealT value = 0;
-        for(IntT d = 0; d < nnStruct->dimension; d++){
+        for(IntT d = 0; d < nnStruct->dimension; d++)
+        {
             value += point[d] * nnStruct->lshFunctions[gNumber][i].a[d];
         }
         // #ifdef PERFORM_NEYSHABUR_MIPS

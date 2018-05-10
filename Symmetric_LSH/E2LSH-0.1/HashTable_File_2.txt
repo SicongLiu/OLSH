@@ -5,27 +5,27 @@ bucketLength: 0
 isLastPoint: 0 
 pointIndex: 0 
 ******************************************** 
-control value: -19919480 
+control value: -204468992 
 isLastBucket: 0 
-bucketLength: 708 
+bucketLength: 640 
 isLastPoint: 1 
-pointIndex: 1043712 
+pointIndex: 998656 
 ******************************************** 
-control value: -1925198376 
+control value: 1175767298 
 isLastBucket: 0 
-bucketLength: 748 
+bucketLength: 129 
 isLastPoint: 1 
-pointIndex: 578556 
+pointIndex: 287052 
 ******************************************** 
-control value: 0 
-isLastBucket: 0 
-bucketLength: 0 
+control value: 27 
+isLastBucket: 1 
+bucketLength: 13 
 isLastPoint: 0 
 pointIndex: 0 
 ******************************************** 
-control value: 0 
+control value: -204469136 
 isLastBucket: 0 
-bucketLength: 0 
-isLastPoint: 0 
-pointIndex: 0 
+bucketLength: 568 
+isLastPoint: 1 
+pointIndex: 998656 
 ******************************************** 
