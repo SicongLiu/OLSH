@@ -2,94 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5bf2f7b8-4b60-4b51-a263-7de4be2410c4" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Statistics.py" afterPath="$PROJECT_DIR$/Statistics.py" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_0.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_0.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_1.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_1.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_10.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_11.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_12.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_13.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_14.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_15.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_16.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_17.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_18.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_19.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_2.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_2.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_20.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_21.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_22.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_23.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_24.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_25.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_26.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_27.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_28.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_29.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_3.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_3.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_30.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_31.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_32.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_33.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_34.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_35.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_36.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_37.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_38.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_39.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_4.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_4.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_40.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_41.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_42.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_43.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_44.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_45.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_46.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_47.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_48.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_49.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_5.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_5.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_50.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_51.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_52.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_53.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_54.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_55.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_56.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_57.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_58.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_59.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_6.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_60.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_61.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_62.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_63.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_64.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_65.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_66.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_67.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_68.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_69.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_7.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_70.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_71.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_72.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_73.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_74.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_75.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_76.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_77.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_78.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_79.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_8.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_File_9.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/HashTable_file.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_LSHFunction_file.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_LSHFunction_file.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_MarkedPoints_file.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_MarkedPoints_file.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_hashedBuckets_file.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_hashedBuckets_file.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_pointULSHVectors_file.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_pointULSHVectors_file.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_precomputedULSH_file.txt" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/nn_Structs_precomputedULSH_file.txt" />
-      <change beforePath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/sources/LocalitySensitiveHashing.cpp" afterPath="$PROJECT_DIR$/Symmetric_LSH/E2LSH-0.1/sources/LocalitySensitiveHashing.cpp" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/NBA_2017_2018.csv" afterPath="$PROJECT_DIR$/NBA_2017_2018.csv" />
+      <change beforePath="$PROJECT_DIR$/NBA_Data_PreProcess.m" afterPath="$PROJECT_DIR$/NBA_Data_PreProcess.m" />
     </list>
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -104,8 +19,8 @@
       <file leaf-file-name="Test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1560">
-              <caret line="107" column="31" lean-forward="false" selection-start-line="107" selection-start-column="31" selection-end-line="107" selection-end-column="31" />
+            <state relative-caret-position="1455">
+              <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
               <folding>
                 <element signature="e#53#71#0" expanded="true" />
               </folding>
@@ -113,27 +28,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Test_Plot.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Test_Plot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-              <folding>
-                <element signature="e#0#17#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Statistics.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Statistics.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Statistics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="80" column="11" lean-forward="true" selection-start-line="80" selection-start-column="11" selection-end-line="80" selection-end-column="11" />
-              <folding>
-                <element signature="e#53#71#0" expanded="true" />
-                <marker date="1525897888528" expanded="true" signature="2597:2675" ph="..." />
-              </folding>
+            <state relative-caret-position="1080">
+              <caret line="75" column="39" lean-forward="false" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -141,8 +41,18 @@
       <file leaf-file-name="Qhull_Process.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1785">
-              <caret line="120" column="4" lean-forward="false" selection-start-line="120" selection-start-column="4" selection-end-line="120" selection-end-column="4" />
+            <state relative-caret-position="-120">
+              <caret line="67" column="74" lean-forward="false" selection-start-line="67" selection-start-column="60" selection-end-line="67" selection-end-column="74" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Qhull_Process_New.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Qhull_Process_New.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="629">
+              <caret line="89" column="18" lean-forward="true" selection-start-line="89" selection-start-column="18" selection-end-line="89" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -157,6 +67,12 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>computer_qhull_index</find>
+      <find>data_file_path</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -167,11 +83,12 @@
         <option value="$PROJECT_DIR$/Test.py" />
         <option value="$PROJECT_DIR$/Qhull_Process.py" />
         <option value="$PROJECT_DIR$/Statistics.py" />
+        <option value="$PROJECT_DIR$/Qhull_Process_New.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1618" />
+    <option name="x" value="43" />
     <option name="y" value="23" />
     <option name="width" value="1587" />
     <option name="height" value="1027" />
@@ -195,6 +112,7 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -211,12 +129,16 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -230,20 +152,38 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Statistics">
+  <component name="RunManager" selected="Python.Qhull_Process_New">
     <configuration name="Qhull_Process" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="StreamingTopK" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Qhull_Process.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Qhull_Process_New" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="StreamingTopK" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Qhull_Process_New.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -303,18 +243,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.Test" />
       <item index="1" class="java.lang.String" itemvalue="Python.Test_Plot" />
       <item index="2" class="java.lang.String" itemvalue="Python.Statistics" />
       <item index="3" class="java.lang.String" itemvalue="Python.Qhull_Process" />
+      <item index="4" class="java.lang.String" itemvalue="Python.Qhull_Process_New" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.Statistics" />
-        <item index="1" class="java.lang.String" itemvalue="Python.Qhull_Process" />
-        <item index="2" class="java.lang.String" itemvalue="Python.Test" />
-        <item index="3" class="java.lang.String" itemvalue="Python.Test_Plot" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.Qhull_Process_New" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Statistics" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Qhull_Process" />
+        <item index="3" class="java.lang.String" itemvalue="Python.Test" />
+        <item index="4" class="java.lang.String" itemvalue="Python.Test_Plot" />
       </list>
     </recent_temporary>
   </component>
@@ -335,19 +277,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1618" y="23" width="1587" height="1027" extended-state="0" />
+    <frame x="43" y="23" width="1587" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21676119" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34031415" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -370,12 +312,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Qhull_Process.py</url>
-          <line>74</line>
+          <line>75</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Qhull_Process.py</url>
-          <line>75</line>
+          <line>76</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -396,6 +338,32 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Test.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1455">
+          <caret line="100" column="0" lean-forward="true" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
+          <folding>
+            <element signature="e#53#71#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1320">
+          <caret line="89" column="0" lean-forward="true" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Statistics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="990">
+          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Test.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
@@ -404,24 +372,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Test_Plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Test_Plot.py" />
     <entry file="file://$PROJECT_DIR$/Statistics.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1200">
           <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
-          <folding>
-            <element signature="e#53#71#0" expanded="true" />
-            <marker date="1525897888528" expanded="true" signature="2597:2675" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -443,16 +399,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Test_Plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Test_Plot.py" />
     <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1785">
@@ -465,10 +412,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1200">
           <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
-          <folding>
-            <element signature="e#53#71#0" expanded="true" />
-            <marker date="1525897888528" expanded="true" signature="2597:2675" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -482,16 +426,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Test_Plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Test_Plot.py" />
     <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1575">
@@ -504,27 +439,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1170">
           <caret line="81" column="4" lean-forward="false" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="4" />
-          <folding>
-            <element signature="e#53#71#0" expanded="true" />
-            <marker date="1525897888528" expanded="true" signature="2597:2675" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Test_Plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Test_Plot.py" />
     <entry file="file://$PROJECT_DIR$/Test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1560">
-          <caret line="107" column="31" lean-forward="false" selection-start-line="107" selection-start-column="31" selection-end-line="107" selection-end-column="31" />
+        <state relative-caret-position="1455">
+          <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
           <folding>
             <element signature="e#53#71#0" expanded="true" />
           </folding>
@@ -538,22 +461,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
+    <entry file="file://$PROJECT_DIR$/Statistics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1785">
-          <caret line="120" column="4" lean-forward="false" selection-start-line="120" selection-start-column="4" selection-end-line="120" selection-end-column="4" />
+        <state relative-caret-position="1080">
+          <caret line="75" column="39" lean-forward="false" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Statistics.py">
+    <entry file="file://$PROJECT_DIR$/Qhull_Process.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="80" column="11" lean-forward="true" selection-start-line="80" selection-start-column="11" selection-end-line="80" selection-end-column="11" />
-          <folding>
-            <element signature="e#53#71#0" expanded="true" />
-            <marker date="1525897888528" expanded="true" signature="2597:2675" ph="..." />
-          </folding>
+        <state relative-caret-position="-120">
+          <caret line="67" column="74" lean-forward="false" selection-start-line="67" selection-start-column="60" selection-end-line="67" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Qhull_Process_New.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="89" column="18" lean-forward="true" selection-start-line="89" selection-start-column="18" selection-end-line="89" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
