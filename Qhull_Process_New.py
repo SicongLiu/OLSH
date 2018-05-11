@@ -90,7 +90,7 @@ if __name__ == '__main__':
     file_count = 1
     my_save_file_folder = '/Users/sicongliu/Desktop/StreamingTopK/qhull/DATA/NBA'
     MY_AFF_NAME = 'nba_test'
-    MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/qhull/DATA/NBA/NBA_2017_2018'
+    MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/qhull/DATA/NBA/NBA_data'
 
     my_aff_name = MY_AFF_NAME
     my_data_file_path = MY_DATA_FILE_PATH
