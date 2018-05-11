@@ -2,26 +2,27 @@
 clc;
 clear;
 
-% same-attribute data as ICDE paper
-file_name = 'NBA_2017_2018.csv';
-save_file_name = 'NBA_2017_2018';
-
-% minutes played (MP), total points (PTS), field goals attempted (FGA),
-% free throws attempted (FTA), total rebounds (TRB), total assists (AST).
-% total personal fouls (PF)
-attribute_index = [5, 27, 7, 17, 21, 22, 26];
-data = csvread(file_name);
-data = data(:, attribute_index);
+% topk of interest
+k = 10;
+% find highest data/query combination score
+data_file_name = 'NBA_2017_2018.csv';
+data = csvread(data_file_name);
 row_size = size(data, 1);
-column_size = size(data, 2);
+dimension = size(data, 2);
 
-fid=fopen(save_file_name, 'w');
-fprintf(fid, '%d\n', column_size);
-fprintf(fid, '%d\n', row_size);
-for i = 1 : row_size
-    % fprintf(fid, [ header1 ' ' header2 '\n']);
-    fprintf(fid, '%f %f %f %f %f %f %f\n', data(i, :));
+% query gives different weight to different dimensions
+query_file_name = 'NBA_query_2017_2018';
+query = csvread(query_file_name);
+query_size = size(query, 1);
+score = zeros(row_size, 1);
+for i = 1 : query_size
+    cur_query = query(i, :);
+    for j = 1 : row_size
+        score(j) = dot(data(j, :), cur_query);
+    end
+    sorted_score = sort(score, 'descend');
+    for j = 1 : k
+       printf('%d-th score : %f .\n', j, sorted_score(j)); 
+    end
 end
-fclose(fid);
-% save data for qHull library processing
 fprintf('All Done.\n');

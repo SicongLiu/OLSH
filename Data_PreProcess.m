@@ -15,13 +15,14 @@ data = data(:, attribute_index);
 row_size = size(data, 1);
 column_size = size(data, 2);
 
+% save data for qHull library processing
 fid=fopen(save_file_name, 'w');
 fprintf(fid, '%d\n', column_size);
 fprintf(fid, '%d\n', row_size);
 for i = 1 : row_size
-    % fprintf(fid, [ header1 ' ' header2 '\n']);
-    fprintf(fid, '%f %f %f %f %f %f %f\n', data(i, :));
+    % data normalization
+    norm_2 = norm(data(i, :));
+    fprintf(fid, '%f %f %f %f %f %f %f\n', data(i, :)/norm_2);
 end
 fclose(fid);
-% save data for qHull library processing
 fprintf('All Done.\n');
