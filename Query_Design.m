@@ -4,7 +4,7 @@ clear;
 
 % design dummy query
 save_file_name = 'NBA_query';
-dimension = 7;
+dimension = 2;
 number_of_queries = 2;
 
 small = 10;
@@ -20,7 +20,8 @@ for i = 1 : number_of_queries
     r = r';
     % query data normalization
     norm_2 = norm(r);
-    fprintf(fid, '%f %f %f %f %f %f %f\n', r/norm_2);
+    % fprintf(fid, '%f %f %f %f %f %f %f\n', r/norm_2);
+    fprintf(fid, '%f %f\n', r./norm_2);
 end
 fclose(fid);
 fprintf('Normalized Query Generation Done.\n');
