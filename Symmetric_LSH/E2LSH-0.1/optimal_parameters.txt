@@ -12,10 +12,10 @@ parameter R^2 of the algorithm: 1.000000
 UseUfunctions (Whether to use <u> hash functions instead of usual <g>)? (boolean): 0 
 Number of tuples of hash functions used (nHFTuples): 6 
 How many LSH functions each of the tuple has (hfTuplesLength): 2 
-Number of points (nPoints): 68 
-The size of the array <points>: 68 
+Number of points (nPoints): 3 
+The size of the array <points>: 3 
 Reporting Results (boolean): 1 
-The size of <markedPoints> and of <markedPointsIndeces>: 68 
+The size of <markedPoints> and of <markedPointsIndeces>: 3 
 
  
  

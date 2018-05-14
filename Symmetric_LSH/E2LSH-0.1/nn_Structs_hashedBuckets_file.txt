@@ -3,9 +3,9 @@ Union bucketPoints not flushed...
 Current iteration index: 0 .
 typeHT: 3 
 Prime Number Used: -5 
-hashTableSize: 68 
+hashTableSize: 3 
 nHashedBuckets: 1 
-nHashedPoints: 68 
+nHashedPoints: 3 
  
  typeHT indicates this is a linked-list .
 ******************** 
