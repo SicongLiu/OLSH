@@ -41,11 +41,14 @@ int comparePPointAndRealTStructT(const void *a, const void *b){
  Added by Sicong
  Rank dot product scores in descending manner
  Compares according to the field "real" of the struct.
+ 
+ source: https://www.geeksforgeeks.org/comparator-function-of-qsort-in-c/
  */
-int my_comparePPointAndRealTStructT(const void *a, const void *b){
+int my_comparePPointAndRealTStructT(const void *a, const void *b)
+{
     PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
     PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
-    return (x->real > y->real) - (x->real < y->real);
+    return (x->real < y->real) - (x->real > y->real);
 }
 
 #ifdef USE_L1_DISTANCE
