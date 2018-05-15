@@ -37,6 +37,16 @@ int comparePPointAndRealTStructT(const void *a, const void *b){
   return (x->real > y->real) - (x->real < y->real);
 }
 
+/**
+ Added by Sicong
+ Rank dot product scores in descending manner
+ Compares according to the field "real" of the struct.
+ */
+int my_comparePPointAndRealTStructT(const void *a, const void *b){
+    PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
+    PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
+    return (x->real > y->real) - (x->real < y->real);
+}
 
 #ifdef USE_L1_DISTANCE
 // Returns the L1 distance from point <p1> to <p2>.
@@ -61,3 +71,21 @@ RealT distance(IntT dimension, PPointT p1, PPointT p2){
   return SQRT(result);
 }
 #endif
+
+/**
+ Added by Sicong
+ compute combined score using dot product from two points
+*/
+RealT my_combined_score(IntT dimension, PPointT p1, PPointT p2)
+{
+    RealT result = 0;
+    
+    for (IntT i = 0; i < dimension; i++)
+    {
+        result += p1->coordinates[i] * p2->coordinates[i];
+    }
+    
+    return result;
+}
+
+

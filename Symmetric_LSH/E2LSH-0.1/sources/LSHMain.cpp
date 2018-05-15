@@ -831,16 +831,35 @@ int main(int nargs, char **args)
                 for(IntT p = 0; p < nNNs; p++)
                 {
                     distToNN[p].ppoint = result[p];
-                    distToNN[p].real = distance(pointsDimension, queryPoint, result[p]);
+                    // distToNN[p].real = distance(pointsDimension, queryPoint, result[p]);
+                    
+                    /**
+                     comment from Sicong:
+                     combine query with data point using dot product, then re-rank them
+                     my_combined_score -- defined in Geometry.cpp
+                     */
+                    distToNN[p].real = my_combined_score(pointsDimension, queryPoint, result[p]);
                 }
-                qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
+                // qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
+                /**
+                 Changed by Sicong
+                 Using dot product
+                 my_comparePPointAndRealTStructT/comparePPointAndRealTStructT -- defined in Geometry.cpp
+                 */
+                qsort(distToNN, nNNs, sizeof(*distToNN), my_comparePPointAndRealTStructT);
                 
                 // Print the points
                 for(IntT j = 0; j < MIN(nNNs, MAX_REPORTED_POINTS); j++)
                 {
                     ASSERT(distToNN[j].ppoint != NULL);
                     printf("%09d\tDistance:%0.6lf\n", distToNN[j].ppoint->index, distToNN[j].real);
-                    CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
+                    
+                    /**
+                     comment out CR_ASSERT function by Sicong
+                     radius does not make sense in MIPS
+                     CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
+                     */
+                    
                     //DPRINTF("Distance: %lf\n", distance(pointsDimension, queryPoint, result[j]));
                     //printRealVector("NN: ", pointsDimension, result[j]->coordinates);
                 }
