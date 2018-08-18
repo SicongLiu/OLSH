@@ -1,0 +1,8 @@
+Flushing MarkedPoints/MarkedPointsIndices to file... 
+markedPoints 	markedPointsIndeces 
+0 	39849328 
+0 	0 
+0 	-1463604360 
+0 	32512 
+0 	0 
+0 	0 
