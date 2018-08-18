@@ -1,0 +1,37 @@
+Flushing hybridHashTable of hashedBuckets to file... 
+control value: 0 
+isLastBucket: 0 
+bucketLength: 0 
+isLastPoint: 0 
+pointIndex: 0 
+******************************************** 
+control value: 0 
+isLastBucket: 0 
+bucketLength: 0 
+isLastPoint: 0 
+pointIndex: 0 
+******************************************** 
+control value: -118201104 
+isLastBucket: 0 
+bucketLength: 632 
+isLastPoint: 0 
+pointIndex: 1019718 
+******************************************** 
+control value: 1570739090 
+isLastBucket: 0 
+bucketLength: 457 
+isLastPoint: 0 
+pointIndex: 383481 
+******************************************** 
+control value: -1241215572 
+isLastBucket: 0 
+bucketLength: 726 
+isLastPoint: 1 
+pointIndex: 745544 
+******************************************** 
+control value: -118201104 
+isLastBucket: 0 
+bucketLength: 632 
+isLastPoint: 0 
+pointIndex: 1019718 
+******************************************** 

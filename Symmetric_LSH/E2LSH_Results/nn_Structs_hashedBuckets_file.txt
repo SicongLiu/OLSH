@@ -1,0 +1,22 @@
+Flushing hashedBuckets to file... 
+Union bucketPoints not flushed... 
+Current iteration index: 0 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 93933540 .
+mainHash index: 1, value: 198224084 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 338496749 .
+mainHash index: 1, value: 450934810 .
+Hash data length: 2 
+
+ 
+ 
