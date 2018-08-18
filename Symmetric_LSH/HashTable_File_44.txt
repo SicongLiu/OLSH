@@ -5,11 +5,11 @@ bucketLength: 0
 isLastPoint: 0 
 pointIndex: 0 
 ******************************************** 
-control value: 39951444 
+control value: 37850196 
 isLastBucket: 0 
 bucketLength: 554 
 isLastPoint: 1 
-pointIndex: 9753 
+pointIndex: 9240 
 ******************************************** 
 control value: -1520461608 
 isLastBucket: 0 

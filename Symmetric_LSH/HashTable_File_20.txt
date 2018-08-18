@@ -1,9 +1,9 @@
 Flushing hybridHashTable of hashedBuckets to file... 
-control value: 39956800 
+control value: 37855552 
 isLastBucket: 0 
 bucketLength: 160 
 isLastPoint: 0 
-pointIndex: 9755 
+pointIndex: 9242 
 ******************************************** 
 control value: 0 
 isLastBucket: 0 

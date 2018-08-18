@@ -1,0 +1,1 @@
+convertMNIST.d: ../convertMNIST.cpp
