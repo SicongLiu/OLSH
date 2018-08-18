@@ -1,0 +1,4 @@
+1. Save the hash bucket chain (linked list)
+2. Analyze main hash functions, and dashcode
+3. Apply the implementation to Angular distance
+4. Update query and test again
