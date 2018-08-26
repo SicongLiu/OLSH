@@ -237,7 +237,7 @@ void preparePointAdding(PRNearNeighborStructT nnStruct, PUHashStructureT uhash, 
 
 // Construct PRNearNeighborStructT given the data set <dataSet> (all
 // the points <dataSet> will be contained in the resulting DS).
-// Currenly only type HT_HYBRID_CHAINS is supported for this
+// Currently only type HT_HYBRID_CHAINS is supported for this
 // operation.
 PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T nPoints, PPointT *dataSet)
 {
@@ -707,7 +707,7 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
 		GeneralizedPGBucket gbucket;
 		if (!nnStruct->useUfunctions)
 		{
-			// Use usual <g> functions (truly independent; <g>s are precisly
+			// Use usual <g> functions (truly independent; <g>s are precisely
 			// <u>s).
 			gbucket = getGBucket(nnStruct->hashedBuckets[i], 1, precomputedHashesOfULSHs[i], NULL);
 		}
