@@ -813,7 +813,13 @@ int main(int nargs, char **args)
         //printRealVector("Query: ", pointsDimension, queryPoint->coordinates);
         */
         
-        
+        /**
+         * Saving Top-K Results to file
+         *
+         * Point index, returned points from dataset, distance
+         * */
+        const char* results_file_name = "TopK_Results.txt";
+        FILE *results_file = fopen(results_file_name, "w");
         // get the near neighbors.
         IntT nNNs = 0;
         for(IntT r = 0; r < nRadii; r++)
@@ -842,6 +848,13 @@ int main(int nargs, char **args)
                 {
                     ASSERT(distToNN[j].ppoint != NULL);
                     printf("%09d\tDistance:%0.6lf\n", distToNN[j].ppoint->index, distToNN[j].real);
+
+                    fprintf(results_file, "%09d\tDistance:%0.6lf\t", distToNN[j].ppoint->index, distToNN[j].real);
+                    for(IntT input_data_dimension = 0; input_data_dimension < pointsDimension; input_data_dimension++)
+                    {
+                    	fprintf(results_file, "%0.6lf\t", dataSetPoints[distToNN[j].ppoint->index][input_data_dimension]);
+                    }
+                    fprintf(results_file, "\n");
                     CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
                     //DPRINTF("Distance: %lf\n", distance(pointsDimension, queryPoint, result[j]));
                     //printRealVector("NN: ", pointsDimension, result[j]->coordinates);
@@ -849,9 +862,12 @@ int main(int nargs, char **args)
                 break;
             }
         }
+        fclose(results_file);
+
+
         if (nNNs == 0)
         {
-            printf("Query point %d: no NNs found.\n", i);
+        	printf("Query point %d: no NNs found.\n", i);
         }
     }
     if (nQueries > 0){
