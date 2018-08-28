@@ -38,6 +38,7 @@ int comparePPointAndRealTStructT(const void *a, const void *b){
 }
 
 // Compares according to the field "real" of the struct.
+// sorting based on descending order
 int my_comparePPointAndRealTStructT(const void *a, const void *b){
   PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
   PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
