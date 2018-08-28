@@ -838,8 +838,20 @@ int main(int nargs, char **args)
                 {
                     distToNN[p].ppoint = result[p];
                     distToNN[p].real = distance(pointsDimension, queryPoint, result[p]);
+
+                    /**
+                     * comment from Sicong:
+                     * combine query with data point using dot product then re-rank them
+                     * my_combined_score -- defined in Geometry.cpp
+                     * */
                     // distToNN[p].real = my_combined_score(pointsDimension, queryPoint, result[p]);
                 }
+
+                /**
+                 * Changed by Sicong
+                 * Using dot product
+                 * my_comparePPointAndRealTStructT/comparePPointAndREALTStruct -- defined in Geometry.cpp
+                 * */
                 qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
                 // qsort(distToNN, nNNs, sizeof(*distToNN), my_comparePPointAndRealTStructT);
                 
@@ -855,7 +867,13 @@ int main(int nargs, char **args)
                     	fprintf(results_file, "%0.6lf\t", dataSetPoints[distToNN[j].ppoint->index][input_data_dimension]);
                     }
                     fprintf(results_file, "\n");
-                    CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
+
+                    /**
+                     * Comment out CR_ASSERT function by Sicong
+                     * Radius does not make sense in MIPS
+                     * */
+                    // CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
+
                     //DPRINTF("Distance: %lf\n", distance(pointsDimension, queryPoint, result[j]));
                     //printRealVector("NN: ", pointsDimension, result[j]->coordinates);
                 }
