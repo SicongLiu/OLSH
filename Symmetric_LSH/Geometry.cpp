@@ -68,7 +68,11 @@ RealT distance(IntT dimension, PPointT p1, PPointT p2){
 }
 #endif
 
-
+/**
+ * Created by Sicong:
+ *
+ * Using dot product for combine score computation
+ * */
 RealT my_combined_score(IntT dimension, PPointT p1, PPointT p2){
   RealT result = 0;
 

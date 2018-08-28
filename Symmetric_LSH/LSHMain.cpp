@@ -837,6 +837,8 @@ int main(int nargs, char **args)
                 for(IntT p = 0; p < nNNs; p++)
                 {
                     distToNN[p].ppoint = result[p];
+
+                    // Use Euclidean distance to compute distance between query and retrieved data points
                     distToNN[p].real = distance(pointsDimension, queryPoint, result[p]);
 
                     /**
@@ -847,12 +849,13 @@ int main(int nargs, char **args)
                     // distToNN[p].real = my_combined_score(pointsDimension, queryPoint, result[p]);
                 }
 
-                /**
-                 * Changed by Sicong
+                // sort in ascending order due to Euclidean distance
+                qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
+                /**Changed by Sicong
                  * Using dot product
                  * my_comparePPointAndRealTStructT/comparePPointAndREALTStruct -- defined in Geometry.cpp
-                 * */
-                qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
+                * */
+                // sort in descending order because of dot product
                 // qsort(distToNN, nNNs, sizeof(*distToNN), my_comparePPointAndRealTStructT);
                 
                 // Print the points
@@ -873,7 +876,6 @@ int main(int nargs, char **args)
                      * Radius does not make sense in MIPS
                      * */
                     // CR_ASSERT(distToNN[j].real <= listOfRadii[r]);
-
                     //DPRINTF("Distance: %lf\n", distance(pointsDimension, queryPoint, result[j]));
                     //printRealVector("NN: ", pointsDimension, result[j]->coordinates);
                 }
