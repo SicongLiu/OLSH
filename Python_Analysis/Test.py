@@ -13,8 +13,17 @@ data_file_path = '/Users/sliu104/Desktop/StreamingTopK/qhull/bin/data_sample/dat
 f = open(data_file_path, 'r')
 lines = f.readlines()
 
+
+t = 10
+print(t%10)
 # lines = np.loadtxt(data_file_path, skiprows=1)
 
+a = [0] * 10
+print(a.__len__())
+for i in range(0, 10):
+    print(i)
+array = [0, 1, 2, 3, 4, 5]
+print(np.mean(array))
 
 print len(lines)
 print lines[0]
