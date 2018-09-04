@@ -3,7 +3,7 @@ dimension of points: 2
 parameter K of the algorithm: 2 
 parameter L of the algorithm: 6 
 parameter W of the algorithm: 4.000000 
-parameter T of the algorithm: 6 
+parameter T of the algorithm: 5 
 parameter R of the algorithm: 1.000000 
 parameter R^2 of the algorithm: 1.000000 
 

@@ -171,10 +171,13 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 		ASSERT(modelHT != NULL);
 		ASSERT(modelHT->typeHT == HT_LINKED_LIST);
 
+		/*
+		 * check point
 		printf("********************************************************************** .\n");
 		printf("check point in newUHashStructure, HT_HYBRID_CHAINS .\n");
 		printf(" hastable size: %d, nHashedPoint: %d,  nHashedBuckets : %d, sizeof(HybridChainEntryT) : %d .\n", hashTableSize, modelHT->nHashedPoints, modelHT->nHashedBuckets, sizeof(HybridChainEntryT));
 		printf("********************************************************************** .\n");
+		*/
 
 		// allocate space for each points
 		FAILIF(NULL == (uhash->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(hashTableSize * sizeof(PHybridChainEntryT))));

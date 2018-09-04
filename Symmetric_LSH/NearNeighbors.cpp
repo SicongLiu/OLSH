@@ -127,6 +127,7 @@ PRNearNeighborStructT initSelfTunedRNearNeighborWithDataSet(RealT thresholdR,
 		// Currenly only type HT_HYBRID_CHAINS is supported for this
 		// operation.
 		////////////////////////////////////////////////////////////////////////
+		printf("Calling initLSH_WithDataSet from NearNeighbors.cpp");
 		nnStruct = initLSH_WithDataSet(optParameters, nPoints, dataSet);
 	}
 

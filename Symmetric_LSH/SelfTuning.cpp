@@ -199,6 +199,7 @@ void determineRTCoefficients(RealT thresholdR,
       }
       break;
     case HT_HYBRID_CHAINS:
+    	printf("Calling initLSH_WithDataSet from SelfTuning.cpp");
       nnStruct = initLSH_WithDataSet(algParameters, n, dataSet);
       break;
     default:

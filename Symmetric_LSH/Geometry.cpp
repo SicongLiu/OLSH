@@ -38,6 +38,7 @@ int comparePPointAndRealTStructT(const void *a, const void *b){
 }
 
 // Compares according to the field "real" of the struct.
+// sorting based on descending order
 int my_comparePPointAndRealTStructT(const void *a, const void *b){
   PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
   PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
@@ -68,7 +69,11 @@ RealT distance(IntT dimension, PPointT p1, PPointT p2){
 }
 #endif
 
-
+/**
+ * Created by Sicong:
+ *
+ * Using dot product for combine score computation
+ * */
 RealT my_combined_score(IntT dimension, PPointT p1, PPointT p2){
   RealT result = 0;
 

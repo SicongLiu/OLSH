@@ -10,12 +10,112 @@ nHashedPoints: 6
  typeHT indicates this is a linked-list .
 ******************** 
 Number of main hash functions: 2 
-mainHash index: 0, value: 338235134 .
-mainHash index: 1, value: 254207096 .
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
 ******************** 
 Number of control hash functions: 2 
-mainHash index: 0, value: 220336444 .
-mainHash index: 1, value: 49815159 .
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
+Hash data length: 2 
+
+ 
+ 
+Current iteration index: 1 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
+Hash data length: 2 
+
+ 
+ 
+Current iteration index: 2 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
+Hash data length: 2 
+
+ 
+ 
+Current iteration index: 3 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
+Hash data length: 2 
+
+ 
+ 
+Current iteration index: 4 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 4 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
+Hash data length: 2 
+
+ 
+ 
+Current iteration index: 5 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 4 
+nHashedPoints: 6 
+ 
+ typeHT indicates this is a linked-list .
+******************** 
+Number of main hash functions: 2 
+mainHash index: 0, value: 37449579 .
+mainHash index: 1, value: 509666093 .
+******************** 
+Number of control hash functions: 2 
+mainHash index: 0, value: 282391604 .
+mainHash index: 1, value: 46200882 .
 Hash data length: 2 
 
  

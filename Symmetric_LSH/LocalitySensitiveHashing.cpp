@@ -305,6 +305,7 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
 	printf(" modelHT-typeHT: %d, USE_PRECOMPUTED_HASHES: %d \n", modelHT->typeHT, USE_PRECOMPUTED_HASHES);
 	printf("********************************************************************** .\n");
 
+	printf("paramter L values: %d .\n", nnStruct->parameterL);
 	for(IntT i = 0; i < nnStruct->parameterL; i++)
 	{
 		// build the model HT.
