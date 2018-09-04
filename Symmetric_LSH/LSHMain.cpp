@@ -546,6 +546,121 @@ PRNearNeighborStructT* Process_Input_Data(PPointT **dataSetPoints, int nargs, ch
 	return nnStructs;
 }
 
+/* Persist Hashing Scheme to file*/
+void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, int nRadii)
+{
+	printf("Persisting nnStruct to file... \n");
+	FILE *pFile = fopen(file_name, "w");
+	for(IntT i = 0; i < nRadii; i++)
+	{
+		fprintf(pFile, "%d \n", nnStructs[i]->dimension);	// dimension of points.
+		fprintf(pFile, "%d \n", nnStructs[i]->parameterK);	// parameter K of the algorithm.
+		fprintf(pFile, "%d \n", nnStructs[i]->parameterL);	// parameter L of the algorithm.
+		fprintf(pFile, "%f \n", nnStructs[i]->parameterW);	// parameter W of the algorithm.
+		fprintf(pFile, "%d \n", nnStructs[i]->parameterT);	// parameter T of the algorithm.
+		fprintf(pFile, "%f \n", nnStructs[i]->parameterR);	// parameter R of the algorithm.
+		fprintf(pFile, "%f \n", nnStructs[i]->parameterR2);	// = parameterR^2
+		fprintf(pFile, "%d \n", nnStructs[i]->useUfunctions);	// boolean type
+		fprintf(pFile, "%d \n", nnStructs[i]->nHFTuples);
+		fprintf(pFile, "%d \n", nnStructs[i]->hfTuplesLength);
+		fprintf(pFile, "%d \n", nnStructs[i]->nPoints);
+
+		// fprint points here: PPointT *points;
+		for(IntT p = 0; p < nnStructs[i]->nPoints; p++)
+		{
+			for(IntT d = 0; d < nnStructs[i]->dimension; d++)
+			{
+				fprintf(pFile, "%f \t", nnStructs[i]->points[p]->coordinates[d]);
+			}
+			fprintf(pFile, "%f \t", nnStructs[i]->points[p]->index);
+			fprintf(pFile, "%f \t", nnStructs[i]->points[p]->sqrLength);
+		}
+
+		fprintf(pFile, "%d \n", nnStructs[i]->pointsArraySize);
+		fprintf(pFile, "%d \n", nnStructs[i]->reportingResult);	// boolean type
+
+		// output LSH function here: LSHFunctionT **lshFunctions;
+		LSHFunctionT** current_lshFunction = nnStructs[i]->lshFunctions;
+		Int32T lsh_tables = nnStructs[i]->parameterL;
+		Int32T lsh_hash_per_table = nnStructs[i]->parameterK;
+		for(int i=0; i<lsh_tables; i++)
+		{
+			LSHFunctionT* pmy_cur_lshFunction = current_lshFunction[i];
+			for(int j=0; j<lsh_hash_per_table; j++)
+			{
+				LSHFunctionT my_cur_lshFunction = pmy_cur_lshFunction[j];
+				int a_size = sizeof(my_cur_lshFunction.a)/sizeof(my_cur_lshFunction.a[0]);
+				for(int k=0; k<a_size; k++)
+				{
+					fprintf(pFile, "%f \t", my_cur_lshFunction.a[k]);
+				}
+				fprintf(pFile, "%f \n", (my_cur_lshFunction.b));
+			}
+		}
+
+		// output precomputedHashesOfULSHs: Uns32T **precomputedHashesOfULSHs;
+		unsigned int** precomputedHashesOfULSHs = nnStructs[i]->precomputedHashesOfULSHs;
+		// Precomputed hashes of each of the <nHFTuples> of <u> functions
+		// (to be used by the bucket hashing module)
+		// printf("precompute hash size check: %d .\n",  sizeof(*precomputedHashesOfULSHs)/sizeof(**precomputedHashesOfULSHs));
+		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
+		{
+			for(int jj=0; jj<nnStructs[i]->parameterK; jj++)
+			{
+				fprintf(pFile, "%d \t", precomputedHashesOfULSHs[ii][jj]);
+			}
+			fprintf(pFile, "\n");
+		}
+
+		// output hashedBuckets: PUHashStructureT *hashedBuckets;
+
+
+		// output pointULSHVectors: Uns32T **pointULSHVectors;
+		unsigned int** pointULSHVectors = nnStructs[i]->pointULSHVectors;
+		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
+		{
+			for(int jj=0; jj<nnStructs[i]->parameterK; jj++)
+			{
+				fprintf(pFile, "%d ", pointULSHVectors[ii][jj]);
+			}
+			fprintf(pFile, "\n");
+		}
+
+		// output reducedPoint: RealT *reducedPoint;
+		float* reducedPoint = nnStructs[i]->reducedPoint;
+		unsigned long row = sizeof(reducedPoint)/sizeof(reducedPoint[0]);
+		for(int ii = 0; ii < row; ii++)
+		{
+			fprintf(pFile, "%f\t", reducedPoint[ii]);
+		}
+		fprintf(pFile, "\n");
+
+		// output markedPoints: BooleanT *markedPoints;
+		// output markedPointsIndeces: Int32T *markedPointsIndeces;
+		BooleanT* markedPoints = nnStructs[i]->markedPoints;
+		Int32T* markedPointsIndeces = nnStructs[i]->markedPointsIndeces;
+		int sizeMarkedPoints = nnStructs[i]->sizeMarkedPoints;
+		for(int ii=0; ii<sizeMarkedPoints; ii++)
+		{
+			fprintf(pFile, "%d \t", markedPoints[ii]);
+			fprintf(pFile, "%d \n", markedPointsIndeces[ii]);
+		}
+
+		fprintf(pFile, "%d \n", nnStructs[i]->sizeMarkedPoints);	// boolean type
+	}
+
+	fclose(pFile);
+}
+
+PRNearNeighborStructT* Load_nnStruct(const char* file_name)
+{
+	printf("Loading nnStruct to RAM... \n");
+	PRNearNeighborStructT *nnStructs = NULL;
+	FAILIF(NULL == (nnStructs = (PRNearNeighborStructT*)MALLOC(nRadii * sizeof(PRNearNeighborStructT))));
+
+
+	return nnStructs;
+}
 /*
  The main entry to LSH package. Depending on the command line
  parameters, the function computes the R-NN data structure optimal
@@ -558,7 +673,17 @@ int main(int nargs, char **args)
 	PPointT *dataSetPoints;
 	PRNearNeighborStructT* nnStructs =  Process_Input_Data(&dataSetPoints, nargs, args);
 
+
 	/* Persist nnStruct to file*/
+	int nRadii = 1;
+
+	// read nnRadii from parameter file
+	FILE *parameterFile = fopen(args[7], "rt");
+	FAILIFWR(parameterFile == NULL, "Could not open the params file.");
+	fscanf(parameterFile, "%d\n", &nRadii);
+
+	const char* nnStructs_file_name = "nn_Structs_file.txt";
+	Persist_nnStruct(nnStructs, nnStructs_file_name, nRadii);
 
 
 	/* Load queries from file*/
@@ -586,10 +711,11 @@ int main(int nargs, char **args)
 	FAILIF(NULL == (queryPoint->coordinates = (RealT*)MALLOC(query_pointsDimension * sizeof(RealT))));
 
 
-	////////////////////////////////////////////////////////////////////////
-	// do the query
-	////////////////////////////////////////////////////////////////////////
+	/* Load nnStruct*/
+	// PRNearNeighborStructT* nnStructs =  Load_nnStruct(nnStructs_file_name);
 
+
+	/* Do the query*/
 	TimeVarT meanQueryTime = 0;
 	PPointAndRealTStructT *distToNN = NULL;
 
