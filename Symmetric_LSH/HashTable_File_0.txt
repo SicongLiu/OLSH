@@ -23,15 +23,15 @@ bucketLength: 2
 isLastPoint: 0 
 pointIndex: 0 
 ******************************************** 
-control value: 11266576 
+control value: 9493008 
 isLastBucket: 0 
 bucketLength: 264 
 isLastPoint: 1 
-pointIndex: 2750 
+pointIndex: 2317 
 ******************************************** 
-control value: 11270672 
+control value: 9497104 
 isLastBucket: 0 
 bucketLength: 264 
 isLastPoint: 1 
-pointIndex: 2751 
+pointIndex: 2318 
 ******************************************** 

@@ -11,24 +11,60 @@
 6 
 -0.500000 	-0.500000 	-0.500000 	0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.100000 	-0.100000 	-0.100000 	0.020000 	0.100000 	0.100000 	0.100000 	0.020000 	6 
 1 
--0.464893 	0.209560 	b :  0.000000 
-0.139192 	0.168976 	b :  0.000000 
--1.509442 	-0.838721 	b :  0.000000 
--1.415144 	0.270503 	b :  0.000000 
--0.194212 	-1.547212 	b :  0.000000 
-0.128199 	0.665406 	b :  0.000000 
--1.564358 	1.566657 	b :  0.000000 
-0.009191 	0.613706 	b :  0.000000 
--0.282337 	-0.937783 	b :  0.000000 
-1.170986 	0.209779 	b :  0.000000 
-0.141305 	1.050982 	b :  0.000000 
--0.953258 	0.570734 	b :  0.000000 
+-0.464893 	0.209560 	0.000000 
+0.139192 	0.168976 	0.000000 
+-1.509442 	-0.838721 	0.000000 
+-1.415144 	0.270503 	0.000000 
+-0.194212 	-1.547212 	0.000000 
+0.128199 	0.665406 	0.000000 
+-1.564358 	1.566657 	0.000000 
+0.009191 	0.613706 	0.000000 
+-0.282337 	-0.937783 	0.000000 
+1.170986 	0.209779 	0.000000 
+0.141305 	1.050982 	0.000000 
+-0.953258 	0.570734 	0.000000 
 659464409 	1175767298 	
 -2106504608 	1314369944 	
 659464409 	1175767298 	
 547115672 	328592486 	
 659464409 	1175767298 	
 2076113951 	467195132 	
+Current iteration index: 0 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 4 
+nHashedPoints: 6 
+Current iteration index: 1 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+Current iteration index: 2 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+Current iteration index: 3 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 2 
+nHashedPoints: 6 
+Current iteration index: 4 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 4 
+nHashedPoints: 6 
+Current iteration index: 5 .
+typeHT: 3 
+Prime Number Used: -5 
+hashTableSize: 6 
+nHashedBuckets: 4 
+nHashedPoints: 6 
 -1 1 
 -1 -1 
 -1 1 
