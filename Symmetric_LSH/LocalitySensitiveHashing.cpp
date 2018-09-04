@@ -342,13 +342,13 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
 		nnStruct->hashedBuckets[i] = newUHashStructure(algParameters.typeHT, nPoints, nnStruct->parameterK, TRUE, mainHashA, controlHash1, modelHT);
 
 		// output hashBuckets->hybridhashTable here
-		char current_layer_HashTable[30];
+		/*char current_layer_HashTable[30];
 		strcpy(current_layer_HashTable, "HashTable_File_");
 		char cur_index[10];
 		sprintf(cur_index, "%d", i);
 		strcat(current_layer_HashTable, cur_index);
 		strcat(current_layer_HashTable, ".txt");
-		save_hasedBuckets_To_File(nnStruct->hashedBuckets[i], current_layer_HashTable, nnStruct->hashedBuckets[i]->hashTableSize);
+		save_hasedBuckets_To_File(nnStruct->hashedBuckets[i], current_layer_HashTable, nnStruct->hashedBuckets[i]->hashTableSize);*/
 
 		// clear the model HT for the next iteration.
 		clearUHashStructure(modelHT);
