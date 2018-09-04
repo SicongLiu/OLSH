@@ -616,40 +616,6 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 		}
 
 		// output hashedBuckets: PUHashStructureT *hashedBuckets;
-
-		  IntT typeHT;
-
-		  // The array containing the hash slots of the universal hashing.
-		  union _hashTableT {
-		    PGBucketT *llHashTable;
-		    PackedGBucketT **packedHashTable;
-		    LinkPackedGBucketT **linkHashTable;
-		    PHybridChainEntryT *hybridHashTable;
-		  } hashTable;
-
-		  IntT *chainSizes;
-
-
-		  HybridChainEntryT *hybridChainsStorage;
-
-		  Int32T hashTableSize;
-
-		  Int32T nHashedBuckets;
-
-		  Int32T nHashedPoints;
-
-
-
-		  IntT hashedDataLength;// the number of IntT's in an element from U (U is the set of values to hash).
-
-		  Uns32T *mainHashA;
-
-		  Uns32T *controlHash1;
-
-
-
-
-
 		PUHashStructureT* current_hashedBuckets = nnStructs[i]->hashedBuckets;
 		unsigned long hashedBuckets_size = sizeof(nnStructs[i]->hashedBuckets)/sizeof(nnStructs[i]->hashedBuckets[0]);
 		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
@@ -658,10 +624,49 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->typeHT);
 
 			// save hashTable
+			fprintf(pFile, "Saving llHash Tables... \n");
+			PGBucketT *llHashTable = current_hashedBuckets[ii]->hashTable._hashTableT;
+			while(llHashTable != NULL)
+			{
+				llHashTable = llHashTable->nextGBucketInChain;
+			}
 
+			fprintf(pFile, "\n");
+
+
+
+			if(current_hashedBuckets[ii]->hashTable.packedHashTable != NULL)
+			{
+				fprintf(pFile, "Saving packedHashTable... \n");
+			}
+			fprintf(pFile, "\n");
+			if(current_hashedBuckets[ii]->hashTable.linkHashTable != NULL)
+			{
+				fprintf(pFile, "Saving linkHashTable... \n");
+			}
+			fprintf(pFile, "\n");
+			if(current_hashedBuckets[ii]->hashTable.hybridHashTable != NULL)
+			{
+				fprintf(pFile, "Saving hybridHashTable... \n");
+			}
+			fprintf(pFile, "\n");
+
+
+
+
+			// The sizes of each of the chains of the hashtable (used only when
+			// typeHT=HT_PACKED or HT_STATISTICS.
 			// save chainSizes
 
-			// save HybridChainEntryT *hybridChainsStorage
+			// save HybridChainEntryT *hybridChainsStorage;
+			if(current_hashedBuckets[ii]->hybridChainsStorage != NULL)
+			{
+				fprintf(pFile, "Saving hybridChainsStorage... \n");
+			}
+
+
+
+
 
 			// save hashTableSize
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->hashTableSize);
@@ -692,105 +697,7 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 				fprintf(pFile, "%d \n", current_hashedBuckets[ii]->controlHash1[jj]);
 			}
 
-			/////////////////////////////////////////////////////////////////////////////
-			if(current_hashedBuckets[ii]->hashTable.llHashTable == NULL)
-			{
-				printf("******************** \n");
-				printf("hashTable.llHashTable is null .\n");
-				printf("******************** \n");
-			}
-			if(current_hashedBuckets[ii]->hashTable.packedHashTable == NULL)
-			{
-				printf("******************** \n");
-				printf("hashTable.packedHashTable is null .\n");
-				printf("******************** \n");
-			}
-			if(current_hashedBuckets[ii]->hashTable.linkHashTable == NULL)
-			{
-				printf("******************** \n");
-				printf("hashTable.linkHashTable is null .\n");
-				printf("******************** \n");
-			}
-			if(current_hashedBuckets[ii]->hashTable.hybridHashTable == NULL)
-			{
-				printf("******************** \n");
-				printf("hashTable.hybridHashTable is null .\n");
-				printf("******************** \n");
-			}
-
-			/////////////////////////////////////////////////////////////////////////////
-			if(current_hashedBuckets[ii]->hybridChainsStorage == NULL)
-			{
-				printf("******************** \n");
-				printf("hybridChainsStorage is null .\n");
-				printf("******************** \n");
-			}
 		}
-			// The sizes of each of the chains of the hashtable (used only when
-			// typeHT=HT_PACKED or HT_STATISTICS.
-
-			/*if(current_hashedBuckets[i]->chainSizes == NULL)
-				{
-					printf("typeHT indicates this is a linked-list .\n");
-					fprintf(hashedBuckets_File, " \n typeHT indicates this is a linked-list .\n");
-					/////////////////////////////////////////////////////////////////////////////
-					// To-Do:
-					// output the hashed LinkedList to file
-					/////////////////////////////////////////////////////////////////////////////
-				}
-				else
-				{
-					fprintf(hashedBuckets_File, "******************** \n");
-					fprintf(hashedBuckets_File, "Chain size (the sizes of each of the chains of the hashtable): %lu \n", sizeof((current_hashedBuckets[i]->chainSizes))/sizeof((current_hashedBuckets[i]->chainSizes[0])));
-					for(int j=0; j<1; j++)
-					{
-						fprintf(hashedBuckets_File, "chain index: %d, value: %d .\n", j, current_hashedBuckets[i]->chainSizes[j]);
-					}
-				}
-
-				fprintf(hashedBuckets_File, "******************** \n");
-				fprintf(hashedBuckets_File, "Number of main hash functions: %lu \n", sizeof((current_hashedBuckets[i]->mainHashA))/sizeof((current_hashedBuckets[i]->mainHashA[0])));
-				int mainHash_size = sizeof((current_hashedBuckets[i]->mainHashA))/sizeof((current_hashedBuckets[i]->mainHashA[0]));
-				for(int j=0; j<mainHash_size; j++)
-				{
-					fprintf(hashedBuckets_File, "mainHash index: %d, value: %d .\n", j, current_hashedBuckets[i]->mainHashA[j]);
-				}
-
-				fprintf(hashedBuckets_File, "******************** \n");
-				fprintf(hashedBuckets_File, "Number of control hash functions: %lu \n", sizeof((current_hashedBuckets[i]->controlHash1))/sizeof((current_hashedBuckets[i]->controlHash1[0])));
-				int controlHash_size = sizeof((current_hashedBuckets[i]->mainHashA))/sizeof((current_hashedBuckets[i]->controlHash1[0]));
-				for(int j=0; j<controlHash_size; j++)
-				{
-					fprintf(hashedBuckets_File, "mainHash index: %d, value: %d .\n", j, current_hashedBuckets[i]->controlHash1[j]);
-				}
-
-				fprintf(hashedBuckets_File, "Hash data length: %d \n", current_hashedBuckets[i]->hashedDataLength);
-
-
-				fprintf(hashedBuckets_File, "\n \n \n");
-			}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 		// output pointULSHVectors: Uns32T **pointULSHVectors;
