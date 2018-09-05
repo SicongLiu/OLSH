@@ -626,6 +626,10 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			// save hashTable
 			fprintf(pFile, "Saving llHash Tables... \n");
 			PGBucketT *llHashTable = current_hashedBuckets[ii]->hashTable._hashTableT;
+			for(int jj = 0; jj <current_hashedBuckets[ii]->hashTableSize; jj++)
+			{
+
+			}
 			while(llHashTable != NULL)
 			{
 				llHashTable = llHashTable->nextGBucketInChain;
@@ -635,19 +639,25 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 
 
 
-			if(current_hashedBuckets[ii]->hashTable.packedHashTable != NULL)
+			/*if(current_hashedBuckets[ii]->hashTable.packedHashTable != NULL)
 			{
 				fprintf(pFile, "Saving packedHashTable... \n");
+
 			}
 			fprintf(pFile, "\n");
 			if(current_hashedBuckets[ii]->hashTable.linkHashTable != NULL)
 			{
 				fprintf(pFile, "Saving linkHashTable... \n");
+
 			}
-			fprintf(pFile, "\n");
+			fprintf(pFile, "\n");*/
+
+
+			/* HybridHashTable Stores the real stuff used for query processing*/
 			if(current_hashedBuckets[ii]->hashTable.hybridHashTable != NULL)
 			{
 				fprintf(pFile, "Saving hybridHashTable... \n");
+
 			}
 			fprintf(pFile, "\n");
 
@@ -659,10 +669,10 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			// save chainSizes
 
 			// save HybridChainEntryT *hybridChainsStorage;
-			if(current_hashedBuckets[ii]->hybridChainsStorage != NULL)
+			/*if(current_hashedBuckets[ii]->hybridChainsStorage != NULL)
 			{
 				fprintf(pFile, "Saving hybridChainsStorage... \n");
-			}
+			}*/
 
 
 
