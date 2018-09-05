@@ -643,11 +643,14 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 				PHybridChainEntryT indexHybrid = current_hashedBuckets[ii]->hashTable.hybridHashTable[jj];
 				if(indexHybrid != NULL)
 				{
-					fprintf(pFile, "%d \n", indexHybrid->controlValue1);
-					fprintf(pFile, "%d \n", indexHybrid->point.isLastBucket);
-					fprintf(pFile, "%d \n", indexHybrid->point.bucketLength);
-					fprintf(pFile, "%d \n", indexHybrid->point.isLastPoint);
-					fprintf(pFile, "%d \n", indexHybrid->point.pointIndex);
+					// need to mark the union structure
+					// printf("size of current indexHybrid: %d .\n", sizeof(indexHybrid->point));
+					// printf("size of unsign int: %d .\n", sizeof(Uns32T));
+					fprintf(pFile, "control value: %d \n", indexHybrid->controlValue1);
+					fprintf(pFile, "isLastBucket %d \n", indexHybrid->point.isLastBucket);
+					fprintf(pFile, "bucketLength: %d \n", indexHybrid->point.bucketLength);
+					fprintf(pFile, "is last point: %d \n", indexHybrid->point.isLastPoint);
+					fprintf(pFile, "point index: %d \n", indexHybrid->point.pointIndex);
 				}
 			}
 
@@ -822,16 +825,27 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashTableSize * sizeof(PHybridChainEntryT))));
 
 			int count = 0;
-			fscanf(pFile, "%d\n", count);
+			fscanf(pFile, "%d \n", &count);
 			for(int jj = 0; jj < count; jj++)
 			{
 				int temp_index = -1;
 				fscanf(pFile, "%d \n", &temp_index);
 				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->controlValue1);
-				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastBucket);
-				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.bucketLength);
-				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastPoint);
-				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.pointIndex);
+				int isLastBucket = 0;
+				fscanf(pFile, "%d \n", &isLastBucket);
+				nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastBucket = isLastBucket;
+
+				int bucketLength = 0;
+				fscanf(pFile, "%d \n", &bucketLength);
+				nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.bucketLength = bucketLength;
+
+				int isLastPoint = 0;
+				fscanf(pFile, "%d \n", &isLastPoint);
+				nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastPoint = isLastPoint;
+
+				int pointIndex = 0;
+				fscanf(pFile, "%d \n", &pointIndex);
+				nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.pointIndex = pointIndex;
 			}
 
 			// read Uns32T *mainHashA;
@@ -843,7 +857,7 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 
 			// read Uns32T *controlHash1;
 			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->controlHash1 = (Uns32T*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashedDataLength * sizeof(Uns32T))));
-			for(int jj=0; jj<nnStructs[i]->hashedBuckets[ii]; jj++)
+			for(int jj=0; jj<nnStructs[i]->hashedBuckets[ii]->hashedDataLength; jj++)
 			{
 				fscanf(pFile, "%d\n", &nnStructs[i]->hashedBuckets[ii]->controlHash1[jj]);
 			}
@@ -889,14 +903,14 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 
 		for(IntT ii = 0; ii < nnStructs[i]->sizeMarkedPoints; ii++)
 		{
-			fprintf(pFile, "%d\n", &nnStructs[i]->sizeMarkedPoints[ii]);
+			fscanf(pFile, "%d\n", &nnStructs[i]->markedPoints[ii]);
 		}
 
 		// init the vector <nearPointsIndeces>
 		FAILIF(NULL == (nnStructs[i]->markedPointsIndeces = (Int32T*)MALLOC(nnStructs[i]->sizeMarkedPoints * sizeof(Int32T))));
 		for(int ii=0; ii<nnStructs[i]->sizeMarkedPoints; ii++)
 		{
-			fprintf(pFile, "%d\n", &nnStructs[i]->markedPointsIndeces[ii]);
+			fscanf(pFile, "%d\n", &nnStructs[i]->markedPointsIndeces[ii]);
 		}
 	}
 	return nnStructs;
