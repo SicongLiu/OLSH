@@ -340,7 +340,6 @@ PRNearNeighborStructT initLSH_WithDataSet(RNNParametersT algParameters, Int32T n
 
 		// copy the model HT into the actual (packed) HT. copy the uhash function too.
 		nnStruct->hashedBuckets[i] = newUHashStructure(algParameters.typeHT, nPoints, nnStruct->parameterK, TRUE, mainHashA, controlHash1, modelHT);
-
 		// output hashBuckets->hybridhashTable here
 		/*char current_layer_HashTable[30];
 		strcpy(current_layer_HashTable, "HashTable_File_");

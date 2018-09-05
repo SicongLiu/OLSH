@@ -283,6 +283,7 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 						bucket = bucket->nextGBucketInChain;
 						//ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
 			} // end of while
+
 		} // end of for
 		ASSERT(indexInStorage == lastIndexInSt + 1);
 		uhash->nHashedPoints = modelHT->nHashedPoints;
@@ -321,6 +322,7 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 	{
 		uhash->controlHash1 = controlHash1;
 	}
+
 
 	return uhash;
 }

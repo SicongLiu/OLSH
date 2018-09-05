@@ -8,8 +8,8 @@
 0 
 6 
 2 
-6 
--0.500000 	-0.500000 	-0.500000 	0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.100000 	-0.100000 	-0.100000 	0.020000 	0.100000 	0.100000 	0.100000 	0.020000 	6 
+8 
+-0.500000 	-0.500000 	-0.500000 	0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.500000 	-0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	0.500000 	-0.100000 	-0.100000 	-0.100000 	0.020000 	0.100000 	0.100000 	0.100000 	0.020000 	-0.100000 	0.100000 	0.100000 	0.020000 	0.100000 	-0.100000 	-0.100000 	0.020000 	8 
 1 
 -0.464893 	0.209560 	0.000000 
 0.139192 	0.168976 	0.000000 
@@ -23,59 +23,97 @@
 1.170986 	0.209779 	0.000000 
 0.141305 	1.050982 	0.000000 
 -0.953258 	0.570734 	0.000000 
-659464409 	1175767298 	
 -2106504608 	1314369944 	
-659464409 	1175767298 	
-547115672 	328592486 	
-659464409 	1175767298 	
+-2106504608 	1314369944 	
 2076113951 	467195132 	
-Current iteration index: 0 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 4 
-nHashedPoints: 6 
-Current iteration index: 1 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 2 
-nHashedPoints: 6 
-Current iteration index: 2 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 2 
-nHashedPoints: 6 
-Current iteration index: 3 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 2 
-nHashedPoints: 6 
-Current iteration index: 4 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 4 
-nHashedPoints: 6 
-Current iteration index: 5 .
-typeHT: 3 
-Prime Number Used: -5 
-hashTableSize: 6 
-nHashedBuckets: 4 
-nHashedPoints: 6 
--1 1 
+-2106504608 	1314369944 	
+547115672 	328592486 	
+-2106504608 	1314369944 	
+3 
+Saving hybridHashTable... 
+
+8 
+4 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
+3 
+Saving hybridHashTable... 
+
+8 
+2 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
+3 
+Saving hybridHashTable... 
+
+8 
+2 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
+3 
+Saving hybridHashTable... 
+
+8 
+2 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
+3 
+Saving hybridHashTable... 
+
+8 
+4 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
+3 
+Saving hybridHashTable... 
+
+8 
+4 
+8 
+-5 
+2 
+37449579 
+509666093 
+282391604 
+46200882 
 -1 -1 
--1 1 
-1 1 
--1 1 
+-1 -1 
 1 -1 
-0.100000	0.100000	
+-1 -1 
+1 1 
+-1 -1 
+0.100000	-0.100000	
 0 	0 
 0 	0 
 0 	0 
 0 	0 
 0 	0 
 0 	0 
-6 
+0 	0 
+0 	0 
+8 

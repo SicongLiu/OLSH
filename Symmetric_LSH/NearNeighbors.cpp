@@ -195,6 +195,7 @@ Int32T getRNearNeighbors(PRNearNeighborStructT nnStruct, PPointT queryPoint, PPo
 
 	TIMEV_START(timeRNNQuery);
 	noExpensiveTiming = !DEBUG_PROFILE_TIMING;
+
 	Int32T nNearNeighbors = getNearNeighborsFromPRNearNeighborStruct(nnStruct, queryPoint, result, resultSize);
 	TIMEV_END(timeRNNQuery);
 

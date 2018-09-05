@@ -575,8 +575,8 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			{
 				fprintf(pFile, "%f \t", nnStructs[i]->points[p]->coordinates[d]);
 			}
-			fprintf(pFile, "%f \t", nnStructs[i]->points[p]->index);
-			fprintf(pFile, "%f \t", nnStructs[i]->points[p]->sqrLength);
+			fprintf(pFile, "%f\n", nnStructs[i]->points[p]->index);
+			fprintf(pFile, "%f\n", nnStructs[i]->points[p]->sqrLength);
 		}
 
 		fprintf(pFile, "%d \n", nnStructs[i]->pointsArraySize);
@@ -622,62 +622,6 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 		{
 			// fprintf(pFile, "Current iteration index: %d .\n", ii);
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->typeHT);
-
-			// save hashTable
-			fprintf(pFile, "Saving llHash Tables... \n");
-			PGBucketT *llHashTable = current_hashedBuckets[ii]->hashTable._hashTableT;
-			for(int jj = 0; jj <current_hashedBuckets[ii]->hashTableSize; jj++)
-			{
-
-			}
-			while(llHashTable != NULL)
-			{
-				llHashTable = llHashTable->nextGBucketInChain;
-			}
-
-			fprintf(pFile, "\n");
-
-
-
-			/*if(current_hashedBuckets[ii]->hashTable.packedHashTable != NULL)
-			{
-				fprintf(pFile, "Saving packedHashTable... \n");
-
-			}
-			fprintf(pFile, "\n");
-			if(current_hashedBuckets[ii]->hashTable.linkHashTable != NULL)
-			{
-				fprintf(pFile, "Saving linkHashTable... \n");
-
-			}
-			fprintf(pFile, "\n");*/
-
-
-			/* HybridHashTable Stores the real stuff used for query processing*/
-			if(current_hashedBuckets[ii]->hashTable.hybridHashTable != NULL)
-			{
-				fprintf(pFile, "Saving hybridHashTable... \n");
-
-			}
-			fprintf(pFile, "\n");
-
-
-
-
-			// The sizes of each of the chains of the hashtable (used only when
-			// typeHT=HT_PACKED or HT_STATISTICS.
-			// save chainSizes
-
-			// save HybridChainEntryT *hybridChainsStorage;
-			/*if(current_hashedBuckets[ii]->hybridChainsStorage != NULL)
-			{
-				fprintf(pFile, "Saving hybridChainsStorage... \n");
-			}*/
-
-
-
-
-
 			// save hashTableSize
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->hashTableSize);
 
@@ -692,6 +636,20 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 
 			// save IntT hashedDataLength
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->hashedDataLength);
+			/* HybridHashTable Stores the real stuff used for query processing*/
+			fprintf(pFile, "Saving hybridHashTable... \n");
+			for (int jj = 0; jj < nnStructs[i]->nPoints; jj++)
+			{
+				PHybridChainEntryT indexHybrid = current_hashedBuckets[ii]->hashTable.hybridHashTable[jj];
+				if(indexHybrid != NULL)
+				{
+					fprintf(pFile, "%d \n", indexHybrid->controlValue1);
+					fprintf(pFile, "%d \n", indexHybrid->point.isLastBucket);
+					fprintf(pFile, "%d \n", indexHybrid->point.bucketLength);
+					fprintf(pFile, "%d \n", indexHybrid->point.isLastPoint);
+					fprintf(pFile, "%d \n", indexHybrid->point.pointIndex);
+				}
+			}
 
 			// save Uns32T *mainHashA;
 			int mainHash_size = sizeof((current_hashedBuckets[ii]->mainHashA))/sizeof((current_hashedBuckets[ii]->mainHashA[0]));
@@ -708,7 +666,6 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			}
 
 		}
-
 
 		// output pointULSHVectors: Uns32T **pointULSHVectors;
 		unsigned int** pointULSHVectors = nnStructs[i]->pointULSHVectors;
@@ -750,10 +707,198 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 {
 	printf("Loading nnStruct to RAM... \n");
+	FILE *pFile = fopen(file_name, "rt");
+	RNNParametersT *algParameters = NULL;
 	PRNearNeighborStructT *nnStructs = NULL;
+
 	FAILIF(NULL == (nnStructs = (PRNearNeighborStructT*)MALLOC(nRadii * sizeof(PRNearNeighborStructT))));
+	FAILIF(NULL == (algParameters = (RNNParametersT*)MALLOC(nRadii * sizeof(RNNParametersT))));
+	for(int i=0; i<nRadii; i++)
+	{
+		FAILIF(NULL == (nnStructs[i] = (PRNearNeighborStructT)MALLOC(sizeof(RNearNeighborStructT))));
+		fscanf(pFile, "%d\n", &nnStructs[i]->dimension);
+		fscanf(pFile, "%d\n", &nnStructs[i]->parameterK);	// parameter K of the algorithm.
+		fscanf(pFile, "%d\n", &nnStructs[i]->parameterL);	// parameter L of the algorithm.
+		fscanf(pFile, "%f\n", &nnStructs[i]->parameterW);	// parameter W of the algorithm.
+		fscanf(pFile, "%d\n", &nnStructs[i]->parameterT);	// parameter T of the algorithm.
+		fscanf(pFile, "%f\n", &nnStructs[i]->parameterR);	// parameter R of the algorithm.
+		fscanf(pFile, "%f\n", &nnStructs[i]->parameterR2);	// = parameterR^2
+		fscanf(pFile, "%d\n", &nnStructs[i]->useUfunctions);	// boolean type
+		fscanf(pFile, "%d\n", &nnStructs[i]->nHFTuples);
+		fscanf(pFile, "%d\n", &nnStructs[i]->hfTuplesLength);
+		fscanf(pFile, "%d\n", &nnStructs[i]->nPoints);
+		fscanf(pFile, "%d\n", &nnStructs[i]->sizeMarkedPoints);	// boolean type
+
+		FAILIF(NULL == (nnStructs[i]->points = (PPointT*)MALLOC(nnStructs[i]->pointsArraySize * sizeof(PPointT))));
+		// Read PPointT *points;
+		for(IntT p = 0; p < nnStructs[i]->nPoints; p++)
+		{
+			char* line = NULL;
+			fscanf(pFile, "%s\n", line);
+			float f_number = 0;
+			int cur_offset, d_index = 0;
+			while( 1 == sscanf(line, "%f\t[^\n]", f_number, &cur_offset) )
+			{
+				nnStructs[i]->points[p]->coordinates[d_index] = f_number;
+				d_index++;
+			}
+			fscanf(pFile, "%f\n", &nnStructs[i]->points[p]->index);
+			fscanf(pFile, "%f\n", &nnStructs[i]->points[p]->sqrLength);
+		}
+
+		fscanf(pFile, "%d\n", &nnStructs[i]->pointsArraySize);
+		fscanf(pFile, "%d\n", &nnStructs[i]->reportingResult);	// boolean type
+
+		// output LSH function here: LSHFunctionT **lshFunctions;
+		LSHFunctionT **lshFunctions;
+		// allocate memory for the functions
+		FAILIF(NULL == (lshFunctions = (LSHFunctionT**)MALLOC(nnStructs[i]->nHFTuples * sizeof(LSHFunctionT*))));
+		for(IntT ii = 0; ii < nnStructs[i]->nHFTuples; ii++)
+		{
+			FAILIF(NULL == (lshFunctions[ii] = (LSHFunctionT*)MALLOC(nnStructs[i]->hfTuplesLength * sizeof(LSHFunctionT))));
+			for(IntT jj = 0; jj < nnStructs[i]->hfTuplesLength; jj++)
+			{
+				FAILIF(NULL == (lshFunctions[ii][jj].a = (RealT*)MALLOC(nnStructs[i]->dimension * sizeof(RealT))));
+			}
+		}
+
+		for(IntT ii = 0; ii < nnStructs[i]->nHFTuples; ii++)
+		{
+			for(IntT jj = 0; jj < nnStructs[i]->hfTuplesLength; jj++)
+			{
+				char* line = NULL;
+				fscanf(pFile, "%s\n", line);
+				float f_number = 0;
+				int cur_offset, d_index = 0;
+				while( 1 == sscanf(line, "%f\t[^\n]", f_number, &cur_offset) )
+				{
+					lshFunctions[ii][jj].a[d_index] = f_number;
+					d_index++;
+				}
+				fscanf(pFile, "%f\n", lshFunctions[ii][jj].b);
+			}
+		}
+		nnStructs[i]->lshFunctions = lshFunctions;
 
 
+		// read precomputedHashesOfULSHs: Uns32T **precomputedHashesOfULSHs;
+		FAILIF(NULL == (nnStructs[i]->precomputedHashesOfULSHs = (Uns32T**)MALLOC(nnStructs[i]->nHFTuples * sizeof(Uns32T*))));
+		for(IntT ii = 0; ii < nnStructs[i]->nHFTuples; ii++)
+		{
+			FAILIF(NULL == (nnStructs[i]->precomputedHashesOfULSHs[ii] = (Uns32T*)MALLOC(N_PRECOMPUTED_HASHES_NEEDED * sizeof(Uns32T))));
+		}
+
+		for(IntT ii = 0; ii < nnStructs[i]->nHFTuples; ii++)
+		{
+			char* line = NULL;
+			fscanf(pFile, "%s\n", line);
+			float f_number = 0;
+			int cur_offset, d_index = 0;
+			while( 1 == sscanf(line, "%f\t[^\n]", f_number, &cur_offset) )
+			{
+				nnStructs[i]->precomputedHashesOfULSHs[ii][d_index] = f_number;
+				d_index++;
+			}
+		}
+		// read hashedBuckets: PUHashStructureT *hashedBuckets;
+		FAILIF(NULL == (nnStructs[i]->hashedBuckets = (PUHashStructureT*)MALLOC(nnStructs[i]->parameterL * sizeof(PUHashStructureT))));
+
+		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
+		{
+			fscanf(pFile, "%d\n", &nnStructs[i]->hashedBuckets[ii]->typeHT);
+			fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTableSize);
+			// read nHashedBuckets
+			fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->nHashedBuckets);
+
+			// read nHashedPoints
+			fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->nHashedPoints);
+
+			// read the prime number
+			fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->prime);	// the prime used for the universal hash functions.
+
+			// read IntT hashedDataLength
+			fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashedDataLength);
+
+			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashTableSize * sizeof(PHybridChainEntryT))));
+
+			int count = 0;
+			fscanf(pFile, "%d\n", count);
+			for(int jj = 0; jj < count; jj++)
+			{
+				int temp_index = -1;
+				fscanf(pFile, "%d \n", &temp_index);
+				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->controlValue1);
+				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastBucket);
+				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.bucketLength);
+				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.isLastPoint);
+				fscanf(pFile, "%d \n", &nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.pointIndex);
+			}
+
+			// read Uns32T *mainHashA;
+			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->controlHash1 = (Uns32T*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashedDataLength * sizeof(Uns32T))));
+			for(int jj=0; jj<nnStructs[i]->hashedBuckets[ii]->hashedDataLength; jj++)
+			{
+				fscanf(pFile, "%d\n", nnStructs[i]->hashedBuckets[ii]->mainHashA[jj]);
+			}
+
+			// read Uns32T *controlHash1;
+			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->controlHash1 = (Uns32T*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashedDataLength * sizeof(Uns32T))));
+			for(int jj=0; jj<nnStructs[i]->hashedBuckets[ii]; jj++)
+			{
+				fscanf(pFile, "%d\n", &nnStructs[i]->hashedBuckets[ii]->controlHash1[jj]);
+			}
+		}
+		// read pointULSHVectors: Uns32T **pointULSHVectors;
+		FAILIF(NULL == (nnStructs[i]->pointULSHVectors = (Uns32T**)MALLOC(nnStructs[i]->nHFTuples * sizeof(Uns32T*))));
+		for(IntT i = 0; i < nnStructs[i]->nHFTuples; i++)
+		{
+			FAILIF(NULL == (nnStructs[i]->pointULSHVectors[i] = (Uns32T*)MALLOC(nnStructs[i]->hfTuplesLength * sizeof(Uns32T))));
+		}
+
+		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
+		{
+			char* ULSH_line = NULL;
+			fscanf(pFile, "%s\n", &ULSH_line);
+			int ULSH_value = 0;
+			int cur_offset, d_index = 0;
+			while( 1 == sscanf(ULSH_line, "%f\t[^\n]", ULSH_value, &cur_offset) )
+			{
+				nnStructs[i]->pointULSHVectors[ii][d_index] = ULSH_value;
+				d_index++;
+			}
+		}
+		// read reducedPoint: RealT *reducedPoint;
+		// init the vector <reducedPoint>
+		FAILIF(NULL == (nnStructs[i]->reducedPoint = (RealT*)MALLOC(nnStructs[i]->dimension * sizeof(RealT))));
+
+		char* reduced_point_line = NULL;
+		fscanf(pFile, "%s\n", &reduced_point_line);
+		float point_number = 0;
+		int cur_offset, d_index = 0;
+		while( 1 == sscanf(reduced_point_line, "%f\t[^\n]", point_number, &cur_offset) )
+		{
+			nnStructs[i]->reducedPoint[d_index] = point_number;
+			d_index++;
+		}
+
+		// read markedPoints: BooleanT *markedPoints;
+		// read markedPointsIndeces: Int32T *markedPointsIndeces;
+		// init the vector <nearPoints>
+		FAILIF(NULL == (nnStructs[i]->markedPoints = (BooleanT*)MALLOC(nnStructs[i]->sizeMarkedPoints * sizeof(BooleanT))));
+
+
+		for(IntT ii = 0; ii < nnStructs[i]->sizeMarkedPoints; ii++)
+		{
+			fprintf(pFile, "%d\n", &nnStructs[i]->sizeMarkedPoints[ii]);
+		}
+
+		// init the vector <nearPointsIndeces>
+		FAILIF(NULL == (nnStructs[i]->markedPointsIndeces = (Int32T*)MALLOC(nnStructs[i]->sizeMarkedPoints * sizeof(Int32T))));
+		for(int ii=0; ii<nnStructs[i]->sizeMarkedPoints; ii++)
+		{
+			fprintf(pFile, "%d\n", &nnStructs[i]->markedPointsIndeces[ii]);
+		}
+	}
 	return nnStructs;
 }
 /*
