@@ -218,7 +218,8 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			{
 				fprintf(pFile, "%f \t", nnStructs[i]->points[p]->coordinates[d]);
 			}
-			fprintf(pFile, "%f\n", nnStructs[i]->points[p]->index);
+			fprintf(pFile, "\n");
+			fprintf(pFile, "%d\n", nnStructs[i]->points[p]->index);
 			fprintf(pFile, "%f\n", nnStructs[i]->points[p]->sqrLength);
 		}
 
@@ -582,6 +583,8 @@ int main(int nargs, char **args)
 	const char* nnStructs_file_name = "nn_Structs_file.txt";
 	Persist_nnStruct(nnStructs, nnStructs_file_name, nRadii);
 
+	/* Load nnStruct from file*/
+	// nnStructs = Load_nnStruct(nnStructs_file_name);
 
 	/* Load queries from file*/
 	PPointT *query_data_Points = NULL;
