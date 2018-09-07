@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 #include <math.h>
 
 // #ifdef CYGWIN
@@ -232,46 +233,83 @@ void GenerateData(int Dimensions,char Distribution,int Count,char* FileName)
 }
 */
 
-int main(int argc, char** argv)
+int main(int argc, char** args)
 // ====
 // main program
 {
-    char* FileName1 = "correlated.txt";
-    char* FileName2 = "anti_correlated.txt";
-    char* FileName3 = "random.txt";
-    FILE* f1 = fopen(FileName1,"wt");
-    FILE* f2 = fopen(FileName2,"wt");
-    FILE* f3 = fopen(FileName3,"wt");
-    int dimension = 2;
-    int count = 1000;
+    int dimensions [] = {5, 10, 15, 20};
+    int cardinalities [] = {1000, 2000, 4000, 8000};
+    int nDimension = sizeof(dimensions)/sizeof(dimensions[0]);
+    int nCardinality = sizeof(cardinalities)/sizeof(cardinalities[0]);
     
-    fprintf(f1,"%d", dimension);
-    fprintf(f1,"\n");
-    fprintf(f1,"%d", count);
-    fprintf(f1,"\n");
-    GenerateDataCorrelated(f1, count, dimension);
-    
-    fprintf(f2,"%d", dimension);
-    fprintf(f2,"\n");
-    fprintf(f2,"%d", count);
-    fprintf(f2,"\n");
-    GenerateDataAnticorrelated(f2, count, dimension);
-    
-    fprintf(f3,"%d", dimension);
-    fprintf(f3,"\n");
-    fprintf(f3,"%d", count);
-    fprintf(f3,"\n");
-    GenerateDataEqually(f3, count, dimension);
-    
+    char FileName1[60];
+    char FileName2[60];
+    char FileName3[60];
+    for(int i = 0; i < nDimension; i++)
+    {
+        for(int j=0; j<nCardinality; j++)
+        {
+            
+            
+            // int dimension = atoi(&dimensions[i]);
+            // int cardinality = atoi(&cardinalities[j]);
+            int dimension = dimensions[i];
+            int cardinality = cardinalities[j];
+            char dimension_string[40];
+            char cardinality_string[40];
+            
+            sprintf(dimension_string, "%d", dimension);
+            sprintf(cardinality_string, "%d", cardinality);
+            
+            printf("Dimension : %d, cardinality: %d .\n", dimension, cardinality);
+            strcpy (FileName1, "correlated_");
+            strcat (FileName1, dimension_string);
+            strcat (FileName1, "_");
+            strcat (FileName1, cardinality_string);
+            strcat (FileName1, ".txt");
+            
+            strcpy (FileName2, "anti_correlated_");
+            strcat (FileName2, dimension_string);
+            strcat (FileName2, "_");
+            strcat (FileName2, cardinality_string);
+            strcat (FileName2, ".txt");
+            
+            strcpy (FileName3, "random_");
+            strcat (FileName3, dimension_string);
+            strcat (FileName3, "_");
+            strcat (FileName3, cardinality_string);
+            strcat (FileName3, ".txt");
+            
+            FILE* f1 = fopen(FileName1,"wt");
+            FILE* f2 = fopen(FileName2,"wt");
+            FILE* f3 = fopen(FileName3,"wt");
+            
+            fprintf(f1,"%d", dimension);
+            fprintf(f1,"\n");
+            fprintf(f1,"%d", cardinality);
+            fprintf(f1,"\n");
+            GenerateDataCorrelated(f1, cardinality, dimension);
+            
+            fprintf(f2,"%d", dimension);
+            fprintf(f2,"\n");
+            fprintf(f2,"%d", cardinality);
+            fprintf(f2,"\n");
+            GenerateDataAnticorrelated(f2, cardinality, dimension);
+            
+            fprintf(f3,"%d", dimension);
+            fprintf(f3,"\n");
+            fprintf(f3,"%d", cardinality);
+            fprintf(f3,"\n");
+            GenerateDataEqually(f3, cardinality, dimension);
+            
+            fclose(f1);
+            fclose(f2);
+            fclose(f3);
+            
+            memset(FileName1, 0, 60);
+            memset(FileName2, 0, 60);
+            memset(FileName3, 0, 60);
+        }
+    }
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
