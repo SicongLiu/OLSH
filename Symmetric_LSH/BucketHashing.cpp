@@ -177,7 +177,7 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 		printf("check point in newUHashStructure, HT_HYBRID_CHAINS .\n");
 		printf(" hastable size: %d, nHashedPoint: %d,  nHashedBuckets : %d, sizeof(HybridChainEntryT) : %d .\n", hashTableSize, modelHT->nHashedPoints, modelHT->nHashedBuckets, sizeof(HybridChainEntryT));
 		printf("********************************************************************** .\n");
-		*/
+		 */
 
 		// allocate space for each points
 		FAILIF(NULL == (uhash->hashTable.hybridHashTable = (PHybridChainEntryT*)MALLOC(hashTableSize * sizeof(PHybridChainEntryT))));
@@ -225,63 +225,63 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 				uhash->hybridChainsStorage[indexInStorage].point.bucketLength = (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET ?
 						nPointsInBucket :
 						0); // 0 means there are "overflow" points
-						uhash->hybridChainsStorage[indexInStorage].point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
-						uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;
-						indexInStorage++;
+				uhash->hybridChainsStorage[indexInStorage].point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
+				uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;
+				indexInStorage++;
 
-						// Store all other points in the storage
-						Uns32T currentIndex = indexInStorage; // index where the "current" point will be stored.
-						Uns32T nOverflow = 0;
-						Uns32T overflowStart = lastIndexInSt;
-						if (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET)
-						{
-							indexInStorage = indexInStorage + nPointsInBucket - 1;
-						}
-						else
-						{
-							// bucket too large.
-							// store the overflow points at the end of the array <uhash->hybridChainsStorage>.
-							nOverflow = nPointsInBucket - MAX_NONOVERFLOW_POINTS_PER_BUCKET;
-							overflowStart = lastIndexInSt - nOverflow + 1;
-							lastIndexInSt = overflowStart - 1;
+				// Store all other points in the storage
+				Uns32T currentIndex = indexInStorage; // index where the "current" point will be stored.
+				Uns32T nOverflow = 0;
+				Uns32T overflowStart = lastIndexInSt;
+				if (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET)
+				{
+					indexInStorage = indexInStorage + nPointsInBucket - 1;
+				}
+				else
+				{
+					// bucket too large.
+					// store the overflow points at the end of the array <uhash->hybridChainsStorage>.
+					nOverflow = nPointsInBucket - MAX_NONOVERFLOW_POINTS_PER_BUCKET;
+					overflowStart = lastIndexInSt - nOverflow + 1;
+					lastIndexInSt = overflowStart - 1;
 
-							// specify the offset of the start of overflow points in the
-							// fields <bucketLength> of points 2, 3, ... of the space
-							// immediately after the bucket.
-							Uns32T value = overflowStart - (currentIndex - 1 + MAX_NONOVERFLOW_POINTS_PER_BUCKET);
-							for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
-							{
-								uhash->hybridChainsStorage[currentIndex + j].point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
-								value = value >> N_BITS_FOR_BUCKET_LENGTH;
-							}
+					// specify the offset of the start of overflow points in the
+					// fields <bucketLength> of points 2, 3, ... of the space
+					// immediately after the bucket.
+					Uns32T value = overflowStart - (currentIndex - 1 + MAX_NONOVERFLOW_POINTS_PER_BUCKET);
+					for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
+					{
+						uhash->hybridChainsStorage[currentIndex + j].point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
+						value = value >> N_BITS_FOR_BUCKET_LENGTH;
+					}
 
-							// update <indexInStorage>
-							indexInStorage = indexInStorage + MAX_NONOVERFLOW_POINTS_PER_BUCKET - 1;
-							ASSERT(indexInStorage <= lastIndexInSt + 1);
+					// update <indexInStorage>
+					indexInStorage = indexInStorage + MAX_NONOVERFLOW_POINTS_PER_BUCKET - 1;
+					ASSERT(indexInStorage <= lastIndexInSt + 1);
 
-							//FAILIFWR(nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET, "Too many points in a bucket -- feature not implemented yet. Try to lower N_BITS_PER_POINT_INDEX as much as possible.");// TODO: not implemented yet
-						}
+					//FAILIFWR(nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET, "Too many points in a bucket -- feature not implemented yet. Try to lower N_BITS_PER_POINT_INDEX as much as possible.");// TODO: not implemented yet
+				}
 
-						bucketEntry = bucket->firstEntry.nextEntry;
-						while(bucketEntry != NULL)
-						{
-							uhash->hybridChainsStorage[currentIndex].point.pointIndex = bucketEntry->pointIndex;
-							uhash->hybridChainsStorage[currentIndex].point.isLastPoint = 0;
-							bucketEntry = bucketEntry->nextEntry;
+				bucketEntry = bucket->firstEntry.nextEntry;
+				while(bucketEntry != NULL)
+				{
+					uhash->hybridChainsStorage[currentIndex].point.pointIndex = bucketEntry->pointIndex;
+					uhash->hybridChainsStorage[currentIndex].point.isLastPoint = 0;
+					bucketEntry = bucketEntry->nextEntry;
 
-							currentIndex++;
-							if (currentIndex == indexInStorage && nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET)
-							{
-								// finished the normal alloted space -> going to the space reserved at end of the table.
-								currentIndex = overflowStart;
-							}
-						}
+					currentIndex++;
+					if (currentIndex == indexInStorage && nPointsInBucket > MAX_NONOVERFLOW_POINTS_PER_BUCKET)
+					{
+						// finished the normal alloted space -> going to the space reserved at end of the table.
+						currentIndex = overflowStart;
+					}
+				}
 
-						// set the <isLastBucket> field of the last point = 1.
-						uhash->hybridChainsStorage[currentIndex - 1].point.isLastPoint = 1;
+				// set the <isLastBucket> field of the last point = 1.
+				uhash->hybridChainsStorage[currentIndex - 1].point.isLastPoint = 1;
 
-						bucket = bucket->nextGBucketInChain;
-						//ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
+				bucket = bucket->nextGBucketInChain;
+				//ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
 			} // end of while
 
 		} // end of for
