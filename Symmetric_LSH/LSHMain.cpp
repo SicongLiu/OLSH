@@ -241,6 +241,7 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 				{
 					fprintf(pFile, "%f \t", my_cur_lshFunction.a[k]);
 				}
+				fprintf(pFile, "\n");
 				fprintf(pFile, "%f \n", (my_cur_lshFunction.b));
 			}
 		}
@@ -261,7 +262,6 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 
 		// output hashedBuckets: PUHashStructureT *hashedBuckets;
 		PUHashStructureT* current_hashedBuckets = nnStructs[i]->hashedBuckets;
-		unsigned long hashedBuckets_size = sizeof(nnStructs[i]->hashedBuckets)/sizeof(nnStructs[i]->hashedBuckets[0]);
 		for(int ii=0; ii<nnStructs[i]->parameterL; ii++)
 		{
 			// fprintf(pFile, "Current iteration index: %d .\n", ii);
@@ -287,26 +287,31 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 				PHybridChainEntryT indexHybrid = current_hashedBuckets[ii]->hashTable.hybridHashTable[jj];
 				if(indexHybrid != NULL)
 				{
-					// need to mark the union structure
-					// printf("size of current indexHybrid: %d .\n", sizeof(indexHybrid->point));
-					// printf("size of unsign int: %d .\n", sizeof(Uns32T));
-					fprintf(pFile, "control value: %d \n", indexHybrid->controlValue1);
-					fprintf(pFile, "isLastBucket %d \n", indexHybrid->point.isLastBucket);
-					fprintf(pFile, "bucketLength: %d \n", indexHybrid->point.bucketLength);
-					fprintf(pFile, "is last point: %d \n", indexHybrid->point.isLastPoint);
-					fprintf(pFile, "point index: %d \n", indexHybrid->point.pointIndex);
+					if(indexHybrid->isControlValue == true)
+					{
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.controlValue1);
+					}
+					else
+					{
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.isLastBucket);
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.bucketLength);
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.isLastPoint);
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.pointIndex);
+					}
 				}
 			}
 
 			// save Uns32T *mainHashA;
-			int mainHash_size = sizeof((current_hashedBuckets[ii]->mainHashA))/sizeof((current_hashedBuckets[ii]->mainHashA[0]));
+			// int mainHash_size = sizeof((current_hashedBuckets[ii]->mainHashA))/sizeof((current_hashedBuckets[ii]->mainHashA[0]));
+			int mainHash_size = current_hashedBuckets[ii]->hashedDataLength;
 			for(int jj=0; jj<mainHash_size; jj++)
 			{
 				fprintf(pFile, "%d \n", current_hashedBuckets[ii]->mainHashA[jj]);
 			}
 
 			// save Uns32T *controlHash1;
-			int controlHash_size = sizeof((current_hashedBuckets[ii]->mainHashA))/sizeof((current_hashedBuckets[ii]->controlHash1[0]));
+			// int controlHash_size = sizeof((current_hashedBuckets[ii]->mainHashA))/sizeof((current_hashedBuckets[ii]->controlHash1[0]));
+			int controlHash_size = current_hashedBuckets[ii]->hashedDataLength;
 			for(int jj=0; jj<controlHash_size; jj++)
 			{
 				fprintf(pFile, "%d \n", current_hashedBuckets[ii]->controlHash1[jj]);
@@ -327,8 +332,7 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 
 		// output reducedPoint: RealT *reducedPoint;
 		float* reducedPoint = nnStructs[i]->reducedPoint;
-		unsigned long row = sizeof(reducedPoint)/sizeof(reducedPoint[0]);
-		for(int ii = 0; ii < row; ii++)
+		for(int ii = 0; ii < nnStructs[i]->dimension; ii++)
 		{
 			fprintf(pFile, "%f\t", reducedPoint[ii]);
 		}
@@ -470,6 +474,7 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 
 			int count = 0;
 			fscanf(pFile, "%d \n", &count);
+			/*
 			for(int jj = 0; jj < count; jj++)
 			{
 				int temp_index = -1;
@@ -491,7 +496,7 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 				fscanf(pFile, "%d \n", &pointIndex);
 				nnStructs[i]->hashedBuckets[ii]->hashTable.hybridHashTable[temp_index]->point.pointIndex = pointIndex;
 			}
-
+			*/
 			// read Uns32T *mainHashA;
 			FAILIF(NULL == (nnStructs[i]->hashedBuckets[ii]->controlHash1 = (Uns32T*)MALLOC(nnStructs[i]->hashedBuckets[ii]->hashedDataLength * sizeof(Uns32T))));
 			for(int jj=0; jj<nnStructs[i]->hashedBuckets[ii]->hashedDataLength; jj++)

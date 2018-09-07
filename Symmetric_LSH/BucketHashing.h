@@ -65,15 +65,35 @@ typedef struct _PackedGBucketT {
 // how many fields of N_BITS_FOR_BUCKET_LENGTH bits are needed to store a 32-bit (unsigned) integer.
 #define N_FIELDS_PER_INDEX_OF_OVERFLOW ((32 + N_BITS_FOR_BUCKET_LENGTH - 1) / N_BITS_FOR_BUCKET_LENGTH)
 
-typedef union _HybridChainEntryT {
-  Uns32T controlValue1;
-  struct _OverloadedPoint {
-    Uns32T isLastBucket : 1;
-    Uns32T bucketLength : N_BITS_FOR_BUCKET_LENGTH;
-    Uns32T isLastPoint : 1;
-    Uns32T pointIndex : N_BITS_PER_POINT_INDEX;
-  } point;
-} HybridChainEntryT, *PHybridChainEntryT;
+
+typedef union _RealHybridChainEntryT
+{
+	Uns32T controlValue1;
+	struct _OverloadedPoint
+	{
+		Uns32T isLastBucket : 1;
+		Uns32T bucketLength : N_BITS_FOR_BUCKET_LENGTH;
+		Uns32T isLastPoint : 1;
+		Uns32T pointIndex : N_BITS_PER_POINT_INDEX;
+	} point;
+}RealHybridChainEntryT;
+
+typedef struct _HybridChainEntryT
+{
+	bool isControlValue;
+	RealHybridChainEntryT realHybridChainEntryT;
+	/*typedef union _RealHybridChainEntryT
+	{
+		Uns32T controlValue1;
+		struct _OverloadedPoint
+		{
+			Uns32T isLastBucket : 1;
+			Uns32T bucketLength : N_BITS_FOR_BUCKET_LENGTH;
+			Uns32T isLastPoint : 1;
+			Uns32T pointIndex : N_BITS_PER_POINT_INDEX;
+		} point;
+	}RealHybridChainEntryT;*/
+}HybridChainEntryT, *PHybridChainEntryT;
 
 typedef union _GeneralizedPGBucket {
   PGBucketT llGBucket;

@@ -29,27 +29,6 @@
 #include "headers.h"
 #include <string.h>
 
-void save_hasedBuckets_To_File(PUHashStructureT hashedBuckets, char* file_name, int table_size)
-{
-	FILE *hashedPoints_File = fopen(file_name, "w");
-	fprintf(hashedPoints_File, "%s \n", "Flushing hybridHashTable of hashedBuckets to file..." );
-	PHybridChainEntryT temp = (PHybridChainEntryT)hashedBuckets->hashTable.hybridHashTable;
-	for(int i=0; i<table_size; i++)
-	{
-		// fprintf(hashedPoints_File, "control value: %d \n", hashedBuckets->hashTable.hybridHashTable->controlValue1);
-		fprintf(hashedPoints_File, "control value: %d \n", (temp)->controlValue1);
-		fprintf(hashedPoints_File, "isLastBucket: %d \n", (temp)->point.isLastBucket);
-		fprintf(hashedPoints_File, "bucketLength: %d \n", (temp)->point.bucketLength);
-		fprintf(hashedPoints_File, "isLastPoint: %d \n", (temp)->point.isLastPoint);
-		fprintf(hashedPoints_File, "pointIndex: %d \n", (temp)->point.pointIndex);
-		fprintf(hashedPoints_File, "%s \n", "********************************************");
-		temp = temp + sizeof(PHybridChainEntryT);
-	}
-
-	fclose(hashedPoints_File);
-}
-
-
 void printRNNParameters(FILE *output, RNNParametersT parameters){
 	ASSERT(output != NULL);
 	fprintf(output, "R\n");
@@ -809,13 +788,15 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
 			{
 				PHybridChainEntryT hybridPoint = gbucket.hybridGBucket;
 				Uns32T offset = 0;
-				if (hybridPoint->point.bucketLength == 0)
+				// if (hybridPoint->point.bucketLength == 0)
+				if (hybridPoint->realHybridChainEntryT.point.bucketLength == 0)
 				{
 					// there are overflow points in this bucket.
 					offset = 0;
 					for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
 					{
-						offset += ((Uns32T)((hybridPoint + 1 + j)->point.bucketLength) << (j * N_BITS_FOR_BUCKET_LENGTH));
+						// offset += ((Uns32T)((hybridPoint + 1 + j)->point.bucketLength) << (j * N_BITS_FOR_BUCKET_LENGTH));
+						offset += ((Uns32T)((hybridPoint + 1 + j)->realHybridChainEntryT.point.bucketLength) << (j * N_BITS_FOR_BUCKET_LENGTH));
 					}
 				}
 				Uns32T index = 0;
@@ -827,9 +808,11 @@ Int32T getNearNeighborsFromPRNearNeighborStruct(PRNearNeighborStructT nnStruct, 
 						//CR_ASSERT(hybridPoint->point.bucketLength == 0);
 						index = index + offset;
 					}
-					Int32T candidatePIndex = (hybridPoint + index)->point.pointIndex;
+					// Int32T candidatePIndex = (hybridPoint + index)->point.pointIndex;
+					Int32T candidatePIndex = (hybridPoint + index)->realHybridChainEntryT.point.pointIndex;
 					CR_ASSERT(candidatePIndex >= 0 && candidatePIndex < nnStruct->nPoints);
-					done = (hybridPoint + index)->point.isLastPoint == 1 ? TRUE : FALSE;
+					// done = (hybridPoint + index)->point.isLastPoint == 1 ? TRUE : FALSE;
+					done = (hybridPoint + index)->realHybridChainEntryT.point.isLastPoint == 1 ? TRUE : FALSE;
 					index++;
 					if (nnStruct->markedPoints[candidatePIndex] == FALSE)
 					{

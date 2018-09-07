@@ -219,14 +219,26 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 				// Copy the points from the bucket to the new HT.
 				ASSERT(nPointsInBucket > 0);
 
-				uhash->hybridChainsStorage[indexInStorage].controlValue1 = bucket->controlValue1;
+				uhash->hybridChainsStorage[indexInStorage].isControlValue = true;
+				// RealHybridChainEntryT realHybridChainEntryT = uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT;
+				uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT.controlValue1 = bucket->controlValue1;
+
+				// uhash->hybridChainsStorage[indexInStorage].controlValue1 = bucket->controlValue1;
 				indexInStorage++;
-				uhash->hybridChainsStorage[indexInStorage].point.isLastBucket = (bucket->nextGBucketInChain == NULL ? 1 : 0);
+				/*uhash->hybridChainsStorage[indexInStorage].point.isLastBucket = (bucket->nextGBucketInChain == NULL ? 1 : 0);
 				uhash->hybridChainsStorage[indexInStorage].point.bucketLength = (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET ?
 						nPointsInBucket :
 						0); // 0 means there are "overflow" points
 				uhash->hybridChainsStorage[indexInStorage].point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
-				uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;
+				uhash->hybridChainsStorage[indexInStorage].point.pointIndex = bucket->firstEntry.pointIndex;*/
+
+				uhash->hybridChainsStorage[indexInStorage].isControlValue = false;
+				uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT.point.isLastBucket = (bucket->nextGBucketInChain == NULL ? 1 : 0);
+				uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT.point.bucketLength = (nPointsInBucket <= MAX_NONOVERFLOW_POINTS_PER_BUCKET ?
+						nPointsInBucket :
+						0); // 0 means there are "overflow" points
+				uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT.point.isLastPoint = (nPointsInBucket == 1 ? 1 : 0);
+				uhash->hybridChainsStorage[indexInStorage].realHybridChainEntryT.point.pointIndex = bucket->firstEntry.pointIndex;
 				indexInStorage++;
 
 				// Store all other points in the storage
@@ -251,7 +263,7 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 					Uns32T value = overflowStart - (currentIndex - 1 + MAX_NONOVERFLOW_POINTS_PER_BUCKET);
 					for(IntT j = 0; j < N_FIELDS_PER_INDEX_OF_OVERFLOW; j++)
 					{
-						uhash->hybridChainsStorage[currentIndex + j].point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
+						uhash->hybridChainsStorage[currentIndex + j].realHybridChainEntryT.point.bucketLength = value & ((1U << N_BITS_FOR_BUCKET_LENGTH) - 1);
 						value = value >> N_BITS_FOR_BUCKET_LENGTH;
 					}
 
@@ -265,8 +277,8 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 				bucketEntry = bucket->firstEntry.nextEntry;
 				while(bucketEntry != NULL)
 				{
-					uhash->hybridChainsStorage[currentIndex].point.pointIndex = bucketEntry->pointIndex;
-					uhash->hybridChainsStorage[currentIndex].point.isLastPoint = 0;
+					uhash->hybridChainsStorage[currentIndex].realHybridChainEntryT.point.pointIndex = bucketEntry->pointIndex;
+					uhash->hybridChainsStorage[currentIndex].realHybridChainEntryT.point.isLastPoint = 0;
 					bucketEntry = bucketEntry->nextEntry;
 
 					currentIndex++;
@@ -278,7 +290,7 @@ PUHashStructureT newUHashStructure(IntT typeHT, Int32T hashTableSize, IntT bucke
 				}
 
 				// set the <isLastBucket> field of the last point = 1.
-				uhash->hybridChainsStorage[currentIndex - 1].point.isLastPoint = 1;
+				uhash->hybridChainsStorage[currentIndex - 1].realHybridChainEntryT.point.isLastPoint = 1;
 
 				bucket = bucket->nextGBucketInChain;
 				//ASSERT((uhash->hashTable.hybridHashTable[i] + 1)->point.bucketLength > 0);
@@ -735,7 +747,8 @@ GeneralizedPGBucket getGBucket(PUHashStructureT uhash, IntT nBucketVectorPieces,
 		indexHybrid = uhash->hashTable.hybridHashTable[hIndex];
 		while (indexHybrid != NULL)
 		{
-			if (indexHybrid->controlValue1 == control1)
+			// if (indexHybrid->->controlValue1 == control1)
+			if (indexHybrid->realHybridChainEntryT.controlValue1 == control1)
 			{
 				result.hybridGBucket = indexHybrid + 1;
 				return result;
@@ -743,12 +756,14 @@ GeneralizedPGBucket getGBucket(PUHashStructureT uhash, IntT nBucketVectorPieces,
 			else
 			{
 				indexHybrid = indexHybrid + 1;
-				if (indexHybrid->point.isLastBucket != 0)
+				// if (indexHybrid->point.isLastBucket != 0)
+				if (indexHybrid->realHybridChainEntryT.point.isLastBucket != 0)
 				{
 					result.hybridGBucket = NULL;
 					return result;
 				}
-				indexHybrid = indexHybrid + indexHybrid->point.bucketLength;
+				// indexHybrid = indexHybrid + indexHybrid->point.bucketLength;
+				indexHybrid = indexHybrid + indexHybrid->realHybridChainEntryT.point.bucketLength;
 			}
 		}
 		result.hybridGBucket = NULL;

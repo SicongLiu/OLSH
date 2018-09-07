@@ -35,18 +35,30 @@
 0.020000
 8 
 1 
--0.464893 	0.209560 	0.000000 
-0.139192 	0.168976 	0.000000 
--1.509442 	-0.838721 	0.000000 
--1.415144 	0.270503 	0.000000 
--0.194212 	-1.547212 	0.000000 
-0.128199 	0.665406 	0.000000 
--1.564358 	1.566657 	0.000000 
-0.009191 	0.613706 	0.000000 
--0.282337 	-0.937783 	0.000000 
-1.170986 	0.209779 	0.000000 
-0.141305 	1.050982 	0.000000 
--0.953258 	0.570734 	0.000000 
+-0.464893 	0.209560 	
+0.000000 
+0.139192 	0.168976 	
+0.000000 
+-1.509442 	-0.838721 	
+0.000000 
+-1.415144 	0.270503 	
+0.000000 
+-0.194212 	-1.547212 	
+0.000000 
+0.128199 	0.665406 	
+0.000000 
+-1.564358 	1.566657 	
+0.000000 
+0.009191 	0.613706 	
+0.000000 
+-0.282337 	-0.937783 	
+0.000000 
+1.170986 	0.209779 	
+0.000000 
+0.141305 	1.050982 	
+0.000000 
+-0.953258 	0.570734 	
+0.000000 
 -2106504608 	1314369944 	
 -2106504608 	1314369944 	
 2076113951 	467195132 	
@@ -60,21 +72,6 @@
 -5 
 2 
 Saving hybridHashTable... 
-control value: 1314369944 
-isLastBucket 0 
-bucketLength: 204 
-is last point: 0 
-point index: 320891 
-control value: 1175767298 
-isLastBucket 0 
-bucketLength: 129 
-is last point: 1 
-point index: 287052 
-control value: 467195132 
-isLastBucket 0 
-bucketLength: 638 
-is last point: 0 
-point index: 114061 
 37449579 
 509666093 
 282391604 
@@ -86,11 +83,6 @@ point index: 114061
 -5 
 2 
 Saving hybridHashTable... 
-control value: 1314369944 
-isLastBucket 0 
-bucketLength: 204 
-is last point: 0 
-point index: 320891 
 37449579 
 509666093 
 282391604 
@@ -102,16 +94,6 @@ point index: 320891
 -5 
 2 
 Saving hybridHashTable... 
-control value: 1175767298 
-isLastBucket 0 
-bucketLength: 129 
-is last point: 1 
-point index: 287052 
-control value: 467195132 
-isLastBucket 0 
-bucketLength: 638 
-is last point: 0 
-point index: 114061 
 37449579 
 509666093 
 282391604 
@@ -123,11 +105,6 @@ point index: 114061
 -5 
 2 
 Saving hybridHashTable... 
-control value: 328592486 
-isLastBucket 0 
-bucketLength: 563 
-is last point: 1 
-point index: 80222 
 37449579 
 509666093 
 282391604 
@@ -139,21 +116,6 @@ point index: 80222
 -5 
 2 
 Saving hybridHashTable... 
-control value: 328592486 
-isLastBucket 0 
-bucketLength: 563 
-is last point: 1 
-point index: 80222 
-control value: 1175767298 
-isLastBucket 0 
-bucketLength: 129 
-is last point: 1 
-point index: 287052 
-control value: 467195132 
-isLastBucket 0 
-bucketLength: 638 
-is last point: 0 
-point index: 114061 
 37449579 
 509666093 
 282391604 
@@ -165,21 +127,6 @@ point index: 114061
 -5 
 2 
 Saving hybridHashTable... 
-control value: 1314369944 
-isLastBucket 0 
-bucketLength: 204 
-is last point: 0 
-point index: 320891 
-control value: 1175767298 
-isLastBucket 0 
-bucketLength: 129 
-is last point: 1 
-point index: 287052 
-control value: 467195132 
-isLastBucket 0 
-bucketLength: 638 
-is last point: 0 
-point index: 114061 
 37449579 
 509666093 
 282391604 
