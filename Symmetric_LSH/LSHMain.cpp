@@ -281,22 +281,26 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			// save IntT hashedDataLength
 			fprintf(pFile, "%d \n", current_hashedBuckets[ii]->hashedDataLength);
 			/* HybridHashTable Stores the real stuff used for query processing*/
-			fprintf(pFile, "Saving hybridHashTable... \n");
+			// fprintf(pFile, "Saving hybridHashTable... \n");
 			for (int jj = 0; jj < nnStructs[i]->nPoints; jj++)
 			{
 				PHybridChainEntryT indexHybrid = current_hashedBuckets[ii]->hashTable.hybridHashTable[jj];
 				if(indexHybrid != NULL)
 				{
-					if(indexHybrid->isControlValue == true)
+					fprintf(pFile, "%d \n", jj);
+					if(indexHybrid->isControlValue == false)
 					{
-						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.controlValue1);
-					}
-					else
-					{
+						fprintf(pFile, "%d \n", indexHybrid->isControlValue);
 						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.isLastBucket);
 						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.bucketLength);
 						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.isLastPoint);
 						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.point.pointIndex);
+
+					}
+					else if(indexHybrid->isControlValue == true)
+					{
+						fprintf(pFile, "%d \n", indexHybrid->isControlValue);
+						fprintf(pFile, "%d \n", indexHybrid->realHybridChainEntryT.controlValue1);
 					}
 				}
 			}
