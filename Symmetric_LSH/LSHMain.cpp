@@ -210,6 +210,9 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 		fprintf(pFile, "%d \n", nnStructs[i]->nHFTuples);
 		fprintf(pFile, "%d \n", nnStructs[i]->hfTuplesLength);
 		fprintf(pFile, "%d \n", nnStructs[i]->nPoints);
+		fprintf(pFile, "%d \n", nnStructs[i]->sizeMarkedPoints);	// boolean type
+		fprintf(pFile, "%d \n", nnStructs[i]->pointsArraySize);
+		fprintf(pFile, "%d \n", nnStructs[i]->reportingResult);	// boolean type
 
 		// fprint points here: PPointT *points;
 		for(IntT p = 0; p < nnStructs[i]->nPoints; p++)
@@ -223,8 +226,7 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			fprintf(pFile, "%f\n", nnStructs[i]->points[p]->sqrLength);
 		}
 
-		fprintf(pFile, "%d \n", nnStructs[i]->pointsArraySize);
-		fprintf(pFile, "%d \n", nnStructs[i]->reportingResult);	// boolean type
+
 
 		// output LSH function here: LSHFunctionT **lshFunctions;
 		LSHFunctionT** current_lshFunction = nnStructs[i]->lshFunctions;
@@ -352,8 +354,6 @@ void Persist_nnStruct(PRNearNeighborStructT* nnStructs, const char* file_name, i
 			fprintf(pFile, "%d \t", markedPoints[ii]);
 			fprintf(pFile, "%d \n", markedPointsIndeces[ii]);
 		}
-
-		fprintf(pFile, "%d \n", nnStructs[i]->sizeMarkedPoints);	// boolean type
 	}
 
 	fclose(pFile);
@@ -383,12 +383,24 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 		fscanf(pFile, "%d\n", &nnStructs[i]->hfTuplesLength);
 		fscanf(pFile, "%d\n", &nnStructs[i]->nPoints);
 		fscanf(pFile, "%d\n", &nnStructs[i]->sizeMarkedPoints);	// boolean type
+		fscanf(pFile, "%d\n", &nnStructs[i]->pointsArraySize);
+		fscanf(pFile, "%d\n", &nnStructs[i]->reportingResult);	// boolean type
 
 		FAILIF(NULL == (nnStructs[i]->points = (PPointT*)MALLOC(nnStructs[i]->pointsArraySize * sizeof(PPointT))));
 		// Read PPointT *points;
 		for(IntT p = 0; p < nnStructs[i]->nPoints; p++)
 		{
-			char* line = NULL;
+			// FAILIF(NULL == (nnStructs[i]->points[p] = (PPointT*)MALLOC(nnStructs[i]->pointsArraySize * sizeof(PPointT))));
+			for(int ii = 0; ii < nnStructs[i]->dimension; ii++)
+			{
+				float temp = 0;
+				// fscanf(pFile, "%lf", &nnStructs[i]->points[p]->coordinates[ii]);
+				fscanf(pFile, "%lf", &temp);
+				//printf("my value: %lf .", nnStructs[i]->points[p]->coordinates[ii]);
+				fscanf(pFile, "\t");
+			}
+			fscanf(pFile, "\n");
+			/*char line[1000];
 			fscanf(pFile, "%s\n", line);
 			float f_number = 0;
 			int cur_offset, d_index = 0;
@@ -396,13 +408,10 @@ PRNearNeighborStructT* Load_nnStruct(const char* file_name)
 			{
 				nnStructs[i]->points[p]->coordinates[d_index] = f_number;
 				d_index++;
-			}
-			fscanf(pFile, "%f\n", &nnStructs[i]->points[p]->index);
+			}*/
+			fscanf(pFile, "%d\n", &nnStructs[i]->points[p]->index);
 			fscanf(pFile, "%f\n", &nnStructs[i]->points[p]->sqrLength);
 		}
-
-		fscanf(pFile, "%d\n", &nnStructs[i]->pointsArraySize);
-		fscanf(pFile, "%d\n", &nnStructs[i]->reportingResult);	// boolean type
 
 		// output LSH function here: LSHFunctionT **lshFunctions;
 		LSHFunctionT **lshFunctions;
@@ -593,7 +602,7 @@ int main(int nargs, char **args)
 	Persist_nnStruct(nnStructs, nnStructs_file_name, nRadii);
 
 	/* Load nnStruct from file*/
-	// nnStructs = Load_nnStruct(nnStructs_file_name);
+	PRNearNeighborStructT* my_nnStructs = Load_nnStruct(nnStructs_file_name);
 
 	/* Load queries from file*/
 	PPointT *query_data_Points = NULL;
