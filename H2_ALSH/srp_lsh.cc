@@ -56,7 +56,7 @@ SRP_LSH::~SRP_LSH()					// destructor
 // -----------------------------------------------------------------------------
 void SRP_LSH::gen_random_vectors()	// generate random projection vectors
 {
-	proj_ = new float*[L_];
+	proj_ = new float**[L_];
 	for(int l=0; l < L_; l++)
 	{
 		proj_[l] = new float*[K_];
