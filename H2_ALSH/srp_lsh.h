@@ -47,7 +47,8 @@ protected:
 	// -------------------------------------------------------------------------
 	void get_proj_vector(			// get vector after random projection
 		const float *data,				// input data
-		bool **hash_code);				// hash code of input data (return)
+		bool *hash_code,			// hash code of input data (return)
+		int layer);					// layer index of interest
 };
 
 #endif // __SRP_LSH_H

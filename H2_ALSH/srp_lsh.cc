@@ -56,7 +56,7 @@ SRP_LSH::~SRP_LSH()					// destructor
 // -----------------------------------------------------------------------------
 void SRP_LSH::gen_random_vectors()	// generate random projection vectors
 {
-	proj_ = new float*[L_];
+	proj_ = new float**[L_];
 	for(int l=0; l < L_; l++)
 	{
 		proj_[l] = new float*[K_];
@@ -75,14 +75,14 @@ void SRP_LSH::gen_random_vectors()	// generate random projection vectors
 // -----------------------------------------------------------------------------
 void SRP_LSH::bulkload()			// bulkloading
 {
-	hash_code_ = new bool*[L_];
+	hash_code_ = new bool**[L_];
 	for(int l=0; l< L_; l++)
 	{
 		hash_code_[l] = new bool*[n_pts_];
 		for (int i = 0; i < n_pts_; ++i)
 		{
 			hash_code_[l][i] = new bool[K_];
-			get_proj_vector(data_[i], hash_code_[l][i]);
+			get_proj_vector(data_[i], hash_code_[l][i], l);
 		}
 	}
 
@@ -91,11 +91,12 @@ void SRP_LSH::bulkload()			// bulkloading
 // -----------------------------------------------------------------------------
 void SRP_LSH::get_proj_vector(		// get vector after random projection
 	const float *data,					// input data 
-	bool *hash_code)					// hash code of input data (return)
+	bool *hash_code,				// hash code of input data (return)
+	int layer)						// layer index of interest
 {
 	for (int i = 0; i < K_; ++i)
 	{
-		float sum = calc_inner_product(dim_, proj_[i], data);
+		float sum = calc_inner_product(dim_, proj_[layer][i], data);
 
 		if (sum >= 0) hash_code[i] = true;
 		else hash_code[i] = false;
@@ -108,8 +109,13 @@ int SRP_LSH::kmc(					// c-k-AMC search
 	const float *query,					// input query
 	MaxK_List *list)					// top-k MC results (return)
 {
-	bool *mc_query = new bool[K_];
-	get_proj_vector(query, mc_query);
+	bool **mc_query = new bool*[L_];
+	for(int l = 0; l < L_; l++)
+	{
+		mc_query[l] = new bool[K_];
+		get_proj_vector(query, mc_query[l], l);
+	}
+
 
 	bool *isMarked = new bool[n_pts_];
 	int match = 0;
