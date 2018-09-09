@@ -116,11 +116,17 @@ int SRP_LSH::kmc(					// c-k-AMC search
 		get_proj_vector(query, mc_query[l], l);
 	}
 
-
-	bool *isMarked = new bool[n_pts_];
 	int match = 0;
+
+	/* Modified by Sicong*/
+	// for each point, pick the best matched case and insert into candidate list
+	// candidate list:
+	// 		key: matched value -- Hamming Similarity of Hash Code
+	// 		value: data object ID
 	for (int i = 0; i < n_pts_; ++i)
 	{
+		int current_match = 0;
+		int best_match = 0;
 		int matched_dim = 0;
 		for(int l = 0; l < L_; l++)
 		{
@@ -128,20 +134,12 @@ int SRP_LSH::kmc(					// c-k-AMC search
 			{
 				if (hash_code_[i][j] == mc_query[j])
 				{
-					++matched_dim;
+					++current_match;
 				}
 			}
-
-			/**
-			 * Check point by Sicong
-			 * Stop condition needs to double check
-			 * */
-			if(matched_dim == K_ && !isMarked[i])
-			{
-				list->insert(match, i);
-				isMarked[i] = true;
-				match++;
-			}
+			if(current_match > best_match)
+				best_match = current_match;
+			list->insert(best_match, i);
 		}
 	}
 
@@ -151,7 +149,57 @@ int SRP_LSH::kmc(					// c-k-AMC search
 	delete[] mc_query;
 	mc_query = NULL;
 
-	delete[] isMarked;
-	isMarked = NULL;
 	return 0;
 }
+
+
+// -----------------------------------------------------------------------------
+int SRP_LSH::persistHashTable(const char *fname)			// persist HashTables on file
+{
+	FILE *fp = fopen(fname, "w");
+	if (!fp)
+	{
+		printf("Could not create %s\n", fname);
+		return 1;
+	}
+	for(int l=0; l< L_; l++)
+	{
+		for(int k = 0; k < K_; k++)
+		{
+			for(int p=0; p < n_pts_; p++)
+			{
+				fprintf(fp, "%d", hash_code_[l][k][p]);
+			}
+			fprintf(fp, "\t");
+		}
+		fprintf(fp, "\n");
+	}
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int SRP_LSH::loadHashTable(const char *fname)			// load HashTables on file
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+	{
+		printf("Could not create %s\n", fname);
+		return 1;
+	}
+	for(int l=0; l< L_; l++)
+	{
+		for(int k = 0; k < K_; k++)
+		{
+			for(int p=0; p < n_pts_; p++)
+			{
+				// fprintf(fp, "%d", hash_code_[l][k][p]);
+				// load using fscanf
+			}
+			fscanf(fp, "\t");
+		}
+		fscanf(fp, "\n");
+	}
+	return 0;
+}
+
+

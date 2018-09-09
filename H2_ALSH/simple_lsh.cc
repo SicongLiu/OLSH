@@ -155,6 +155,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		int id = mcs_list->ith_id(i);
 		float ip = calc_inner_product(dim_, data_[id], query);
 
+		// list structure -- priority queue using resorted distance of inner prouct as similarity
 		list->insert(ip, id + 1);
 	}
 
@@ -168,4 +169,16 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	mcs_list = NULL;
 
 	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file
+{
+	return lsh_->persistHashTable(fname);
+}
+
+// -----------------------------------------------------------------------------
+int Simple_LSH::loadHashTable(const char *fname)			// load HashTables on file
+{
+	return lsh_->loadHashTable(fname);
 }

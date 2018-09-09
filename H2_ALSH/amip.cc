@@ -16,21 +16,25 @@ int ground_truth(					// find the ground truth results
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	FILE *fp = fopen(truth_set, "w");
-	if (!fp) {
+	if (!fp)
+	{
 		printf("Could not create %s.\n", truth_set);
 		return 1;
 	}
 
 	MaxK_List *list = new MaxK_List(MAXK);
 	fprintf(fp, "%d %d\n", qn, MAXK);
-	for (int i = 0; i < qn; ++i) {
+	for (int i = 0; i < qn; ++i)
+	{
 		list->reset();
-		for (int j = 0; j < n; ++j) {	
+		for (int j = 0; j < n; ++j)
+		{
 			float ip = calc_inner_product(d, data[j], query[i]);
 			list->insert(ip, j + 1);
 		}
 
-		for (int j = 0; j < MAXK; ++j) {
+		for (int j = 0; j < MAXK; ++j)
+		{
 			fprintf(fp, "%d %f ", list->ith_id(j), list->ith_key(j));
 		}
 		fprintf(fp, "\n");
@@ -682,7 +686,7 @@ int simple_lsh(						// mip search via simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, nn_ratio, data);
+	lsh->build(n, d, K, L, nn_ratio, data);
 
 	gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec + 
@@ -702,7 +706,10 @@ int simple_lsh(						// mip search via simple_lsh
 		return 1;
 	}
 
+	// Top-K result of interest
 	int kMIPs[] = { 1, 2, 5, 10 };
+
+	// max_round : size of kMIPs array
 	int max_round = 4;
 	int top_k = -1;
 
@@ -1124,7 +1131,8 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	int   n,							// number of data points
 	int   qn,							// number of query points
 	int   d,							// dimension of space
-	int   K,							// number of hash tables
+	int   K,							// number of hash functions
+	int   L,							// number of hash tables
 	float nn_ratio,						// approximation ratio for nn search
 	const float **data,					// data set
 	const float **query,				// query set
@@ -1155,7 +1163,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, nn_ratio, data);
+	lsh->build(n, d, K, L, nn_ratio, data);
 
 	gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec + 

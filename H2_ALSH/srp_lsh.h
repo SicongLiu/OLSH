@@ -49,6 +49,10 @@ protected:
 		const float *data,				// input data
 		bool *hash_code,			// hash code of input data (return)
 		int layer);					// layer index of interest
+
+	// -------------------------------------------------------------------------
+	int persistHashTable(const char *fname);		// persist HashTables on file
+	int loadHashTable(const char *fname);		// persist HashTables on file
 };
 
 #endif // __SRP_LSH_H

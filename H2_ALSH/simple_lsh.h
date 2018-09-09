@@ -50,6 +50,10 @@ protected:
 
 	// -------------------------------------------------------------------------
 	void display();					// display parameters
+
+	// -------------------------------------------------------------------------
+	int persistHashTable(const char *fname);		// persist HashTables on file
+	int loadHashTable(const char *fname);		// persist HashTables on file
 };
 
 #endif // __SIMPLE_LSH_H

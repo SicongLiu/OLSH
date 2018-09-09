@@ -99,8 +99,9 @@ int Sign_ALSH::bulkload()			// bulkloading
 	// -------------------------------------------------------------------------
 	//  indexing the new format of data using srp-lsh
 	// -------------------------------------------------------------------------
-	lsh_ = new SRP_LSH(n_pts_, sign_alsh_dim_, K_, 
-		(const float **) sign_alsh_data_);
+
+	// lsh_ = new SRP_LSH(n_pts_, sign_alsh_dim_, K_,
+	//	(const float **) sign_alsh_data_);
 
 	return 0;
 }
