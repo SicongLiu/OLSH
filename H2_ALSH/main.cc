@@ -70,7 +70,7 @@ void usage() 						// display the usage of this package
 int main(int nargs, char **args)
 {
 	srand((unsigned) time(NULL));	// set the random seed
-	//usage();
+	usage();
 
 	int   alg       = -1;			// which algorithm?
 	int   n         = -1;			// cardinality
@@ -248,7 +248,7 @@ int main(int nargs, char **args)
 			(const float **) query, truth_set, output_folder);
 		break;
 	case 10:
-		simple_lsh_precision_recall(n, qn, d, K, nn_ratio, (const float **) data, 
+		simple_lsh_precision_recall(n, qn, d, K, L, nn_ratio, (const float **) data,
 			(const float **) query, truth_set, output_folder);
 		break;
 	case 11:

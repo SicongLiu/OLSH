@@ -130,6 +130,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	int   qn,							// number of query points
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
+	int   L,							// number of hash layers
 	float nn_ratio,						// approximation ratio for ANN search
 	const float **data,					// data set
 	const float **query,				// query set

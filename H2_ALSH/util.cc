@@ -74,16 +74,26 @@ int read_data(						// read data/query set from disk
 	float **data)						// data/query objects (return)
 {
 	FILE *fp = fopen(fname, "r");
-	if (!fp) {
+	if (!fp)
+	{
 		printf("Could not open %s\n", fname);
 		return 1;
 	}
 
+	int num_dim = -1;
+	int num_element = -1;
+	fscanf(fp, "%d\n", &num_dim);
+	fscanf(fp, "%d\n", &num_element);
+	assert(num_dim == d);
+	assert(num_element == n);
+
 	int i   = 0;
-	int tmp = -1;
-	while (!feof(fp) && i < n) {
-		fscanf(fp, "%d", &tmp);
-		for (int j = 0; j < d; ++j) {
+	// int tmp = -1;
+	while (!feof(fp) && i < n)
+	{
+		// fscanf(fp, "%d", &tmp);
+		for (int j = 0; j < d; ++j)
+		{
 			fscanf(fp, " %f", &data[i][j]);
 		}
 		fscanf(fp, "\n");
@@ -103,7 +113,8 @@ int read_ground_truth(				// read ground truth results from disk
 	Result **R)							// ground truth results (return)
 {
 	FILE *fp = fopen(fname, "r");
-	if (!fp) {
+	if (!fp)
+	{
 		printf("Could not open %s\n", fname);
 		return 1;
 	}
@@ -113,8 +124,10 @@ int read_ground_truth(				// read ground truth results from disk
 	fscanf(fp, "%d %d\n", &tmp1, &tmp2);
 	assert(tmp1 == qn && tmp2 == MAXK);
 
-	for (int i = 0; i < qn; ++i) {
-		for (int j = 0; j < MAXK; ++j) {
+	for (int i = 0; i < qn; ++i)
+	{
+		for (int j = 0; j < MAXK; ++j)
+		{
 			fscanf(fp, "%d %f ", &R[i][j].id_, &R[i][j].key_);
 		}
 		fscanf(fp, "\n");

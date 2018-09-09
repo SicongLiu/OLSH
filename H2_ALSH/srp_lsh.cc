@@ -154,13 +154,13 @@ int SRP_LSH::kmc(					// c-k-AMC search
 
 
 // -----------------------------------------------------------------------------
-int SRP_LSH::persistHashTable(const char *fname)			// persist HashTables on file
+void SRP_LSH::persistHashTable(const char *fname)			// persist HashTables on file
 {
 	FILE *fp = fopen(fname, "w");
 	if (!fp)
 	{
 		printf("Could not create %s\n", fname);
-		return 1;
+		return;
 	}
 	for(int l=0; l< L_; l++)
 	{
@@ -174,17 +174,16 @@ int SRP_LSH::persistHashTable(const char *fname)			// persist HashTables on file
 		}
 		fprintf(fp, "\n");
 	}
-	return 0;
 }
 
 // -----------------------------------------------------------------------------
-int SRP_LSH::loadHashTable(const char *fname)			// load HashTables on file
+void SRP_LSH::loadHashTable(const char *fname)			// load HashTables on file
 {
 	FILE *fp = fopen(fname, "r");
 	if (!fp)
 	{
 		printf("Could not create %s\n", fname);
-		return 1;
+		return;
 	}
 	for(int l=0; l< L_; l++)
 	{
@@ -199,7 +198,6 @@ int SRP_LSH::loadHashTable(const char *fname)			// load HashTables on file
 		}
 		fscanf(fp, "\n");
 	}
-	return 0;
 }
 
 

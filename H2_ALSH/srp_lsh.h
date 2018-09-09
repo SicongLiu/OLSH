@@ -24,9 +24,13 @@ public:
 
 	// -------------------------------------------------------------------------
 	int kmc(						// c-k-AMC search
-		int   top_k,					// top-k value
-		const float *query,				// input query
-		MaxK_List *list);				// top-k MC results  (return)
+			int   top_k,					// top-k value
+			const float *query,				// input query
+			MaxK_List *list);				// top-k MC results  (return)
+
+	// -------------------------------------------------------------------------
+	void persistHashTable(const char *fname);		// persist HashTables on file
+	void loadHashTable(const char *fname);		// persist HashTables on file
 
 protected:
 	int   n_pts_;					// cardinality of dataset
@@ -50,9 +54,7 @@ protected:
 		bool *hash_code,			// hash code of input data (return)
 		int layer);					// layer index of interest
 
-	// -------------------------------------------------------------------------
-	int persistHashTable(const char *fname);		// persist HashTables on file
-	int loadHashTable(const char *fname);		// persist HashTables on file
+
 };
 
 #endif // __SRP_LSH_H

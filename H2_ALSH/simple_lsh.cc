@@ -78,24 +78,24 @@ int Simple_LSH::bulkload()			// bulkloading
 	int exponent = -1;
 
 	printf("Construct Simple_LSH Data\n\n");
-	simple_lsh_data_ = new float**[L_];
-	for (int l = 0; l < L_; l++)
-	{
-		simple_lsh_data_[l] = new float[n_pts_];
-		for (int i = 0; i < n_pts_; ++i) {
-			simple_lsh_data_[l][i] = new float[simple_lsh_dim_];
 
-			norm[i] = norm[i] * scale;
-			for (int j = 0; j < simple_lsh_dim_; ++j) {
-				if (j < dim_) {
-					simple_lsh_data_[l][i][j] = data_[i][j] * scale;
-				}
-				else {
-					simple_lsh_data_[l][i][j] = sqrt(1.0f - norm[i] * norm[i]);
-				}
+	simple_lsh_data_ = new float*[n_pts_];
+	for (int i = 0; i < n_pts_; ++i) {
+		simple_lsh_data_[i] = new float[simple_lsh_dim_];
+
+		norm[i] = norm[i] * scale;
+		for (int j = 0; j < simple_lsh_dim_; ++j)
+		{
+			if (j < dim_)
+			{
+				simple_lsh_data_[i][j] = data_[i][j] * scale;
+			}
+			else {
+				simple_lsh_data_[i][j] = sqrt(1.0f - norm[i] * norm[i]);
 			}
 		}
 	}
+
 
 	// -------------------------------------------------------------------------
 	//  indexing the new data using SRP-LSH
@@ -172,13 +172,13 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 }
 
 // -----------------------------------------------------------------------------
-int Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file
+void Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file
 {
-	return lsh_->persistHashTable(fname);
+	lsh_->persistHashTable(fname);
 }
 
 // -----------------------------------------------------------------------------
-int Simple_LSH::loadHashTable(const char *fname)			// load HashTables on file
+void Simple_LSH::loadHashTable(const char *fname)			// load HashTables on file
 {
-	return lsh_->loadHashTable(fname);
+	lsh_->loadHashTable(fname);
 }
