@@ -237,8 +237,10 @@ int main(int argc, char** args)
 // ====
 // main program
 {
-    int dimensions [] = {5, 10, 15, 20};
-    int cardinalities [] = {1000, 2000, 4000, 8000};
+    // int dimensions [] = {5, 10, 15, 20};
+    int dimensions [] = {2};
+    // int cardinalities [] = {1000, 2000, 4000, 8000};
+    int cardinalities [] = {1000};
     int nDimension = sizeof(dimensions)/sizeof(dimensions[0]);
     int nCardinality = sizeof(cardinalities)/sizeof(cardinalities[0]);
     
