@@ -85,9 +85,6 @@ int read_data(						// read data/query set from disk
 	fscanf(fp, "%d\n", &num_dim);
 	fscanf(fp, "%d\n", &num_element);
 
-	printf("num_dim: %d \n", num_dim);
-	printf("num_element: %d \n", num_element);
-
 	assert(num_dim == d);
 	assert(num_element == n);
 
@@ -214,7 +211,8 @@ int get_hits(						// get the number of hits between two ID list
 {
 	int i = k - 1;
 	int last = t - 1;
-	while (i >= 0 && R[last].key_ - list->ith_key(i) > FLOATZERO) {
+	while (i >= 0 && R[last].key_ - list->ith_key(i) > FLOATZERO)
+	{
 		i--;
 	}
 	return min(t, i + 1);
