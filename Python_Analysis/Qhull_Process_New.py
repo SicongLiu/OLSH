@@ -79,8 +79,8 @@ if __name__ == '__main__':
     dimensions = [10, 15, 20]
     cardinality = [1000, 2000, 4000, 8000]
 
-    # data_type = ['anti_correlated_', 'correlated_', 'random_']
-    data_type = ['correlated_', 'random_']
+    data_type = ['anti_correlated_', 'correlated_', 'random_']
+    # data_type = ['correlated_', 'random_']
     MAX_LAYERS = 10
 
     MY_DATA_FILE_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
