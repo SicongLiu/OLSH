@@ -1186,9 +1186,9 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 
 	int tMIPs[] = { 1, 2, 5, 10 };
 	//int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
-	int kMIPs[] = { 1, 2, 5, 10};
+	int kMIPs[] = { 1, 2, 5, 10, 20};
 	int maxT_round = 4;
-	int maxK_round = 4;
+	int maxK_round = 5;
 
 	float **pre    = new float*[maxT_round];
 	float **recall = new float*[maxT_round];
