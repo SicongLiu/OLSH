@@ -1148,7 +1148,8 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
+	if (read_ground_truth(qn, truth_set, R) == 1)
+	{
 		printf("Reading Truth Set Error!\n");
 		return 1;
 	}
@@ -1177,39 +1178,46 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	sprintf(output_set, "%ssimple_lsh_precision_recall.out", output_folder);
 
 	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
+	if (!fp)
+	{
 		printf("Could not create %s\n", output_set);
 		return 1;
 	}
 
 	int tMIPs[] = { 1, 2, 5, 10 };
-	int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
+	//int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
+	int kMIPs[] = { 1, 2, 5, 10};
 	int maxT_round = 4;
-	int maxK_round = 16;
+	int maxK_round = 4;
 
 	float **pre    = new float*[maxT_round];
 	float **recall = new float*[maxT_round];
 	
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
+	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	{
 		pre[t_round]    = new float[maxK_round];
 		recall[t_round] = new float[maxK_round];
 
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
+		for (int k_round = 0; k_round < maxK_round; ++k_round)
+		{
 			pre[t_round][k_round]    = 0;
 			recall[t_round][k_round] = 0;
 		}
 	}
 
 	printf("Top-t c-AMIP of Simple_LSH: \n");
-	for (int k_round = 0; k_round < maxK_round; ++k_round) {
+	for (int k_round = 0; k_round < maxK_round; ++k_round)
+	{
 		int top_k = kMIPs[k_round];
 		MaxK_List* list = new MaxK_List(top_k);
 
-		for (int i = 0; i < qn; ++i) {
+		for (int i = 0; i < qn; ++i)
+		{
 			list->reset();
 			lsh->kmip(top_k, query[i], list);
 
-			for (int t_round = 0; t_round < maxT_round; ++t_round) {
+			for (int t_round = 0; t_round < maxT_round; ++t_round)
+			{
 				int top_t = tMIPs[t_round];
 				int hits = get_hits(top_k, top_t, R[i], list);
 
@@ -1217,15 +1225,18 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 				recall[t_round][k_round] += hits / (float) top_t;
 			}
 		}
-		delete list; list = NULL;
+		delete list;
+		list = NULL;
 	}
 
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
+	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	{
 		int top_t = tMIPs[t_round];
 		printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
 		fprintf(fp, "Top-%d\tRecall\t\tPrecision\n", top_t);
 		
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
+		for (int k_round = 0; k_round < maxK_round; ++k_round)
+		{
 			int top_k = kMIPs[k_round];
 			pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
 			recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;

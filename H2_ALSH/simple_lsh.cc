@@ -96,7 +96,6 @@ int Simple_LSH::bulkload()			// bulkloading
 		}
 	}
 
-
 	// -------------------------------------------------------------------------
 	//  indexing the new data using SRP-LSH
 	// -------------------------------------------------------------------------
@@ -135,7 +134,8 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	{
 		if (i < dim_)
 			simple_lsh_query[i] = query[i] / norm_q;
-		else simple_lsh_query[i] = 0.0f;
+		else
+			simple_lsh_query[i] = 0.0f;
 	}
 
 	// -------------------------------------------------------------------------

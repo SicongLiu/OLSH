@@ -60,8 +60,7 @@ void usage() 						// display the usage of this package
 		"         Parameters: -alg 11 -n -qn -d -ds -qs -of\n"
 		"\n"
 		"-------------------------------------------------------------------\n"
-		" Authors: Qiang Huang (huangq2011@gmail.com)                       \n"
-		"          Guihong Ma  (maguihong@vip.qq.com)                       \n"
+		" Authors: Sicong Liu (s.liu@asu.edu)                               \n"
 		"-------------------------------------------------------------------\n"
 		"\n\n\n");
 }
@@ -131,9 +130,9 @@ int main(int nargs, char **args)
 			}
 		}
 		else if (strcmp(args[cnt], "-L") == 0) {
-			L = (float) atof(args[++cnt]);
+			L = atoi(args[++cnt]);
 			printf("L             = %d\n", L);
-			if (L <= 0.0f || L > 1.0f) {
+			if (L <= 0) {
 				failed = true;
 				break;
 			}

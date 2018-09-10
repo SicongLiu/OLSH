@@ -84,6 +84,10 @@ int read_data(						// read data/query set from disk
 	int num_element = -1;
 	fscanf(fp, "%d\n", &num_dim);
 	fscanf(fp, "%d\n", &num_element);
+
+	printf("num_dim: %d \n", num_dim);
+	printf("num_element: %d \n", num_element);
+
 	assert(num_dim == d);
 	assert(num_element == n);
 

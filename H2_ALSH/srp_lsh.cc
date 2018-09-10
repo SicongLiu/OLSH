@@ -116,8 +116,6 @@ int SRP_LSH::kmc(					// c-k-AMC search
 		get_proj_vector(query, mc_query[l], l);
 	}
 
-	int match = 0;
-
 	/* Modified by Sicong*/
 	// for each point, pick the best matched case and insert into candidate list
 	// candidate list:
@@ -132,7 +130,7 @@ int SRP_LSH::kmc(					// c-k-AMC search
 		{
 			for (int j = 0; j < K_; ++j)
 			{
-				if (hash_code_[i][j] == mc_query[j])
+				if (hash_code_[l][i][j] == mc_query[l][j])
 				{
 					++current_match;
 				}
