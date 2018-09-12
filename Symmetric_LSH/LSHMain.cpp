@@ -602,7 +602,7 @@ int main(int nargs, char **args)
 	Persist_nnStruct(nnStructs, nnStructs_file_name, nRadii);
 
 	/* Load nnStruct from file*/
-	PRNearNeighborStructT* my_nnStructs = Load_nnStruct(nnStructs_file_name);
+	// PRNearNeighborStructT* my_nnStructs = Load_nnStruct(nnStructs_file_name);
 
 	/* Load queries from file*/
 	PPointT *query_data_Points = NULL;
@@ -672,13 +672,13 @@ int main(int nargs, char **args)
 					// distToNN[p].real = my_combined_score(pointsDimension, queryPoint, result[p]);
 				}
 				// sort in ascending order due to Euclidean distance
-				qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
+				//qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
 				/**Changed by Sicong
 				 * Using dot product
 				 * my_comparePPointAndRealTStructT/comparePPointAndREALTStruct -- defined in Geometry.cpp
 				 * */
 				// sort in descending order because of dot product
-				// qsort(distToNN, nNNs, sizeof(*distToNN), my_comparePPointAndRealTStructT);
+				qsort(distToNN, nNNs, sizeof(*distToNN), comparePPointAndRealTStructT);
 
 				for(IntT j = 0; j < MIN(nNNs, MAX_REPORTED_POINTS); j++)
 				{

@@ -131,7 +131,8 @@ void determineRTCoefficients(RealT thresholdR,
   // Initialize the data set to use.
   PPointT *dataSet;
   FAILIF(NULL == (dataSet = (PPointT*)MALLOC(n * sizeof(PPointT))));
-  for(IntT i = 0; i < n; i++){
+  for(IntT i = 0; i < n; i++)
+  {
     dataSet[i] = realData[genRandomInt(0, nPoints - 1)];
   }
 
@@ -151,10 +152,12 @@ void determineRTCoefficients(RealT thresholdR,
   algParameters.parameterT = n;
   algParameters.typeHT = typeHT;
 
-  if (algParameters.useUfunctions){
+  if (algParameters.useUfunctions)
+  {
     algParameters.parameterM = computeMForULSH(algParameters.parameterK, algParameters.successProbability);
     algParameters.parameterL = algParameters.parameterM * (algParameters.parameterM - 1) / 2;
-  }else{
+  }else
+  {
     algParameters.parameterM = computeLfromKP(algParameters.parameterK, algParameters.successProbability);
     algParameters.parameterL = algParameters.parameterM;
   }
@@ -188,78 +191,84 @@ void determineRTCoefficients(RealT thresholdR,
   IntT nSucReps;
 
   do{
-    // create the test structure
-    PRNearNeighborStructT nnStruct;
-    switch(algParameters.typeHT){
-    case HT_LINKED_LIST:
-      nnStruct = initLSH(algParameters, n);
-      // add points to the test structure
-      for(IntT i = 0; i < n; i++){
-	addNewPointToPRNearNeighborStruct(nnStruct, realData[i]);
-      }
-      break;
-    case HT_HYBRID_CHAINS:
-    	printf("Calling initLSH_WithDataSet from SelfTuning.cpp");
-      nnStruct = initLSH_WithDataSet(algParameters, n, dataSet);
-      break;
-    default:
-      ASSERT(FALSE);
-    }
+	  // create the test structure
+	  PRNearNeighborStructT nnStruct;
+	  switch(algParameters.typeHT)
+	  {
+	  case HT_LINKED_LIST:
+		  nnStruct = initLSH(algParameters, n);
+		  // add points to the test structure
+		  for(IntT i = 0; i < n; i++)
+		  {
+			  addNewPointToPRNearNeighborStruct(nnStruct, realData[i]);
+		  }
+		  break;
+	  case HT_HYBRID_CHAINS:
+		  printf("Calling initLSH_WithDataSet from SelfTuning.cpp");
+		  nnStruct = initLSH_WithDataSet(algParameters, n, dataSet);
+		  break;
+	  default:
+		  ASSERT(FALSE);
+	  }
 
-    // query point
-    PPointT queryPoint;
-//     FAILIF(NULL == (queryPoint = (PPointT)MALLOC(sizeof(PointT))));
-//     FAILIF(NULL == (queryPoint->coordinates = (RealT*)MALLOC(dimension * sizeof(RealT))));
-//     RealT sqrLength = 0;
-//     for(IntT i = 0; i < dimension; i++){
-//       queryPoint->coordinates[i] = dataSet[0]->coordinates[i];
-//       //queryPoint->coordinates[i] = 0.1;
-//       sqrLength += SQR(queryPoint->coordinates[i]);
-//     }
-    //queryPoint->coordinates[0] = dataPoint->coordinates[0] + 0.0001;
-    //queryPoint->sqrLength = sqrLength;
+	  // query point
+	  PPointT queryPoint;
+	  //     FAILIF(NULL == (queryPoint = (PPointT)MALLOC(sizeof(PointT))));
+	  //     FAILIF(NULL == (queryPoint->coordinates = (RealT*)MALLOC(dimension * sizeof(RealT))));
+	  //     RealT sqrLength = 0;
+	  //     for(IntT i = 0; i < dimension; i++){
+	  //       queryPoint->coordinates[i] = dataSet[0]->coordinates[i];
+	  //       //queryPoint->coordinates[i] = 0.1;
+	  //       sqrLength += SQR(queryPoint->coordinates[i]);
+	  //     }
+	  //queryPoint->coordinates[0] = dataPoint->coordinates[0] + 0.0001;
+	  //queryPoint->sqrLength = sqrLength;
 
-    // reset the R parameter so that there are no NN neighbors.
-    setResultReporting(nnStruct, FALSE);
-    //DPRINTF1("X\n");
+	  // reset the R parameter so that there are no NN neighbors.
+	  setResultReporting(nnStruct, FALSE);
+	  //DPRINTF1("X\n");
 
-    lshPrecomp = 0;
-    uhashOver = 0;
-    distComp = 0;
-    IntT nReps = 20;
-    nSucReps = 0;
-    for(IntT rep = 0; rep < nReps; rep++){
-      queryPoint = realData[genRandomInt(0, nPoints - 1)];
-      timeComputeULSH = 0;
-      timeGetBucket = 0;
-      timeCycleBucket = 0;
-      nOfDistComps = 0;
-      nNNs = getNearNeighborsFromPRNearNeighborStruct(nnStruct, queryPoint, result, resultSize);
-      //DPRINTF("Time to compute LSH: %0.6lf\n", timeComputeULSH);
-      //DPRINTF("Time to get bucket: %0.6lf\n", timeGetBucket);
-      //DPRINTF("Time to cycle through buckets: %0.9lf\n", timeCycleBucket);
-      //DPRINTF("N of dist comp: %d\n", nOfDistComps);
+	  lshPrecomp = 0;
+	  uhashOver = 0;
+	  distComp = 0;
+	  IntT nReps = 20;
+	  nSucReps = 0;
+	  for(IntT rep = 0; rep < nReps; rep++)
+	  {
+		  queryPoint = realData[genRandomInt(0, nPoints - 1)];
+		  timeComputeULSH = 0;
+		  timeGetBucket = 0;
+		  timeCycleBucket = 0;
+		  nOfDistComps = 0;
+		  nNNs = getNearNeighborsFromPRNearNeighborStruct(nnStruct, queryPoint, result, resultSize);
+		  //DPRINTF("Time to compute LSH: %0.6lf\n", timeComputeULSH);
+		  //DPRINTF("Time to get bucket: %0.6lf\n", timeGetBucket);
+		  //DPRINTF("Time to cycle through buckets: %0.9lf\n", timeCycleBucket);
+		  //DPRINTF("N of dist comp: %d\n", nOfDistComps);
 
-      ASSERT(nNNs == 0);
-      if (nOfDistComps >= MIN(n / 10, 100)){
-	nSucReps++;
-	lshPrecomp += timeComputeULSH / algParameters.parameterK / algParameters.parameterM;
-	uhashOver += timeGetBucket / algParameters.parameterL;
-	distComp += timeCycleBucket / nOfDistComps;
-      }
-    }
+		  ASSERT(nNNs == 0);
+		  if (nOfDistComps >= MIN(n / 10, 100))
+		  {
+			  nSucReps++;
+			  lshPrecomp += timeComputeULSH / algParameters.parameterK / algParameters.parameterM;
+			  uhashOver += timeGetBucket / algParameters.parameterL;
+			  distComp += timeCycleBucket / nOfDistComps;
+		  }
+	  }
 
-    if (nSucReps >= 5){
-      lshPrecomp /= nSucReps;
-      uhashOver /= nSucReps;
-      distComp /= nSucReps;
-      DPRINTF1("RT coeffs computed.\n");
-    }else{
-      algParameters.parameterR *= 2; // double the radius and repeat
-      DPRINTF1("Could not determine the RT coeffs. Repeating.\n");
-    }
+	  if (nSucReps >= 5)
+	  {
+		  lshPrecomp /= nSucReps;
+		  uhashOver /= nSucReps;
+		  distComp /= nSucReps;
+		  DPRINTF1("RT coeffs computed.\n");
+	  }else
+	  {
+		  algParameters.parameterR *= 2; // double the radius and repeat
+		  DPRINTF1("Could not determine the RT coeffs. Repeating.\n");
+	  }
 
-    freePRNearNeighborStruct(nnStruct);
+	  freePRNearNeighborStruct(nnStruct);
 
   }while(nSucReps < 5);
 
@@ -298,7 +307,8 @@ IntT computeMForULSH(IntT k, RealT successProbability){
   RealT d = (1-mu)/(1-P)*1/LOG(1/mu) * POW(mu, -1/(1-mu));
   RealT y = LOG(d);
   IntT m = CEIL(1 - y/LOG(mu) - 1/(1-mu));
-  while (POW(mu, m-1) * (1 + m * (1-mu)) > 1 - P){
+  while (POW(mu, m-1) * (1 + m * (1-mu)) > 1 - P)
+  {
     m++;
   }
   return m;
@@ -409,7 +419,8 @@ RNNParametersT computeOptimalParameters(RealT R,
   // Compute the run-time parameters (timings of different parts of the algorithm).
   IntT nReps = 2; // # number of repetions
   RealT lshPrecomp = 0, uhashOver = 0, distComp = 0;
-  for(IntT i = 0; i < nReps; i++){
+  for(IntT i = 0; i < nReps; i++)
+  {
     RealT lP, uO, dC;
     determineRTCoefficients(optParameters.parameterR, 
 			    optParameters.successProbability, 
@@ -442,13 +453,15 @@ RNNParametersT computeOptimalParameters(RealT R,
   //PPointT query = dataSet[queryIndex]; // query points = a random points from the data set.
   IntT bestK = 0;
   RealT bestTime = 0;
-  for(k = 2; ; k += 2){
+  for(k = 2; ; k += 2)
+  {
 
     DPRINTF("ST. k = %d\n", k);
     IntT m = computeMForULSH(k, successProbability);
     IntT L = m * (m-1) / 2;
     //DPRINTF("Available memory: %lld\n", getAvailableMemory());
-    if (L * nPoints > memoryUpperBound / 12){
+    if (L * nPoints > memoryUpperBound / 12)
+    {
       break;
     }
     timeLSH = m * k * lshPrecomp;
@@ -457,7 +470,8 @@ RNNParametersT computeOptimalParameters(RealT R,
 
     // Compute the mean number of collisions for the points from the sample query set.
     RealT nCollisions = 0;
-    for(IntT i = 0; i < nSampleQueries; i++){
+    for(IntT i = 0; i < nSampleQueries; i++)
+    {
       nCollisions += estimateNDistinctCollisions(nPoints, dimension, dataSet, sampleQueries[i], TRUE, k, m, R);
     }
     nCollisions /= nSampleQueries;
@@ -469,7 +483,8 @@ RNNParametersT computeOptimalParameters(RealT R,
     DPRINTF("ST.TimeUH = %0.6lf\n", timeUH);
     DPRINTF("ST.TimeCycling = %0.6lf\n", timeCycling);
     DPRINTF("ST.Sum = %0.6lf\n", timeLSH + timeUH + timeCycling);
-    if (bestK == 0 || (timeLSH + timeUH + timeCycling) < bestTime) {
+    if (bestK == 0 || (timeLSH + timeUH + timeCycling) < bestTime)
+    {
       bestK = k;
       bestTime = timeLSH + timeUH + timeCycling;
     }
@@ -487,7 +502,8 @@ RNNParametersT computeOptimalParameters(RealT R,
   
   // Compute the mean number of collisions for the points from the sample query set.
   RealT nCollisions = 0;
-  for(IntT i = 0; i < nSampleQueries; i++){
+  for(IntT i = 0; i < nSampleQueries; i++)
+  {
     nCollisions += estimateNDistinctCollisions(nPoints, dimension, dataSet, sampleQueries[i], TRUE, k, m, R);
   }
   nCollisions /= nSampleQueries;

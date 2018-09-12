@@ -25,7 +25,7 @@
 // Maximum number of points = (2^N_BITS_PER_POINT_INDEX-2)
 #define MAX_N_POINTS ((1U << N_BITS_PER_POINT_INDEX) - 1)
 // Maxumum number of points to be reported (i.e., the "k" if interested in "k-NN")
-#define MAX_REPORTED_POINTS 10
+#define MAX_REPORTED_POINTS 100
 
 #define IntT int
 #define LongUns64T long long unsigned

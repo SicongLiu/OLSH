@@ -31,23 +31,23 @@
 
 
 // Compares according to the field "real" of the struct.
-int comparePPointAndRealTStructT(const void *a, const void *b){
+/*int comparePPointAndRealTStructT(const void *a, const void *b){
   PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
   PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
   return (x->real > y->real) - (x->real < y->real);
-}
+}*/
 
 // Compares according to the field "real" of the struct.
 // sorting based on descending order
-int my_comparePPointAndRealTStructT(const void *a, const void *b){
+int comparePPointAndRealTStructT(const void *a, const void *b){
   PPointAndRealTStructT *x = (PPointAndRealTStructT*)a;
   PPointAndRealTStructT *y = (PPointAndRealTStructT*)b;
   return (x->real < y->real) - (x->real > y->real);
 }
 
-#ifdef USE_L1_DISTANCE
+//#ifdef USE_L1_DISTANCE
 // Returns the L1 distance from point <p1> to <p2>.
-RealT distance(IntT dimension, PPointT p1, PPointT p2){
+/*RealT distance(IntT dimension, PPointT p1, PPointT p2){
   RealT result = 0;
 
   for (IntT i = 0; i < dimension; i++){
@@ -55,19 +55,26 @@ RealT distance(IntT dimension, PPointT p1, PPointT p2){
   }
 
   return result;
-}
-#else
+}*/
+//#else
 // Returns the Euclidean distance from point <p1> to <p2>.
 RealT distance(IntT dimension, PPointT p1, PPointT p2){
-  RealT result = 0;
+	/*RealT result = 0;
 
   for (IntT i = 0; i < dimension; i++){
     result += SQR(p1->coordinates[i] - p2->coordinates[i]);
   }
 
-  return SQRT(result);
+  return SQRT(result);*/
+	RealT result = 0;
+
+	for (IntT i = 0; i < dimension; i++)
+	{
+		result += p1->coordinates[i] * p2->coordinates[i];
+	}
+	return result;
 }
-#endif
+//#endif
 
 /**
  * Created by Sicong:
