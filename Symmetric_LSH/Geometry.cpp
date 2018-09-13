@@ -59,13 +59,21 @@ RealT distance(IntT dimension, PPointT p1, PPointT p2){
 #else
 // Returns the Euclidean distance from point <p1> to <p2>.
 RealT distance(IntT dimension, PPointT p1, PPointT p2){
-  RealT result = 0;
+	/*RealT result = 0;
 
   for (IntT i = 0; i < dimension; i++){
     result += SQR(p1->coordinates[i] - p2->coordinates[i]);
   }
 
-  return SQRT(result);
+  return SQRT(result);*/
+
+	RealT result = 0;
+
+	for (IntT i = 0; i < dimension; i++)
+	{
+		result += p1->coordinates[i] * p2->coordinates[i];
+	}
+	return result;
 }
 #endif
 

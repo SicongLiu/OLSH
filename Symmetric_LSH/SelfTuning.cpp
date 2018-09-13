@@ -228,33 +228,37 @@ void determineRTCoefficients(RealT thresholdR,
     distComp = 0;
     IntT nReps = 20;
     nSucReps = 0;
-    for(IntT rep = 0; rep < nReps; rep++){
-      queryPoint = realData[genRandomInt(0, nPoints - 1)];
-      timeComputeULSH = 0;
-      timeGetBucket = 0;
-      timeCycleBucket = 0;
-      nOfDistComps = 0;
-      nNNs = getNearNeighborsFromPRNearNeighborStruct(nnStruct, queryPoint, result, resultSize);
-      //DPRINTF("Time to compute LSH: %0.6lf\n", timeComputeULSH);
-      //DPRINTF("Time to get bucket: %0.6lf\n", timeGetBucket);
-      //DPRINTF("Time to cycle through buckets: %0.9lf\n", timeCycleBucket);
-      //DPRINTF("N of dist comp: %d\n", nOfDistComps);
+    for(IntT rep = 0; rep < nReps; rep++)
+    {
+    	queryPoint = realData[genRandomInt(0, nPoints - 1)];
+    	timeComputeULSH = 0;
+    	timeGetBucket = 0;
+    	timeCycleBucket = 0;
+    	nOfDistComps = 0;
+    	nNNs = getNearNeighborsFromPRNearNeighborStruct(nnStruct, queryPoint, result, resultSize);
+    	//DPRINTF("Time to compute LSH: %0.6lf\n", timeComputeULSH);
+    	//DPRINTF("Time to get bucket: %0.6lf\n", timeGetBucket);
+    	//DPRINTF("Time to cycle through buckets: %0.9lf\n", timeCycleBucket);
+    	//DPRINTF("N of dist comp: %d\n", nOfDistComps);
 
-      ASSERT(nNNs == 0);
-      if (nOfDistComps >= MIN(n / 10, 100)){
-	nSucReps++;
-	lshPrecomp += timeComputeULSH / algParameters.parameterK / algParameters.parameterM;
-	uhashOver += timeGetBucket / algParameters.parameterL;
-	distComp += timeCycleBucket / nOfDistComps;
-      }
+    	ASSERT(nNNs == 0);
+    	if (nOfDistComps >= MIN(n / 10, 100))
+    	{
+    		nSucReps++;
+    		lshPrecomp += timeComputeULSH / algParameters.parameterK / algParameters.parameterM;
+    		uhashOver += timeGetBucket / algParameters.parameterL;
+    		distComp += timeCycleBucket / nOfDistComps;
+    	}
     }
 
-    if (nSucReps >= 5){
+    if (nSucReps >= 5)
+    {
       lshPrecomp /= nSucReps;
       uhashOver /= nSucReps;
       distComp /= nSucReps;
       DPRINTF1("RT coeffs computed.\n");
-    }else{
+    }else
+    {
       algParameters.parameterR *= 2; // double the radius and repeat
       DPRINTF1("Could not determine the RT coeffs. Repeating.\n");
     }
@@ -298,7 +302,8 @@ IntT computeMForULSH(IntT k, RealT successProbability){
   RealT d = (1-mu)/(1-P)*1/LOG(1/mu) * POW(mu, -1/(1-mu));
   RealT y = LOG(d);
   IntT m = CEIL(1 - y/LOG(mu) - 1/(1-mu));
-  while (POW(mu, m-1) * (1 + m * (1-mu)) > 1 - P){
+  while (POW(mu, m-1) * (1 + m * (1-mu)) > 1 - P)
+  {
     m++;
   }
   return m;
@@ -326,20 +331,24 @@ RealT estimateNCollisionsFromDSPoint(IntT nPoints, IntT dim, PPointT *dataSet, I
 }
 
 RealT estimateNDistinctCollisions(IntT nPoints, IntT dim, PPointT *dataSet, PPointT query, BooleanT useUfunctions, IntT k, IntT LorM, RealT R){
-  RealT sumCollisions = 0;
-  for(IntT i = 0; i < nPoints; i++){
-    if (query != dataSet[i]) {
-      RealT dist = distance(dim, query, dataSet[i]);
-      if (!useUfunctions){
-	sumCollisions += 1-POW(1-POW(computeFunctionP(PARAMETER_W_DEFAULT, dist / R), k), LorM);
-      }else{
-	RealT mu = 1 - POW(computeFunctionP(PARAMETER_W_DEFAULT, dist / R), k / 2);
-	RealT x = POW(mu, LorM - 1);
-	sumCollisions += 1 - mu * x - LorM * (1 - mu) * x;
-      }
-    }
-  }
-  return sumCollisions;
+	RealT sumCollisions = 0;
+	for(IntT i = 0; i < nPoints; i++)
+	{
+		if (query != dataSet[i])
+		{
+			RealT dist = distance(dim, query, dataSet[i]);
+			if (!useUfunctions)
+			{
+				sumCollisions += 1-POW(1-POW(computeFunctionP(PARAMETER_W_DEFAULT, dist / R), k), LorM);
+			}else
+			{
+				RealT mu = 1 - POW(computeFunctionP(PARAMETER_W_DEFAULT, dist / R), k / 2);
+				RealT x = POW(mu, LorM - 1);
+				sumCollisions += 1 - mu * x - LorM * (1 - mu) * x;
+			}
+		}
+	}
+	return sumCollisions;
 }
 
 RealT estimateNDistinctCollisionsFromDSPoint(IntT nPoints, IntT dim, PPointT *dataSet, IntT queryIndex, BooleanT useUfunctions, IntT k, IntT LorM, RealT R){
@@ -409,7 +418,8 @@ RNNParametersT computeOptimalParameters(RealT R,
   // Compute the run-time parameters (timings of different parts of the algorithm).
   IntT nReps = 2; // # number of repetions
   RealT lshPrecomp = 0, uhashOver = 0, distComp = 0;
-  for(IntT i = 0; i < nReps; i++){
+  for(IntT i = 0; i < nReps; i++)
+  {
     RealT lP, uO, dC;
     determineRTCoefficients(optParameters.parameterR, 
 			    optParameters.successProbability, 
@@ -442,7 +452,8 @@ RNNParametersT computeOptimalParameters(RealT R,
   //PPointT query = dataSet[queryIndex]; // query points = a random points from the data set.
   IntT bestK = 0;
   RealT bestTime = 0;
-  for(k = 2; ; k += 2){
+  for(k = 2; ; k += 2)
+  {
 
     DPRINTF("ST. k = %d\n", k);
     IntT m = computeMForULSH(k, successProbability);
@@ -487,7 +498,8 @@ RNNParametersT computeOptimalParameters(RealT R,
   
   // Compute the mean number of collisions for the points from the sample query set.
   RealT nCollisions = 0;
-  for(IntT i = 0; i < nSampleQueries; i++){
+  for(IntT i = 0; i < nSampleQueries; i++)
+  {
     nCollisions += estimateNDistinctCollisions(nPoints, dimension, dataSet, sampleQueries[i], TRUE, k, m, R);
   }
   nCollisions /= nSampleQueries;

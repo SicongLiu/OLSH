@@ -123,11 +123,11 @@ int SRP_LSH::kmc(					// c-k-AMC search
 	// 		value: data object ID
 	for (int i = 0; i < n_pts_; ++i)
 	{
-		int current_match = 0;
 		int best_match = 0;
 		int matched_dim = 0;
 		for(int l = 0; l < L_; l++)
 		{
+			int current_match = 0;
 			for (int j = 0; j < K_; ++j)
 			{
 				if (hash_code_[l][i][j] == mc_query[l][j])
