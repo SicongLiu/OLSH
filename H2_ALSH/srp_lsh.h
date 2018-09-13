@@ -17,6 +17,7 @@ public:
 		int d,							// dimensionality of dataset
 		int K,							// number of hash tables
 		int L,							// number of hash layers
+		float S,						// similarity threshold
 		const float **data);			// data objects
 
 	// -------------------------------------------------------------------------
@@ -37,6 +38,7 @@ protected:
 	int   dim_;						// dimensionality of dataset
 	int   K_;						// number of hash tables
 	int   L_;						// number of hash layers
+	float S_;						// similarity threshold
 	const float **data_;			// data objects
 
 	bool  ***hash_code_;				// hash code of data objects

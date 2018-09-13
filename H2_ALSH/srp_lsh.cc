@@ -6,6 +6,7 @@ SRP_LSH::SRP_LSH(					// constructor
 	int d,								// dimensionality of dataset
 	int K,								// number of hash tables
 	int L,								// number of hash layers
+	float S,							// similarity threshold
 	const float **data)					// data objects
 {
 	// -------------------------------------------------------------------------
@@ -15,6 +16,7 @@ SRP_LSH::SRP_LSH(					// constructor
 	dim_   = d;
 	K_     = K;
 	L_     = L;
+	S_	   = S;
 	data_  = data;
 
 	// -------------------------------------------------------------------------
@@ -137,8 +139,10 @@ int SRP_LSH::kmc(					// c-k-AMC search
 			}
 			if(current_match > best_match)
 				best_match = current_match;
-			list->insert(best_match, i);
 		}
+		// enforce matching similarity associated with optimization function
+		if(calc_inner_product(dim_, data_[i], query) >=S_)
+			list->insert(best_match, i);
 	}
 
 	// -------------------------------------------------------------------------

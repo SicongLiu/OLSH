@@ -76,7 +76,8 @@ int main(int nargs, char **args)
 	int   qn        = -1;			// query number
 	int   d         = -1;			// dimensionality
 	int   K         = -1;			// #tables for sign-alsh and simple-lsh
-	int 	  L         = -1;		// # of hash layers
+	int   L         = -1;			// # of hash layers
+	float S 		= -1.0f;		// similarity threshold
 	float nn_ratio  = -1.0f;		// approximation ratio of ANN search
 	float mip_ratio = -1.0f;		// approximation ratio of AMIP search
 
@@ -133,6 +134,14 @@ int main(int nargs, char **args)
 			L = atoi(args[++cnt]);
 			printf("L             = %d\n", L);
 			if (L <= 0) {
+				failed = true;
+				break;
+			}
+		}
+		else if (strcmp(args[cnt], "-S") == 0) {
+			S = (float) atof(args[++cnt]);
+			printf("S            = %.2f\n", S);
+			if (S <= 0.0f) {
 				failed = true;
 				break;
 			}
@@ -235,7 +244,7 @@ int main(int nargs, char **args)
 			truth_set, output_folder);
 		break;
 	case 6:
-		simple_lsh(n, qn, d, K, L, nn_ratio, (const float **) data,
+		simple_lsh(n, qn, d, K, L, S, nn_ratio, (const float **) data,
 			(const float **) query, truth_set, output_folder);
 		break;
 	case 7:
@@ -247,7 +256,7 @@ int main(int nargs, char **args)
 			(const float **) query, truth_set, output_folder);
 		break;
 	case 10:
-		simple_lsh_precision_recall(n, qn, d, K, L, nn_ratio, (const float **) data,
+		simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
 			(const float **) query, truth_set, output_folder);
 		break;
 	case 11:

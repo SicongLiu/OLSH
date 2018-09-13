@@ -82,6 +82,7 @@ int simple_lsh(						// c-AMIP search via simple_lsh
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
+	float S,							// similarity threshold
 	float nn_ratio,						// approximation ratio for ANN search
 	const float **data,					// data set
 	const float **query,				// query set
@@ -131,6 +132,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
+	float S,							// similarity threshold
 	float nn_ratio,						// approximation ratio for ANN search
 	const float **data,					// data set
 	const float **query,				// query set
