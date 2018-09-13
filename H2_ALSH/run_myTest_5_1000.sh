@@ -1,5 +1,5 @@
 #!/bin/bash
-# make
+make
 rm *.o
 
 # ------------------------------------------------------------------------------
@@ -10,6 +10,7 @@ cardinality=1000
 d=5
 qn=1
 c0=2.0
+S=0.9
 
 n0=312
 n1=301
@@ -18,10 +19,10 @@ n3=115
 n4=53
 n5=10
 
-K0=5
-K1=4
-K2=3
-K3=2
+K0=512
+K1=412
+K2=312
+K3=212
 # K4=4
 
 # K0=512
@@ -34,6 +35,8 @@ L1=9
 L2=7
 L3=6
 L4=6
+
+
 
 dPath0=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_0
 dPath1=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_1
@@ -68,18 +71,18 @@ tsPath=./result/result_${d}D # path for the ground truth
 #     -ds ${dPath}.ds -qs ${dPath}.q -ts ${dPath}.mip -of ${oFolder}
 
 
-./alsh -alg 10 -n ${n0} -qn ${qn} -d ${d} -K ${K0} -L ${L0} -c0 ${c0} -ds ${dPath0} \
+./alsh -alg 10 -n ${n0} -qn ${qn} -d ${d} -K ${K0} -L ${L0} -S ${S} -c0 ${c0} -ds ${dPath0} \
     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder0}.simple_LSH
 
-./alsh -alg 10 -n ${n1} -qn ${qn} -d ${d} -K ${K1} -L ${L1} -c0 ${c0} -ds ${dPath1} \
+./alsh -alg 10 -n ${n1} -qn ${qn} -d ${d} -K ${K1} -L ${L1} -S ${S} -c0 ${c0} -ds ${dPath1} \
     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder1}.simple_LSH
 
 
-./alsh -alg 10 -n ${n2} -qn ${qn} -d ${d} -K ${K2} -L ${L2} -c0 ${c0} -ds ${dPath2} \
+./alsh -alg 10 -n ${n2} -qn ${qn} -d ${d} -K ${K2} -L ${L2} -S ${S} -c0 ${c0} -ds ${dPath2} \
     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder2}.simple_LSH
 
 
-./alsh -alg 10 -n ${n3} -qn ${qn} -d ${d} -K ${K3} -L ${L3} -c0 ${c0} -ds ${dPath3} \
+./alsh -alg 10 -n ${n3} -qn ${qn} -d ${d} -K ${K3} -L ${L3} -S ${S} -c0 ${c0} -ds ${dPath3} \
     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder3}.simple_LSH
 
 

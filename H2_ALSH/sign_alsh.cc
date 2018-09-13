@@ -141,7 +141,7 @@ int Sign_ALSH::kmip(				// c-k-AMIP search
 	//  conduct c-k-AMC search by SRP-LSH
 	// -------------------------------------------------------------------------
 	MaxK_List *mcs_list = new MaxK_List(top_k);
-	lsh_->kmc(top_k, (const float *) sign_alsh_query,  mcs_list);
+	lsh_->kmc(top_k, (const float *) sign_alsh_query,  mcs_list, query);
 
 	// -------------------------------------------------------------------------
 	//  calc inner product for candidates returned by SRP-LSH

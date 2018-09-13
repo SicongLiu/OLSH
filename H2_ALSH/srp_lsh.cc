@@ -109,7 +109,9 @@ void SRP_LSH::get_proj_vector(		// get vector after random projection
 int SRP_LSH::kmc(					// c-k-AMC search
 	int   top_k,						// top-k value
 	const float *query,					// input query
-	MaxK_List *list)					// top-k MC results (return)
+	MaxK_List *list,					// top-k MC results (return)
+	const float *real_query
+	)
 {
 	bool **mc_query = new bool*[L_];
 	for(int l = 0; l < L_; l++)
@@ -141,8 +143,10 @@ int SRP_LSH::kmc(					// c-k-AMC search
 				best_match = current_match;
 		}
 		// enforce matching similarity associated with optimization function
-		if(calc_inner_product(dim_, data_[i], query) >=S_)
+		if(calc_inner_product(dim_, data_[i], real_query) >=S_)
+		{
 			list->insert(best_match, i);
+		}
 	}
 
 	// -------------------------------------------------------------------------

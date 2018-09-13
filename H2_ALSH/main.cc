@@ -141,10 +141,10 @@ int main(int nargs, char **args)
 		else if (strcmp(args[cnt], "-S") == 0) {
 			S = (float) atof(args[++cnt]);
 			printf("S            = %.2f\n", S);
-			if (S <= 0.0f) {
+			/*if (S <= 0.0f) {
 				failed = true;
 				break;
-			}
+			}*/
 		}
 		else if (strcmp(args[cnt], "-c0") == 0) {
 			nn_ratio = (float) atof(args[++cnt]);

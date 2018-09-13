@@ -1129,12 +1129,12 @@ int sign_alsh_precision_recall(		// precision recall curve of sign_alsh
 
 // -----------------------------------------------------------------------------
 int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
-	float S,
 	int   n,							// number of data points
 	int   qn,							// number of query points
 	int   d,							// dimension of space
 	int   K,							// number of hash functions
 	int   L,							// number of hash tables
+	float  S,							// number of hash tables
 	float nn_ratio,						// approximation ratio for nn search
 	const float **data,					// data set
 	const float **query,				// query set
@@ -1212,7 +1212,6 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	{
 		int top_k = kMIPs[k_round];
 		MaxK_List* list = new MaxK_List(top_k);
-
 		for (int i = 0; i < qn; ++i)
 		{
 			list->reset();
