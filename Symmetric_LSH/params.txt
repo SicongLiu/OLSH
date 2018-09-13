@@ -2,7 +2,7 @@
 R
 1
 Success probability
-0.9
+0.1
 Dimension
 2
 R^2

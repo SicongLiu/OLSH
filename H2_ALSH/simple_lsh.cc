@@ -7,6 +7,7 @@ Simple_LSH::Simple_LSH()			// default constructor
 	dim_             = -1;
 	K_               = -1;
 	L_               = -1;
+	S_               = -1.0f;
 	appr_ratio_      = -1.0f;
 	data_            = NULL;
 	M_               = -1.0f;
@@ -36,6 +37,7 @@ void Simple_LSH::build(				// build index
 	int   d,							// dimension of data
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
+	float   S,							// similarity threshold
 	float ratio,						// approximation ratio
 	const float** data)					// data objects
 {
@@ -46,6 +48,7 @@ void Simple_LSH::build(				// build index
 	dim_            = d;
 	K_              = K;
 	L_              = L;
+	S_				= S;
 	appr_ratio_     = ratio;
 	data_           = data;
 	simple_lsh_dim_ = d + 1;
@@ -99,7 +102,7 @@ int Simple_LSH::bulkload()			// bulkloading
 	// -------------------------------------------------------------------------
 	//  indexing the new data using SRP-LSH
 	// -------------------------------------------------------------------------
-	lsh_ = new SRP_LSH(n_pts_, simple_lsh_dim_, K_, L_,
+	lsh_ = new SRP_LSH(n_pts_, simple_lsh_dim_, K_, L_, S_,
 		(const float **) simple_lsh_data_);
 
 	return 0;

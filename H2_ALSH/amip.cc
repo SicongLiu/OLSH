@@ -655,6 +655,7 @@ int simple_lsh(						// mip search via simple_lsh
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
+	float S,
 	float nn_ratio,						// approximation ratio for nn search
 	const float **data,					// data set
 	const float **query,				// query set
@@ -686,7 +687,7 @@ int simple_lsh(						// mip search via simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, nn_ratio, data);
+	lsh->build(n, d, K, L, S, nn_ratio, data);
 
 	gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec + 
@@ -1128,6 +1129,7 @@ int sign_alsh_precision_recall(		// precision recall curve of sign_alsh
 
 // -----------------------------------------------------------------------------
 int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
+	float S,
 	int   n,							// number of data points
 	int   qn,							// number of query points
 	int   d,							// dimension of space
@@ -1164,7 +1166,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, nn_ratio, data);
+	lsh->build(n, d, K, L, S, nn_ratio, data);
 
 	gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec + 
