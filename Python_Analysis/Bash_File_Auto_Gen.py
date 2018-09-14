@@ -1,0 +1,97 @@
+# script to generate .sh file for execution
+
+# data_type = ["anti_correlated", "correlated", "random"]
+data_type = ["anti_correlated"]
+dimensions = [5]
+cardinality = [1000]
+query_count = 1
+
+ratios = [2]
+sim_thresholds = [0.9]
+
+BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/"
+BASH_FILE_FOLDER = "../H2_ALSH/"
+
+# read qhull data to get qhull layer element count
+for i in range(len(data_type)):
+    for j in range(len(dimensions)):
+        for k in range(len(cardinality)):
+            K_List = []
+            L_List = []
+            qhull_data_count = []
+            bash_file = PARAMETER_BASE_FOLDER + "run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
+                        str(cardinality[k]) + ".sh"
+
+            # read parameters K and L
+            # path for param-K
+            paramK_path = PARAMETER_BASE_FOLDER + "K_" + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
+            f1 = open(paramK_path, 'r')
+            K_lines = f1.readlines()
+            for k_index in range(0, len(K_lines)):
+                K_List.append(int(K_lines[k_index].split('\n')[0]))
+            f1.close()
+
+            # path for param-L
+            paramL_path = PARAMETER_BASE_FOLDER + "L_" + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
+
+            f2 = open(paramL_path, 'r')
+            L_lines = f2.readlines()
+            for l_index in range(0, len(L_lines)):
+                L_List.append(int(L_lines[l_index].split('\n')[0]))
+            f2.close()
+
+            for m in range(len(K_List)):
+                qhull_file = BASE_FOLDER + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k]) + \
+                             "_" + "qhull_layer_" + str(m)
+                f = open(qhull_file, 'r')
+                lines = f.readlines()
+                second_line = lines[1]
+                cur_data_count = int(second_line.split('\n')[0])
+                qhull_data_count.append(cur_data_count)
+                f.close()
+
+            # write to .sh file at save path
+            f3 = open(bash_file, 'w')
+            f3.write("#!/bin/bash \n")
+            f3.write("# make \n")
+            f3.write("rm *.o \n")
+            cur_data_type = data_type[i]
+            cur_cardinality = cardinality[k]
+            cur_dimension = dimensions[j]
+
+            for rr in range(len(ratios)):
+                for ss in range(len(sim_thresholds)):
+                    ratio = ratios[rr]
+                    sim_threshold = sim_thresholds[ss]
+                    f3.write("datatype=" + cur_data_type + "\n")
+                    f3.write("cardinality=" + str(cur_cardinality) + "\n")
+                    f3.write("d=" + str(cur_dimension) + "\n")
+                    f3.write("qn=" + str(query_count) + "\n")
+                    f3.write("c0=" + str(ratio) + "\n")
+                    f3.write("S=" + str(sim_threshold) + "\n \n \n")
+
+                    for kk in range(len(K_List)):
+                        f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                        f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                        f3.write("L" + str(kk) + "=" + str(L_List[kk]) + "\n")
+
+                        f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                                     "${cardinality}_qhull_layer_"+str(kk) + "\n")
+
+                        f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                       "${cardinality}/result_${d}D" + str(kk) + "_${K" + str(kk)
+                                 + "}_${L"+str(kk) + "}" + "\n")
+
+                        f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                 "} -L ${L" + str(kk) + "} -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                 + "} -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder" + str(kk) + "}.simple_LSH \n")
+
+                        f3.write("\n")
+
+                    f3.write("\n \n \n")
+                    f3.write("qPath=./query/query_${d}D.txt \n")
+                    f3.write("tsPath=./result/result_${d}D # path for the ground truth \n")
+
+            f3.close()
+
