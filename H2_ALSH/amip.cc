@@ -1139,6 +1139,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	const float **data,					// data set
 	const float **query,				// query set
 	const char  *truth_set,				// address of truth set
+	const char  *temp_result,			// address to store temporary output from different onion layers
 	const char  *output_folder) 		// output folder
 {
 	timeval start_time, end_time;
@@ -1216,6 +1217,8 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 		{
 			list->reset();
 			lsh->kmip(top_k, query[i], list);
+			// persist (append) topk list on file, per query per list
+			persist_intermediate_on_file(top_k, d, list, data, temp_result);
 
 			for (int t_round = 0; t_round < maxT_round; ++t_round)
 			{
@@ -1329,6 +1332,75 @@ int norm_distribution(				// analyse norm distribution of data
 	float runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec - 
 		start_time.tv_usec) / 1000000.0f;
 	printf("Norm distribution: %.6f Seconds\n\n", runtime);
+
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int persist_intermediate_on_file(		// persist intermediate result per query per onion layer on file, for aggregation
+	int   topk, 						// topk results of interest
+	int   d,							// dimension of space
+	MaxK_List* list,					// list that contains the topk result per query per onion layer
+	const float **data,					// data set
+	const char  *output_folder)			// output folder
+{
+	FILE *fp = fopen(output_folder, "a+");
+	if (!fp)
+	{
+		printf("Could not create %s\n", output_folder);
+		return 1;
+	}
+
+	for(int i = 0; i < list->size(); i++)
+	{
+		int current_data_idx = list->ith_id(i);
+		for(int j = 0; j < d; j++)
+		{
+			fprintf(fp, "%f\t", data[current_data_idx][j]);
+		}
+		fprintf(fp, "%f\t", list->ith_key(i));	// flush the similarity value to file
+		fprintf(fp, "\n");
+	}
+	fclose(fp);
+}
+
+
+// -----------------------------------------------------------------------------
+int overall_performance(				// output the overall performance of indexing
+		int   d,							// dimension of space
+		int   qn, 							// number of queries
+		int   layers,						// number of onion layers
+		const char  *temp_output_folder,	// temporal output
+		const char  *ground_truth_folder,	// ground truth folder
+		const char  *output_folder)			// output folder
+{
+	// need to initialize temp_result
+
+
+	int tMIPs[] = { 1, 2, 5, 10 };
+	int kMIPs[] = { 1, 2, 5, 10, 20};
+	int maxT_round = 4;
+	int maxK_round = 5;
+	FILE *fp1 = fopen(temp_output_folder, "r");
+	if (!fp1)
+	{
+		printf("Could not open %s\n", temp_output_folder);
+		return 1;
+	}
+
+	// temp_result dimension: d+1, last dimension is the similarity score
+	int i   = 0;
+	while (!feof(fp1) && i < topk*layers*qn)
+	{
+		for (int j = 0; j < d; ++j)
+		{
+			fscanf(fp1, " %f", &temp_result[i][j]);
+		}
+		fscanf(fp1, "\n");
+		++i;
+	}
+	assert(feof(fp1) && i == topk*layers*qn);
+	fclose(fp1);
 
 	return 0;
 }

@@ -84,6 +84,7 @@ int main(int nargs, char **args)
 	char  data_set[200];			// address of data set
 	char  query_set[200];			// address of query set
 	char  truth_set[200];			// address of ground truth file
+	char  temp_set[200];			// address of temporary results per query per onion layer
 	char  output_folder[200];		// output folder
 
 	bool  failed = false;
@@ -174,6 +175,10 @@ int main(int nargs, char **args)
 			strncpy(truth_set, args[++cnt], sizeof(truth_set));
 			printf("truth_set     = %s\n", truth_set);
 		}
+		else if (strcmp(args[cnt], "-it") == 0) {
+			strncpy(temp_set, args[++cnt], sizeof(temp_set));
+			printf("temp_st     = %s\n", temp_set);
+		}
 		else if (strcmp(args[cnt], "-of") == 0) {
 			strncpy(output_folder, args[++cnt], sizeof(output_folder));
 			printf("output_folder = %s\n", output_folder);
@@ -257,10 +262,13 @@ int main(int nargs, char **args)
 		break;
 	case 10:
 		simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-			(const float **) query, truth_set, output_folder);
+			(const float **) query, truth_set, temp_set, output_folder);
 		break;
 	case 11:
 		norm_distribution(n, d, (const float **) data, output_folder);
+		break;
+	case 12: // compute overall performance, as a separate option
+		overall_performance(d, qn, L, temp_set, truth_set, output_folder);
 		break;
 	default:
 		printf("Parameters error!\n");

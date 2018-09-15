@@ -137,6 +137,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	const float **data,					// data set
 	const float **query,				// query set
 	const char  *truth_set,				// address of truth set
+	const char  *temp_result,			// address to store temporary output from different onion layers
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
@@ -144,6 +145,23 @@ int norm_distribution(				// analyse norm distribution of data
 	int   n,							// number of data points
 	int   d,							// dimension of space
 	const float **data,					// data set
+	const char  *output_folder);		// output folder
+
+// -----------------------------------------------------------------------------
+int persist_intermediate_on_file(		// persist intermediate result per query per onion layer on file, for aggregation
+	int   topk, 						// topk results of interest
+	int   d,							// dimension of space
+	MaxK_List* list,					// list that contains the topk result per query per onion layer
+	const float **data,					// data set
+	const char  *output_folder);		// output folder
+
+// -----------------------------------------------------------------------------
+int overall_performance(				// output the overall performance of indexing
+	int   d,							// dimension of space
+	int   qn, 							// number of queries
+	int   layers,						// number of onion layers
+	const char  *temp_output_folder,	// temporal output folder
+	const char  *ground_truth_folder,	// ground truth folder
 	const char  *output_folder);		// output folder
 
 #endif // __AMIP_H
