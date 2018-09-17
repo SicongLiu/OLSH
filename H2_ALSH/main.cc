@@ -1,5 +1,8 @@
 #include "headers.h"
 
+// int MAX_DIMENSION = 0;
+
+
 // -----------------------------------------------------------------------------
 void usage() 						// display the usage of this package
 {
@@ -110,6 +113,7 @@ int main(int nargs, char **args)
 		else if (strcmp(args[cnt], "-d") == 0) {
 			d = atoi(args[++cnt]);
 			printf("d             = %d\n", d);
+			// MAX_DIMENSION = d;
 			if (d <= 0) {
 				failed = true;
 				break;

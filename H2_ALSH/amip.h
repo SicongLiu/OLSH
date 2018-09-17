@@ -164,4 +164,6 @@ int overall_performance(				// output the overall performance of indexing
 	const char  *ground_truth_folder,	// ground truth folder
 	const char  *output_folder);		// output folder
 
+int my_sort_col(const void *a, const void *b);
+
 #endif // __AMIP_H
