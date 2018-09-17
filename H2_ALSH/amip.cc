@@ -1386,6 +1386,7 @@ int overall_performance(				// output the overall performance of indexing
 		const char  *ground_truth_folder,	// ground truth folder
 		const char  *output_folder)			// output folder
 {
+	printf("we are here: !!!!");
 	MAX_DIMENSION = d;
 	int tMIPs[] = { 1, 2, 5, 10 };
 	int kMIPs[] = { 1, 2, 5, 10, 20};
@@ -1453,13 +1454,14 @@ int overall_performance(				// output the overall performance of indexing
 		qsort(temp_result[i], kMIPs[maxK_round - 1]*layers, sizeof(*temp_result[i]), my_sort_col);
 	}
 
-	char output_set[200];
-	sprintf(output_set, "%ssimple_lsh_precision_recall.out", output_folder);
+	/*char output_set[200];
+	sprintf(output_set, "%soverall_simple_lsh_precision_recall.out", output_folder);
 
-	FILE *fp2 = fopen(output_set, "a+");
+	FILE *fp2 = fopen(output_set, "a+");*/
+	FILE *fp2 = fopen(output_folder, "r");
 	if (!fp2)
 	{
-		printf("Could not create %s\n", output_set);
+		printf("Could not open %s\n", output_folder);
 		return 1;
 	}
 

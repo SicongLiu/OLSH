@@ -12,6 +12,7 @@ sim_thresholds = [0.9]
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/"
 BASH_FILE_FOLDER = "../H2_ALSH/"
+TEMPORAL_RESULT = "../H2_ALSH/qhull_data/"
 
 # read qhull data to get qhull layer element count
 for i in range(len(data_type)):
@@ -20,7 +21,7 @@ for i in range(len(data_type)):
             K_List = []
             L_List = []
             qhull_data_count = []
-            bash_file = PARAMETER_BASE_FOLDER + "run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
+            bash_file = BASH_FILE_FOLDER + "run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
                         str(cardinality[k]) + ".sh"
 
             # read parameters K and L
@@ -59,7 +60,6 @@ for i in range(len(data_type)):
             cur_data_type = data_type[i]
             cur_cardinality = cardinality[k]
             cur_dimension = dimensions[j]
-
             for rr in range(len(ratios)):
                 for ss in range(len(sim_thresholds)):
                     ratio = ratios[rr]
@@ -69,7 +69,19 @@ for i in range(len(data_type)):
                     f3.write("d=" + str(cur_dimension) + "\n")
                     f3.write("qn=" + str(query_count) + "\n")
                     f3.write("c0=" + str(ratio) + "\n")
-                    f3.write("S=" + str(sim_threshold) + "\n \n \n")
+                    temporalResult = TEMPORAL_RESULT + "run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
+                        str(cardinality[k]) + ".txt"
+                    f3.write("temporalResult=" + temporalResult + "\n")
+
+                    overallResult = TEMPORAL_RESULT + "overall_run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
+                        str(cardinality[k]) + ".txt"
+                    f3.write("overallResult=" + overallResult + "\n")
+
+                    f3.write("S=" + str(sim_threshold) + "\n")
+                    f3.write("L1=" + str(len(K_List)) + "\n")
+                    f3.write("qPath=./query/query_${d}D.txt \n")
+                    f3.write("tsPath=./result/result_${d}D # path for the ground truth \n")
+                    f3.write("\n \n \n")
 
                     for kk in range(len(K_List)):
                         f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
@@ -85,13 +97,11 @@ for i in range(len(data_type)):
 
                         f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                  "} -L ${L" + str(kk) + "} -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                 + "} -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder" + str(kk) + "}.simple_LSH \n")
+                                 + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(kk) + "}.simple_LSH \n")
 
                         f3.write("\n")
-
-                    f3.write("\n \n \n")
-                    f3.write("qPath=./query/query_${d}D.txt \n")
-                    f3.write("tsPath=./result/result_${d}D # path for the ground truth \n")
-
+                    # append overall accuracy computation here
+                    f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${L1} -it ${temporalResult} -ts ${tsPath}.mip -of "
+                             "${overallResult} \n")
             f3.close()
 
