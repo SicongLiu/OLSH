@@ -1,5 +1,8 @@
 #include "headers.h"
 
+// int MAX_DIMENSION = 0;
+
+
 // -----------------------------------------------------------------------------
 void usage() 						// display the usage of this package
 {
@@ -58,6 +61,8 @@ void usage() 						// display the usage of this package
 		"\n"
 		"    11 - Norm Distributiuon\n"
 		"         Parameters: -alg 11 -n -qn -d -ds -qs -of\n"
+		"    12 - overall_performance \n"
+		"         Parameters: -alg 12 -d -qn -L1 -it -ts -of\n"
 		"\n"
 		"-------------------------------------------------------------------\n"
 		" Authors: Sicong Liu (s.liu@asu.edu)                               \n"
@@ -75,8 +80,9 @@ int main(int nargs, char **args)
 	int   n         = -1;			// cardinality
 	int   qn        = -1;			// query number
 	int   d         = -1;			// dimensionality
-	int   K         = -1;			// #tables for sign-alsh and simple-lsh
+	int   K         = -1;			// # tables for sign-alsh and simple-lsh
 	int   L         = -1;			// # of hash layers
+	int   L1         = -1;			// # of onion layers
 	float S 		= -1.0f;		// similarity threshold
 	float nn_ratio  = -1.0f;		// approximation ratio of ANN search
 	float mip_ratio = -1.0f;		// approximation ratio of AMIP search
@@ -84,6 +90,7 @@ int main(int nargs, char **args)
 	char  data_set[200];			// address of data set
 	char  query_set[200];			// address of query set
 	char  truth_set[200];			// address of ground truth file
+	char  temp_set[200];			// address of temporary results per query per onion layer
 	char  output_folder[200];		// output folder
 
 	bool  failed = false;
@@ -93,7 +100,7 @@ int main(int nargs, char **args)
 		if (strcmp(args[cnt], "-alg") == 0) {
 			alg = atoi(args[++cnt]);
 			printf("alg           = %d\n", alg);
-			if (alg < 0 || alg > 11) {
+			if (alg < 0 || alg > 12) {
 				failed = true;
 				break;
 			}
@@ -109,6 +116,7 @@ int main(int nargs, char **args)
 		else if (strcmp(args[cnt], "-d") == 0) {
 			d = atoi(args[++cnt]);
 			printf("d             = %d\n", d);
+			// MAX_DIMENSION = d;
 			if (d <= 0) {
 				failed = true;
 				break;
@@ -118,6 +126,14 @@ int main(int nargs, char **args)
 			qn = atoi(args[++cnt]);
 			printf("qn            = %d\n", qn);
 			if (qn <= 0) {
+				failed = true;
+				break;
+			}
+		}
+		else if (strcmp(args[cnt], "-L1") == 0) {
+			L1 = atoi(args[++cnt]);
+			printf("L1            = %d\n", L1);
+			if (L1 <= 0) {
 				failed = true;
 				break;
 			}
@@ -174,16 +190,23 @@ int main(int nargs, char **args)
 			strncpy(truth_set, args[++cnt], sizeof(truth_set));
 			printf("truth_set     = %s\n", truth_set);
 		}
+		else if (strcmp(args[cnt], "-it") == 0) {
+			strncpy(temp_set, args[++cnt], sizeof(temp_set));
+			printf("temp_set     = %s\n", temp_set);
+		}
 		else if (strcmp(args[cnt], "-of") == 0) {
 			strncpy(output_folder, args[++cnt], sizeof(output_folder));
 			printf("output_folder = %s\n", output_folder);
 
-			int len = (int) strlen(output_folder);
-			if (output_folder[len - 1] != '/') {
-				output_folder[len] = '/';
-				output_folder[len + 1] = '\0';
+			if(alg != 12)
+			{
+				int len = (int) strlen(output_folder);
+				if (output_folder[len - 1] != '/') {
+					output_folder[len] = '/';
+					output_folder[len + 1] = '\0';
+				}
+				create_dir(output_folder);
 			}
-			create_dir(output_folder);
 		}
 		else {
 			failed = true;
@@ -197,95 +220,104 @@ int main(int nargs, char **args)
 	// -------------------------------------------------------------------------
 	//  read data set and query set
 	// -------------------------------------------------------------------------
-	timeval start_time, end_time;
 
-	gettimeofday(&start_time, NULL);
-	float** data = new float*[n];
-	for (int i = 0; i < n; ++i)
+	if(alg == 12) // compute overall performance, as a separate option
 	{
-		data[i] = new float[d];
+		overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
 	}
-	if (read_data(n, d, data_set, data) == 1)
+	else
 	{
-		printf("Reading dataset error!\n");
-		return 1;
-	}
+		timeval start_time, end_time;
 
-	float** query = new float*[qn];
-	for (int i = 0; i < qn; ++i)
-	{
-		query[i] = new float[d];
-	}
-	if (read_data(qn, d, query_set, query) == 1)
-	{
-		printf("Reading query set error!\n");
-		return 1;
-	}
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec + 
-		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Data and Query: %f Seconds\n\n", read_file_time);
+		gettimeofday(&start_time, NULL);
+		float** data = new float*[n];
+		for (int i = 0; i < n; ++i)
+		{
+			data[i] = new float[d];
+		}
+		if (read_data(n, d, data_set, data) == 1)
+		{
+			printf("Reading dataset error!\n");
+			return 1;
+		}
 
-	// -------------------------------------------------------------------------
-	//  methods
-	// -------------------------------------------------------------------------
-	switch (alg)
-	{
-	case 0:
-		ground_truth(n, qn, d, (const float **) data, (const float **) query, 
-			truth_set);
-		break;
-	case 1:
-		h2_alsh(n, qn, d, nn_ratio, mip_ratio, (const float **) data, 
-			(const float **) query, truth_set, output_folder);
-		break;
-	case 4:
-		xbox(n, qn, d, nn_ratio, (const float **) data, (const float **) query, 
-			truth_set, output_folder);
-		break;
-	case 6:
-		simple_lsh(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-			(const float **) query, truth_set, output_folder);
-		break;
-	case 7:
-		linear_scan(n, qn, d, (const float **) data, (const float **) query,
-			truth_set, output_folder);
-		break;
-	case 8:
-		h2_alsh_precision_recall(n, qn, d, nn_ratio, mip_ratio, (const float **) data, 
-			(const float **) query, truth_set, output_folder);
-		break;
-	case 10:
-		simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-			(const float **) query, truth_set, output_folder);
-		break;
-	case 11:
-		norm_distribution(n, d, (const float **) data, output_folder);
-		break;
-	default:
-		printf("Parameters error!\n");
-		usage();
-		break;
-	}
-	
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	for (int i = 0; i < n; ++i)
-	{
-		delete[] data[i];
-		data[i] = NULL;
-	}
-	delete[] data;
-	data  = NULL;
+		float** query = new float*[qn];
+		for (int i = 0; i < qn; ++i)
+		{
+			query[i] = new float[d];
+		}
+		if (read_data(qn, d, query_set, query) == 1)
+		{
+			printf("Reading query set error!\n");
+			return 1;
+		}
+		gettimeofday(&end_time, NULL);
+		float read_file_time = end_time.tv_sec - start_time.tv_sec +
+				(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+		printf("Read Data and Query: %f Seconds\n\n", read_file_time);
 
-	for (int i = 0; i < qn; ++i)
-	{
-		delete[] query[i];
-		query[i] = NULL;
+
+		// -------------------------------------------------------------------------
+		//  methods
+		// -------------------------------------------------------------------------
+		switch (alg)
+		{
+		case 0:
+			ground_truth(n, qn, d, (const float **) data, (const float **) query,
+					truth_set);
+			break;
+		case 1:
+			h2_alsh(n, qn, d, nn_ratio, mip_ratio, (const float **) data,
+					(const float **) query, truth_set, output_folder);
+			break;
+		case 4:
+			xbox(n, qn, d, nn_ratio, (const float **) data, (const float **) query,
+					truth_set, output_folder);
+			break;
+		case 6:
+			simple_lsh(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+					(const float **) query, truth_set, output_folder);
+			break;
+		case 7:
+			linear_scan(n, qn, d, (const float **) data, (const float **) query,
+					truth_set, output_folder);
+			break;
+		case 8:
+			h2_alsh_precision_recall(n, qn, d, nn_ratio, mip_ratio, (const float **) data,
+					(const float **) query, truth_set, output_folder);
+			break;
+		case 10:
+			simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+					(const float **) query, truth_set, temp_set, output_folder);
+			break;
+		case 11:
+			norm_distribution(n, d, (const float **) data, output_folder);
+			break;
+		default:
+			printf("Parameters error!\n");
+			usage();
+			break;
+		}
+
+		// -------------------------------------------------------------------------
+		//  release space
+		// -------------------------------------------------------------------------
+		for (int i = 0; i < n; ++i)
+		{
+			delete[] data[i];
+			data[i] = NULL;
+		}
+		delete[] data;
+		data  = NULL;
+
+		for (int i = 0; i < qn; ++i)
+		{
+			delete[] query[i];
+			query[i] = NULL;
+		}
+		delete[] query;
+		query = NULL;
 	}
-	delete[] query;
-	query = NULL;
 
 	return 0;
 }

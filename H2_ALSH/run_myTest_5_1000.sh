@@ -1,5 +1,5 @@
 #!/bin/bash
-make
+# make
 rm *.o
 
 # ------------------------------------------------------------------------------
@@ -16,13 +16,13 @@ n0=312
 n1=301
 n2=209
 n3=115
-n4=53
-n5=10
+# n4=53
+# n5=10
 
-K0=512
-K1=412
-K2=312
-K3=212
+K0=50
+K1=40
+K2=40
+K3=30
 # K4=4
 
 # K0=512
@@ -30,11 +30,11 @@ K3=212
 # K2=512
 # K3=512
 
-L0=10
-L1=9
-L2=7
-L3=6
-L4=6
+L0=480
+L1=600
+L2=600
+L3=799
+# L4=6
 
 
 
@@ -45,10 +45,10 @@ dPath3=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_3
 # dPath4=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_4
 # dPath5=./qhull_data/Synthetic/anti_correlated_5_1000_qhull_layer_5
 
-oFolder0=./result/result_${d}D0
-oFolder1=./result/result_${d}D1
-oFolder2=./result/result_${d}D2
-oFolder3=./result/result_${d}D3
+oFolder0=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D0_${K0}_${L0}
+oFolder1=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D1_${K1}_${L1}
+oFolder2=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D2_${K2}_${L2}
+oFolder3=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D3_${K3}_${L3}
 # oFolder4=./result/result_${d}D4
 # oFolder5=./result/result_5D5
 
@@ -84,8 +84,6 @@ tsPath=./result/result_${d}D # path for the ground truth
 
 ./alsh -alg 10 -n ${n3} -qn ${qn} -d ${d} -K ${K3} -L ${L3} -S ${S} -c0 ${c0} -ds ${dPath3} \
     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder3}.simple_LSH
-
-
 
 # ./alsh -alg 10 -n ${n4} -qn ${qn} -d ${d} -K ${K} -L ${L} -c0 ${c0} -ds ${dPath4} \
 #     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder4}.simple_LSH

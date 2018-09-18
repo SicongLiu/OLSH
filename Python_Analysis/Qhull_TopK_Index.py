@@ -75,7 +75,7 @@ if __name__ == '__main__':
     layers = [0, 1, 2, 3]
     data_type = ['anti_correlated_', 'correlated_', 'random_']
     dimensions = [5]
-    cardinality = [1000, 2000, 4000, 8000]
+    cardinality = [1000, 2000, 4000]
     topK = 10
     INPUT_DATA_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
     QUERY_DATA_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/'

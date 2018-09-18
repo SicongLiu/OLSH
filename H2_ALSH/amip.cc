@@ -1,5 +1,7 @@
 #include "headers.h"
 
+int MAX_DIMENSION = 0;
+
 // -----------------------------------------------------------------------------
 int ground_truth(					// find the ground truth results
 	int   n,							// number of data points
@@ -1139,6 +1141,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	const float **data,					// data set
 	const float **query,				// query set
 	const char  *truth_set,				// address of truth set
+	const char  *temp_result,			// address to store temporary output from different onion layers
 	const char  *output_folder) 		// output folder
 {
 	timeval start_time, end_time;
@@ -1206,6 +1209,19 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 			recall[t_round][k_round] = 0;
 		}
 	}
+
+	// persist (append) topk list on file, per query per list
+	MaxK_List* cur_list = new MaxK_List(kMIPs[maxK_round - 1]);
+	for(int i = 0; i < qn; i++)
+	{
+		cur_list->reset();
+		lsh->kmip(kMIPs[maxK_round - 1], query[i], cur_list);
+		persist_intermediate_on_file(kMIPs[maxK_round - 1], d, cur_list, data, temp_result);
+	}
+	// free space
+	delete cur_list;
+	cur_list = NULL;
+
 
 	printf("Top-t c-AMIP of Simple_LSH: \n");
 	for (int k_round = 0; k_round < maxK_round; ++k_round)
@@ -1332,3 +1348,275 @@ int norm_distribution(				// analyse norm distribution of data
 
 	return 0;
 }
+
+// -----------------------------------------------------------------------------
+int persist_intermediate_on_file(		// persist intermediate result per query per onion layer on file, for aggregation
+	int   topk, 						// topk results of interest
+	int   d,							// dimension of space
+	MaxK_List* list,					// list that contains the topk result per query per onion layer
+	const float **data,					// data set
+	const char  *output_folder)			// output folder
+{
+	FILE *fp = fopen(output_folder, "a+");
+	if (!fp)
+	{
+		printf("Could not create %s\n", output_folder);
+		return 1;
+	}
+
+	for(int i = 0; i < list->size(); i++)
+	{
+		int current_data_idx = list->ith_id(i);
+		for(int j = 0; j < d; j++)
+		{
+			fprintf(fp, "%f\t", data[current_data_idx][j]);
+		}
+		fprintf(fp, "%f\n", list->ith_key(i));	// flush the similarity value to file
+	}
+	fclose(fp);
+}
+
+
+// -----------------------------------------------------------------------------
+int overall_performance(				// output the overall performance of indexing
+		int   d,							// dimension of space
+		int   qn, 							// number of queries
+		int   layers,						// number of onion layers
+		const char  *temp_output_folder,	// temporal output
+		const char  *ground_truth_folder,	// ground truth folder
+		const char  *output_folder)			// output folder
+{
+	MAX_DIMENSION = d;
+	int tMIPs[] = { 1, 2, 5, 10 };
+	int kMIPs[] = { 1, 2, 5, 10, 20};
+	int maxT_round = 4;
+	int maxK_round = 5;
+
+	// -------------------------------------------------------------------------
+	//  read all candidates per query per onion layer and sort
+	// -------------------------------------------------------------------------
+	// float** temp_result = new float*[kMIPs[maxK_round - 1]*layers*qn];
+	float*** temp_result = new float**[qn];
+	for(int i = 0; i < qn; i++)
+	{
+		temp_result[i] = new float*[kMIPs[maxK_round - 1]*layers];
+		for(int j=0; j<kMIPs[maxK_round - 1]*layers; j++)
+		{
+			temp_result[i][j] = new float[d+1];
+		}
+	}
+
+	FILE *fp1 = fopen(temp_output_folder, "r");
+	if (!fp1)
+	{
+		printf("Could not open %s\n", temp_output_folder);
+		return 1;
+	}
+
+	// temp_result dimension: d+1, last dimension is the similarity score
+	int line_count   = 0;
+	int cur_q_line_count = 0;
+	int q_index = 0;
+	int layer_index = 0;
+	while (!feof(fp1) && line_count < kMIPs[maxK_round - 1]*layers*qn)
+	{
+		/*if(line_count%(kMIPs[maxK_round - 1]*layers) == 0 && line_count > 0)
+		{
+			q_index = (++q_index)%qn;
+			cur_q_line_count = 0;
+		}
+		temp_result[q_index][cur_q_line_count] = new float[d+1];
+		for (int j = 0; j < d + 1; ++j)
+		{
+			fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count][j]);
+		}
+		fscanf(fp1, "\n");
+		++line_count;
+		++cur_q_line_count;*/
+
+		if(line_count%(kMIPs[maxK_round - 1]) == 0 && line_count > 0)
+		{
+			q_index = (++q_index)%qn;
+			cur_q_line_count = 0;
+			if(line_count%(kMIPs[maxK_round - 1]*qn) == 0)
+			{
+				++layer_index;
+			}
+		}
+		for (int j = 0; j < d + 1; ++j)
+		{
+			fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * kMIPs[maxK_round - 1]][j]);
+		}
+		fscanf(fp1, "\n");
+
+		++line_count;
+		++cur_q_line_count;
+
+	}
+	assert(feof(fp1) && line_count == kMIPs[maxK_round - 1]*layers*qn);
+	fclose(fp1);
+
+	/////////////////////////////////////////////////////////////
+	/*FILE *fp3 = fopen("../H2_ALSH/qhull_data/checkpoint.txt", "w");
+	if (!fp3)
+	{
+		printf("Could not open %s\n", temp_output_folder);
+		return 1;
+	}
+	for(int i = 0; i< kMIPs[maxK_round - 1]*layers; i++)
+	{
+		for(int j = 0; j < qn; j++)
+		{
+			for(int k = 0; k < d + 1; k++)
+			{
+				printf("%f ", temp_result[j][i][k]);
+				fprintf(fp3, "%f ", temp_result[j][i][k]);
+			}
+			printf("\n");
+			fprintf(fp3, "\n");
+		}
+	}
+	fclose(fp3);*/
+
+
+
+	/////////////////////////////////////////////////////////////
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i)
+	{
+		R[i] = new Result[MAXK];
+	}
+	if (read_ground_truth(qn, ground_truth_folder, R) == 1)
+	{
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	// sort based on the last dimension of temp_result as the output of topk from each layer
+	printf("size in bytes: %d \n", sizeof(*temp_result[0]));
+	for(int i = 0; i < qn; i++)
+	{
+		qsort(temp_result[i], kMIPs[maxK_round - 1]*layers - 1, sizeof(*temp_result[i]), my_sort_col);
+		// qsort(temp_result[i], kMIPs[maxK_round - 1]*layers - 1, 4, my_sort_col);
+	}
+
+	for(int i=0; i<qn; i++)
+	{
+		for(int j=0; j < kMIPs[maxK_round - 1]*layers; j++)
+		{
+			printf("%f \n", temp_result[i][j][d]);
+		}
+
+	}
+	/*char output_set[200];
+	sprintf(output_set, "%soverall_simple_lsh_precision_recall.out", output_folder);
+
+	FILE *fp2 = fopen(output_set, "a+");*/
+
+	printf("Output path %s \n. ", output_folder);
+	FILE *fp2 = fopen(output_folder, "a+");
+	if (!fp2)
+	{
+		printf("Could not open %s\n", output_folder);
+		return 1;
+	}
+
+	// -------------------------------------------------------------------------
+	//  compute precision and recall per query
+	// -------------------------------------------------------------------------
+	float **pre    = new float*[maxT_round];
+	float **recall = new float*[maxT_round];
+
+	printf("Top-t c-AMIP of Simple_LSH (overall): \n");
+	for (int k_round = 0; k_round < maxK_round; ++k_round)
+	{
+		int top_k = kMIPs[k_round];
+		MaxK_List* list = new MaxK_List(top_k);
+		for (int i = 0; i < qn; ++i)
+		{
+			list->reset();
+
+			// initialize list
+			for(int j = 0; j < top_k; j++)
+			{
+				// key: j, value: temp_result[i][j][d];
+				printf("index: %d, %f \n", j, temp_result[i][j][d]);
+				list->insert(temp_result[i][j][d], j + 1);
+			}
+
+
+			for (int t_round = 0; t_round < maxT_round; ++t_round)
+			{
+				int top_t = tMIPs[t_round];
+				int hits = get_hits(top_k, top_t, R[i], list);
+
+				pre[t_round][k_round]    += hits / (float) top_k;
+				recall[t_round][k_round] += hits / (float) top_t;
+			}
+		}
+		delete list;
+		list = NULL;
+	}
+
+	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	{
+		int top_t = tMIPs[t_round];
+		printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
+		fprintf(fp2, "Top-%d\tRecall\t\tPrecision\n", top_t);
+
+		for (int k_round = 0; k_round < maxK_round; ++k_round)
+		{
+			int top_k = kMIPs[k_round];
+			pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
+			recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;
+
+			printf("%4d\t\t%.2f\t\t%.2f\n", top_k,
+					recall[t_round][k_round], pre[t_round][k_round]);
+			fprintf(fp2, "%d\t%f\t%f\n", top_k,
+					recall[t_round][k_round], pre[t_round][k_round]);
+		}
+		printf("\n");
+		fprintf(fp2, "\n");
+	}
+	printf("\n");
+	fprintf(fp2, "\n");
+	fclose(fp2);
+
+
+	/////////////////////////////////////////////
+	// -------------------------------------------------------------------------
+	//  free memory space
+	// -------------------------------------------------------------------------
+
+	for (int i = 0; i < kMIPs[maxK_round - 1]*layers*qn; ++i)
+	{
+		delete[] temp_result[i];
+		temp_result[i] = NULL;
+	}
+	delete[] temp_result;
+	temp_result = NULL;
+
+	delete[] R; R = NULL;
+	for (int i = 0; i < maxT_round; ++i) {
+		delete[] pre[i];	pre[i] = NULL;
+		delete[] recall[i];	recall[i] = NULL;
+	}
+	delete[] pre;	 pre = NULL;
+	delete[] recall; recall = NULL;
+
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int my_sort_col(const void *a, const void *b){
+    float *x = (float*)a;
+    float *y = (float*)b;
+    // int my_dimension = sizeof(x)/sizeof(float);
+    // return (x[my_dimension-1] < y[my_dimension-1]) - (x[my_dimension-1] > y[my_dimension-1]);
+    return x[MAX_DIMENSION] < y[MAX_DIMENSION];
+}
+
+
