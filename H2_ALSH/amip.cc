@@ -1496,25 +1496,10 @@ int overall_performance(				// output the overall performance of indexing
 	}
 
 	// sort based on the last dimension of temp_result as the output of topk from each layer
-	printf("size in bytes: %d \n", sizeof(*temp_result[0]));
 	for(int i = 0; i < qn; i++)
 	{
-		qsort(temp_result[i], kMIPs[maxK_round - 1]*layers - 1, sizeof(*temp_result[i]), my_sort_col);
-		// qsort(temp_result[i], kMIPs[maxK_round - 1]*layers - 1, 4, my_sort_col);
+		qsort(temp_result[i], kMIPs[maxK_round - 1]*layers, sizeof(*temp_result[i]), my_sort_col);
 	}
-
-	for(int i=0; i<qn; i++)
-	{
-		for(int j=0; j < kMIPs[maxK_round - 1]*layers; j++)
-		{
-			printf("%f \n", temp_result[i][j][d]);
-		}
-
-	}
-	/*char output_set[200];
-	sprintf(output_set, "%soverall_simple_lsh_precision_recall.out", output_folder);
-
-	FILE *fp2 = fopen(output_set, "a+");*/
 
 	printf("Output path %s \n. ", output_folder);
 	FILE *fp2 = fopen(output_folder, "a+");
@@ -1530,6 +1515,18 @@ int overall_performance(				// output the overall performance of indexing
 	float **pre    = new float*[maxT_round];
 	float **recall = new float*[maxT_round];
 
+	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	{
+		pre[t_round]    = new float[maxK_round];
+		recall[t_round] = new float[maxK_round];
+
+		for (int k_round = 0; k_round < maxK_round; ++k_round)
+		{
+			pre[t_round][k_round]    = 0;
+			recall[t_round][k_round] = 0;
+		}
+	}
+
 	printf("Top-t c-AMIP of Simple_LSH (overall): \n");
 	for (int k_round = 0; k_round < maxK_round; ++k_round)
 	{
@@ -1543,10 +1540,8 @@ int overall_performance(				// output the overall performance of indexing
 			for(int j = 0; j < top_k; j++)
 			{
 				// key: j, value: temp_result[i][j][d];
-				printf("index: %d, %f \n", j, temp_result[i][j][d]);
 				list->insert(temp_result[i][j][d], j + 1);
 			}
-
 
 			for (int t_round = 0; t_round < maxT_round; ++t_round)
 			{
@@ -1590,9 +1585,13 @@ int overall_performance(				// output the overall performance of indexing
 	// -------------------------------------------------------------------------
 	//  free memory space
 	// -------------------------------------------------------------------------
-
-	for (int i = 0; i < kMIPs[maxK_round - 1]*layers*qn; ++i)
+	for(int i = 0; i < qn; i++)
 	{
+		for(int j = 0; j < kMIPs[maxK_round - 1]*layers; j++)
+		{
+			delete[] temp_result[i][j];
+			temp_result[i][j] = NULL;
+		}
 		delete[] temp_result[i];
 		temp_result[i] = NULL;
 	}
@@ -1611,12 +1610,17 @@ int overall_performance(				// output the overall performance of indexing
 }
 
 // -----------------------------------------------------------------------------
-int my_sort_col(const void *a, const void *b){
-    float *x = (float*)a;
+int my_sort_col(const void *pa, const void *pb ){
+	const int *a = *(const int **)pa;
+	const int *b = *(const int **)pb;
+	return (a[MAX_DIMENSION] < b[MAX_DIMENSION]) - (a[MAX_DIMENSION] > b[MAX_DIMENSION]);
+    /*
+	float *x = (float*)a;
     float *y = (float*)b;
     // int my_dimension = sizeof(x)/sizeof(float);
     // return (x[my_dimension-1] < y[my_dimension-1]) - (x[my_dimension-1] > y[my_dimension-1]);
     return x[MAX_DIMENSION] < y[MAX_DIMENSION];
+    */
 }
 
 

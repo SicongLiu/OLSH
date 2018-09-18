@@ -14,7 +14,7 @@ qPath=./query/query_${d}D.txt
 tsPath=./result/result_${d}D # path for the ground truth 
 
  
- 
+
 #n0=312
 #K0=50
 #L0=480
@@ -43,4 +43,4 @@ tsPath=./result/result_${d}D # path for the ground truth
 #oFolder3=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D3_${K3}_${L3}
 #./alsh -alg 10 -n ${n3} -qn ${qn} -d ${d} -K ${K3} -L ${L3} -S ${S} -c0 ${c0} -ds ${dPath3} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder3}.simple_LSH
 
-./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${L1} -it ${temporalResult} -ts ${tsPath}.mip -of ${overallResult}
+ ./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${L1} -it ${temporalResult} -ts ${tsPath}.mip -of ${overallResult}
