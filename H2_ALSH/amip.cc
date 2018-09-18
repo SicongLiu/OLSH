@@ -1209,13 +1209,14 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 			recall[t_round][k_round] = 0;
 		}
 	}
-
 	// persist (append) topk list on file, per query per list
 	MaxK_List* cur_list = new MaxK_List(kMIPs[maxK_round - 1]);
 	for(int i = 0; i < qn; i++)
 	{
+		printf("query index: %d \n", i);
 		cur_list->reset();
 		lsh->kmip(kMIPs[maxK_round - 1], query[i], cur_list);
+		printf("persisting on file \n");
 		persist_intermediate_on_file(kMIPs[maxK_round - 1], d, cur_list, data, temp_result);
 	}
 	// free space
@@ -1364,6 +1365,7 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 		return 1;
 	}
 
+	printf("list size: %d \n", list->size());
 	for(int i = 0; i < list->size(); i++)
 	{
 		int current_data_idx = list->ith_id(i);
@@ -1374,6 +1376,8 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 		fprintf(fp, "%f\n", list->ith_key(i));	// flush the similarity value to file
 	}
 	fclose(fp);
+
+	return 0;
 }
 
 

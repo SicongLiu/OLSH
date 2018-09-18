@@ -12,7 +12,7 @@ sim_thresholds = [0.9]
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/"
 BASH_FILE_FOLDER = "../H2_ALSH/"
-TEMPORAL_RESULT = "../H2_ALSH/qhull_data/"
+TEMPORAL_RESULT = "../H2_ALSH/qhull_data/Mathematica/"
 
 # read qhull data to get qhull layer element count
 for i in range(len(data_type)):
@@ -80,7 +80,7 @@ for i in range(len(data_type)):
                     f3.write("S=" + str(sim_threshold) + "\n")
                     f3.write("num_layer=" + str(len(K_List)) + "\n")
                     f3.write("qPath=./query/query_${d}D.txt \n")
-                    f3.write("tsPath=./result/result_${d}D # path for the ground truth \n")
+                    f3.write("tsPath=./result/result_${d}D_${cardinality} # path for the ground truth \n")
                     f3.write("\n \n \n")
 
                     for kk in range(len(K_List)):
