@@ -6,9 +6,9 @@ rm *.o
 #  Parameters 5_D_anti_correlated
 # ------------------------------------------------------------------------------
 datatype=anti_correlated
-cardinality=8000
+cardinality=1000
 d=5
-qn=1
+qn=25
 
 dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt
 
