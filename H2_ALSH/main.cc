@@ -192,18 +192,21 @@ int main(int nargs, char **args)
 		}
 		else if (strcmp(args[cnt], "-it") == 0) {
 			strncpy(temp_set, args[++cnt], sizeof(temp_set));
-			printf("temp_st     = %s\n", temp_set);
+			printf("temp_set     = %s\n", temp_set);
 		}
 		else if (strcmp(args[cnt], "-of") == 0) {
 			strncpy(output_folder, args[++cnt], sizeof(output_folder));
 			printf("output_folder = %s\n", output_folder);
 
-			int len = (int) strlen(output_folder);
-			if (output_folder[len - 1] != '/') {
-				output_folder[len] = '/';
-				output_folder[len + 1] = '\0';
+			if(alg != 12)
+			{
+				int len = (int) strlen(output_folder);
+				if (output_folder[len - 1] != '/') {
+					output_folder[len] = '/';
+					output_folder[len + 1] = '\0';
+				}
+				create_dir(output_folder);
 			}
-			create_dir(output_folder);
 		}
 		else {
 			failed = true;
