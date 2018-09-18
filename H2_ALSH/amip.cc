@@ -1386,7 +1386,6 @@ int overall_performance(				// output the overall performance of indexing
 		const char  *ground_truth_folder,	// ground truth folder
 		const char  *output_folder)			// output folder
 {
-	printf("we are here: !!!!");
 	MAX_DIMENSION = d;
 	int tMIPs[] = { 1, 2, 5, 10 };
 	int kMIPs[] = { 1, 2, 5, 10, 20};
@@ -1414,9 +1413,10 @@ int overall_performance(				// output the overall performance of indexing
 	int line_count   = 0;
 	int cur_q_line_count = 0;
 	int q_index = 0;
+	int layer_index = 0;
 	while (!feof(fp1) && line_count < kMIPs[maxK_round - 1]*layers*qn)
 	{
-		if(line_count%(kMIPs[maxK_round - 1]*layers) == 0 && line_count > 0)
+		/*if(line_count%(kMIPs[maxK_round - 1]*layers) == 0 && line_count > 0)
 		{
 			q_index = (++q_index)%qn;
 			cur_q_line_count = 0;
@@ -1428,10 +1428,52 @@ int overall_performance(				// output the overall performance of indexing
 		}
 		fscanf(fp1, "\n");
 		++line_count;
+		++cur_q_line_count;*/
+
+		if(line_count%(kMIPs[maxK_round - 1]) == 0 && line_count > 0)
+		{
+			q_index = (++q_index)%qn;
+			cur_q_line_count = 0;
+			if(line_count%(kMIPs[maxK_round - 1]*qn) == 0)
+			{
+				++layer_index;
+			}
+		}
+		temp_result[q_index][cur_q_line_count + layer_index * kMIPs[maxK_round - 1]] = new float[d+1];
+		for (int j = 0; j < d + 1; ++j)
+		{
+			fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * kMIPs[maxK_round - 1]][j]);
+		}
+		fscanf(fp1, "\n");
+
+		++line_count;
 		++cur_q_line_count;
+
 	}
 	assert(feof(fp1) && line_count == kMIPs[maxK_round - 1]*layers*qn);
 	fclose(fp1);
+
+	/////////////////////////////////////////////////////////////
+	FILE *fp3 = fopen("../H2_ALSH/qhull_data/checkpoint.txt", "w");
+	if (!fp3)
+	{
+		printf("Could not open %s\n", temp_output_folder);
+		return 1;
+	}
+	for(int i = 0; i< layers; i++)
+	{
+		for(int j = 0; j < qn; j++)
+		{
+			for(int k = 0; k < d + 1; k++)
+			{
+				fprintf(fp3, "%f ", temp_result[j][i][k]);
+			}
+			fprintf(fp3, "\n");
+		}
+	}
+	fclose(fp3);
+
+
 
 	/////////////////////////////////////////////////////////////
 	// -------------------------------------------------------------------------
@@ -1458,7 +1500,8 @@ int overall_performance(				// output the overall performance of indexing
 	sprintf(output_set, "%soverall_simple_lsh_precision_recall.out", output_folder);
 
 	FILE *fp2 = fopen(output_set, "a+");*/
-	FILE *fp2 = fopen(output_folder, "r");
+
+	FILE *fp2 = fopen(output_folder, "a+");
 	if (!fp2)
 	{
 		printf("Could not open %s\n", output_folder);

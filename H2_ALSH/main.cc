@@ -220,7 +220,6 @@ int main(int nargs, char **args)
 
 	if(alg == 12) // compute overall performance, as a separate option
 	{
-		printf("we are here: q234uqowieafj \n");
 		overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
 	}
 	else
