@@ -70,7 +70,7 @@ for i in range(len(data_type)):
                     f3.write("qn=" + str(query_count) + "\n")
                     f3.write("c0=" + str(ratio) + "\n")
                     temporalResult = TEMPORAL_RESULT + "run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
-                        str(cardinality[k]) + ".txt"
+                        str(cardinality[k])
                     f3.write("temporalResult=" + temporalResult + "\n")
 
                     overallResult = TEMPORAL_RESULT + "overall_run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
