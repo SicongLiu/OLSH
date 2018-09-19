@@ -4,7 +4,8 @@ SRCS=util.cc random.cc pri_queue.cc qalsh.cc srp_lsh.cc l2_alsh.cc \
 OBJS=${SRCS:.cc=.o}
 
 CXX=g++ -std=c++11
-CPPFLAGS=-w -O3
+# CPPFLAGS=-w -O3
+CPPFLAGS=-g -O0
 
 .PHONY: clean
 
