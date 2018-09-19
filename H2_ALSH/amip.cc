@@ -1651,6 +1651,13 @@ int overall_performance(				// output the overall performance of indexing
 			return 1;
 		}
 
+		/**
+		 * Created by Sicong
+		 *
+		 * The idea essentially is to combine the top-k results of the same
+		 * query across different layers, then aggregate different query
+		 * results together
+		 * */
 		float*** temp_result = new float**[qn];
 		for(int i = 0; i < qn; i++)
 		{
