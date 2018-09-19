@@ -4,7 +4,7 @@ rm *.o
 datatype=anti_correlated
 cardinality=1000
 d=5
-qn=25
+qn=2
 c0=2
 temporalResult=../H2_ALSH/qhull_data/run_test_anti_correlated_5_1000
 overallResult=../H2_ALSH/qhull_data/overall_run_test_anti_correlated_5_1000.txt
