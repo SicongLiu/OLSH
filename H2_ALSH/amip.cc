@@ -1220,10 +1220,13 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 			list->reset();
 			lsh->kmip(top_k, query[i], list);
 
+
+			printf("list size: %d \n", list->size());
 			// persist on file to compute overall performance
 			char output_set[200];
 			sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
 
+			printf("persisting on file.... \n");
 			persist_intermediate_on_file(top_k, d, list, data, output_set);
 			for (int t_round = 0; t_round < maxT_round; ++t_round)
 			{
@@ -1233,6 +1236,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 				pre[t_round][k_round]    += hits / (float) top_k;
 				recall[t_round][k_round] += hits / (float) top_t;
 			}
+			printf("persisting on file DONE. !!! \n");
 		}
 		delete list;
 		list = NULL;
@@ -1361,6 +1365,7 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 		int current_data_idx = list->ith_id(i);
 		if(current_data_idx < 0 )
 		{
+			printf("bingo not enough .\n ");
 			for(int j = 0; j < d; j++)
 			{
 				fprintf(fp, "%f\t", -1.0f);
@@ -1651,6 +1656,13 @@ int overall_performance(				// output the overall performance of indexing
 			return 1;
 		}
 
+		/**
+		 * Created by Sicong
+		 *
+		 * The idea essentially is to combine the top-k results of the same
+		 * query across different layers, then aggregate different query
+		 * results together
+		 * */
 		float*** temp_result = new float**[qn];
 		for(int i = 0; i < qn; i++)
 		{
@@ -1685,6 +1697,7 @@ int overall_performance(				// output the overall performance of indexing
 			++cur_q_line_count;
 
 		}
+		printf("top_k: %d, layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
 		assert(feof(fp1) && line_count == top_k * layers * qn);
 
 		MaxK_List* list = new MaxK_List(top_k);

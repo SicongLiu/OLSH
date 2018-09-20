@@ -153,8 +153,9 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	//
 	//	Re-compute the similarity
 	// -------------------------------------------------------------------------
-	// int temp_count = min(top_k, mcs_list->size());
-	for (int i = 0; i < top_k; ++i)
+	int temp_count = min(top_k, mcs_list->size());
+	printf("temp_count: %d, top_k: %d, mcs_list size: %d \n", temp_count, top_k, mcs_list->size());
+	for (int i = 0; i < temp_count; ++i)
 	{
 		int id = mcs_list->ith_id(i);
 		float ip = calc_inner_product(dim_, data_[id], query);
@@ -162,14 +163,16 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		// list structure -- priority queue using resorted distance of inner prouct as similarity
 		list->insert(ip, id + 1);
 	}
-	/*for (int i = temp_count; i < top_k; i++)
+	for (int i = temp_count; i < top_k; i++)
 	{
-		int id = -1;
-		float ip = -1.0f;
+		printf("we are inserting dummies here. \n");
+		int id = -1 - i;
+		// float ip = -1.0f;
+		float ip = FLT_MIN + i;
 
 		// list structure -- priority queue using resorted distance of inner prouct as similarity
 		list->insert(ip, id);
-	}*/
+	}
 
 	// -------------------------------------------------------------------------
 	//  release space
