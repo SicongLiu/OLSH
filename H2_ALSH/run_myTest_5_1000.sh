@@ -8,7 +8,7 @@ rm *.o
 datatype=anti_correlated
 cardinality=1000
 d=5
-qn=1
+qn=25
 c0=2.0
 S=0.9
 
@@ -53,7 +53,7 @@ oFolder3=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_$
 # oFolder5=./result/result_5D5
 
 qPath=./query/query_${d}D.txt
-tsPath=./result/result_${d}D # path for the ground truth
+tsPath=./result/result_${datatype}_${d}D # path for the ground truth
 # ------------------------------------------------------------------------------
 #  Ground-Truth
 # ------------------------------------------------------------------------------
@@ -92,3 +92,10 @@ tsPath=./result/result_${d}D # path for the ground truth
 
 # ./alsh -alg 10 -n ${n5} -qn ${qn} -d ${d} -K ${K} -L ${L} -c0 ${c0} -ds ${dPath5} \
 #     -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder5}.simple_LSH
+
+
+-alg 12 -d 5 -qn 25 -L1 ${} -it ../H2_ALSH/qhull_data/run_test_anti_correlated_5_1000 -ts ./result/result_anti_correlated_5D_1000.mip -of ../H2_ALSH/qhull_data/overall_run_test_anti_correlated_5_1000.txt
+
+
+
+

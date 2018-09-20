@@ -74,7 +74,7 @@ void usage() 						// display the usage of this package
 int main(int nargs, char **args)
 {
 	srand((unsigned) time(NULL));	// set the random seed
-	usage();
+	// usage();
 
 	int   alg       = -1;			// which algorithm?
 	int   n         = -1;			// cardinality

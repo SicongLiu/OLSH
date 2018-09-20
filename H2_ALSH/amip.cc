@@ -1220,13 +1220,10 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 			list->reset();
 			lsh->kmip(top_k, query[i], list);
 
-
-			printf("list size: %d \n", list->size());
 			// persist on file to compute overall performance
 			char output_set[200];
 			sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
 
-			printf("persisting on file.... \n");
 			persist_intermediate_on_file(top_k, d, list, data, output_set);
 			for (int t_round = 0; t_round < maxT_round; ++t_round)
 			{
@@ -1236,7 +1233,6 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 				pre[t_round][k_round]    += hits / (float) top_k;
 				recall[t_round][k_round] += hits / (float) top_t;
 			}
-			printf("persisting on file DONE. !!! \n");
 		}
 		delete list;
 		list = NULL;
@@ -1362,19 +1358,19 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 
 	for(int i = 0; i < list->size(); i++)
 	{
-		int current_data_idx = list->ith_id(i);
+		int current_data_idx = list->ith_id(i) - 1;
 		if(current_data_idx < 0 )
 		{
-			printf("bingo not enough .\n ");
 			for(int j = 0; j < d; j++)
 			{
 				fprintf(fp, "%f\t", -1.0f);
 
 			}
-			fprintf(fp, "%f\n", FLT_MIN);	// flush the similarity value to file
+			fprintf(fp, "%f\n", -100.0f);	// flush the similarity value to file
 		}
 		else
 		{
+			float temp_value = list->ith_key(i);
 			for(int j = 0; j < d; j++)
 			{
 				fprintf(fp, "%f\t", data[current_data_idx][j]);
