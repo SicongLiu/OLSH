@@ -20,5 +20,4 @@ tsPath=./result/result_${d}D # path for the ground truth
 # ------------------------------------------------------------------------------
 #  Ground-Truth
 # ------------------------------------------------------------------------------
- ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} \
-    -ts ${oFolder}.mip
+ ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts ${oFolder}.mip

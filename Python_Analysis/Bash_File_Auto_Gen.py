@@ -1,7 +1,7 @@
 # script to generate .sh file for execution
+# bash file includes execution of Ground Truth, LSH Scheme and Overall Performance
 
 # data_type = ["anti_correlated", "correlated", "random"]
-# data_type = ["anti_correlated"]
 data_type = ["correlated"]
 dimensions = [5]
 cardinality = [1000]
@@ -77,13 +77,21 @@ for i in range(len(data_type)):
                     overallResult = TEMPORAL_RESULT + "overall_run_test_" + str(data_type[i]) + "_" + str(dimensions[j]) + "_" + \
                         str(cardinality[k]) + ".txt"
                     f3.write("overallResult=" + overallResult + "\n")
-
                     f3.write("S=" + str(sim_threshold) + "\n")
                     f3.write("num_layer=" + str(len(K_List)) + "\n")
+                    f3.write("# ------------------------------------------------------------------------------ \n")
+                    f3.write("#     Ground-Truth \n")
+                    f3.write("# ------------------------------------------------------------------------------ \n")
+                    f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                    f3.write("tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
                     f3.write("qPath=./query/query_${d}D.txt \n")
-                    f3.write("tsPath=./result/result_${d}D_${cardinality} # path for the ground truth \n")
+                    f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+                    f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                             "${oFolder}.mip \n")
                     f3.write("\n \n \n")
-
+                    f3.write("# ------------------------------------------------------------------------------ \n")
+                    f3.write("#     Layer-Performance \n")
+                    f3.write("# ------------------------------------------------------------------------------ \n")
                     for kk in range(len(K_List)):
                         f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
                         f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
@@ -102,6 +110,9 @@ for i in range(len(data_type)):
 
                         f3.write("\n")
                     # append overall accuracy computation here
+                    f3.write("# ------------------------------------------------------------------------------ \n")
+                    f3.write("#     Overall-Performance \n")
+                    f3.write("# ------------------------------------------------------------------------------ \n")
                     f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
                              "${tsPath}.mip -of ${overallResult} \n")
             f3.close()
