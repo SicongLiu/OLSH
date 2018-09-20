@@ -1,7 +1,8 @@
 # script to generate .sh file for execution
 
 # data_type = ["anti_correlated", "correlated", "random"]
-data_type = ["anti_correlated"]
+# data_type = ["anti_correlated"]
+data_type = ["correlated"]
 dimensions = [5]
 cardinality = [1000]
 query_count = 1
