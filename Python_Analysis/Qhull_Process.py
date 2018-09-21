@@ -75,9 +75,9 @@ def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name
 
 if __name__ == '__main__':
     command_bin_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/bin'
-    dimensions = [5]
+    dimensions = [2, 5, 7]
     # dimensions = [10, 15, 20]
-    cardinality = [1000, 2000, 4000, 8000]
+    cardinality = [10000, 20000, 50000, 100000]
 
     data_type = ['anti_correlated_', 'correlated_', 'random_']
     # data_type = ['correlated_', 'random_']
