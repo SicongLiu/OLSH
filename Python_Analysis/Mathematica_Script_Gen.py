@@ -8,6 +8,7 @@ hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
 KList = [90, 80, 70, 60, 50, 40, 30, 20, 10, 10]
 
 # count, hashTables KList
+PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters.txt"
 DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 f = open(SCRIPT_OUTPUT_FILE, 'w')
@@ -16,6 +17,16 @@ for i in range(len(data_type)):
     for j in range(len(dimensions)):
         for k in range(len(cardinality)):
 
+            K_Parameter_File = PARAMETER_FILE_FOLDER + "K_" + data_type[i] + "_" + str(dimensions[j]) + \
+                               "_" + str(cardinality[k])
+            L_Parameter_File = PARAMETER_FILE_FOLDER + "L_" + data_type[i] + "_" + str(dimensions[j]) + \
+                               "_" + str(cardinality[k])
+            f3 = open(K_Parameter_File, 'w')
+            # f4 = open(L_Parameter_File, 'w')
+            for m in range(len(KList)):
+                f3.write(str(KList[m]) + "\n")
+            f3.close()
+            # f4.close()
             declare_string = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
             count = []
             f.write("# ------------------------------------------------------------------------------ \n")
