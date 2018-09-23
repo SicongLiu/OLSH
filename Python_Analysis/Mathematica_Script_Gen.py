@@ -1,10 +1,10 @@
 # data_type = ["anti_correlated", "correlated", "random"]
-data_type = ["correlated"]
+data_type = ["correlated", "anti_correlated", "random"]
 dimensions = [2, 5]
 cardinality = [10000, 20000, 50000, 100000]
 query_count = [20, 50]
 topk = 10
-hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 KList = [90, 80, 70, 60, 50, 40, 30, 20, 10, 10]
 
 # count, hashTables KList
@@ -50,6 +50,12 @@ for i in range(len(data_type)):
             f.write("hashTables = List[" + ','.join(hashTables) + "] \n")
             # f.write("hashTables = List" + str(hashTables) + "\n")
             f.write("KList = List" + str(KList) + "\n")
+            opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
+                      "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
+                      "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
+                      "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
+                      "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
+                      "{a,b,c,d,e,f,g,h,i,j}]"
             f.write("\n \n \n")
 f.close()
 
