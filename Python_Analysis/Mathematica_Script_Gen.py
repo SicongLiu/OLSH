@@ -2,7 +2,7 @@
 data_type = ["correlated", "anti_correlated", "random"]
 dimensions = [2, 5]
 cardinality = [10000, 20000, 50000, 100000]
-query_count = [20, 50]
+query_count = [25, 50]
 topk = 10
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 KList = [90, 80, 70, 60, 50, 40, 30, 20, 10, 10]

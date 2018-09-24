@@ -5,7 +5,7 @@
 data_type = ["correlated"]
 dimensions = [5]
 cardinality = [1000]
-query_count = 1
+query_count = 25
 
 ratios = [2]
 sim_thresholds = [0.9]
