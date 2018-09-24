@@ -1,5 +1,5 @@
 # data_type = ["anti_correlated", "correlated", "random"]
-data_type = ["correlated", "anti_correlated", "random"]
+data_type = ["anti_correlated", "random"]
 dimensions = [2, 5]
 cardinality = [10000, 20000, 50000, 100000]
 query_count = [25, 50]
@@ -26,7 +26,8 @@ for i in range(len(data_type)):
             for m in range(len(KList)):
                 f3.write(str(KList[m]) + "\n")
             f3.close()
-            # f4.close()
+            f4 = open(L_Parameter_File, 'w')
+            f4.close()
             declare_string = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
             count = []
             f.write("# ------------------------------------------------------------------------------ \n")
