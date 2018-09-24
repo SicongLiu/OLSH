@@ -1,17 +1,17 @@
 # script to generate .sh file for execution
 # bash file includes execution of Ground Truth, LSH Scheme and Overall Performance
 
-# data_type = ["anti_correlated", "correlated", "random"]
-data_type = ["correlated"]
-dimensions = [5]
-cardinality = [1000]
-query_count = 1
+data_type = ["anti_correlated", "correlated", "random"]
+# data_type = ["correlated"]
+dimensions = [2, 5]
+cardinality = [10000, 20000, 50000, 100000]
+query_count = 20
 
 ratios = [2]
 sim_thresholds = [0.9]
 
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/"
+PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/Optimized/"
 BASH_FILE_FOLDER = "../H2_ALSH/"
 TEMPORAL_RESULT = "../H2_ALSH/qhull_data/Mathematica/"
 
