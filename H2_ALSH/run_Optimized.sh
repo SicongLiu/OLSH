@@ -1,0 +1,32 @@
+#!/bin/bash
+sh run_test_anti_correlated_2_10000.sh
+sh run_test_anti_correlated_2_20000.sh
+sh run_test_anti_correlated_2_50000.sh
+sh run_test_anti_correlated_2_100000.sh
+
+sh run_test_anti_correlated_5_10000.sh
+sh run_test_anti_correlated_5_20000.sh
+sh run_test_anti_correlated_5_50000.sh
+sh run_test_anti_correlated_5_100000.sh
+
+
+sh run_test_correlated_2_10000.sh
+sh run_test_correlated_2_20000.sh
+sh run_test_correlated_2_50000.sh
+sh run_test_correlated_2_100000.sh
+
+sh run_test_correlated_5_10000.sh
+sh run_test_correlated_5_20000.sh
+sh run_test_correlated_5_50000.sh
+sh run_test_correlated_5_100000.sh
+
+
+sh run_test_random_2_10000.sh
+sh run_test_random_2_20000.sh
+sh run_test_random_2_50000.sh
+sh run_test_random_2_100000.sh
+
+sh run_test_random_5_10000.sh
+sh run_test_random_5_20000.sh
+sh run_test_random_5_50000.sh
+sh run_test_random_5_100000.sh
