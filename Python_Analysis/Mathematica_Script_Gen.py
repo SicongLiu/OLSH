@@ -1,11 +1,12 @@
 # data_type = ["anti_correlated", "correlated", "random"]
-data_type = ["anti_correlated", "random"]
+data_type = ["correlated", "anti_correlated", "random"]
 dimensions = [2, 5]
 cardinality = [10000, 20000, 50000, 100000]
 query_count = [25, 50]
 topk = 10
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
-KList = [90, 80, 70, 60, 50, 40, 30, 20, 10, 10]
+# KList = [80, 70, 70, 70, 60, 60, 60, 50, 50, 50]
+KList = [70, 65, 60, 55, 50, 45, 40, 35, 30, 25]
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
