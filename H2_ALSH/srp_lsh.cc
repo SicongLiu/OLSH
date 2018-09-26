@@ -120,7 +120,56 @@ int SRP_LSH::kmc(					// c-k-AMC search
 		get_proj_vector(query, mc_query[l], l);
 	}
 
-	/* Modified by Sicong*/
+	// Modified by Sicong
+	// for each point, pick the best matched case and insert into candidate list
+	// candidate list:
+	// 		key: matched value -- Hamming Similarity of Hash Code
+	// 		value: data object ID
+	for (int i = 0; i < n_pts_; ++i)
+	{
+		int collisions = 0;
+		for(int l = 0; l < L_; l++)
+		{
+			for (int j = 0; j < K_; ++j)
+			{
+				if (hash_code_[l][i][j] == mc_query[l][j])
+				{
+					++collisions;
+				}
+			}
+		}
+		// enforce matching similarity associated with optimization function
+		if(calc_inner_product(dim_, data_[i], real_query) >=S_)
+		{
+			list->insert(collisions, i);
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] mc_query;
+	mc_query = NULL;
+
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+/*int SRP_LSH::kmc(					// c-k-AMC search
+	int   top_k,						// top-k value
+	const float *query,					// input query
+	MaxK_List *list,					// top-k MC results (return)
+	const float *real_query
+	)
+{
+	bool **mc_query = new bool*[L_];
+	for(int l = 0; l < L_; l++)
+	{
+		mc_query[l] = new bool[K_];
+		get_proj_vector(query, mc_query[l], l);
+	}
+
+	// Modified by Sicong
 	// for each point, pick the best matched case and insert into candidate list
 	// candidate list:
 	// 		key: matched value -- Hamming Similarity of Hash Code
@@ -157,7 +206,7 @@ int SRP_LSH::kmc(					// c-k-AMC search
 
 	return 0;
 }
-
+*/
 
 // -----------------------------------------------------------------------------
 void SRP_LSH::persistHashTable(const char *fname)			// persist HashTables on file
