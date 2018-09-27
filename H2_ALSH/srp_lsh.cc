@@ -18,7 +18,7 @@ SRP_LSH::SRP_LSH(					// constructor
 	L_     = L;
 	S_	   = S;
 	data_  = data;
-
+	maps_ = new unordered_map<string, vector<int> >[L_];
 	// -------------------------------------------------------------------------
 	//  build hash tables (bulkloading)
 	// -------------------------------------------------------------------------
@@ -51,6 +51,8 @@ SRP_LSH::~SRP_LSH()					// destructor
 			delete[] hash_code_[l];
 			hash_code_[l] = NULL;
 		}
+		// To-Do:
+		// need to clear up the maps
 	}
 
 }
@@ -86,8 +88,42 @@ void SRP_LSH::bulkload()			// bulkloading
 			hash_code_[l][i] = new bool[K_];
 			get_proj_vector(data_[i], hash_code_[l][i], l);
 		}
+		// for each layer build map here
+
+		unordered_map<string, vector<int>> map = buildMap(hash_code_[l]);
+		maps_[l] = map;
+		// free hashcode space
 	}
 
+}
+
+// -----------------------------------------------------------------------------
+unordered_map<string, vector<int>> SRP_LSH::buildMap(bool **hashcode)			// build hash map
+{
+	unordered_map<string, vector<int> > map;
+	for(int i=0; i < n_pts_; i++)
+	{
+		char c[K_];
+		for(int j = 0; j < K_; j++)
+		{
+			c[j] = hashcode[i][j] == true ? '1' : '0';
+		}
+		string str(c);
+		str = str.substr(0, K_);
+		if(map.find(str) != map.end())
+		{
+			map[str].push_back(i);
+		}
+		else
+		{
+			vector<int> data_index;
+			data_index.push_back(i);
+			pair<string, vector<int> > dict(str, data_index);
+			map.insert(dict);
+		}
+		memset(c, 0, K_);
+	}
+	return map;
 }
 
 // -----------------------------------------------------------------------------
@@ -106,12 +142,59 @@ void SRP_LSH::get_proj_vector(		// get vector after random projection
 }
 
 // -----------------------------------------------------------------------------
-int SRP_LSH::kmc(					// c-k-AMC search
+vector<int> SRP_LSH::mykmc(					// c-k-AMC search
 	int   top_k,						// top-k value
 	const float *query,					// input query
 	MaxK_List *list,					// top-k MC results (return)
 	const float *real_query
 	)
+{
+	bool **mc_query = new bool*[L_];
+	for(int l = 0; l < L_; l++)
+	{
+		mc_query[l] = new bool[K_];
+		get_proj_vector(query, mc_query[l], l);
+	}
+
+	// build hash code for mc_query
+	vector<int> candidates;
+
+	for(int i = 0; i < L_; i++)
+	{
+		char c[K_];
+		for(int j = 0; j < K_; j++)
+		{
+			c[j] = mc_query[i][j] ? '1' : '0';
+		}
+		string str(c);
+		str = str.substr(0, K_);
+		cout<<str<<endl;
+
+
+		// search through map to find candidates
+		if(maps_[i].find(str) != maps_[i].end())
+		{
+			vector<int> temp_map = maps_[i][str];
+			candidates.insert(candidates.end(), temp_map.begin(), temp_map.end());
+		}
+		memset(c, 0, K_);
+	}
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] mc_query;
+	mc_query = NULL;
+
+	return candidates;
+}
+
+// -----------------------------------------------------------------------------
+int SRP_LSH::kmc(					// c-k-AMC search
+	int   top_k,						// top-k value
+	const float *query,					// input query
+	MaxK_List *list,					// top-k MC results (return)
+	const float *real_query
+)
 {
 	bool **mc_query = new bool*[L_];
 	for(int l = 0; l < L_; l++)
@@ -153,6 +236,7 @@ int SRP_LSH::kmc(					// c-k-AMC search
 
 	return 0;
 }
+
 
 // -----------------------------------------------------------------------------
 /*int SRP_LSH::kmc(					// c-k-AMC search

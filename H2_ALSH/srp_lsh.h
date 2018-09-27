@@ -1,5 +1,7 @@
+
 #ifndef __SRP_LSH_H
 #define __SRP_LSH_H
+#include"headers.h"
 
 // -----------------------------------------------------------------------------
 //  Sign-Random Projection LSH (SRP_LSH) is used to solve the problem of 
@@ -29,6 +31,12 @@ public:
 			const float *query,				// input query
 			MaxK_List *list,					// top-k MC results  (return)
 			const float *real_query);
+	// -------------------------------------------------------------------------
+	vector<int> mykmc(						// c-k-AMC search
+			int   top_k,					// top-k value
+			const float *query,				// input query
+			MaxK_List *list,					// top-k MC results  (return)
+			const float *real_query);
 
 	// -------------------------------------------------------------------------
 	void persistHashTable(const char *fname);		// persist HashTables on file
@@ -44,6 +52,7 @@ protected:
 
 	bool  ***hash_code_;				// hash code of data objects
 	float ***proj_;					// random projection vectors
+	unordered_map<string, vector<int>>* maps_;
 
 	// -------------------------------------------------------------------------
 	void gen_random_vectors();		// generate random projection vectors
@@ -57,6 +66,8 @@ protected:
 		bool *hash_code,			// hash code of input data (return)
 		int layer);					// layer index of interest
 
+	// -------------------------------------------------------------------------
+	unordered_map<string, vector<int>> buildMap(bool **hashcode);
 
 };
 
