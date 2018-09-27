@@ -82,17 +82,17 @@ def persist_on_file(file_name, struct):
 
 
 if __name__ == '__main__':
-    layers = [0, 1, 2, 3]
-    data_type = ['anti_correlated_']
-    # data_type = ['anti_correlated_', 'correlated_', 'random_']
+    layers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # data_type = ['anti_correlated_']
+    data_type = ['anti_correlated_', 'correlated_', 'random_']
     dimensions = [5]
-    cardinality = [100000]
+    cardinality = [10000, 20000, 50000, 100000]
     topK = 10
-    INPUT_DATA_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-    QUERY_DATA_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/'
-    OUTPUT_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/'
-    # LAYER_DATA_FOLDER = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
-    LAYER_DATA_FOLDER = '/Users/sliu104/Dropbox (ASU)/LSH_Synthetic/qhull_data/Synthetic/'
+    INPUT_DATA_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+    QUERY_DATA_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
+    OUTPUT_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
+    LAYER_DATA_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
+    # LAYER_DATA_FOLDER = '/Users/sliu104/Dropbox (ASU)/LSH_Synthetic/qhull_data/Synthetic/'
     for i in range(len(dimensions)):
         for j in range(len(cardinality)):
             for k in range(len(data_type)):
@@ -119,7 +119,7 @@ if __name__ == '__main__':
                     # all_ground_truth.append(return_struct)
                     all_ground_truth = all_ground_truth + return_struct
                 # save return_struct to file
-                save_file_path = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/result/' + "grounTruth_Layer_Index_" + \
+                save_file_path = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/' + "grounTruth_Layer_Index_" + \
                                  data_type[k] + str(dimensions[i]) + "_" + str(cardinality[j])
                 np.savetxt(save_file_path, all_ground_truth, fmt='%10.5f')
                 # for ii in range(len(all_ground_truth)):
