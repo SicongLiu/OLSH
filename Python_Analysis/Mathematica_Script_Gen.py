@@ -6,7 +6,8 @@ query_count = [25, 50]
 topk = 10
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 # KList = [80, 70, 70, 70, 60, 60, 60, 50, 50, 50]
-KList = [70, 65, 60, 55, 50, 45, 40, 35, 30, 25]
+# KList = [70, 65, 60, 55, 50, 45, 40, 35, 30, 25]
+KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
