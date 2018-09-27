@@ -168,7 +168,6 @@ vector<int> SRP_LSH::mykmc(					// c-k-AMC search
 		}
 		string str(c);
 		str = str.substr(0, K_);
-		cout<<str<<endl;
 
 
 		// search through map to find candidates

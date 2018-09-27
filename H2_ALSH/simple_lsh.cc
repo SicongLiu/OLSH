@@ -166,9 +166,9 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 			list->insert(ip, id + 1);
 		}
 	}
-	/*if(candidates.size() < top_k)
+	if(candidates.size() < top_k)
 	{
-		for(int i = top_k - candidates.size(); i < top_k;  i++)
+		for(int i = top_k - candidates.size(); i >=0;  i--)
 		{
 			int id = -1;
 			float ip = FLT_MIN;
@@ -176,28 +176,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 			// list structure -- priority queue using resorted distance of inner prouct as similarity
 			list->insert(ip, id);
 		}
-	}*/
-
-
-	/*int temp_count = min(top_k, mcs_list->size());
-	for (int i = 0; i < temp_count; ++i)
-	{
-		int id = mcs_list->ith_id(i);
-		float ip = calc_inner_product(dim_, data_[id], query);
-
-		// list structure -- priority queue using resorted distance of inner prouct as similarity
-		list->insert(ip, id + 1);
 	}
-	for (int i = temp_count; i < top_k; i++)
-	{
-		int id = -1;
-		// float ip = -1.0f;
-		float ip = FLT_MIN;
-
-		// list structure -- priority queue using resorted distance of inner prouct as similarity
-		list->insert(ip, id);
-	}
-	*/
 
 	// -------------------------------------------------------------------------
 	//  release space
