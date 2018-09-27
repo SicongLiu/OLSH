@@ -27,16 +27,16 @@ oFolder=./result/result_${datatype}_${d}D_${cardinality}
 n0=2194
 K0=512
 L0=9
-dPath0=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_0
+dPath0=/Users/sliu104/Dropbox\ (ASU)/LSH_Synthetic/qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_0
 oFolder0=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D0_${K0}_${L0}
 ./alsh -alg 10 -n ${n0} -qn ${qn} -d ${d} -K ${K0} -L ${L0} -S ${S} -c0 ${c0} -ds ${dPath0} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder0}.simple_LSH
 #
-n1=3012
-K1=450
-L1=9
-dPath1=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_1
-oFolder1=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D1_${K1}_${L1}
-./alsh -alg 10 -n ${n1} -qn ${qn} -d ${d} -K ${K1} -L ${L1} -S ${S} -c0 ${c0} -ds ${dPath1} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder1}.simple_LSH
+#n1=3012
+#K1=450
+#L1=9
+#dPath1=/Users/sliu104/Dropbox\ \(ASU\)/LSH_Synthetic/qhull_data/Synthetic/${datatype}_${d}_${cardinality}_qhull_layer_1
+#oFolder1=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_${d}D1_${K1}_${L1}
+#./alsh -alg 10 -n ${n1} -qn ${qn} -d ${d} -K ${K1} -L ${L1} -S ${S} -c0 ${c0} -ds ${dPath1} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder1}.simple_LSH
 #
 #n2=3996
 #K2=60
@@ -97,4 +97,4 @@ oFolder1=./result/${datatype}/Dimension_${d}_Cardinality_${cardinality}/result_$
 ## ------------------------------------------------------------------------------
 ##     Overall-Performance
 ## ------------------------------------------------------------------------------
-./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts ${tsPath}.mip -of ${overallResult}
+#./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts ${tsPath}.mip -of ${overallResult}

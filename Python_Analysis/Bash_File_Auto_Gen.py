@@ -13,7 +13,7 @@ topk = 10
 ratios = [2]
 sim_thresholds = [0.9]
 
-BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+BASE_FOLDER = "/Users/sliu104/Dropbox (ASU)/LSH_Synthetic/qhull_data/Synthetic/"
 PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/Optimized_2/"
 BASH_FILE_FOLDER = "../H2_ALSH/"
 TEMPORAL_RESULT = "../H2_ALSH/qhull_data/Mathematica/"
