@@ -166,9 +166,9 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 			list->insert(ip, id + 1);
 		}
 	}
-	if(candidates.size() < top_k)
+	if(list->size() < top_k)
 	{
-		for(int i = top_k - candidates.size(); i >=0;  i--)
+		for(int i = top_k - list->size(); i >=0;  i--)
 		{
 			int id = -1;
 			float ip = FLT_MIN;

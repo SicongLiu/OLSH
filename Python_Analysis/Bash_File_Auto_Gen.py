@@ -14,7 +14,7 @@ ratios = [2]
 sim_thresholds = [0.9]
 
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/Optimized_1/"
+PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/UniForm_1/"
 
 BASH_FILE_FOLDER = "../H2_ALSH/"
 TEMPORAL_RESULT = "../H2_ALSH/qhull_data/Mathematica/"
