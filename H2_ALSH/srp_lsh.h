@@ -32,7 +32,7 @@ public:
 			MaxK_List *list,					// top-k MC results  (return)
 			const float *real_query);
 	// -------------------------------------------------------------------------
-	vector<int> mykmc(						// c-k-AMC search
+	unordered_set<int> mykmc(						// c-k-AMC search
 			int   top_k,					// top-k value
 			const float *query,				// input query
 			MaxK_List *list,					// top-k MC results  (return)

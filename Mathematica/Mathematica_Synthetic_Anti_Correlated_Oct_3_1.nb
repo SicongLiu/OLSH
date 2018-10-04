@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     31831,        647]
-NotebookOptionsPosition[     31332,        631]
-NotebookOutlinePosition[     31690,        647]
-CellTagsIndexPosition[     31647,        644]
+NotebookDataLength[     32619,        664]
+NotebookOptionsPosition[     32120,        648]
+NotebookOutlinePosition[     32478,        664]
+CellTagsIndexPosition[     32435,        661]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -52,7 +52,7 @@ Cell[BoxData[{
   RowBox[{"weight2", " ", "=", " ", "2"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"totalBudget", " ", "=", " ", "500000"}], ";"}], 
+   RowBox[{"totalBudget", " ", "=", " ", "1000000"}], ";"}], 
   "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{"count", "=", 
   RowBox[{"List", "[", 
@@ -65,19 +65,33 @@ Cell[BoxData[{
    RowBox[{"List", "[", 
     RowBox[{
     "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h",
-      ",", "q", ",", "j"}], "]"}]}], "\n", 
+      ",", "q", ",", "j"}], "]"}]}], "\[IndentingNewLine]", 
   RowBox[{"(*", 
    RowBox[{"KList", "=", 
     RowBox[{"List", "[", 
      RowBox[{
      "25", ",", "20", ",", "15", ",", "10", ",", "9", ",", "8", ",", "7", ",",
-       "6", ",", "5", ",", "4"}], "]"}]}], "*)"}]}], "\[IndentingNewLine]", 
+       "6", ",", "5", ",", "4"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"KList", "=", 
+    RowBox[{"List", "[", 
+     RowBox[{
+     "12", ",", " ", "12", ",", " ", "12", ",", " ", "13", ",", " ", "13", 
+      ",", " ", "13", ",", " ", "13", ",", " ", "13", ",", " ", "13", ",", 
+      " ", "13"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"KList", "=", 
+    RowBox[{"List", "[", 
+     RowBox[{
+     "9", ",", " ", "9", ",", " ", "9", ",", " ", "10", ",", " ", "10", ",", 
+      " ", "10", ",", " ", "10", ",", " ", "10", ",", " ", "10", ",", " ", 
+      "10"}], "]"}]}], "*)"}]}], "\n", 
  RowBox[{"KList", "=", 
   RowBox[{"List", "[", 
    RowBox[{
-   "12", ",", " ", "12", ",", " ", "12", ",", " ", "13", ",", " ", "13", ",", 
-    " ", "13", ",", " ", "13", ",", " ", "13", ",", " ", "13", ",", " ", 
-    "13"}], "]"}]}], "\n", 
+   "15", ",", " ", "15", ",", " ", "15", ",", " ", "16", ",", " ", "16", ",", 
+    " ", "16", ",", " ", "16", ",", " ", "16", ",", " ", "16", ",", " ", 
+    "16"}], "]"}]}], "\n", 
  RowBox[{
   RowBox[{"count1", " ", "=", " ", 
    RowBox[{"List", "[", 
@@ -626,7 +640,10 @@ Cell[BoxData[{
    3.747603734135247*^9, 3.7476037574799213`*^9}, 3.7476037905676813`*^9, 
    3.7476038249024687`*^9, 3.747603868316248*^9, {3.7476048254098053`*^9, 
    3.747604889070496*^9}, 3.747605051679803*^9, {3.747605082253297*^9, 
-   3.7476050823707523`*^9}},ExpressionUUID->"850ee3a4-bb20-4201-afa0-\
+   3.7476050823707523`*^9}, {3.747658211860745*^9, 3.747658250400239*^9}, {
+   3.7476583512255497`*^9, 3.747658378191412*^9}, {3.747658501322349*^9, 
+   3.747658503893792*^9}, {3.7476585988163443`*^9, 
+   3.747658606532928*^9}},ExpressionUUID->"850ee3a4-bb20-4201-afa0-\
 507cb5d1e1d7"]
 },
 WindowSize->{1240, 960},
@@ -648,7 +665,7 @@ CellTagsIndex->{}
 Notebook[{
 Cell[558, 20, 429, 7, 30, "Input",ExpressionUUID->"37476d5b-1b73-4a28-af49-c09382f36079"],
 Cell[990, 29, 1086, 16, 30, "Input",ExpressionUUID->"faee95b8-a212-4721-bed6-44041766bed6"],
-Cell[2079, 47, 29249, 582, 1375, "Input",ExpressionUUID->"850ee3a4-bb20-4201-afa0-507cb5d1e1d7"]
+Cell[2079, 47, 30037, 599, 1417, "Input",ExpressionUUID->"850ee3a4-bb20-4201-afa0-507cb5d1e1d7"]
 }
 ]
 *)

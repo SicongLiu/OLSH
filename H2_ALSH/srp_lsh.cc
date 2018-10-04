@@ -142,7 +142,7 @@ void SRP_LSH::get_proj_vector(		// get vector after random projection
 }
 
 // -----------------------------------------------------------------------------
-vector<int> SRP_LSH::mykmc(					// c-k-AMC search
+unordered_set<int> SRP_LSH::mykmc(					// c-k-AMC search
 	int   top_k,						// top-k value
 	const float *query,					// input query
 	MaxK_List *list,					// top-k MC results (return)
@@ -157,7 +157,8 @@ vector<int> SRP_LSH::mykmc(					// c-k-AMC search
 	}
 
 	// build hash code for mc_query
-	vector<int> candidates;
+	// vector<int> candidates;
+	unordered_set<int> candidates;
 
 	for(int i = 0; i < L_; i++)
 	{
@@ -174,7 +175,8 @@ vector<int> SRP_LSH::mykmc(					// c-k-AMC search
 		if(maps_[i].find(str) != maps_[i].end())
 		{
 			vector<int> temp_map = maps_[i][str];
-			candidates.insert(candidates.end(), temp_map.begin(), temp_map.end());
+			// candidates.insert(candidates.end(), temp_map.begin(), temp_map.end());
+			copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
 		}
 		memset(c, 0, K_);
 	}
