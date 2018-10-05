@@ -3,21 +3,23 @@
 
 import math
 
-data_type = ["anti_correlated", "correlated", "random"]
+# data_type = ["random", "correlated", "anti_correlated"]
+data_type = ["random", "correlated", "anti_correlated"]
 # data_type = ["correlated"]
-dimensions = [2, 5]
-cardinality = [10000, 20000, 50000, 100000]
-query_count = 25
+dimensions = [5]
+cardinality = [100000]
+query_count = 1000
 
 topk = 10
 ratios = [2]
 sim_thresholds = [0.9]
 
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/UniForm_1/"
+PARAMETER_BASE_FOLDER = "../H2_ALSH/parameters/Space_Cost_Uni_5/"
 
 BASH_FILE_FOLDER = "../H2_ALSH/"
 TEMPORAL_RESULT = "../H2_ALSH/qhull_data/Mathematica/"
+script_index = 0
 
 # read qhull data to get qhull layer element count
 for i in range(len(data_type)):
@@ -34,25 +36,25 @@ for i in range(len(data_type)):
             paramK_path = PARAMETER_BASE_FOLDER + "K_" + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
             f1 = open(paramK_path, 'r')
             K_lines = f1.readlines()
-            for k_index in range(topk):
-                K_List.append(int(K_lines[0].split('\r')[k_index]))
-            f1.close()
-            # for k_index in range(0, len(K_lines)):
-            #     K_List.append(int(K_lines[k_index].split('\n')[0]))
+            # for k_index in range(topk):
+            #     K_List.append(int(K_lines[0].split('\r')[k_index]))
             # f1.close()
+            for k_index in range(0, len(K_lines)):
+                K_List.append(int(K_lines[k_index].split('\n')[0]))
+            f1.close()
 
             # path for param-L
             paramL_path = PARAMETER_BASE_FOLDER + "L_" + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
 
             f2 = open(paramL_path, 'r')
             L_lines = f2.readlines()
-            for l_index in range(0, topk):
-                L_List.append(int(math.floor(float(L_lines[0].split('\r')[l_index]))))
-            f2.close()
-
-            # for l_index in range(0, len(L_lines)):
-            #     L_List.append(int(math.floor(float(L_lines[l_index].split('\n')[0]))))
+            # for l_index in range(0, topk):
+            #     L_List.append(int(math.floor(float(L_lines[0].split('\r')[l_index]))))
             # f2.close()
+
+            for l_index in range(0, len(L_lines)):
+                L_List.append(int(math.floor(float(L_lines[l_index].split('\n')[0]))))
+            f2.close()
             print(L_List)
             for m in range(len(K_List)):
                 qhull_file = BASE_FOLDER + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k]) + \

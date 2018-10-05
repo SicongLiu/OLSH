@@ -148,25 +148,11 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	// lsh_->kmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
 	// vector<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
 	unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
+
 	// -------------------------------------------------------------------------
 	//  calc inner product for candidates returned by SRP-LSH
-	//
-	//
-	//	Re-compute the similarity
 	// -------------------------------------------------------------------------
-	//
-
-	/*for(int i = 0; i < candidates.size(); i++)
-	{
-		int id = candidates.at(i);
-		float ip = calc_inner_product(dim_, data_[id], query);
-
-		if( ip > S_)
-		{
-			// list structure -- priority queue using resorted distance of inner prouct as similarity
-			list->insert(ip, id + 1);
-		}
-	}*/
+	int candidate_size = 0;
 	for(auto it : candidates)
 	{
 		int id = (int)it;
@@ -174,6 +160,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 
 		if( ip > S_)
 		{
+			++candidate_size;
 			// list structure -- priority queue using resorted distance of inner prouct as similarity
 			list->insert(ip, id + 1);
 		}
@@ -199,7 +186,8 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	delete mcs_list;
 	mcs_list = NULL;
 
-	return 0;
+	// return 0;
+	return candidate_size;
 }
 
 // -----------------------------------------------------------------------------

@@ -287,8 +287,10 @@ int main(int nargs, char **args)
 					(const float **) query, truth_set, output_folder);
 			break;
 		case 10:
-			simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-					(const float **) query, truth_set, temp_set, output_folder);
+			// simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+			//		(const float **) query, truth_set, temp_set, output_folder);
+			simple_lsh_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+								(const float **) query, truth_set, temp_set, output_folder);
 			break;
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);

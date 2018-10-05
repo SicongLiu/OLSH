@@ -1210,15 +1210,18 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 		}
 	}
 
+	vector<float> average_candidate_size;
 	printf("Top-t c-AMIP of Simple_LSH: \n");
 	for (int k_round = 0; k_round < maxK_round; ++k_round)
 	{
 		int top_k = kMIPs[k_round];
 		MaxK_List* list = new MaxK_List(top_k);
+
+		float candidate_size = 0.0f;
 		for (int i = 0; i < qn; ++i)
 		{
 			list->reset();
-			lsh->kmip(top_k, query[i], list);
+			candidate_size +=lsh->kmip(top_k, query[i], list);
 
 			// persist on file to compute overall performance
 			char output_set[200];
@@ -1234,9 +1237,14 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 				recall[t_round][k_round] += hits / (float) top_t;
 			}
 		}
+		candidate_size = candidate_size * 1.0f / qn;
+		average_candidate_size.push_back(candidate_size);
+
 		delete list;
 		list = NULL;
 	}
+	// persist candidate_size on file
+	persist_candidate_size(average_candidate_size, maxK_round, kMIPs, temp_result);
 
 	for (int t_round = 0; t_round < maxT_round; ++t_round)
 	{
@@ -1273,6 +1281,123 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	}
 	delete[] pre;	 pre = NULL;
 	delete[] recall; recall = NULL;
+
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int simple_lsh_recall(	// precision recall curve of simple_lsh
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	int   K,							// number of hash functions
+	int   L,							// number of hash tables
+	float  S,							// number of hash tables
+	float nn_ratio,						// approximation ratio for nn search
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *temp_result,			// address to store temporary output from different onion layers
+	const char  *output_folder) 		// output folder
+{
+	timeval start_time, end_time;
+
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R) == 1)
+	{
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	gettimeofday(&end_time, NULL);
+	float read_file_time = end_time.tv_sec - start_time.tv_sec +
+		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
+
+	// -------------------------------------------------------------------------
+	//  indexing
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+	Simple_LSH *lsh = new Simple_LSH();
+	lsh->build(n, d, K, L, S, nn_ratio, data);
+
+	gettimeofday(&end_time, NULL);
+	float indexing_time = end_time.tv_sec - start_time.tv_sec +
+		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Indexing Time: %f Seconds\n\n", indexing_time);
+
+	// -------------------------------------------------------------------------
+	//  Precision Recall Curve of Simple_LSH
+	// -------------------------------------------------------------------------
+	char output_set[200];
+	sprintf(output_set, "%ssimple_lsh_recall.out", output_folder);
+
+	FILE *fp = fopen(output_set, "a+");
+	if (!fp)
+	{
+		printf("Could not create %s\n", output_set);
+		return 1;
+	}
+
+	int kMIPs[] = { 1, 2, 5, 10};
+	int max_round = 4;
+	int top_k = -1;
+
+	float runtime = -1.0f;
+	float recall = -1.0f;
+	vector<float> average_candidate_size;
+
+	printf("Top-k c-AMIP of Simple_LSH: \n");
+	printf("  Top-k\t\tTime (ms)\tRecall\n");
+	for (int num = 0; num < max_round; num++)
+	{
+		gettimeofday(&start_time, NULL);
+		top_k = kMIPs[num];
+		MaxK_List* list = new MaxK_List(top_k);
+
+		recall = 0.0f;
+		float candidate_size = 0.0f;
+		for (int i = 0; i < qn; ++i)
+		{
+			list->reset();
+			candidate_size += lsh->kmip(top_k, query[i], list);
+
+			// persist on file to compute overall performance
+			char output_set[200];
+			sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
+			persist_intermediate_on_file(top_k, d, list, data, output_set);
+
+			recall += calc_recall(top_k, (const Result *) R[i], list);
+		}
+		delete list; list = NULL;
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+				start_time.tv_usec) / 1000000.0f;
+
+		candidate_size = candidate_size * 1.0f / qn;
+		average_candidate_size.push_back(candidate_size);
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
+	}
+	persist_candidate_size(average_candidate_size, max_round, kMIPs, temp_result);
+
+	printf("\n");
+	fprintf(fp, "\n");
+	fclose(fp);
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete lsh; lsh = NULL;
+	delete[] R; R = NULL;
 
 	return 0;
 }
@@ -1383,6 +1508,32 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 	return 0;
 }
 
+// -----------------------------------------------------------------------------
+int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
+	vector<float>   average_candidate_size, 	// average value of candidate size
+	int   maxK_round,					// topk results of interest
+	int*  kMIPs,						// round of top-k tested
+	const char  *output_folder)			// output folder
+{
+	for(int k_round = 0; k_round < maxK_round; ++k_round)
+	{
+		int topk = kMIPs[k_round];
+		char output_set[200];
+		sprintf(output_set, "%s_top_%d_candidate_size.txt", output_folder, topk);
+		FILE *fp = fopen(output_set, "a+");
+		if (!fp)
+		{
+			printf("Could not create %s\n", output_set);
+			return 1;
+		}
+		fprintf(fp, "%f\n", average_candidate_size.at(k_round));
+
+		fclose(fp);
+	}
+
+	return 0;
+}
+
 // -------------------------------------------------------------------------
 //  read all candidates per top_k, per query per onion layer
 // -------------------------------------------------------------------------
@@ -1395,10 +1546,8 @@ int overall_performance(				// output the overall performance of indexing
 		const char  *output_folder)			// output folder
 {
 	MAX_DIMENSION = d;
-	int tMIPs[] = { 1, 2, 5, 10 };
-	int kMIPs[] = { 1, 2, 5, 10, 20};
-	int maxT_round = 4;
-	int maxK_round = 5;
+	int kMIPs[] = { 1, 2, 5, 10 };
+	int max_round = 4;
 
 	// -------------------------------------------------------------------------
 	//  read the ground truth file
@@ -1417,26 +1566,18 @@ int overall_performance(				// output the overall performance of indexing
 	// -------------------------------------------------------------------------
 	//  compute precision and recall per query
 	// -------------------------------------------------------------------------
-	float **pre    = new float*[maxT_round];
-	float **recall = new float*[maxT_round];
+	float *recall = new float[max_round];
 
-	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	for (int round = 0; round < max_round; ++round)
 	{
-		pre[t_round]    = new float[maxK_round];
-		recall[t_round] = new float[maxK_round];
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round)
-		{
-			pre[t_round][k_round]    = 0;
-			recall[t_round][k_round] = 0;
-		}
+		recall[round] = 0;
 	}
 
 	printf("Top-t c-AMIP of Simple_LSH (overall): \n");
 
-	for (int k_round = 0; k_round < maxK_round; ++k_round)
+	for (int round = 0; round < max_round; ++round)
 	{
-		int top_k = kMIPs[k_round];
+		int top_k = kMIPs[round];
 		char output_set[200];
 		sprintf(output_set, "%s_top_%d.txt", temp_output_folder, top_k);
 
@@ -1501,14 +1642,7 @@ int overall_performance(				// output the overall performance of indexing
 				list->insert(temp_result[i][j][d], j + 1);
 			}
 
-			for (int t_round = 0; t_round < maxT_round; ++t_round)
-			{
-				int top_t = tMIPs[t_round];
-				int hits = get_hits(top_k, top_t, R[i], list);
-
-				pre[t_round][k_round]    += hits / (float) top_k;
-				recall[t_round][k_round] += hits / (float) top_t;
-			}
+			recall[round] += calc_recall(top_k, (const Result *) R[i], list);
 		}
 		delete list;
 		list = NULL;
@@ -1538,23 +1672,16 @@ int overall_performance(				// output the overall performance of indexing
 		printf("Could not open %s\n", output_folder);
 		return 1;
 	}
-	for (int t_round = 0; t_round < maxT_round; ++t_round)
+	printf("Top-k\t\tRecall\n");
+	fprintf(fp2, "Top-k\t\tRecall\n");
+	for (int round = 0; round < max_round; ++round)
 	{
-		int top_t = tMIPs[t_round];
-		printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
-		fprintf(fp2, "Top-%d\tRecall\t\tPrecision\n", top_t);
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round)
-		{
-			int top_k = kMIPs[k_round];
-			pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
-			recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;
-
-			printf("%4d\t\t%.2f\t\t%.2f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-			fprintf(fp2, "%d\t%f\t%f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-		}
+		int top_k = kMIPs[round];
+		recall[round]= recall[round] / qn;
+		printf("%4d\t\t%.2f\n", top_k,
+				recall[round]);
+		fprintf(fp2, "%d\t%f\n", top_k,
+				recall[round]);
 		printf("\n");
 		fprintf(fp2, "\n");
 	}
@@ -1563,11 +1690,6 @@ int overall_performance(				// output the overall performance of indexing
 	fclose(fp2);
 
 	delete[] R; R = NULL;
-	for (int i = 0; i < maxT_round; ++i) {
-		delete[] pre[i];	pre[i] = NULL;
-		delete[] recall[i];	recall[i] = NULL;
-	}
-	delete[] pre;	 pre = NULL;
 	delete[] recall; recall = NULL;
 
 	return 0;

@@ -141,6 +141,21 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
+int simple_lsh_recall(	// precision recall curve of simple_lsh
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	int   K,							// number of hash tables
+	int   L,							// number of hash layers
+	float S,							// similarity threshold
+	float nn_ratio,						// approximation ratio for ANN search
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *temp_result,			// address to store temporary output from different onion layers
+	const char  *output_folder);		// output folder
+
+// -----------------------------------------------------------------------------
 int norm_distribution(				// analyse norm distribution of data
 	int   n,							// number of data points
 	int   d,							// dimension of space
@@ -154,6 +169,13 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 	MaxK_List* list,					// list that contains the topk result per query per onion layer
 	const float **data,					// data set
 	const char  *output_folder);		// output folder
+
+// -----------------------------------------------------------------------------
+int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
+	vector<float>   average_candidate_size, 	// average value of candidate size
+	int   maxK_round,					// topk results of interest
+	int*  kMIPs,						// round of top-k tested
+	const char  *output_folder);			// output folder
 
 // -----------------------------------------------------------------------------
 int overall_performance(				// output the overall performance of indexing
