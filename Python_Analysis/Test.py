@@ -12,4 +12,12 @@ c = []
 c.append(a)
 c.append(b)
 
-print(c)
+d = []
+print(d.__len__())
+d.append(5)
+d.append(d[d.__len__() - 1] + 5)
+d.append(5)
+d.append(5)
+d.append(5)
+
+print(d)

@@ -48,7 +48,7 @@ def computer_qhull_statistics(data_file_path, k):
 
 
 def plot_histogram(distribution, save_data_folder, my_aff_name):
-    print 'Distribution to be printed: ', distribution
+    print ('Distribution to be printed: ', distribution)
     fig = plt.figure()
     # plt.hist(distribution)
     # plt.plot(distribution)
@@ -102,5 +102,5 @@ if __name__ == '__main__':
         my_save_data_folder = MY_SAVE_DATA_FOLDER + str(i)
         plot_histogram(my_distribution, my_save_data_folder, MY_AFF_NAME)
 
-    print 'Qhull Statistics Done'
+    print ('Qhull Statistics Done')
 
