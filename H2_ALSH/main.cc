@@ -82,6 +82,7 @@ int main(int nargs, char **args)
 	int   d         = -1;			// dimensionality
 	int   K         = -1;			// # tables for sign-alsh and simple-lsh
 	int   L         = -1;			// # of hash layers
+	int   layer_index = -1;			// current onion layer index
 	int   L1         = -1;			// # of onion layers
 	float S 		= -1.0f;		// similarity threshold
 	float nn_ratio  = -1.0f;		// approximation ratio of ANN search
@@ -150,6 +151,14 @@ int main(int nargs, char **args)
 			L = atoi(args[++cnt]);
 			printf("L             = %d\n", L);
 			if (L <= 0) {
+				failed = true;
+				break;
+			}
+		}
+		else if (strcmp(args[cnt], "-LI") == 0) {
+			layer_index = atoi(args[++cnt]);
+			printf("layer_index             = %d\n", layer_index);
+			if (layer_index <= 0) {
 				failed = true;
 				break;
 			}
@@ -223,7 +232,8 @@ int main(int nargs, char **args)
 
 	if(alg == 12) // compute overall performance, as a separate option
 	{
-		overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
+		// overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
+		overall_performance_1(d, qn, L1, temp_set, truth_set, output_folder);
 	}
 	else
 	{
@@ -289,8 +299,10 @@ int main(int nargs, char **args)
 		case 10:
 			// simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
 			//		(const float **) query, truth_set, temp_set, output_folder);
-			simple_lsh_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-								(const float **) query, truth_set, temp_set, output_folder);
+			/*simple_lsh_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+								(const float **) query, truth_set, temp_set, output_folder);*/
+			simple_lsh_recall_1(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
+											(const float **) query, truth_set, temp_set, output_folder);
 			break;
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);

@@ -144,7 +144,7 @@ for i in range(len(data_type)):
                          + "}_${L"+str(kk) + "}" + "\n")
 
                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                         "} -L ${L" + str(kk) + "} -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                         "} -L ${L" + str(kk) + "} -LI " + str(kk+1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(kk) + "}.simple_LSH \n")
 
                 f3.write("\n")
