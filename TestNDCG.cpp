@@ -57,6 +57,7 @@ int main()
 {
     static const double arr[] = {3,2,3,0,1,2};
     std::vector<double> relevence (arr, arr + sizeof(arr) / sizeof(arr[0]) );
+    std::vector<double> relevence1 (arr, arr + sizeof(arr) / sizeof(arr[0]) );
     
     // print to check
     for(int i=0; i<relevence.size(); i++)
@@ -65,14 +66,15 @@ int main()
     }
     std::cout<<std::endl;
     
-    // double dcg = DCG(relevence);
     double alterdcg = alterDCG(relevence);
-    //double ndcg = NDCG(relevence);
     double alterndcg = alterNDCG(relevence);
-    //std::cout<<"DCG Value: " << dcg << std::endl;
     std::cout<<"Alter DCG Value: " << alterdcg << std::endl;
-    //std::cout<<"NDCG Value: " << ndcg <<std::endl;
     std::cout<<"Alter NDCG Value: " << alterndcg <<std::endl;
+    
+    double dcg = DCG(relevence1);
+    double ndcg = NDCG(relevence1);
+    std::cout<<"DCG Value: " << dcg << std::endl;
+    std::cout<<"NDCG Value: " << ndcg <<std::endl;
     return 0;
 }
 

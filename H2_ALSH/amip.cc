@@ -1854,10 +1854,11 @@ int overall_performance_1(				// output the overall performance of indexing
 	//  compute precision and recall per query
 	// -------------------------------------------------------------------------
 	float *recall = new float[max_round];
-
+	float *NDCG = new float[max_round];
 	for (int round = 0; round < max_round; ++round)
 	{
 		recall[round] = 0;
+		NDCG[round] = 0;
 	}
 
 	printf("Top-t c-AMIP of Simple_LSH (overall): \n");
@@ -1936,6 +1937,7 @@ int overall_performance_1(				// output the overall performance of indexing
 			}
 
 			recall[round] += calc_recall(top_k, (const Result *) R[i], list);
+			NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
 		}
 		delete list;
 		list = NULL;
@@ -1965,16 +1967,17 @@ int overall_performance_1(				// output the overall performance of indexing
 		printf("Could not open %s\n", output_folder);
 		return 1;
 	}
-	printf("Top-k\t\tRecall\n");
-	fprintf(fp2, "Top-k\t\tRecall\n");
+	printf("Top-k\t\tRecall\tNDCG\n");
+	fprintf(fp2, "Top-k\t\tRecall\tNDCG\n");
 	for (int round = 0; round < max_round; ++round)
 	{
 		int top_k = kMIPs[round];
-		recall[round]= recall[round] / qn;
-		printf("%4d\t\t%.2f\n", top_k,
-				recall[round]);
-		fprintf(fp2, "%d\t%f\n", top_k,
-				recall[round]);
+		recall[round] = recall[round] / qn;
+		NDCG[round] = NDCG[round] * 1.0f / qn;
+		printf("%4d\t\t%.2f\t%.2f\n", top_k,
+				recall[round], NDCG[round]);
+		fprintf(fp2, "%d\t%f\t%f\n", top_k,
+				recall[round], NDCG[round]);
 		printf("\n");
 		fprintf(fp2, "\n");
 	}
@@ -1984,6 +1987,7 @@ int overall_performance_1(				// output the overall performance of indexing
 
 	delete[] R; R = NULL;
 	delete[] recall; recall = NULL;
+	delete[] NDCG; NDCG = NULL;
 
 	return 0;
 }

@@ -203,6 +203,38 @@ float calc_recall(					// calc recall (percentage)
 }
 
 // -----------------------------------------------------------------------------
+float calc_DCG(						// compute Discounted Cumulative Gain
+		vector<double> relevence)
+{
+	double dcg = 0;
+	for(int i=0; i<relevence.size(); i++)
+	{
+		int rankIndex = i + 1;
+		dcg += relevence.at(i)/log2(rankIndex + 1);
+	}
+	return dcg;
+}
+
+
+// -----------------------------------------------------------------------------
+float calc_NDCG(						// compute Normalized Discounted Cumulative Gain
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	MaxK_List *list)					// results returned by algorithms
+{
+	vector<double> ground_truth_list;
+	vector<double> returned_list;
+	for(int i = 0; i < k; i++)
+	{
+		ground_truth_list.push_back(R[i].key_);
+		returned_list.push_back(list->ith_key(i) > 0 ? list->ith_key(i) : 0);
+	}
+	double ideal_dcg = calc_DCG(ground_truth_list);
+	double dcg = calc_DCG(returned_list);
+	return dcg/ideal_dcg;
+}
+
+// -----------------------------------------------------------------------------
 int get_hits(						// get the number of hits between two ID list
 	int   k,							// top-k value
 	int   t,							// top-t value

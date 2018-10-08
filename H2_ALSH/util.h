@@ -63,6 +63,15 @@ float calc_l1_dist(					// calc L1 distance
 	int   dim,							// dimension
 	const float *p1,					// 1st point
 	const float *p2);					// 2nd point
+// -----------------------------------------------------------------------------
+float calc_DCG(						// compute Discounted Cumulative Gain
+		std::vector<double> relevence);
+
+// -----------------------------------------------------------------------------
+float calc_NDCG(						// compute Normalized Discounted Cumulative Gain
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	MaxK_List *list)	;				// results returned by algorithms
 
 // -----------------------------------------------------------------------------
 float calc_recall(					// calc recall (percentage)
