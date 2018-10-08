@@ -147,21 +147,6 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
-	float S,							// similarity threshold
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *temp_result,			// address to store temporary output from different onion layers
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int simple_lsh_recall_1(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
 	int   layer_index, 				// current onion layer index
 	float S,							// similarity threshold
 	float nn_ratio,						// approximation ratio for ANN search
@@ -188,20 +173,12 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 
 // -----------------------------------------------------------------------------
 int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
-	unordered_map<int, float> mymap, 	// average value of candidate size
-	const char  *output_folder);			// output folder
+		unordered_map<int, float> mymap, 	// average value of candidate size
+		const char  *output_folder,			// output folder
+		unordered_map<int, float> my_run_time);			// run time of different top-k
 
 // -----------------------------------------------------------------------------
 int overall_performance(				// output the overall performance of indexing
-	int   d,							// dimension of space
-	int   qn, 							// number of queries
-	int   layers,						// number of onion layers
-	const char  *temp_output_folder,	// temporal output folder
-	const char  *ground_truth_folder,	// ground truth folder
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int overall_performance_1(				// output the overall performance of indexing
 	int   d,							// dimension of space
 	int   qn, 							// number of queries
 	int   layers,						// number of onion layers

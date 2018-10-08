@@ -206,11 +206,19 @@ float calc_recall(					// calc recall (percentage)
 float calc_DCG(						// compute Discounted Cumulative Gain
 		vector<double> relevence)
 {
+	/*double dcg = 0.0f;
+	for(int i=0; i<relevence.size(); i++)
+	{
+		int rankIndex = i + 1;
+		dcg += relevence.at(i)/(1.0f * log2(rankIndex + 1));
+	}
+	return dcg;*/
+
 	double dcg = 0;
 	for(int i=0; i<relevence.size(); i++)
 	{
 		int rankIndex = i + 1;
-		dcg += relevence.at(i)/log2(rankIndex + 1);
+		dcg += (pow(2, relevence.at(i)) - 1 )/log2(rankIndex + 1);
 	}
 	return dcg;
 }

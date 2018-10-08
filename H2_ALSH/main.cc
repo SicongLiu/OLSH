@@ -232,8 +232,7 @@ int main(int nargs, char **args)
 
 	if(alg == 12) // compute overall performance, as a separate option
 	{
-		// overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
-		overall_performance_1(d, qn, L1, temp_set, truth_set, output_folder);
+		overall_performance(d, qn, L1, temp_set, truth_set, output_folder);
 	}
 	else
 	{
@@ -297,11 +296,7 @@ int main(int nargs, char **args)
 					(const float **) query, truth_set, output_folder);
 			break;
 		case 10:
-			// simple_lsh_precision_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-			//		(const float **) query, truth_set, temp_set, output_folder);
-			/*simple_lsh_recall(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-								(const float **) query, truth_set, temp_set, output_folder);*/
-			simple_lsh_recall_1(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
+			simple_lsh_recall(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
 											(const float **) query, truth_set, temp_set, output_folder);
 			break;
 		case 11:

@@ -1287,125 +1287,6 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   d,							// dimension of space
 	int   K,							// number of hash functions
 	int   L,							// number of hash tables
-	float  S,							// number of hash tables
-	float nn_ratio,						// approximation ratio for nn search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *temp_result,			// address to store temporary output from different onion layers
-	const char  *output_folder) 		// output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1)
-	{
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, S, nn_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  Precision Recall Curve of Simple_LSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%ssimple_lsh_recall.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp)
-	{
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int kMIPs[] = { 1, 2, 5, 10};
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float recall = -1.0f;
-	unordered_map<int, float> average_candidate_size;
-
-	printf("Top-k c-AMIP of Simple_LSH: \n");
-	printf("  Top-k\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++)
-	{
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		recall = 0.0f;
-		float candidate_size = 0.0f;
-		for (int i = 0; i < qn; ++i)
-		{
-			list->reset();
-			candidate_size += lsh->kmip(top_k, query[i], list);
-
-			// persist on file to compute overall performance
-			char output_set[200];
-			sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-			persist_intermediate_on_file(top_k, d, list, data, output_set);
-
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		candidate_size = candidate_size * 1.0f / qn;
-		pair<int, float > dict(top_k, candidate_size);
-		average_candidate_size.insert(dict);
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
-	}
-	persist_candidate_size(average_candidate_size, temp_result);
-
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-
-// -----------------------------------------------------------------------------
-int simple_lsh_recall_1(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash functions
-	int   L,							// number of hash tables
 	int 	  layer_index, 				// the index of current onion layer
 	float  S,							// number of hash tables
 	float nn_ratio,						// approximation ratio for nn search
@@ -1466,7 +1347,7 @@ int simple_lsh_recall_1(	// precision recall curve of simple_lsh
 
 	float runtime = -1.0f;
 	float recall = -1.0f;
-	// vector<float> average_candidate_size;
+	unordered_map<int, float> my_run_time;
 	unordered_map<int, float> average_candidate_size;
 
 	printf("Top-k c-AMIP of Simple_LSH: \n");
@@ -1474,6 +1355,7 @@ int simple_lsh_recall_1(	// precision recall curve of simple_lsh
 	for (int num = 0; num < max_round; num++)
 	{
 		gettimeofday(&start_time, NULL);
+		float file_processing_time = 0.0f;
 		top_k = kMIPs[num];
 		if(top_k < layer_index)
 		{
@@ -1487,29 +1369,37 @@ int simple_lsh_recall_1(	// precision recall curve of simple_lsh
 		{
 			list->reset();
 			candidate_size += lsh->kmip(top_k, query[i], list);
+			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			// persist on file to compute overall performance
 			char output_set[200];
 			sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-			persist_intermediate_on_file(top_k, d, list, data, output_set);
 
-			recall += calc_recall(top_k, (const Result *) R[i], list);
+			timeval file_start_time, file_end_time;
+			gettimeofday(&file_start_time, NULL);
+			persist_intermediate_on_file(top_k, d, list, data, output_set);
+			gettimeofday(&file_end_time, NULL);
+			file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
+					file_start_time.tv_usec) / 1000000.0f;
 		}
 		delete list; list = NULL;
 		gettimeofday(&end_time, NULL);
 		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 				start_time.tv_usec) / 1000000.0f;
+		runtime = runtime - file_processing_time;
+		pair<int, float > dict_time(top_k, runtime);
+		my_run_time.insert(dict_time);
 
 		candidate_size = candidate_size * 1.0f / qn;
-		pair<int, float > dict(top_k, candidate_size);
-		average_candidate_size.insert(dict);
+		pair<int, float > dict_candidate(top_k, candidate_size);
+		average_candidate_size.insert(dict_candidate);
 		recall        = recall / qn;
 		runtime       = (runtime * 1000.0f) / qn;
 
 		printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 		fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
 	}
-	persist_candidate_size(average_candidate_size, temp_result);
+	persist_candidate_size(average_candidate_size, temp_result, my_run_time);
 
 	printf("\n");
 	fprintf(fp, "\n");
@@ -1633,12 +1523,15 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 // -----------------------------------------------------------------------------
 int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
 		unordered_map<int, float> mymap, 	// average value of candidate size
-		const char  *output_folder)			// output folder
+		const char  *output_folder,			// output folder
+		unordered_map<int, float> my_run_time)			// run time of different top-k
 {
+	int run_time_index = 0;
 	for ( auto it = mymap.begin(); it != mymap.end(); ++it )
 	{
 		int top_k_key = (int)it->first;
 		float element_count = (float)it->second;
+		float run_time =  my_run_time[(int)it->first];
 		char output_set[200];
 		sprintf(output_set, "%s_top_%d_candidate_size.txt", output_folder, top_k_key);
 		FILE *fp = fopen(output_set, "a+");
@@ -1647,7 +1540,7 @@ int persist_candidate_size(				// persist average number of candidate on file, r
 			printf("Could not create %s\n", output_set);
 			return 1;
 		}
-		fprintf(fp, "%f\n", element_count);
+		fprintf(fp, "%f, %f\n", element_count, run_time);
 
 		fclose(fp);
 	}
@@ -1658,173 +1551,6 @@ int persist_candidate_size(				// persist average number of candidate on file, r
 //  read all candidates per top_k, per query per onion layer
 // -------------------------------------------------------------------------
 int overall_performance(				// output the overall performance of indexing
-		int   d,							// dimension of space
-		int   qn, 							// number of queries
-		int   layers,						// number of onion layers
-		const char  *temp_output_folder,	// temporal output
-		const char  *ground_truth_folder,	// ground truth folder
-		const char  *output_folder)			// output folder
-{
-	MAX_DIMENSION = d;
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i)
-	{
-		R[i] = new Result[MAXK];
-	}
-	if (read_ground_truth(qn, ground_truth_folder, R) == 1)
-	{
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	// -------------------------------------------------------------------------
-	//  compute precision and recall per query
-	// -------------------------------------------------------------------------
-	float *recall = new float[max_round];
-
-	for (int round = 0; round < max_round; ++round)
-	{
-		recall[round] = 0;
-	}
-
-	printf("Top-t c-AMIP of Simple_LSH (overall): \n");
-
-	for (int round = 0; round < max_round; ++round)
-	{
-		int top_k = kMIPs[round];
-		if(top_k > layers)
-		{
-			break;
-		}
-		char output_set[200];
-		sprintf(output_set, "%s_top_%d.txt", temp_output_folder, top_k);
-
-		// load from file
-		FILE *fp1 = fopen(output_set, "r");
-		if (!fp1)
-		{
-			printf("Could not open %s\n", output_set);
-			return 1;
-		}
-
-		/**
-		 * Created by Sicong
-		 *
-		 * The idea essentially is to combine the top-k results of the same
-		 * query across different layers, then aggregate different query
-		 * results together
-		 * */
-		float*** temp_result = new float**[qn];
-		for(int i = 0; i < qn; i++)
-		{
-			temp_result[i] = new float*[top_k * layers];
-			for(int j=0; j< top_k * layers; j++)
-			{
-				temp_result[i][j] = new float[d+1];
-			}
-		}
-
-		int q_index = 0;
-		int layer_index = 0;
-		int cur_q_line_count = 0;
-		int line_count = 0;
-		// while (!feof(fp1) && line_count < top_k * layers * qn)
-		while (!feof(fp1) && line_count < top_k * top_k * qn)
-		{
-			if(line_count%top_k == 0 && line_count > 0)
-			{
-				q_index = (++q_index)%qn;
-				cur_q_line_count = 0;
-				if(line_count%(top_k * qn) == 0)
-				{
-					++layer_index;
-				}
-			}
-			for (int j = 0; j < d + 1; ++j)
-			{
-				fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * top_k][j]);
-			}
-			fscanf(fp1, "\n");
-			++line_count;
-			++cur_q_line_count;
-
-		}
-		printf("top_k: %d, layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
-		// assert(feof(fp1) && line_count == top_k * layers * qn);
-		assert(feof(fp1) && line_count == top_k * top_k * qn);
-
-		MaxK_List* list = new MaxK_List(top_k);
-		for (int i = 0; i < qn; ++i)
-		{
-			list->reset();
-			for(int j = 0; j < top_k * layers; j++)
-			{
-				list->insert(temp_result[i][j][d], j + 1);
-			}
-
-			recall[round] += calc_recall(top_k, (const Result *) R[i], list);
-		}
-		delete list;
-		list = NULL;
-		fclose(fp1);
-
-		// -------------------------------------------------------------------------
-		//  free memory space
-		// -------------------------------------------------------------------------
-		for(int i = 0; i < qn; i++)
-		{
-			for(int j = 0; j < top_k * layers; j++)
-			{
-				delete[] temp_result[i][j];
-				temp_result[i][j] = NULL;
-			}
-			delete[] temp_result[i];
-			temp_result[i] = NULL;
-		}
-		delete[] temp_result;
-		temp_result = NULL;
-	}
-
-	printf("Output path %s \n ", output_folder);
-	FILE *fp2 = fopen(output_folder, "a+");
-	if (!fp2)
-	{
-		printf("Could not open %s\n", output_folder);
-		return 1;
-	}
-	printf("Top-k\t\tRecall\n");
-	fprintf(fp2, "Top-k\t\tRecall\n");
-	for (int round = 0; round < max_round; ++round)
-	{
-		int top_k = kMIPs[round];
-		recall[round]= recall[round] / qn;
-		printf("%4d\t\t%.2f\n", top_k,
-				recall[round]);
-		fprintf(fp2, "%d\t%f\n", top_k,
-				recall[round]);
-		printf("\n");
-		fprintf(fp2, "\n");
-	}
-	printf("\n");
-	fprintf(fp2, "\n");
-	fclose(fp2);
-
-	delete[] R; R = NULL;
-	delete[] recall; recall = NULL;
-
-	return 0;
-}
-
-// -------------------------------------------------------------------------
-//  read all candidates per top_k, per query per onion layer
-// -------------------------------------------------------------------------
-int overall_performance_1(				// output the overall performance of indexing
 		int   d,							// dimension of space
 		int   qn, 							// number of queries
 		int   layers,						// number of onion layers
