@@ -1,12 +1,10 @@
-# data_type = ["anti_correlated", "correlated", "random"]
 data_type = ["correlated", "anti_correlated", "random"]
-dimensions = [2, 5]
-cardinality = [10000, 20000, 50000, 100000]
-query_count = [25, 50]
-topk = 10
+dimensions = [2, 3, 4, 5, 6, 7]
+cardinality = [100000, 500000, 1000000, 10000000]
+query_count = [1000]
+topk = 25
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
-# KList = [80, 70, 70, 70, 60, 60, 60, 50, 50, 50]
-# KList = [70, 65, 60, 55, 50, 45, 40, 35, 30, 25]
+# hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 
 # count, hashTables KList
@@ -32,6 +30,7 @@ for i in range(len(data_type)):
             # f4.close()
             declare_string = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
             count = []
+            count1 = []
             f.write("# ------------------------------------------------------------------------------ \n")
             f.write("#     " + declare_string + " \n")
             f.write("# ------------------------------------------------------------------------------ \n")
@@ -48,11 +47,13 @@ for i in range(len(data_type)):
                 assert cur_dimension == dimensions[j]
 
                 count.append(float(cur_cardinality)/float(cardinality[k]))
+                count1.append(cur_cardinality)
                 f1.close()
             f.write("count = List" + str(count) + "\n")
             f.write("hashTables = List[" + ','.join(hashTables) + "] \n")
             # f.write("hashTables = List" + str(hashTables) + "\n")
             f.write("KList = List" + str(KList) + "\n")
+            f.write("count1 = List" + str(count1) + "\n")
             opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
                       "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
                       "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
