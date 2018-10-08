@@ -188,9 +188,7 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 
 // -----------------------------------------------------------------------------
 int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
-	vector<float>   average_candidate_size, 	// average value of candidate size
-	int   maxK_round,					// topk results of interest
-	int*  kMIPs,						// round of top-k tested
+	unordered_map<int, float> mymap, 	// average value of candidate size
 	const char  *output_folder);			// output folder
 
 // -----------------------------------------------------------------------------
