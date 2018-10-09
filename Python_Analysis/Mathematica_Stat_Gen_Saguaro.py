@@ -1,8 +1,8 @@
 data_type = ["correlated", "anti_correlated", "random"]
-dimensions = [2, 3, 4, 5, 6, 7]
-cardinality = [100000, 500000, 1000000, 10000000]
+dimensions = [5]
+cardinality = [100000]
 query_count = [1000]
-topk = 25
+topk = 10
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]

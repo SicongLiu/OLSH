@@ -23,22 +23,25 @@ def save_remaining_qhull(data_cardinality, data, current_qhull_output, layer_ind
     # 1: dimension -- INTEGER
     # 2: number of points -- INTEGER
     # 3: point coordinates
+    current_data = np.asarray(current_data)
     num_of_dimension = int(current_data[0])
     num_of_points = int(current_data[1])
     data_len = 2 + int(current_data[1])
     for i in range(2, data_len):
         current_data_record = np.fromstring(current_data[i], dtype=float, sep=' ')
-        rows, columns = np.where(data == current_data_record)
-        data.pop(rows[0])
+        # rows, columns = np.where((data == current_data_record).all(axis=1))
+        my_row = np.where((data == current_data_record).all(axis=1))[0]
+        data = np.delete(data, my_row, 0)
 
     file_name = cur_output_folder + '/' + aff_name + '_remain_qhull_input_'+str(layer_index)
     remain_qhull.append(np.asarray(int(num_of_dimension)))
     remain_qhull.append(np.asarray(int(data_cardinality - num_of_points)))
+    remain_qhull = np.asarray(remain_qhull)
     np.savetxt(file_name, remain_qhull, delimiter=',', fmt='%i')
 
     # separate metadata and data points, appending data points to metadata text saved on file
-    f_handle = file(file_name, 'a')
-    np.savetxt(f_handle, data)
+    f_handle = open(file_name, 'ab')
+    np.savetxt(f_handle, data, fmt='%10.6f')
     f_handle.close()
     return file_name, data
 
@@ -57,6 +60,8 @@ def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name
         my_line = np.fromstring(cur_line, dtype=float, sep=' ')
         data.append(my_line)
 
+    data = np.asarray(data)
+    print(type(data))
     # compute qhull till max_layer of interest
     for i in range(max_layers):
         command_line = command_bin_folder + '/qhull p < ' + input_path
@@ -74,17 +79,18 @@ def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name
 
 
 if __name__ == '__main__':
-    command_bin_folder = '/Users/sliu104/Desktop/StreamingTopK/qhull/bin'
-    dimensions = [2, 5, 7]
+    command_bin_folder = '/Users/sicongliu/Desktop/StreamingTopK/qhull/bin'
+    dimensions = [5]
     # dimensions = [10, 15, 20]
-    cardinality = [10000, 20000, 50000, 100000]
+    cardinality = [100000]
 
     data_type = ['anti_correlated_', 'correlated_', 'random_']
     # data_type = ['correlated_', 'random_']
     MAX_LAYERS = 10
 
-    MY_DATA_FILE_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-    OUTPUT_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic'
+    MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+    OUTPUT_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
+    # OUTPUT_PATH = '/Users/sicongliu/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
 
     for i in range(len(dimensions)):
         for j in range(len(cardinality)):
