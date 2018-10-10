@@ -237,6 +237,7 @@ float calc_NDCG(						// compute Normalized Discounted Cumulative Gain
 		ground_truth_list.push_back(R[i].key_);
 		returned_list.push_back(list->ith_key(i) > 0 ? list->ith_key(i) : 0);
 	}
+
 	double ideal_dcg = calc_DCG(ground_truth_list);
 	double dcg = calc_DCG(returned_list);
 

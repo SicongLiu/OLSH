@@ -1,16 +1,18 @@
 data_type = ["correlated", "anti_correlated", "random"]
+# data_type = ["anti_correlated"]
 dimensions = [5]
 cardinality = [100000]
 query_count = [1000]
-topk = 10
-hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
-# hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+topk = 25
+# hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
+hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
-SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters.txt"
-DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters_top_" + str(topk) + ".txt"
+# DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+DATA_FOLDER = "../H2_ALSH/qhull_data/"
 f = open(SCRIPT_OUTPUT_FILE, 'w')
 
 for i in range(len(data_type)):

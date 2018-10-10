@@ -11,7 +11,7 @@ dimensions = [5]
 cardinality = [100000]
 query_count = 1000
 
-topk = 10
+topk = 25
 ratio = 2
 sim_threshold = 0.9
 
