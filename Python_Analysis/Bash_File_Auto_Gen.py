@@ -11,8 +11,10 @@ dimensions = [5]
 top_ks = [10, 25]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 card_excel = ['100k', '200k']
+cardinality = [100000, 200000]
+# cardinality = 100000
 
-k_ranges_anti_10 = ['E6', 'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
+k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
 l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
 l_ranges_uni_anti_10 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
 
@@ -71,120 +73,119 @@ for i in range(top_ks.__len__()):
         budget = budgets[j]
         for k in range(dimensions.__len__()):
             dimension = dimensions[k]
-            sheetname = "Budget_" + str(dimension) + "D_top" + str(top_k) + "_" + str(budget)
-            if sheetname in wb.sheetnames:
-                ws = wb[sheetname]
-                for m in range(types.__len__()):
-                    type_name = types[m]
-                    start = 2 * m
-                    end = 2 * m + 1
-                    # read data type anti_correlated
-                    k_anti = []
-                    for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
-                        for cell in row:
-                            k_anti.append(cell.value)
+            for cc in range(cardinality.__len__()):
+                sheetname = "Budget_" + str(dimension) + "D_top" + str(top_k) + "_" + str(budget) + "_" + card_excel[cc]
+                if sheetname in wb.sheetnames:
+                    ws = wb[sheetname]
+                    for m in range(types.__len__()):
+                        type_name = types[m]
+                        start = 2 * m
+                        end = 2 * m + 1
+                        # read data type anti_correlated
+                        k_anti = []
+                        for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
+                            for cell in row:
+                                k_anti.append(cell.value)
 
-                    l_anti_opt = []
-                    for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
-                        for cell in row:
-                            l_anti_opt.append(cell.value)
+                        l_anti_opt = []
+                        for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
+                            for cell in row:
+                                l_anti_opt.append(cell.value)
 
-                    l_anti_uni = []
-                    for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
-                        for cell in row:
-                            l_anti_uni.append(cell.value)
+                        l_anti_uni = []
+                        for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
+                            for cell in row:
+                                l_anti_uni.append(cell.value)
 
-                    # read data type correlated
-                    k_corr = []
-                    for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
-                        for cell in row:
-                            k_corr.append(cell.value)
+                        # read data type correlated
+                        k_corr = []
+                        for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
+                            for cell in row:
+                                k_corr.append(cell.value)
 
-                    l_corr_opt = []
-                    for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
-                        for cell in row:
-                            l_corr_opt.append(cell.value)
+                        l_corr_opt = []
+                        for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
+                            for cell in row:
+                                l_corr_opt.append(cell.value)
 
-                    l_corr_uni = []
-                    for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
-                        for cell in row:
-                            l_corr_uni.append(cell.value)
+                        l_corr_uni = []
+                        for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
+                            for cell in row:
+                                l_corr_uni.append(cell.value)
 
-                    # read data type random
-                    k_random = []
-                    for row in ws[k_ranges_random[start]: k_ranges_random[end]]:
-                        for cell in row:
-                            k_random.append(cell.value)
+                        # read data type random
+                        k_random = []
+                        for row in ws[k_ranges_random[start]: k_ranges_random[end]]:
+                            for cell in row:
+                                k_random.append(cell.value)
 
-                    l_random_opt = []
-                    for row in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
-                        for cell in row:
-                            l_random_opt.append(cell.value)
+                        l_random_opt = []
+                        for row in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
+                            for cell in row:
+                                l_random_opt.append(cell.value)
 
-                    l_random_uni = []
-                    for row in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
-                        for cell in row:
-                            l_random_uni.append(cell.value)
-                    # save current K and L parameters to files
-                    # anti_opt
-                    # anti_uni
-                    save_file_dir = save_file_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
-                                    + "_" + type_name + "/"
+                        l_random_uni = []
+                        for row in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
+                            for cell in row:
+                                l_random_uni.append(cell.value)
+                        # save current K and L parameters to files
+                        # anti_opt
+                        # anti_uni
+                        save_file_dir = save_file_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
+                                        + "_" + type_name + "_" + card_excel[cc] + "/"
 
-                    if not os.path.exists(save_file_dir):
-                        os.makedirs(save_file_dir)
-                    anti_k_name = save_file_dir + "k_anti_correlated"
-                    f = open(anti_k_name, 'w')
-                    f.write(','.join(map(str, k_anti)))
-                    f.close()
+                        if not os.path.exists(save_file_dir):
+                            os.makedirs(save_file_dir)
+                        anti_k_name = save_file_dir + "k_anti_correlated"
+                        f = open(anti_k_name, 'w')
+                        f.write(','.join(map(str, k_anti)))
+                        f.close()
 
-                    anti_opt_name = save_file_dir + "l_anti_correlated_opt"
-                    f = open(anti_opt_name, 'w')
-                    f.write(','.join(map(str, l_anti_opt)))
-                    f.close()
+                        anti_opt_name = save_file_dir + "l_anti_correlated_opt"
+                        f = open(anti_opt_name, 'w')
+                        f.write(','.join(map(str, l_anti_opt)))
+                        f.close()
 
-                    anti_uni_name = save_file_dir + "l_anti_correlated_uni"
-                    f = open(anti_uni_name, 'w')
-                    f.write(','.join(map(str, l_anti_uni)))
-                    f.close()
+                        anti_uni_name = save_file_dir + "l_anti_correlated_uni"
+                        f = open(anti_uni_name, 'w')
+                        f.write(','.join(map(str, l_anti_uni)))
+                        f.close()
 
-                    # corr_opt
-                    # corr_uni
-                    corr_k_name = save_file_dir + "k_correlated"
-                    f = open(corr_k_name, 'w')
-                    f.write(','.join(map(str, k_corr)))
-                    f.close()
+                        # corr_opt
+                        # corr_uni
+                        corr_k_name = save_file_dir + "k_correlated"
+                        f = open(corr_k_name, 'w')
+                        f.write(','.join(map(str, k_corr)))
+                        f.close()
 
-                    corr_opt_name = save_file_dir + "l_correlated_opt"
-                    f = open(corr_opt_name, 'w')
-                    f.write(','.join(map(str, l_corr_opt)))
-                    f.close()
+                        corr_opt_name = save_file_dir + "l_correlated_opt"
+                        f = open(corr_opt_name, 'w')
+                        f.write(','.join(map(str, l_corr_opt)))
+                        f.close()
 
-                    corr_uni_name = save_file_dir + "l_correlated_uni"
-                    f = open(corr_uni_name, 'w')
-                    f.write(','.join(map(str, l_corr_uni)))
-                    f.close()
-                    # random_opt
-                    # random_uni
-                    random_k_name = save_file_dir + "k_random"
-                    f = open(random_k_name, 'w')
-                    f.write(','.join(map(str, k_random)))
-                    f.close()
+                        corr_uni_name = save_file_dir + "l_correlated_uni"
+                        f = open(corr_uni_name, 'w')
+                        f.write(','.join(map(str, l_corr_uni)))
+                        f.close()
+                        # random_opt
+                        # random_uni
+                        random_k_name = save_file_dir + "k_random"
+                        f = open(random_k_name, 'w')
+                        f.write(','.join(map(str, k_random)))
+                        f.close()
 
-                    random_opt_name = save_file_dir + "l_random_opt"
-                    f = open(random_opt_name, 'w')
-                    f.write(','.join(map(str, l_random_opt)))
-                    f.close()
+                        random_opt_name = save_file_dir + "l_random_opt"
+                        f = open(random_opt_name, 'w')
+                        f.write(','.join(map(str, l_random_opt)))
+                        f.close()
 
-                    random_uni_name = save_file_dir + "l_random_uni"
-                    f = open(random_uni_name, 'w')
-                    f.write(','.join(map(str, l_random_uni)))
-                    f.close()
+                        random_uni_name = save_file_dir + "l_random_uni"
+                        f = open(random_uni_name, 'w')
+                        f.write(','.join(map(str, l_random_uni)))
+                        f.close()
 wb.close()
 print("Done .\n")
 
-
-cardinality = [100000, 200000]
 query_count = 1000
 ratio = 2
 sim_threshold = 0.9
@@ -206,230 +207,231 @@ for i in range(top_ks.__len__()):
             dimension = dimensions[k]
             for m in range(types.__len__()):
                 type_name = types[m]
-                parameter_dir = parameter_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
-                                    + "_" + type_name + "/"
-                if not os.path.exists(parameter_dir):
-                    continue
-                else:
-                    BASH_FILE_FOLDER = BASH_FILE_BASE_FOLDER + "bash_set_" + str(dimension) + "D_top" + str(top_k) + \
-                                       "_budget_" + str(budget) + "_" + type_name + "/"
-                    TEMPORAL_RESULT = "../H2_ALSH/temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
-                                      str(budget) + "_" + type_name + "/"
-                    TEMPORAL_RESULT_FOR_BASH = "./temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
-                                               str(budget) + "_" + type_name + "/"
+                for cc in range(cardinality.__len__()):
+                    parameter_dir = parameter_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
+                                        + "_" + type_name + "_" + card_excel[cc] + "/"
+                    if not os.path.exists(parameter_dir):
+                        continue
+                    else:
+                        BASH_FILE_FOLDER = BASH_FILE_BASE_FOLDER + "bash_set_" + str(dimension) + "D_top" + str(top_k) + \
+                                           "_budget_" + str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
+                        TEMPORAL_RESULT = "../H2_ALSH/temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
+                                          str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
+                        TEMPORAL_RESULT_FOR_BASH = "./temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
+                                                   str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
 
-                    if not os.path.exists(BASH_FILE_FOLDER):
-                        os.makedirs(BASH_FILE_FOLDER)
+                        if not os.path.exists(BASH_FILE_FOLDER):
+                            os.makedirs(BASH_FILE_FOLDER)
 
-                    if not os.path.exists(TEMPORAL_RESULT):
-                        os.makedirs(TEMPORAL_RESULT)
+                        if not os.path.exists(TEMPORAL_RESULT):
+                            os.makedirs(TEMPORAL_RESULT)
 
-                    cur_bash_set_dir = "bash_set_" + str(dimension) + "D_top" + str(top_k) + \
-                                       "_budget_" + str(budget) + "_" + type_name + "/"
-                    for ii in range(len(data_type)):
-                        K_List = []
-                        L_Opt_List = []
-                        L_Uni_List = []
-                        qhull_data_count = []
-                        bash_file_opt = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
-                                        + "_" + str(cardinality) + "_opt.sh"
+                        cur_bash_set_dir = "bash_set_" + str(dimension) + "D_top" + str(top_k) + \
+                                           "_budget_" + str(budget) + "_" + type_name + "/"
+                        for ii in range(len(data_type)):
+                            K_List = []
+                            L_Opt_List = []
+                            L_Uni_List = []
+                            qhull_data_count = []
+                            bash_file_opt = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
+                                            + "_" + str(cardinality[cc]) + "_opt.sh"
 
-                        bash_file_uni = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
-                                        + "_" + str(cardinality) + "_uni.sh"
+                            bash_file_uni = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
+                                            + "_" + str(cardinality[cc]) + "_uni.sh"
 
-                        f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality) + "_opt.sh \n")
-                        f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality) + "_uni.sh \n")
-                        paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
-                        f1 = open(paramK_path, 'r')
-                        K_lines = f1.readlines()
-                        for k_index in range(top_k):
-                            K_List.append(int(K_lines[0].split(',')[k_index]))
-                        f1.close()
+                            f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality) + "_opt.sh \n")
+                            f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality) + "_uni.sh \n")
+                            paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
+                            f1 = open(paramK_path, 'r')
+                            K_lines = f1.readlines()
+                            for k_index in range(top_k):
+                                K_List.append(int(K_lines[0].split(',')[k_index]))
+                            f1.close()
 
-                        paramL_opt_path = parameter_dir + "l_" + data_type[ii] + "_opt" # str(cardinality[k])
-                        f2 = open(paramL_opt_path, 'r')
-                        L_lines = f2.readlines()
-                        for l_index in range(0, top_k):
-                            L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
-                        f2.close()
-                        print("L opt: " + str(L_Opt_List))
+                            paramL_opt_path = parameter_dir + "l_" + data_type[ii] + "_opt" # str(cardinality[k])
+                            f2 = open(paramL_opt_path, 'r')
+                            L_lines = f2.readlines()
+                            for l_index in range(0, top_k):
+                                L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
+                            f2.close()
+                            print("L opt: " + str(L_Opt_List))
 
-                        paramL_uni_path = parameter_dir + "l_" + data_type[ii] + "_uni"  # str(cardinality[k])
-                        f2 = open(paramL_uni_path, 'r')
-                        L_lines = f2.readlines()
-                        for l_index in range(0, top_k):
-                            L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
-                        f2.close()
-                        print("L uni: " + str(L_Uni_List))
+                            paramL_uni_path = parameter_dir + "l_" + data_type[ii] + "_uni"  # str(cardinality[k])
+                            f2 = open(paramL_uni_path, 'r')
+                            L_lines = f2.readlines()
+                            for l_index in range(0, top_k):
+                                L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
+                            f2.close()
+                            print("L uni: " + str(L_Uni_List))
 
-                        for mm in range(len(K_List)):
-                            qhull_file = BASE_FOLDER + data_type[ii] + "_" + str(dimensions[k]) + "_" + str(cardinality)\
-                                         + "_" + "qhull_layer_" + str(mm)
-                            f = open(qhull_file, 'r')
-                            lines = f.readlines()
-                            second_line = lines[1]
-                            cur_data_count = int(second_line.split('\n')[0])
-                            qhull_data_count.append(cur_data_count)
-                            f.close()
+                            for mm in range(len(K_List)):
+                                qhull_file = BASE_FOLDER + data_type[ii] + "_" + str(dimensions[k]) + "_" + str(cardinality[cc])\
+                                             + "_" + "qhull_layer_" + str(mm)
+                                f = open(qhull_file, 'r')
+                                lines = f.readlines()
+                                second_line = lines[1]
+                                cur_data_count = int(second_line.split('\n')[0])
+                                qhull_data_count.append(cur_data_count)
+                                f.close()
 
-                        # opt cumsum_hashsize
-                        obj_cumsum = []
-                        hashsize_cumsum = []
-                        obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type[ii] + "_" + str(
-                            dimensions[k]) +  "_" + str(cardinality) + ".txt"
-                        f4 = open(obj_hashsize_file, 'w')
-                        for mm in range(len(L_Opt_List)):
-                            if obj_cumsum.__len__() == 0:
-                                obj_cumsum.append(qhull_data_count[mm])
-                                hashsize_cumsum.append(qhull_data_count[mm] * L_Opt_List[mm])
-                            else:
-                                obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
-                                hashsize_cumsum.append(
-                                    hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] * L_Opt_List[mm])
-                        f4.write(','.join(map(repr, obj_cumsum)))
-                        f4.write("\n")
-                        f4.write(','.join(map(repr, hashsize_cumsum)))
-                        f4.close()
+                            # opt cumsum_hashsize
+                            obj_cumsum = []
+                            hashsize_cumsum = []
+                            obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type[ii] + "_" + str(
+                                dimensions[k]) +  "_" + str(cardinality[cc]) + ".txt"
+                            f4 = open(obj_hashsize_file, 'w')
+                            for mm in range(len(L_Opt_List)):
+                                if obj_cumsum.__len__() == 0:
+                                    obj_cumsum.append(qhull_data_count[mm])
+                                    hashsize_cumsum.append(qhull_data_count[mm] * L_Opt_List[mm])
+                                else:
+                                    obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
+                                    hashsize_cumsum.append(
+                                        hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] * L_Opt_List[mm])
+                            f4.write(','.join(map(repr, obj_cumsum)))
+                            f4.write("\n")
+                            f4.write(','.join(map(repr, hashsize_cumsum)))
+                            f4.close()
 
-                        # uni cumsum hashsize
-                        obj_cumsum = []
-                        hashsize_cumsum = []
-                        obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type[ii] + "_" + str(
-                            dimensions[k]) + "_" + str(cardinality) + ".txt"
-                        f4 = open(obj_hashsize_file, 'w')
-                        for mm in range(len(L_Uni_List)):
-                            if obj_cumsum.__len__() == 0:
-                                obj_cumsum.append(qhull_data_count[mm])
-                                hashsize_cumsum.append(qhull_data_count[mm] * L_Uni_List[mm])
-                            else:
-                                obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
-                                hashsize_cumsum.append(
-                                    hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] * L_Uni_List[mm])
-                        f4.write(','.join(map(repr, obj_cumsum)))
-                        f4.write("\n")
-                        f4.write(','.join(map(repr, hashsize_cumsum)))
-                        f4.close()
+                            # uni cumsum hashsize
+                            obj_cumsum = []
+                            hashsize_cumsum = []
+                            obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type[ii] + "_" + str(
+                                dimensions[k]) + "_" + str(cardinality[cc]) + ".txt"
+                            f4 = open(obj_hashsize_file, 'w')
+                            for mm in range(len(L_Uni_List)):
+                                if obj_cumsum.__len__() == 0:
+                                    obj_cumsum.append(qhull_data_count[mm])
+                                    hashsize_cumsum.append(qhull_data_count[mm] * L_Uni_List[mm])
+                                else:
+                                    obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
+                                    hashsize_cumsum.append(
+                                        hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] * L_Uni_List[mm])
+                            f4.write(','.join(map(repr, obj_cumsum)))
+                            f4.write("\n")
+                            f4.write(','.join(map(repr, hashsize_cumsum)))
+                            f4.close()
 
-                        # write to .sh file at save path, opt
-                        f3 = open(bash_file_opt, 'w')
-                        f3.write("#!/bin/bash \n")
-                        f3.write("# make \n")
-                        f3.write("rm *.o \n")
-                        cur_data_type = data_type[ii]
-                        cur_cardinality = cardinality
-                        cur_dimension = dimensions[k]
-                        f3.write("datatype=" + cur_data_type + "\n")
-                        f3.write("cardinality=" + str(cur_cardinality) + "\n")
-                        f3.write("d=" + str(cur_dimension) + "\n")
-                        f3.write("qn=" + str(query_count) + "\n")
-                        f3.write("c0=" + str(ratio) + "\n")
+                            # write to .sh file at save path, opt
+                            f3 = open(bash_file_opt, 'w')
+                            f3.write("#!/bin/bash \n")
+                            f3.write("# make \n")
+                            f3.write("rm *.o \n")
+                            cur_data_type = data_type[ii]
+                            cur_cardinality = cardinality[cc]
+                            cur_dimension = dimensions[k]
+                            f3.write("datatype=" + cur_data_type + "\n")
+                            f3.write("cardinality=" + str(cur_cardinality) + "\n")
+                            f3.write("d=" + str(cur_dimension) + "\n")
+                            f3.write("qn=" + str(query_count) + "\n")
+                            f3.write("c0=" + str(ratio) + "\n")
 
-                        temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
-                        overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
-                        f3.write("temporalResult=" + temporalResult + "\n")
-                        f3.write("overallResult=" + overallResult + "\n")
-                        f3.write("S=" + str(sim_threshold) + "\n")
-                        f3.write("num_layer=" + str(len(K_List)) + "\n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Ground-Truth \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
-                        f3.write(
-                            "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                        f3.write("qPath=./query/query_${d}D.txt \n")
-                        f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                        f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-                                 "${oFolder}.mip \n")
-                        f3.write("\n \n \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Layer-Performance \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        for kk in range(len(K_List)):
-                            f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
-                            f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
-                            f3.write("L" + str(kk) + "=" + str(L_Opt_List[kk]) + "\n")
+                            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
+                            f3.write("temporalResult=" + temporalResult + "\n")
+                            f3.write("overallResult=" + overallResult + "\n")
+                            f3.write("S=" + str(sim_threshold) + "\n")
+                            f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Ground-Truth \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            f3.write(
+                                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                            f3.write("qPath=./query/query_${d}D.txt \n")
+                            f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+                            f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                                     "${oFolder}.mip \n")
+                            f3.write("\n \n \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Layer-Performance \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            for kk in range(len(K_List)):
+                                f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                                f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                                f3.write("L" + str(kk) + "=" + str(L_Opt_List[kk]) + "\n")
 
-                            f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
-                                                         "${cardinality}_qhull_layer_" + str(kk) + "\n")
+                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                                             "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
-                            f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
-                                                           "${cardinality}_opt/result_${d}D" + str(kk) + "_${K" + str(kk)
-                                     + "}_${L" + str(kk) + "}" + "\n")
+                                f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                               "${cardinality}_opt/result_${d}D" + str(kk) + "_${K" + str(kk)
+                                         + "}_${L" + str(kk) + "}" + "\n")
 
-                            f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                                     "} -L ${L" + str(kk) + "} -LI " + str(
-                                kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                     + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
-                                kk) + "}.simple_LSH \n")
+                                f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                         "} -L ${L" + str(kk) + "} -LI " + str(
+                                    kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
+                                    kk) + "}.simple_LSH \n")
 
-                            f3.write("\n")
-                        # append overall accuracy computation here
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Overall-Performance \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
-                                 "${tsPath}.mip -of ${overallResult} \n")
-                        f3.close()
+                                f3.write("\n")
+                            # append overall accuracy computation here
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Overall-Performance \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
+                                     "${tsPath}.mip -of ${overallResult} \n")
+                            f3.close()
 
-                        # write to .sh file at save path, uni
-                        f3 = open(bash_file_uni, 'w')
-                        f3.write("#!/bin/bash \n")
-                        f3.write("# make \n")
-                        f3.write("rm *.o \n")
-                        cur_data_type = data_type[ii]
-                        cur_cardinality = cardinality
-                        cur_dimension = dimensions[k]
-                        f3.write("datatype=" + cur_data_type + "\n")
-                        f3.write("cardinality=" + str(cur_cardinality) + "\n")
-                        f3.write("d=" + str(cur_dimension) + "\n")
-                        f3.write("qn=" + str(query_count) + "\n")
-                        f3.write("c0=" + str(ratio) + "\n")
+                            # write to .sh file at save path, uni
+                            f3 = open(bash_file_uni, 'w')
+                            f3.write("#!/bin/bash \n")
+                            f3.write("# make \n")
+                            f3.write("rm *.o \n")
+                            cur_data_type = data_type[ii]
+                            cur_cardinality = cardinality[cc]
+                            cur_dimension = dimensions[k]
+                            f3.write("datatype=" + cur_data_type + "\n")
+                            f3.write("cardinality=" + str(cur_cardinality) + "\n")
+                            f3.write("d=" + str(cur_dimension) + "\n")
+                            f3.write("qn=" + str(query_count) + "\n")
+                            f3.write("c0=" + str(ratio) + "\n")
 
-                        temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
-                        overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
-                        f3.write("temporalResult=" + temporalResult + "\n")
-                        f3.write("overallResult=" + overallResult + "\n")
-                        f3.write("S=" + str(sim_threshold) + "\n")
-                        f3.write("num_layer=" + str(len(K_List)) + "\n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Ground-Truth \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
-                        f3.write(
-                            "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                        f3.write("qPath=./query/query_${d}D.txt \n")
-                        f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                        f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-                                 "${oFolder}.mip \n")
-                        f3.write("\n \n \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Layer-Performance \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        for kk in range(len(K_List)):
-                            f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
-                            f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
-                            f3.write("L" + str(kk) + "=" + str(L_Uni_List[kk]) + "\n")
+                            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
+                            f3.write("temporalResult=" + temporalResult + "\n")
+                            f3.write("overallResult=" + overallResult + "\n")
+                            f3.write("S=" + str(sim_threshold) + "\n")
+                            f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Ground-Truth \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            f3.write(
+                                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                            f3.write("qPath=./query/query_${d}D.txt \n")
+                            f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+                            f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                                     "${oFolder}.mip \n")
+                            f3.write("\n \n \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Layer-Performance \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            for kk in range(len(K_List)):
+                                f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                                f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                                f3.write("L" + str(kk) + "=" + str(L_Uni_List[kk]) + "\n")
 
-                            f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
-                                                         "${cardinality}_qhull_layer_" + str(kk) + "\n")
+                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                                             "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
-                            f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
-                                                           "${cardinality}_uni/result_${d}D" + str(kk) + "_${K" + str(kk)
-                                     + "}_${L" + str(kk) + "}" + "\n")
+                                f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                               "${cardinality}_uni/result_${d}D" + str(kk) + "_${K" + str(kk)
+                                         + "}_${L" + str(kk) + "}" + "\n")
 
-                            f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                                     "} -L ${L" + str(kk) + "} -LI " + str(
-                                kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                     + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
-                                kk) + "}.simple_LSH \n")
+                                f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                         "} -L ${L" + str(kk) + "} -LI " + str(
+                                    kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
+                                    kk) + "}.simple_LSH \n")
 
-                            f3.write("\n")
-                        # append overall accuracy computation here
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("#     Overall-Performance \n")
-                        f3.write("# ------------------------------------------------------------------------------ \n")
-                        f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
-                                 "${tsPath}.mip -of ${overallResult} \n")
-                        f3.close()
+                                f3.write("\n")
+                            # append overall accuracy computation here
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Overall-Performance \n")
+                            f3.write("# ------------------------------------------------------------------------------ \n")
+                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
+                                     "${tsPath}.mip -of ${overallResult} \n")
+                            f3.close()
 f10.close()
 print("Done .\n")

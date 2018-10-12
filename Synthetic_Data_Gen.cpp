@@ -239,7 +239,7 @@ int main(int argc, char** args)
 {
     // int dimensions [] = {5, 10, 15, 20};
     int dimensions [] = {5, 7};
-    int cardinalities [] = {200000};
+    int cardinalities [] = {500000, 1000000};
     int nDimension = sizeof(dimensions)/sizeof(dimensions[0]);
     int nCardinality = sizeof(cardinalities)/sizeof(cardinalities[0]);
     
