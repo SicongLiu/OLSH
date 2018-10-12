@@ -15,7 +15,7 @@ card = [100000]
 
 # optimized_tops = [10, 25]
 optimized_tops = [25]
-comp_types = ['opt', 'uni']
+comp_types = ['opt', 'max', 'uni']
 
 top_ks = [1, 2, 5, 10, 25]
 # budget = ['1M', '500k']
