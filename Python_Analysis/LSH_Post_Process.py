@@ -49,9 +49,9 @@ for dd in range(dimensions.__len__()):
                             f1 = open(obj_file, 'r')
                             lines = f1.readlines()
                             obj_s = lines[0].split(',')
-                            print(obj_s)
+                            # print(obj_s)
                             hash_s = lines[1].split(',')
-                            print(hash_s)
+                            # print(hash_s)
 
                             obj = []
                             hash = []
@@ -86,19 +86,19 @@ for dd in range(dimensions.__len__()):
 
                             overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
                                 cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '.txt'
-                            print(overall_result_file)
+                            # print(overall_result_file)
                             f1 = open(overall_result_file, 'r')
                             lines = f1.readlines()
                             recall = []
                             NDCG = []
                             for ll in range(top_ks.__len__()):
-                                print (lines[2*ll+1])
+                                # print (lines[2*ll+1])
                                 ttt = lines[2*ll+1].split('\t')[0]
-                                print(ttt)
+                                # print(ttt)
                                 recall.append(float(lines[2*ll+1].split('\t')[1]))
                                 NDCG.append(float(lines[2*ll+1].split('\t')[2]))
-                            print(recall)
-                            print(NDCG)
+                            # print(recall)
+                            # print(NDCG)
 
                             # now we have
                             # recall NDCG cand_size_list obj hash
@@ -117,9 +117,5 @@ for dd in range(dimensions.__len__()):
                                 f.write('\n')
                             f.write('\n')
                             f.write('\n')
-
-
-
-
 f.close()
 print('Done')
