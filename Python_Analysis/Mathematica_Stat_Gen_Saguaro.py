@@ -1,33 +1,38 @@
+import math
+
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["anti_correlated"]
-dimensions = [5]
-cardinality = [100000]
+dimensions = [4]
+cardinality = [100000, 200000]
 query_count = [1000]
 topk = 25
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
-SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters_top_" + str(topk) + ".txt"
-# DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-DATA_FOLDER = "../H2_ALSH/qhull_data/"
-f = open(SCRIPT_OUTPUT_FILE, 'w')
+SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters_"
+DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 
-for i in range(len(data_type)):
-    for j in range(len(dimensions)):
-        for k in range(len(cardinality)):
+
+for j in range(len(dimensions)):
+    for k in range(len(cardinality)):
+        save_data_file = SCRIPT_OUTPUT_FILE + "_top_" + str(topk) + "_" + str(dimensions[j]) + "D_" + str(
+            cardinality[k]) + ".txt"
+
+        f = open(save_data_file, 'w')
+        for i in range(len(data_type)):
+            K_Log_List = []
+            K_Log_Minus_List = []
+            K_Log_Plus_List = []
+            K_Log_Plus_Plus_List = []
+            K_Log_Uni_List = []
 
             K_Parameter_File = PARAMETER_FILE_FOLDER + "K_" + data_type[i] + "_" + str(dimensions[j]) + \
                                "_" + str(cardinality[k])
             # L_Parameter_File = PARAMETER_FILE_FOLDER + "L_" + data_type[i] + "_" + str(dimensions[j]) + \
             #                    "_" + str(cardinality[k])
-            f3 = open(K_Parameter_File, 'w')
-            # f4 = open(L_Parameter_File, 'w')
-            for m in range(len(KList)):
-                f3.write(str(KList[m]) + "\n")
-            f3.close()
+
             # f4 = open(L_Parameter_File, 'w')
             # f4.close()
             declare_string = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
@@ -36,6 +41,7 @@ for i in range(len(data_type)):
             f.write("# ------------------------------------------------------------------------------ \n")
             f.write("#     " + declare_string + " \n")
             f.write("# ------------------------------------------------------------------------------ \n")
+            print("------------------------------------------------")
             for m in range(topk):
                 input_file = DATA_FOLDER + data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k]) + \
                              "_qhull_layer_" + str(m)
@@ -50,21 +56,39 @@ for i in range(len(data_type)):
 
                 count.append(float(cur_cardinality)/float(cardinality[k]))
                 count1.append(cur_cardinality)
-                f1.close()
-            f.write("count = List" + str(count) + "\n")
-            f.write("hashTables = List[" + ','.join(hashTables) + "] \n")
-            # f.write("hashTables = List" + str(hashTables) + "\n")
-            f.write("KList = List" + str(KList) + "\n")
-            f.write("count1 = List" + str(count1) + "\n")
-            opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
-                      "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
-                      "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
-                      "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
-                      "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
-                      "{a,b,c,d,e,f,g,h,i,j}]"
-            f.write("\n \n \n")
-f.close()
+                k_log = math.ceil(math.log(cur_cardinality, 2))
+                k_log_minus = k_log - 3
+                k_log_plus = k_log + 3
+                k_log_plus_plus = k_log + 6
 
+                K_Log_List.append(k_log)
+                K_Log_Minus_List.append(k_log_minus)
+                K_Log_Plus_List.append(k_log_plus)
+                K_Log_Plus_Plus_List.append(k_log_plus_plus)
+
+                f1.close()
+            k_log_max = max(K_Log_List)
+            for m in range(topk):
+                K_Log_Uni_List.append(k_log_max)
+
+            f.write("count = List" + str(count) + "\n")
+            f.write("count1 = List" + str(count1) + "\n")
+
+            f.write("K_Log_List = List" + str(K_Log_List) + "\n")
+            f.write("K_Log_Minus_List = List" + str(K_Log_Minus_List) + "\n")
+            f.write("K_Log_Plus_List = List" + str(K_Log_Plus_List) + "\n")
+            f.write("K_Log_Plus_Plus_List = List" + str(K_Log_Plus_Plus_List) + "\n")
+            f.write("K_Log_Uni_List = List" + str(K_Log_Uni_List) + "\n")
+
+
+            # opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
+            #           "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
+            #           "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
+            #           "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
+            #           "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
+            #           "{a,b,c,d,e,f,g,h,i,j}]"
+            f.write("\n \n \n")
+        f.close()
 
 
 
