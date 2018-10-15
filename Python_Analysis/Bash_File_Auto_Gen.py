@@ -5,14 +5,27 @@ import math
 import os
 from openpyxl import load_workbook
 
+saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial partition \n' \
+                        '#SBATCH -n 4 # number of cores \n' \
+                        '#SBATCH --mem=32000                 # 32 GB \n' \
+                        '#SBATCH -t 0-15:00                  # wall time (D-HH:MM) \n' \
+                        '#SBATCH -o slurm.%j.out             # STDOUT (%j = JobId) \n' \
+                        '#SBATCH -e slurm.%j.err             # STDERR (%j = JobId) \n' \
+                        '#SBATCH --mail-type=END,FAIL        # notifications for job done & fail \n' \
+                        '#SBATCH --mail-user=sliu104@asu.edu # send-to address \n' \
+                        'module load gcc/4.9.2 \n'
 data_type = ["anti_correlated", "correlated", "random"]
-budgets = ["500k", "1M"]
+budgets = ["10M"]
+# dimensions = [4, 5]
 dimensions = [5]
-top_ks = [10, 25]
+top_ks = [50]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-card_excel = ['100k', '200k']
-cardinality = [100000, 200000]
+# card_excel = ['100k', '200k', '1M']
+# cardinality = [100000, 200000, 1000000]
 # cardinality = 100000
+
+card_excel = ['1M']
+cardinality = [1000000]
 
 k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
 l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
@@ -44,6 +57,23 @@ l_ranges_opt_random_25 = ['AM6', 'AM30', 'AM38', 'AM62', 'AM69', 'AM93', 'AM100'
 l_ranges_max_random_25 = ['AN6', 'AN30', 'AN38', 'AN62', 'AN69', 'AN93', 'AN100', 'AN124', 'AN131', 'AN155']
 l_ranges_uni_random_25 = ['AO6', 'AO30', 'AO38', 'AO62', 'AO69', 'AO93', 'AO100', 'AO124', 'AO131', 'AO155']
 
+
+k_ranges_anti_50 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
+l_ranges_opt_anti_50 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
+l_ranges_max_anti_50 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
+l_ranges_uni_anti_50 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
+
+k_ranges_corr_50 = ['V6', 'V55', 'V63', 'V112', 'V120', 'V169', 'V177', 'V226', 'V234', 'V283']
+l_ranges_opt_corr_50 = ['W6', 'W55', 'W63', 'W112', 'W120', 'W169', 'W177', 'W226', 'W234', 'W283']
+l_ranges_max_corr_50 = ['X6', 'X55', 'X63', 'X112', 'X120', 'X169', 'X177', 'X226', 'X234', 'X283']
+l_ranges_uni_corr_50 = ['Y6', 'Y55', 'Y63', 'Y112', 'Y120', 'Y169', 'Y177', 'Y226', 'Y234', 'Y283']
+
+k_ranges_random_50 = ['AL6', 'AL55', 'AL63', 'AL112', 'AL120', 'AL169', 'AL177', 'AL226', 'AL234', 'AL283']
+l_ranges_opt_random_50 = ['AM6', 'AM55', 'AM63', 'AM112', 'AM120', 'AM169', 'AM177', 'AM226', 'AM234', 'AM283']
+l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN177', 'AN226', 'AN234', 'AN283']
+l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
+
+
 excel_file = "../Checkpoint_Result_Oct_12.xlsx"
 wb = load_workbook(filename=excel_file, data_only=True)
 
@@ -66,7 +96,7 @@ for i in range(top_ks.__len__()):
         l_ranges_opt_random = l_ranges_opt_random_10
         l_ranges_max_random = l_ranges_max_random_10
         l_ranges_uni_random = l_ranges_uni_random_10
-    else:
+    elif top_k == 25:
         k_ranges_anti = k_ranges_anti_25
         l_ranges_opt_anti = l_ranges_opt_anti_25
         l_ranges_max_anti = l_ranges_max_anti_25
@@ -81,6 +111,22 @@ for i in range(top_ks.__len__()):
         l_ranges_opt_random = l_ranges_opt_random_25
         l_ranges_max_random = l_ranges_max_random_25
         l_ranges_uni_random = l_ranges_uni_random_25
+    else:
+        k_ranges_anti = k_ranges_anti_50
+        l_ranges_opt_anti = l_ranges_opt_anti_50
+        l_ranges_max_anti = l_ranges_max_anti_50
+        l_ranges_uni_anti = l_ranges_uni_anti_50
+
+        k_ranges_corr = k_ranges_corr_50
+        l_ranges_opt_corr = l_ranges_opt_corr_50
+        l_ranges_max_corr = l_ranges_max_corr_50
+        l_ranges_uni_corr = l_ranges_uni_corr_50
+
+        k_ranges_random = k_ranges_random_50
+        l_ranges_opt_random = l_ranges_opt_random_50
+        l_ranges_max_random = l_ranges_max_random_50
+        l_ranges_uni_random = l_ranges_uni_random_50
+
     for j in range(budgets.__len__()):
         budget = budgets[j]
         for k in range(dimensions.__len__()):
@@ -238,19 +284,18 @@ parameter_type = ["opt", "uni"]
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
-total_bash_file = BASH_FILE_BASE_FOLDER + "run_bash_set_cur.sh"
-f10 = open(total_bash_file, 'w')
-f10.write("#!/bin/bash \n")
-
-for i in range(top_ks.__len__()):
-    top_k = top_ks[i]
-    for j in range(budgets.__len__()):
-        budget = budgets[j]
-        for k in range(dimensions.__len__()):
-            dimension = dimensions[k]
-            for m in range(types.__len__()):
-                type_name = types[m]
-                for cc in range(cardinality.__len__()):
+for k in range(dimensions.__len__()):
+    dimension = dimensions[k]
+    for cc in range(cardinality.__len__()):
+        total_bash_file = BASH_FILE_BASE_FOLDER + "run_bash_set_cur_" + str(dimension) + 'D_' + card_excel[cc] + '.sh'
+        f10 = open(total_bash_file, 'w')
+        f10.write("#!/bin/bash \n")
+        for i in range(top_ks.__len__()):
+            top_k = top_ks[i]
+            for j in range(budgets.__len__()):
+                budget = budgets[j]
+                for m in range(types.__len__()):
+                    type_name = types[m]
                     parameter_dir = parameter_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
                                         + "_" + type_name + "_" + card_excel[cc] + "/"
                     if not os.path.exists(parameter_dir):
@@ -287,9 +332,9 @@ for i in range(top_ks.__len__()):
                             bash_file_uni = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
                                             + "_" + str(cardinality[cc]) + "_uni.sh"
 
-                            f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh \n")
-                            f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh \n")
-                            f10.write('sh ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh \n")
+                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh sleep 2\n")
+                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
+                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh sleep 2\n")
                             paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
                             f1 = open(paramK_path, 'r')
                             K_lines = f1.readlines()
@@ -394,6 +439,7 @@ for i in range(top_ks.__len__()):
                             f3 = open(bash_file_opt, 'w')
                             f3.write("#!/bin/bash \n")
                             f3.write("# make \n")
+                            f3.write(saguaro_script_string)
                             f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
@@ -418,8 +464,10 @@ for i in range(top_ks.__len__()):
                                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
                             f3.write("qPath=./query/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                            f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-                                     "${oFolder}.mip \n")
+
+                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                                      "${oFolder}.mip \n")
+
                             f3.write("\n \n \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Layer-Performance \n")
@@ -455,6 +503,7 @@ for i in range(top_ks.__len__()):
                             f3 = open(bash_file_max, 'w')
                             f3.write("#!/bin/bash \n")
                             f3.write("# make \n")
+                            f3.write(saguaro_script_string)
                             f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
@@ -481,7 +530,7 @@ for i in range(top_ks.__len__()):
                                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
                             f3.write("qPath=./query/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                            f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
                                      "${oFolder}.mip \n")
                             f3.write("\n \n \n")
                             f3.write(
@@ -524,6 +573,7 @@ for i in range(top_ks.__len__()):
                             f3 = open(bash_file_uni, 'w')
                             f3.write("#!/bin/bash \n")
                             f3.write("# make \n")
+                            f3.write(saguaro_script_string)
                             f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
@@ -548,7 +598,7 @@ for i in range(top_ks.__len__()):
                                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
                             f3.write("qPath=./query/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                            f3.write("./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
                                      "${oFolder}.mip \n")
                             f3.write("\n \n \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")

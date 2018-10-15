@@ -1,6 +1,7 @@
 
+import os
 
-result_file_dir = '../H2_ALSH/Top_10_25_Oct_11/'
+result_file_dir = '../H2_ALSH/'
 
 # get obj and hash count from bash_set
 obj_hashsize_prefix = 'bash_set_'
@@ -8,22 +9,25 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-dimensions = [5]
-# card_file_name = ['1M', '500k']
-# card = [100000, 500000]
-card = [100000]
+# dimensions = [5]
+dimensions = [4, 5]
+
+card_file_name = ['1M', '500k', '100k', '200k']
+card = [100000, 500000, 100000, 200000]
+# card = [100000]
 
 # optimized_tops = [10, 25]
-optimized_tops = [25]
-comp_types = ['opt', 'max', 'uni']
+optimized_tops = [25, 50]
+# comp_types = ['opt', 'max', 'uni']
+comp_types = ['opt', 'uni']
 
-top_ks = [1, 2, 5, 10, 25]
+top_ks = [1, 2, 5, 10, 25, 50]
 # budget = ['1M', '500k']
 budget = ['1M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 
-over_reault = result_file_dir + 'all_aggregated.txt'
+over_reault = result_file_dir + 'all_aggregated_Oct_14.txt'
 f = open(over_reault, 'w')
 
 for dd in range(dimensions.__len__()):
@@ -43,6 +47,9 @@ for dd in range(dimensions.__len__()):
                             cur_ct = comp_types[ct]
                             obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
                                         str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
+                            if not os.path.exists(obj_file_dir):
+                                continue
+
                             obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
                                        str(cur_dimension) + '_' + str(cur_card) + '.txt'
 
@@ -70,6 +77,9 @@ for dd in range(dimensions.__len__()):
                             temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
                                         str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
 
+                            if not os.path.exists(temp_result_dir):
+                                continue
+
                             cand_size_list = []
                             for ii in range(top_ks_length):
                                 cand_result_file = temp_result_dir + 'run_test_' + cur_dt + '_' + str(cur_dimension) + '_' + \
@@ -91,7 +101,8 @@ for dd in range(dimensions.__len__()):
                             lines = f1.readlines()
                             recall = []
                             NDCG = []
-                            for ll in range(top_ks.__len__()):
+                            # for ll in range(top_ks.__len__()):
+                            for ll in range(top_ks_length):
                                 # print (lines[2*ll+1])
                                 ttt = lines[2*ll+1].split('\t')[0]
                                 # print(ttt)
