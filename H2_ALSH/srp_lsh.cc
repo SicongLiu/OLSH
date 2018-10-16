@@ -92,9 +92,20 @@ void SRP_LSH::bulkload()			// bulkloading
 
 		unordered_map<string, vector<int>> map = buildMap(hash_code_[l]);
 		maps_[l] = map;
-		// free hashcode space
+
 	}
 
+	// free hashcode space
+	/*if (hash_code_[l] != NULL)
+	{
+		for (int i = 0; i < n_pts_; ++i)
+		{
+			delete[] hash_code_[l][i];
+			hash_code_[l][i] = NULL;
+		}
+		delete[] hash_code_[l];
+		hash_code_[l] = NULL;
+	}*/
 }
 
 // -----------------------------------------------------------------------------

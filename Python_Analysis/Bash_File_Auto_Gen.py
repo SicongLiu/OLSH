@@ -17,15 +17,15 @@ saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial p
 data_type = ["anti_correlated", "correlated", "random"]
 budgets = ["10M"]
 # dimensions = [4, 5]
-dimensions = [5]
-top_ks = [50]
+dimensions = [6]
+top_ks = [25]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 # card_excel = ['100k', '200k', '1M']
 # cardinality = [100000, 200000, 1000000]
 # cardinality = 100000
 
-card_excel = ['1M']
-cardinality = [1000000]
+card_excel = ['500k']
+cardinality = [500000]
 
 k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
 l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
@@ -74,7 +74,7 @@ l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN1
 l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
 
 
-excel_file = "../Checkpoint_Result_Oct_12.xlsx"
+excel_file = "../Checkpoint_Result_Oct_15.xlsx"
 wb = load_workbook(filename=excel_file, data_only=True)
 
 save_file_path = '../H2_ALSH/parameters/'

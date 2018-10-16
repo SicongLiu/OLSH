@@ -2,16 +2,16 @@ import math
 
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["anti_correlated"]
-dimensions = [4]
+dimensions = [6]
 cardinality = [500000]
 query_count = [1000]
-topk = 50
+topk = 25
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
-# hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
-hashTables = ["aaa", "bbb", "ccc", "ddd", "eee", "fff", "ggg", "hhh", "iii", "jjj", "kkk", "lll", "mmm", "nnn", "ooo", "ppp",
-              "qqq", "rrr", "sss", "ttt", "uuu", "vvv", "www", "xxx", "yyy", "zzz", "aaaa", "bbbb", "cccc", "dddd", "eeee", "ffff",
-              "gggg", "hhhh", "iiii", "jjjj", "kkkk", "llll", "mmmm", "nnnn", "oooo", "pppp", "qqqq","rrrr", "ssss", "tttt", "uuuu", "vvvv", "wwww", "xxxx"]
+# hashTables = ["aaa", "bbb", "ccc", "ddd", "eee", "fff", "ggg", "hhh", "iii", "jjj", "kkk", "lll", "mmm", "nnn", "ooo", "ppp",
+#               "qqq", "rrr", "sss", "ttt", "uuu", "vvv", "www", "xxx", "yyy", "zzz", "aaaa", "bbbb", "cccc", "dddd", "eeee", "ffff",
+              # "gggg", "hhhh", "iiii", "jjjj", "kkkk", "llll", "mmmm", "nnnn", "oooo", "pppp", "qqqq","rrrr", "ssss", "tttt", "uuuu", "vvvv", "wwww", "xxxx"]
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"

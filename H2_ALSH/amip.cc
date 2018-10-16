@@ -1341,8 +1341,13 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 		return 1;
 	}
 
-	int kMIPs[] = { 1, 2, 5, 10, 25};
-	int max_round = 5;
+	// top-25
+	// int kMIPs[] = { 1, 2, 5, 10, 25};
+	// int max_round = 5;
+
+	// top-50
+	int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+	int max_round = 6;
 	int top_k = -1;
 
 	float runtime = -1.0f;
@@ -1559,8 +1564,14 @@ int overall_performance(				// output the overall performance of indexing
 		const char  *output_folder)			// output folder
 {
 	MAX_DIMENSION = d;
-	int kMIPs[] = { 1, 2, 5, 10, 25};
-	int max_round = 5;
+
+	// top-25
+	// int kMIPs[] = { 1, 2, 5, 10, 25};
+	// int max_round = 5;
+
+	// top-50
+	int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+	int max_round = 6;
 
 	// -------------------------------------------------------------------------
 	//  read the ground truth file
