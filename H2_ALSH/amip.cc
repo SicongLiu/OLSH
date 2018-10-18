@@ -651,7 +651,7 @@ int sign_alsh(						// mip search via sign_alsh
 }
 
 // -----------------------------------------------------------------------------
-int simple_lsh(						// mip search via simple_lsh
+/*int simple_lsh(						// mip search via simple_lsh
 	int   n,							// number of data points
 	int   qn,							// number of query points
 	int   d,							// dimension of space
@@ -768,6 +768,7 @@ int simple_lsh(						// mip search via simple_lsh
 
 	return 0;
 }
+*/
 
 // -----------------------------------------------------------------------------
 int linear_scan(					// find top-k mip using linear_scan
@@ -1129,6 +1130,7 @@ int sign_alsh_precision_recall(		// precision recall curve of sign_alsh
 	return 0;
 }
 
+/*
 // -----------------------------------------------------------------------------
 int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 	int   n,							// number of data points
@@ -1279,6 +1281,7 @@ int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
 
 	return 0;
 }
+*/
 
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(	// precision recall curve of simple_lsh
@@ -1294,6 +1297,7 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	const float **query,				// query set
 	const char  *truth_set,				// address of truth set
 	const char  *temp_result,			// address to store temporary output from different onion layers
+	const char  *sim_angle,			// address to store sim-angle from different layers
 	const char  *output_folder) 		// output folder
 {
 	timeval start_time, end_time;
@@ -1342,13 +1346,46 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	}
 
 	// top-25
-	// int kMIPs[] = { 1, 2, 5, 10, 25};
-	// int max_round = 5;
+	int kMIPs[] = { 1, 2, 5, 10, 25};
+	int max_round = 5;
 
 	// top-50
-	int kMIPs[] = { 1, 2, 5, 10, 25, 50};
-	int max_round = 6;
+	// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+	// int max_round = 6;
 	int top_k = -1;
+	vector<float>* temp_sim_angle_vec = new vector<float>[qn];
+
+	if(layer_index != 1)
+	{
+		FILE *fp1 = fopen(sim_angle, "r");
+		if (!fp1)
+		{
+			printf("Could not open %s\n", sim_angle);
+			return 1;
+		}
+		for(int i = 0; i < qn; i++)
+		{
+			for(int j = 0; j < max_round; j++)
+			{
+				float temp = 0.0f;
+				fscanf(fp1, " %f", &temp);
+				temp_sim_angle_vec[i].push_back(temp);
+			}
+			fscanf(fp1, "\n");
+		}
+		fclose(fp1);
+	}
+	else
+	{
+		for(int i = 0; i < qn; i++)
+		{
+			// no intilaization info from the file
+			for(int j = 0; j < max_round; j++)
+			{
+				temp_sim_angle_vec[i].push_back(MAXREAL);
+			}
+		}
+	}
 
 	float runtime = -1.0f;
 	float recall = -1.0f;
@@ -1357,6 +1394,7 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 
 	printf("Top-k c-AMIP of Simple_LSH: \n");
 	printf("  Top-k\t\tTime (ms)\tRecall\n");
+
 	for (int num = 0; num < max_round; num++)
 	{
 		gettimeofday(&start_time, NULL);
@@ -1370,10 +1408,12 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 
 		recall = 0.0f;
 		float candidate_size = 0.0f;
+
 		for (int i = 0; i < qn; ++i)
 		{
 			list->reset();
-			candidate_size += lsh->kmip(top_k, query[i], list);
+			// one threshold for each query, for each (topksim_threshold passed by reference)
+			candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num]);
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			// persist on file to compute overall performance
@@ -1387,6 +1427,7 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 			file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
 					file_start_time.tv_usec) / 1000000.0f;
 		}
+		// update sim_threshold
 		delete list; list = NULL;
 		gettimeofday(&end_time, NULL);
 		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
@@ -1404,6 +1445,28 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 		printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 		fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
 	}
+
+
+	// TO-DO:
+	// output updated temp_sim_angle back to file
+	FILE *fp2 = fopen(sim_angle, "w");
+	if (!fp2)
+	{
+		printf("Could not open %s\n", sim_angle);
+		return 1;
+	}
+	for(int i = 0; i < qn; i++)
+	{
+		// no intilaization info from the file
+		for(int j = 0; j < max_round; j++)
+		{
+			fprintf(fp2, "%f\t", temp_sim_angle_vec[i][j]);
+		}
+		fprintf(fp2, "\n");
+	}
+	fclose(fp2);
+
+
 	persist_candidate_size(average_candidate_size, temp_result, my_run_time);
 
 	printf("\n");
@@ -1566,12 +1629,12 @@ int overall_performance(				// output the overall performance of indexing
 	MAX_DIMENSION = d;
 
 	// top-25
-	// int kMIPs[] = { 1, 2, 5, 10, 25};
-	// int max_round = 5;
+	int kMIPs[] = { 1, 2, 5, 10, 25};
+	int max_round = 5;
 
 	// top-50
-	int kMIPs[] = { 1, 2, 5, 10, 25, 50};
-	int max_round = 6;
+	// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+	// int max_round = 6;
 
 	// -------------------------------------------------------------------------
 	//  read the ground truth file

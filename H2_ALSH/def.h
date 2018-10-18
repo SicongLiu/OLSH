@@ -32,6 +32,7 @@ const float ANGLE         = PI / 8.0f;
 
 // const int   MAXK          = 10;
 const int   MAXK          = 25;
+// const int   MAXK          = 50;
 const int   SCAN_SIZE     = 512;
 const int   CANDIDATES    = 100;
 const int   MAX_BLOCK_NUM = 5000;

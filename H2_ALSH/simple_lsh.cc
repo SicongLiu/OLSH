@@ -124,8 +124,9 @@ void Simple_LSH::display()			// display parameters
 // -----------------------------------------------------------------------------
 int Simple_LSH::kmip(				// c-k-AMIP search
 	int   top_k,						// top-k value
-	const float *query,					// input query
-	MaxK_List *list)					// top-k MIP results (return) 
+	const float *query,				// input query
+	MaxK_List *list,					// top-k MIP results (return)
+	float& sim_threshold)
 {
 	// -------------------------------------------------------------------------
 	//  construct Simple_LSH query
@@ -147,7 +148,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	MaxK_List *mcs_list = new MaxK_List(top_k);
 	// lsh_->kmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
 	// vector<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
-	unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
+	unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, sim_threshold);
 
 	// -------------------------------------------------------------------------
 	//  calc inner product for candidates returned by SRP-LSH
@@ -165,6 +166,20 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 			list->insert(ip, id + 1);
 		}
 	}
+
+	// then update the sim_min_threshold
+	int temp_index_size = min(top_k, list->size());
+
+	if(temp_index_size > 0)
+	{
+		int current_data_idx = list->ith_id(temp_index_size - 1) - 1;
+		sim_threshold = min(calc_inner_product(dim_, data_[current_data_idx], query), sim_threshold);
+	}
+	else
+	{
+		sim_threshold = MAXREAL;
+	}
+
 	if(list->size() < top_k)
 	{
 		for(int i = top_k - list->size(); i >=0;  i--)
@@ -177,6 +192,10 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		}
 	}
 
+	if(list->size() != top_k)
+	{
+		printf("Something is wrong.... \n");
+	}
 	// -------------------------------------------------------------------------
 	//  release space
 	// -------------------------------------------------------------------------

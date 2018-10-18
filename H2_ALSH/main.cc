@@ -84,15 +84,16 @@ int main(int nargs, char **args)
 	int   L         = -1;			// # of hash layers
 	int   layer_index = -1;			// current onion layer index
 	int   L1         = -1;			// # of onion layers
-	float S 		= -1.0f;		// similarity threshold
-	float nn_ratio  = -1.0f;		// approximation ratio of ANN search
-	float mip_ratio = -1.0f;		// approximation ratio of AMIP search
+	float S 		= -1.0f;				// similarity threshold
+	float nn_ratio  = -1.0f;			// approximation ratio of ANN search
+	float mip_ratio = -1.0f;			// approximation ratio of AMIP search
 
-	char  data_set[200];			// address of data set
+	char  data_set[200];				// address of data set
 	char  query_set[200];			// address of query set
 	char  truth_set[200];			// address of ground truth file
-	char  temp_set[200];			// address of temporary results per query per onion layer
+	char  temp_set[200];				// address of temporary results per query per onion layer
 	char  output_folder[200];		// output folder
+	char  sim_angle[200];			// address of sim-angle output
 
 	bool  failed = false;
 	int   cnt = 1;
@@ -203,6 +204,10 @@ int main(int nargs, char **args)
 			strncpy(temp_set, args[++cnt], sizeof(temp_set));
 			printf("temp_set     = %s\n", temp_set);
 		}
+		else if (strcmp(args[cnt], "-sa") == 0) {
+			strncpy(sim_angle, args[++cnt], sizeof(sim_angle));
+			printf("sim_angle     = %s\n", sim_angle);
+		}
 		else if (strcmp(args[cnt], "-of") == 0) {
 			strncpy(output_folder, args[++cnt], sizeof(output_folder));
 			printf("output_folder = %s\n", output_folder);
@@ -284,8 +289,8 @@ int main(int nargs, char **args)
 					truth_set, output_folder);
 			break;
 		case 6:
-			simple_lsh(n, qn, d, K, L, S, nn_ratio, (const float **) data,
-					(const float **) query, truth_set, output_folder);
+			// simple_lsh(n, qn, d, K, L, S, nn_ratio, (const float **) data,
+			//		(const float **) query, truth_set, output_folder);
 			break;
 		case 7:
 			linear_scan(n, qn, d, (const float **) data, (const float **) query,
@@ -296,8 +301,10 @@ int main(int nargs, char **args)
 					(const float **) query, truth_set, output_folder);
 			break;
 		case 10:
+			// simple_lsh_recall(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
+			//								(const float **) query, truth_set, temp_set, output_folder);
 			simple_lsh_recall(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
-											(const float **) query, truth_set, temp_set, output_folder);
+											(const float **) query, truth_set, temp_set, sim_angle, output_folder);
 			break;
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);

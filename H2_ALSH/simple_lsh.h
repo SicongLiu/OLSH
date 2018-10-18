@@ -30,8 +30,9 @@ public:
 	// -------------------------------------------------------------------------
 	int kmip(						// c-k-AMIP search
 		int   top_k,					// top-k value
-		const float* query,				// input query
-		MaxK_List* list);				// top-k mip results
+		const float* query,			// input query
+		MaxK_List* list,				// top-k mip results
+		float& sim_threshold);
 
 protected:
 	int   n_pts_;					// number of data points
