@@ -158,7 +158,7 @@ vector<float> SRP_LSH::compute_vector_mean(vector<int> data_ids)
 // -----------------------------------------------------------------------------
 float SRP_LSH::compute_mean_sim(vector<float> query, vector<int> data_ids)
 {
-	float min_sim = MAXINT;
+	float min_sim = MAXREAL;
 	for(int i = 0; i < data_ids.size(); i++)
 	{
 		float temp = calc_inner_product(dim_, &query[0], data_[i]);
@@ -171,12 +171,27 @@ float SRP_LSH::compute_mean_sim(vector<float> query, vector<int> data_ids)
 }
 
 // -----------------------------------------------------------------------------
+float SRP_LSH::compute_max_angle(vector<float> query, vector<int> data_ids)
+{
+	float max_angle = 0.0f;
+	for(int i = 0; i < data_ids.size(); i++)
+	{
+		float cos_angle = calc_angle(dim_, &query[0], data_[i]);
+		if(cos_angle > max_angle)
+		{
+			max_angle = cos_angle; // max angle -> min cos-sim
+		}
+	}
+	return max_angle;
+}
+
+// -----------------------------------------------------------------------------
 void SRP_LSH::post_process_map()			// compute similarity interval for data elements in each hash buckets
 {
 	// for each layer
 	for(int l = 0; l < L_; l++)
 	{
-		unordered_map<string, vector<float> > cur_sim_map;
+		unordered_map<string, vector<float> > cur_angle_map;
 		unordered_map<string, vector<int> > cur_map = maps_[l];
 
 		// for each hash bucket at each layer
@@ -184,15 +199,15 @@ void SRP_LSH::post_process_map()			// compute similarity interval for data eleme
 		{
 			vector<int> data_ids = it.second;
 			vector<float> mean_data_vector = compute_vector_mean(data_ids);
-			float min_sim = compute_mean_sim(mean_data_vector, data_ids);
+			float max_angle = compute_max_angle(mean_data_vector, data_ids);
 
 			vector<float>::iterator iterator;
 			iterator = mean_data_vector.begin();
-			mean_data_vector.insert(iterator , min_sim);
+			mean_data_vector.insert(iterator , max_angle);
 			pair<string, vector<float> > dict(it.first, mean_data_vector);
-			cur_sim_map.insert(dict);
+			cur_angle_map.insert(dict);
 		}
-		maps_interval_[l] = cur_sim_map;
+		maps_interval_[l] = cur_angle_map;
 	}
 }
 
@@ -217,7 +232,9 @@ unordered_set<int> SRP_LSH::mykmc(	// c-k-AMC search
 	const float *query,				// input query
 	MaxK_List *list,					// top-k MC results (return)
 	const float *real_query,
-	float& sim_threshold)				// sim_threshold from previous layers
+	float& angle_threshold,
+	bool is_threshold,				// sim_threshold from previous layers
+	int& hash_table_hit)
 {
 	bool **mc_query = new bool*[L_];
 	for(int l = 0; l < L_; l++)
@@ -239,16 +256,27 @@ unordered_set<int> SRP_LSH::mykmc(	// c-k-AMC search
 		string str(c);
 		str = str.substr(0, K_);
 
-		// search through map to find candidates
+		// search through map to find collision hashcode and retrieve candidates
 		if(maps_[i].find(str) != maps_[i].end())
 		{
+			++hash_table_hit;
 			vector<int> temp_map = maps_[i][str];
-			// use sim_threshold to see if there is pruned candidates
-			// condition: sim_threshold + sim_i >= sim_q_mean
-			vector<float> cur_sim_vec = maps_interval_[i][str];
-			float sim_i = cur_sim_vec[0];
-			float sim_q_mean = calc_inner_product(dim_, real_query, &cur_sim_vec[1]);
-			if(sim_threshold + sim_i >= sim_q_mean)
+			if(is_threshold)
+			{
+				// condition: angle_q_mean <= angle_q_topk + angle_i
+				vector<float> cur_angle_vec = maps_interval_[i][str];
+				float angle_i = cur_angle_vec[0];
+				float angle_q_mean = calc_angle(dim_, real_query, &cur_angle_vec[1]);
+				if(angle_threshold + angle_i >= angle_q_mean)
+				{
+					copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
+				}
+				else
+				{
+					printf("gain size: %lu .\n", temp_map.size());
+				}
+			}
+			else
 			{
 				copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
 			}

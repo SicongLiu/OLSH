@@ -36,7 +36,9 @@ public:
 			const float *query,			// input query
 			MaxK_List *list,				// top-k MC results  (return)
 			const float *real_query,
-			float& sim_threshold);
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_table_hit);
 
 	// -------------------------------------------------------------------------
 	void persistHashTable(const char *fname);		// persist HashTables on file
@@ -73,6 +75,7 @@ protected:
 	void post_process_map();		// compute similarity interval for data elements in each hash buckets
 	vector<float> compute_vector_mean(vector<int> data_ids);
 	float compute_mean_sim(vector<float> query, vector<int> data_ids);
+	float compute_max_angle(vector<float> query, vector<int> data_ids);
 
 };
 

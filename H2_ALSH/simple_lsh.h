@@ -32,7 +32,9 @@ public:
 		int   top_k,					// top-k value
 		const float* query,			// input query
 		MaxK_List* list,				// top-k mip results
-		float& sim_threshold);
+		float& sim_threshold,
+		bool is_threshold,
+		int& hash_hits);
 
 protected:
 	int   n_pts_;					// number of data points

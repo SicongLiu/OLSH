@@ -259,3 +259,34 @@ int get_hits(						// get the number of hits between two ID list
 	}
 	return min(t, i + 1);
 }
+
+// -----------------------------------------------------------------------------
+float calc_norm(						// calc L2 norm of a given point
+	int   dim,						// dimension
+	const float *p)
+{
+	float norm = 0.0f;
+	float diff = 0.0f;
+	for(int i = 0; i < dim; i++)
+	{
+		diff = p[i] - 0;
+		norm += diff * diff;
+	}
+	return sqrt(norm);
+}
+
+// -----------------------------------------------------------------------------
+float calc_angle(					// calc angle of two points p1 and p2
+	int   dim,						// dimension
+	const float *p1,					// 1st point
+	const float *p2)					// 2nd point
+{
+	float inner_sim = calc_inner_product(dim, p1, p2);
+	float p1_norm = calc_norm(dim, p1);
+	float p2_norm = calc_norm(dim, p2);
+	float cos_angle = acos(inner_sim/(p1_norm * p2_norm)) * 180 / PI;
+	return cos_angle;
+}
+
+
+

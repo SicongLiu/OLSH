@@ -36,5 +36,4 @@ const int   MAXK          = 25;
 const int   SCAN_SIZE     = 512;
 const int   CANDIDATES    = 100;
 const int   MAX_BLOCK_NUM = 5000;
-
 #endif // __DEF_H
