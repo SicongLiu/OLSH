@@ -1496,7 +1496,8 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
         }
 
         char temp_result_set[200];
-        sprintf(temp_result_set, "%s_top_%d_%s", temp_result, top_k, is_threshold_file_name.c_str());
+        // sprintf(temp_result_set, "%s_top_%d_%s", temp_result, top_k, is_threshold_file_name.c_str());
+        sprintf(temp_result_set, "%s_%s", temp_result, is_threshold_file_name.c_str());
         persist_candidate_size(average_candidate_size, temp_result_set, my_run_time);
 
         printf("\n");
@@ -1815,7 +1816,7 @@ int overall_performance(                        // output the overall performanc
 
         char output_folder_set[200];
         // sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
-        sprintf(output_folder_set, "%s_%s", output_folder, is_threshold_file_name.c_str());
+        sprintf(output_folder_set, "%s_%s.txt", output_folder, is_threshold_file_name.c_str());
 
         printf("Output path %s \n ", output_folder_set);
         FILE *fp2 = fopen(output_folder_set, "a+");

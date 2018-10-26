@@ -22,10 +22,32 @@
 #    jjjj, kkkk, llll, mmmm, nnnn, oooo, pppp, qqqq, rrrr, ssss, tttt,
 #   uuuu, vvvv, wwww, xxxx}, MaxIterations -> 1000]
 
-a = [1, 2, 3, 4, 5]
-b = [2, 3, 4, 5, 6]
+# a = [1, 2, 3, 4, 5]
+# b = [2, 3, 4, 5, 6]
+#
+# s = "  ".join(map(str, a))
+#
+# print(s)
 
-s = "  ".join(map(str, a))
-
-print(s)
-
+# file = open(“testfile.txt”, ”w”)
+#
+# file.write(“Hello
+# World”)
+# file.write(“This is our
+# new
+# text
+# file”)
+# file.write(“ and this is another
+# line.”)
+# file.write(“Why? Because
+# we
+# can.”)
+#
+# file.close()
+import numpy as np
+myarray = np.fromfile('usa_00001.dat', dtype=float)
+print(myarray.size)
+print(myarray.ndim)
+# for data in myarray:
+#     print(data)
+print("all done")

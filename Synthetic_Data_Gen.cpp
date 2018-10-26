@@ -238,8 +238,8 @@ int main(int argc, char** args)
 // main program
 {
     // int dimensions [] = {5, 10, 15, 20};
-    int dimensions [] = {2};
-    int cardinalities [] = {1000000};
+    int dimensions [] = {2, 3, 4, 5, 6, 7};
+    int cardinalities [] = {1500000, 2000000};
     int nDimension = sizeof(dimensions)/sizeof(dimensions[0]);
     int nCardinality = sizeof(cardinalities)/sizeof(cardinalities[0]);
     
@@ -250,8 +250,6 @@ int main(int argc, char** args)
     {
         for(int j=0; j<nCardinality; j++)
         {
-            
-            
             // int dimension = atoi(&dimensions[i]);
             // int cardinality = atoi(&cardinalities[j]);
             int dimension = dimensions[i];

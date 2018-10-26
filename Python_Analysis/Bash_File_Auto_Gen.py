@@ -451,7 +451,8 @@ for k in range(dimensions.__len__()):
                             f3.write("c0=" + str(ratio) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
-                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
+                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt"
                             f3.write("temporalResult=" + temporalResult + "\n")
                             f3.write("overallResult=" + overallResult + "\n")
                             f3.write("S=" + str(sim_threshold) + "\n")
