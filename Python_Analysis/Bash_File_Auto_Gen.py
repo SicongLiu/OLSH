@@ -516,7 +516,8 @@ for k in range(dimensions.__len__()):
                             f3.write("c0=" + str(ratio) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
-                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
+                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
                             f3.write("temporalResult=" + temporalResult + "\n")
                             f3.write("overallResult=" + overallResult + "\n")
                             f3.write("S=" + str(sim_threshold) + "\n")
@@ -586,7 +587,8 @@ for k in range(dimensions.__len__()):
                             f3.write("c0=" + str(ratio) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
-                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
+                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni"
                             f3.write("temporalResult=" + temporalResult + "\n")
                             f3.write("overallResult=" + overallResult + "\n")
                             f3.write("S=" + str(sim_threshold) + "\n")
