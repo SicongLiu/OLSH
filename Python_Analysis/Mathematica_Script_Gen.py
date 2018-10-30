@@ -1,7 +1,7 @@
 # data_type = ["anti_correlated", "correlated", "random"]
 data_type = ["correlated", "anti_correlated", "random"]
-dimensions = [5]
-cardinality = [100000]
+dimensions = [4]
+cardinality = [200000]
 query_count = [1000]
 topk = 10
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]

@@ -1,11 +1,28 @@
 import math
 
+import decimal
+
+# create a new context for this task
+ctx = decimal.Context()
+
+# 20 digits should be enough for everyone :D
+ctx.prec = 20
+
+def float_to_str(f):
+    """
+    Convert the given float to a string,
+    without resorting to scientific notation
+    """
+    d1 = ctx.create_decimal(repr(f))
+    return format(d1, 'f')
+
+
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["anti_correlated"]
-dimensions = [6]
-cardinality = [500000]
+dimensions = [2]
+cardinality = [2000000]
 query_count = [1000]
-topk = 25
+topk = 50
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
@@ -58,7 +75,7 @@ for j in range(len(dimensions)):
                 cur_cardinality = int(second_line.split('\n')[0])
                 assert cur_dimension == dimensions[j]
 
-                count.append(float(cur_cardinality)/float(cardinality[k]))
+                count.append(float_to_str(float(cur_cardinality)/float(cardinality[k])))
                 count1.append(cur_cardinality)
                 k_log = math.ceil(math.log(cur_cardinality, 2))
                 k_log_minus = k_log - 3
@@ -76,7 +93,7 @@ for j in range(len(dimensions)):
                 K_Log_Uni_List.append(k_log_max)
 
             f.write("hashTables = List" + str(hashTables) + "\n")
-            f.write("count = List" + str(count) + "\n")
+            f.write("count = List[" + str(', '.join(map(str, count))) + "]\n")
             f.write("count1 = List" + str(count1) + "\n")
 
             f.write("K_Log_List = List" + str(K_Log_List) + "\n")
@@ -92,8 +109,10 @@ for j in range(len(dimensions)):
             #           "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
             #           "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
             #           "{a,b,c,d,e,f,g,h,i,j}]"
+            # f.write(opt_str)
             f.write("\n \n \n")
         f.close()
+
 
 
 
