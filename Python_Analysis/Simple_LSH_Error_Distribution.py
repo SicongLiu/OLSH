@@ -14,12 +14,13 @@ def compute_success_distribution(s):
 
 
 def plot_collision_sim(successProbability, sims):
+    f = plt.figure()
     plt.plot(successProbability, sims)
     plt.title('similarity vs success probability')
     plt.xlabel('success probability')
     plt.ylabel('similarity')
     plt.show()
-    # fig.savefig('plot.png')
+    f.savefig('plot.pdf')
 
 
 if __name__ == '__main__':
