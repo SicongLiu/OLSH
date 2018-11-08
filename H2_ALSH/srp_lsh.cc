@@ -273,7 +273,7 @@ unordered_set<int> SRP_LSH::mykmc(	// c-k-AMC search
 				}
 				else
 				{
-					printf("gain size: %lu .\n", temp_map.size());
+					// printf("gain size: %lu .\n", temp_map.size());
 				}
 			}
 			else

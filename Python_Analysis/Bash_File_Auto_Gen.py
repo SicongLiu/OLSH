@@ -15,17 +15,17 @@ saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial p
                         '#SBATCH --mail-user=sliu104@asu.edu # send-to address \n' \
                         'module load gcc/4.9.2 \n'
 data_type = ["anti_correlated", "correlated", "random"]
-budgets = ["10M"]
+budgets = ["1M", "10M"]
 # dimensions = [4, 5]
-dimensions = [6]
-top_ks = [25]
+dimensions = [2, 3, 4, 5, 6]
+top_ks = [10, 25, 50]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-# card_excel = ['100k', '200k', '1M']
-# cardinality = [100000, 200000, 1000000]
-# cardinality = 100000
 
-card_excel = ['500k']
-cardinality = [500000]
+card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
+cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
+
+# card_excel = ['200k', '500k', '1M', '15M', '2M']
+# cardinality = [200000, 500000, 1000000, 1500000, 2000000]
 
 k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
 l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
@@ -74,205 +74,209 @@ l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN1
 l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
 
 
-excel_file = "../Checkpoint_Result_Oct_15.xlsx"
-wb = load_workbook(filename=excel_file, data_only=True)
+excel_files = ["../Checkpoint_Result_Oct_23_2D.xlsx", "../Checkpoint_Result_Oct_23_3D.xlsx",
+               "../Checkpoint_Result_Oct_23_4D.xlsx", "../Checkpoint_Result_Oct_23_5D.xlsx",
+               "../Checkpoint_Result_Oct_23_6D.xlsx"]
+for excel_file in excel_files:
+    # excel_file = "../Checkpoint_Result_Oct_23_4D.xlsx"
+    wb = load_workbook(filename=excel_file, data_only=True)
 
-save_file_path = '../H2_ALSH/parameters/'
+    save_file_path = '../H2_ALSH/parameters/'
 
-for i in range(top_ks.__len__()):
-    top_k = top_ks[i]
-    if top_k == 10:
-        k_ranges_anti = k_ranges_anti_10
-        l_ranges_opt_anti = l_ranges_opt_anti_10
-        l_ranges_max_anti = l_ranges_max_anti_10
-        l_ranges_uni_anti = l_ranges_uni_anti_10
+    for i in range(top_ks.__len__()):
+        top_k = top_ks[i]
+        if top_k == 10:
+            k_ranges_anti = k_ranges_anti_10
+            l_ranges_opt_anti = l_ranges_opt_anti_10
+            l_ranges_max_anti = l_ranges_max_anti_10
+            l_ranges_uni_anti = l_ranges_uni_anti_10
 
-        k_ranges_corr = k_ranges_corr_10
-        l_ranges_opt_corr = l_ranges_opt_corr_10
-        l_ranges_max_corr = l_ranges_max_corr_10
-        l_ranges_uni_corr = l_ranges_uni_corr_10
+            k_ranges_corr = k_ranges_corr_10
+            l_ranges_opt_corr = l_ranges_opt_corr_10
+            l_ranges_max_corr = l_ranges_max_corr_10
+            l_ranges_uni_corr = l_ranges_uni_corr_10
 
-        k_ranges_random = k_ranges_random_10
-        l_ranges_opt_random = l_ranges_opt_random_10
-        l_ranges_max_random = l_ranges_max_random_10
-        l_ranges_uni_random = l_ranges_uni_random_10
-    elif top_k == 25:
-        k_ranges_anti = k_ranges_anti_25
-        l_ranges_opt_anti = l_ranges_opt_anti_25
-        l_ranges_max_anti = l_ranges_max_anti_25
-        l_ranges_uni_anti = l_ranges_uni_anti_25
+            k_ranges_random = k_ranges_random_10
+            l_ranges_opt_random = l_ranges_opt_random_10
+            l_ranges_max_random = l_ranges_max_random_10
+            l_ranges_uni_random = l_ranges_uni_random_10
+        elif top_k == 25:
+            k_ranges_anti = k_ranges_anti_25
+            l_ranges_opt_anti = l_ranges_opt_anti_25
+            l_ranges_max_anti = l_ranges_max_anti_25
+            l_ranges_uni_anti = l_ranges_uni_anti_25
 
-        k_ranges_corr = k_ranges_corr_25
-        l_ranges_opt_corr = l_ranges_opt_corr_25
-        l_ranges_max_corr = l_ranges_max_corr_25
-        l_ranges_uni_corr = l_ranges_uni_corr_25
+            k_ranges_corr = k_ranges_corr_25
+            l_ranges_opt_corr = l_ranges_opt_corr_25
+            l_ranges_max_corr = l_ranges_max_corr_25
+            l_ranges_uni_corr = l_ranges_uni_corr_25
 
-        k_ranges_random = k_ranges_random_25
-        l_ranges_opt_random = l_ranges_opt_random_25
-        l_ranges_max_random = l_ranges_max_random_25
-        l_ranges_uni_random = l_ranges_uni_random_25
-    else:
-        k_ranges_anti = k_ranges_anti_50
-        l_ranges_opt_anti = l_ranges_opt_anti_50
-        l_ranges_max_anti = l_ranges_max_anti_50
-        l_ranges_uni_anti = l_ranges_uni_anti_50
+            k_ranges_random = k_ranges_random_25
+            l_ranges_opt_random = l_ranges_opt_random_25
+            l_ranges_max_random = l_ranges_max_random_25
+            l_ranges_uni_random = l_ranges_uni_random_25
+        else:
+            k_ranges_anti = k_ranges_anti_50
+            l_ranges_opt_anti = l_ranges_opt_anti_50
+            l_ranges_max_anti = l_ranges_max_anti_50
+            l_ranges_uni_anti = l_ranges_uni_anti_50
 
-        k_ranges_corr = k_ranges_corr_50
-        l_ranges_opt_corr = l_ranges_opt_corr_50
-        l_ranges_max_corr = l_ranges_max_corr_50
-        l_ranges_uni_corr = l_ranges_uni_corr_50
+            k_ranges_corr = k_ranges_corr_50
+            l_ranges_opt_corr = l_ranges_opt_corr_50
+            l_ranges_max_corr = l_ranges_max_corr_50
+            l_ranges_uni_corr = l_ranges_uni_corr_50
 
-        k_ranges_random = k_ranges_random_50
-        l_ranges_opt_random = l_ranges_opt_random_50
-        l_ranges_max_random = l_ranges_max_random_50
-        l_ranges_uni_random = l_ranges_uni_random_50
+            k_ranges_random = k_ranges_random_50
+            l_ranges_opt_random = l_ranges_opt_random_50
+            l_ranges_max_random = l_ranges_max_random_50
+            l_ranges_uni_random = l_ranges_uni_random_50
 
-    for j in range(budgets.__len__()):
-        budget = budgets[j]
-        for k in range(dimensions.__len__()):
-            dimension = dimensions[k]
-            for cc in range(cardinality.__len__()):
-                sheetname = "Budget_" + str(dimension) + "D_top" + str(top_k) + "_" + str(budget) + "_" + card_excel[cc]
-                if sheetname in wb.sheetnames:
-                    ws = wb[sheetname]
-                    for m in range(types.__len__()):
-                        type_name = types[m]
-                        start = 2 * m
-                        end = 2 * m + 1
-                        # read data type anti_correlated
-                        k_anti = []
-                        for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
-                            for cell in row:
-                                k_anti.append(cell.value)
+        for j in range(budgets.__len__()):
+            budget = budgets[j]
+            for k in range(dimensions.__len__()):
+                dimension = dimensions[k]
+                for cc in range(cardinality.__len__()):
+                    sheetname = "Budget_" + str(budget) + "_" + str(dimension) + "D_top" + str(top_k) + "_" + card_excel[cc]
+                    if sheetname in wb.sheetnames:
+                        ws = wb[sheetname]
+                        for m in range(types.__len__()):
+                            type_name = types[m]
+                            start = 2 * m
+                            end = 2 * m + 1
+                            # read data type anti_correlated
+                            k_anti = []
+                            for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
+                                for cell in row:
+                                    k_anti.append(cell.value)
 
-                        l_anti_opt = []
-                        for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
-                            for cell in row:
-                                l_anti_opt.append(cell.value)
+                            l_anti_opt = []
+                            for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
+                                for cell in row:
+                                    l_anti_opt.append(cell.value)
 
-                        l_anti_max = []
-                        for row in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
-                            for cell in row:
-                                l_anti_max.append(cell.value)
+                            l_anti_max = []
+                            for row in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
+                                for cell in row:
+                                    l_anti_max.append(cell.value)
 
-                        l_anti_uni = []
-                        for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
-                            for cell in row:
-                                l_anti_uni.append(cell.value)
+                            l_anti_uni = []
+                            for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
+                                for cell in row:
+                                    l_anti_uni.append(cell.value)
 
-                        # read data type correlated
-                        k_corr = []
-                        for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
-                            for cell in row:
-                                k_corr.append(cell.value)
+                            # read data type correlated
+                            k_corr = []
+                            for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
+                                for cell in row:
+                                    k_corr.append(cell.value)
 
-                        l_corr_opt = []
-                        for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
-                            for cell in row:
-                                l_corr_opt.append(cell.value)
+                            l_corr_opt = []
+                            for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
+                                for cell in row:
+                                    l_corr_opt.append(cell.value)
 
-                        l_corr_max = []
-                        for row in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
-                            for cell in row:
-                                l_corr_max.append(cell.value)
+                            l_corr_max = []
+                            for row in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
+                                for cell in row:
+                                    l_corr_max.append(cell.value)
 
-                        l_corr_uni = []
-                        for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
-                            for cell in row:
-                                l_corr_uni.append(cell.value)
+                            l_corr_uni = []
+                            for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
+                                for cell in row:
+                                    l_corr_uni.append(cell.value)
 
-                        # read data type random
-                        k_random = []
-                        for row in ws[k_ranges_random[start]: k_ranges_random[end]]:
-                            for cell in row:
-                                k_random.append(cell.value)
+                            # read data type random
+                            k_random = []
+                            for row in ws[k_ranges_random[start]: k_ranges_random[end]]:
+                                for cell in row:
+                                    k_random.append(cell.value)
 
-                        l_random_opt = []
-                        for row in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
-                            for cell in row:
-                                l_random_opt.append(cell.value)
+                            l_random_opt = []
+                            for row in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
+                                for cell in row:
+                                    l_random_opt.append(cell.value)
 
-                        l_random_max = []
-                        for row in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
-                            for cell in row:
-                                l_random_max.append(cell.value)
+                            l_random_max = []
+                            for row in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
+                                for cell in row:
+                                    l_random_max.append(cell.value)
 
-                        l_random_uni = []
-                        for row in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
-                            for cell in row:
-                                l_random_uni.append(cell.value)
-                        # save current K and L parameters to files
-                        # anti_opt
-                        # anti_uni
-                        save_file_dir = save_file_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
-                                        + "_" + type_name + "_" + card_excel[cc] + "/"
+                            l_random_uni = []
+                            for row in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
+                                for cell in row:
+                                    l_random_uni.append(cell.value)
+                            # save current K and L parameters to files
+                            # anti_opt
+                            # anti_uni
+                            save_file_dir = save_file_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
+                                            + "_" + type_name + "_" + card_excel[cc] + "/"
 
-                        if not os.path.exists(save_file_dir):
-                            os.makedirs(save_file_dir)
-                        anti_k_name = save_file_dir + "k_anti_correlated"
-                        f = open(anti_k_name, 'w')
-                        f.write(','.join(map(str, k_anti)))
-                        f.close()
+                            if not os.path.exists(save_file_dir):
+                                os.makedirs(save_file_dir)
+                            anti_k_name = save_file_dir + "k_anti_correlated"
+                            f = open(anti_k_name, 'w')
+                            f.write(','.join(map(str, k_anti)))
+                            f.close()
 
-                        anti_opt_name = save_file_dir + "l_anti_correlated_opt"
-                        f = open(anti_opt_name, 'w')
-                        f.write(','.join(map(str, l_anti_opt)))
-                        f.close()
+                            anti_opt_name = save_file_dir + "l_anti_correlated_opt"
+                            f = open(anti_opt_name, 'w')
+                            f.write(','.join(map(str, l_anti_opt)))
+                            f.close()
 
-                        anti_max_name = save_file_dir + "l_anti_correlated_max"
-                        f = open(anti_max_name, 'w')
-                        f.write(','.join(map(str, l_anti_max)))
-                        f.close()
+                            anti_max_name = save_file_dir + "l_anti_correlated_max"
+                            f = open(anti_max_name, 'w')
+                            f.write(','.join(map(str, l_anti_max)))
+                            f.close()
 
-                        anti_uni_name = save_file_dir + "l_anti_correlated_uni"
-                        f = open(anti_uni_name, 'w')
-                        f.write(','.join(map(str, l_anti_uni)))
-                        f.close()
+                            anti_uni_name = save_file_dir + "l_anti_correlated_uni"
+                            f = open(anti_uni_name, 'w')
+                            f.write(','.join(map(str, l_anti_uni)))
+                            f.close()
 
-                        # corr_opt
-                        # corr_uni
-                        corr_k_name = save_file_dir + "k_correlated"
-                        f = open(corr_k_name, 'w')
-                        f.write(','.join(map(str, k_corr)))
-                        f.close()
+                            # corr_opt
+                            # corr_uni
+                            corr_k_name = save_file_dir + "k_correlated"
+                            f = open(corr_k_name, 'w')
+                            f.write(','.join(map(str, k_corr)))
+                            f.close()
 
-                        corr_opt_name = save_file_dir + "l_correlated_opt"
-                        f = open(corr_opt_name, 'w')
-                        f.write(','.join(map(str, l_corr_opt)))
-                        f.close()
+                            corr_opt_name = save_file_dir + "l_correlated_opt"
+                            f = open(corr_opt_name, 'w')
+                            f.write(','.join(map(str, l_corr_opt)))
+                            f.close()
 
-                        corr_max_name = save_file_dir + "l_correlated_max"
-                        f = open(corr_max_name, 'w')
-                        f.write(','.join(map(str, l_corr_max)))
-                        f.close()
+                            corr_max_name = save_file_dir + "l_correlated_max"
+                            f = open(corr_max_name, 'w')
+                            f.write(','.join(map(str, l_corr_max)))
+                            f.close()
 
-                        corr_uni_name = save_file_dir + "l_correlated_uni"
-                        f = open(corr_uni_name, 'w')
-                        f.write(','.join(map(str, l_corr_uni)))
-                        f.close()
+                            corr_uni_name = save_file_dir + "l_correlated_uni"
+                            f = open(corr_uni_name, 'w')
+                            f.write(','.join(map(str, l_corr_uni)))
+                            f.close()
 
-                        # random_opt
-                        # random_uni
-                        random_k_name = save_file_dir + "k_random"
-                        f = open(random_k_name, 'w')
-                        f.write(','.join(map(str, k_random)))
-                        f.close()
+                            # random_opt
+                            # random_uni
+                            random_k_name = save_file_dir + "k_random"
+                            f = open(random_k_name, 'w')
+                            f.write(','.join(map(str, k_random)))
+                            f.close()
 
-                        random_opt_name = save_file_dir + "l_random_opt"
-                        f = open(random_opt_name, 'w')
-                        f.write(','.join(map(str, l_random_opt)))
-                        f.close()
+                            random_opt_name = save_file_dir + "l_random_opt"
+                            f = open(random_opt_name, 'w')
+                            f.write(','.join(map(str, l_random_opt)))
+                            f.close()
 
-                        random_max_name = save_file_dir + "l_random_max"
-                        f = open(random_max_name, 'w')
-                        f.write(','.join(map(str, l_random_max)))
-                        f.close()
+                            random_max_name = save_file_dir + "l_random_max"
+                            f = open(random_max_name, 'w')
+                            f.write(','.join(map(str, l_random_max)))
+                            f.close()
 
-                        random_uni_name = save_file_dir + "l_random_uni"
-                        f = open(random_uni_name, 'w')
-                        f.write(','.join(map(str, l_random_uni)))
-                        f.close()
-wb.close()
+                            random_uni_name = save_file_dir + "l_random_uni"
+                            f = open(random_uni_name, 'w')
+                            f.write(','.join(map(str, l_random_uni)))
+                            f.close()
+    wb.close()
 print("Done .\n")
 
 query_count = 1000
@@ -284,20 +288,58 @@ parameter_type = ["opt", "uni"]
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
+dir_items = os.listdir(parameter_path)
+ground_truth_path = BASH_FILE_BASE_FOLDER + "all_ground_truth.sh"
+f33 = open(ground_truth_path, 'w')
+f33.write("#!/bin/bash \n")
+f33.write(saguaro_script_string)
+
+for k in range(dimensions.__len__()):
+    dimension = dimensions[k]
+    for cc in range(cardinality.__len__()):
+        cur_cardinality = cardinality[cc]
+        # if any(x.startswith('runner') for x in os.listdir('/path/to/runners')):
+        if any(x.startswith(str(dimension)) and x.endswith(card_excel[cc]) for x in os.listdir(parameter_path)):
+            for ii in range(len(data_type)):
+                # write ground truth to bash file
+                cur_data_type = data_type[ii]
+
+                cur_dimension = dimensions[k]
+                f33.write("datatype=" + cur_data_type + "\n")
+                f33.write("cardinality=" + str(cur_cardinality) + "\n")
+                f33.write("d=" + str(cur_dimension) + "\n")
+                f33.write("qn=" + str(query_count) + "\n")
+                f33.write(
+                    "# ------------------------------------------------------------------------------ \n")
+                f33.write("#     Ground-Truth \n")
+                f33.write(
+                    "# ------------------------------------------------------------------------------ \n")
+                f33.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                f33.write(
+                    "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                f33.write("qPath=./query/query_${d}D.txt \n")
+                f33.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+
+                f33.write(
+                    "  ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                    "${oFolder}.mip sleep 2\n")
+f33.close()
 for k in range(dimensions.__len__()):
     dimension = dimensions[k]
     for cc in range(cardinality.__len__()):
         total_bash_file = BASH_FILE_BASE_FOLDER + "run_bash_set_cur_" + str(dimension) + 'D_' + card_excel[cc] + '.sh'
         f10 = open(total_bash_file, 'w')
         f10.write("#!/bin/bash \n")
-        for i in range(top_ks.__len__()):
-            top_k = top_ks[i]
+
+        for m in range(types.__len__()):
+            type_name = types[m]
             for j in range(budgets.__len__()):
                 budget = budgets[j]
-                for m in range(types.__len__()):
-                    type_name = types[m]
+                for i in range(top_ks.__len__()):
+                    top_k = top_ks[i]
                     parameter_dir = parameter_path + str(dimension) + "D_top" + str(top_k) + "_budget_" + str(budget)\
                                         + "_" + type_name + "_" + card_excel[cc] + "/"
+                    print(parameter_dir)
                     if not os.path.exists(parameter_dir):
                         continue
                     else:
@@ -316,6 +358,8 @@ for k in range(dimensions.__len__()):
 
                         cur_bash_set_dir = "bash_set_" + str(dimension) + "D_top" + str(top_k) + \
                                            "_budget_" + str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
+                        # ground_truth_path = BASH_FILE_FOLDER + "ground_truth.sh"
+                        # f10.write('sbatch ./' + cur_bash_set_dir + 'ground_truth.sh sleep 50 \n')
                         for ii in range(len(data_type)):
                             K_List = []
                             L_Opt_List = []
@@ -333,7 +377,7 @@ for k in range(dimensions.__len__()):
                                             + "_" + str(cardinality[cc]) + "_uni.sh"
 
                             f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh sleep 2\n")
-                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
+                            #f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
                             f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh sleep 2\n")
                             paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
                             f1 = open(paramK_path, 'r')
@@ -348,7 +392,7 @@ for k in range(dimensions.__len__()):
                             for l_index in range(0, top_k):
                                 L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                             f2.close()
-                            print("L opt: " + str(L_Opt_List))
+                            # print("L opt: " + str(L_Opt_List))
 
                             paramL_max_path = parameter_dir + "l_" + data_type[ii] + "_max"  # str(cardinality[k])
                             f2 = open(paramL_max_path, 'r')
@@ -356,15 +400,16 @@ for k in range(dimensions.__len__()):
                             for l_index in range(0, top_k):
                                 L_Max_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                             f2.close()
-                            print("L max: " + str(L_Max_List))
+                            # print("L max: " + str(L_Max_List))
 
                             paramL_uni_path = parameter_dir + "l_" + data_type[ii] + "_uni"  # str(cardinality[k])
                             f2 = open(paramL_uni_path, 'r')
                             L_lines = f2.readlines()
+
                             for l_index in range(0, top_k):
                                 L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                             f2.close()
-                            print("L uni: " + str(L_Uni_List))
+                            # print("L uni: " + str(L_Uni_List))
 
                             for mm in range(len(K_List)):
                                 qhull_file = BASE_FOLDER + data_type[ii] + "_" + str(dimensions[k]) + "_" + str(cardinality[cc])\
@@ -435,6 +480,8 @@ for k in range(dimensions.__len__()):
                             f4.write(','.join(map(repr, hashsize_cumsum)))
                             f4.close()
 
+
+
                             # write to .sh file at save path, opt
                             f3 = open(bash_file_opt, 'w')
                             f3.write("#!/bin/bash \n")
@@ -453,10 +500,13 @@ for k in range(dimensions.__len__()):
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
                             # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
                             overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt"
+                            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_opt"
                             f3.write("temporalResult=" + temporalResult + "\n")
                             f3.write("overallResult=" + overallResult + "\n")
+                            f3.write("sim_angle=" + sim_angle + "\n")
                             f3.write("S=" + str(sim_threshold) + "\n")
                             f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            f3.write("top_k=" + str(top_k) + "\n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Ground-Truth \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
@@ -466,8 +516,9 @@ for k in range(dimensions.__len__()):
                             f3.write("qPath=./query/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
 
-                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                            f3.write(" # ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
                                       "${oFolder}.mip \n")
+                            f3.write(" # sleep 1 \n")
 
                             f3.write("\n \n \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
@@ -487,8 +538,8 @@ for k in range(dimensions.__len__()):
 
                                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                          "} -L ${L" + str(kk) + "} -LI " + str(
-                                    kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
+                                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
                                     kk) + "}.simple_LSH \n")
 
                                 f3.write("\n")
@@ -496,79 +547,82 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Overall-Performance \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
-                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
+                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                      "${tsPath}.mip -of ${overallResult} \n")
                             f3.close()
 
-                            # write to .sh file at save path, max
-                            f3 = open(bash_file_max, 'w')
-                            f3.write("#!/bin/bash \n")
-                            f3.write("# make \n")
-                            f3.write(saguaro_script_string)
-                            f3.write("rm *.o \n")
-                            cur_data_type = data_type[ii]
-                            cur_cardinality = cardinality[cc]
-                            cur_dimension = dimensions[k]
-                            f3.write("datatype=" + cur_data_type + "\n")
-                            f3.write("cardinality=" + str(cur_cardinality) + "\n")
-                            f3.write("d=" + str(cur_dimension) + "\n")
-                            f3.write("qn=" + str(query_count) + "\n")
-                            f3.write("c0=" + str(ratio) + "\n")
-
-                            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
-                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
-                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
-                            f3.write("temporalResult=" + temporalResult + "\n")
-                            f3.write("overallResult=" + overallResult + "\n")
-                            f3.write("S=" + str(sim_threshold) + "\n")
-                            f3.write("num_layer=" + str(len(K_List)) + "\n")
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            f3.write("#     Ground-Truth \n")
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
-                            f3.write(
-                                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                            f3.write("qPath=./query/query_${d}D.txt \n")
-                            f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-                                     "${oFolder}.mip \n")
-                            f3.write("\n \n \n")
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            f3.write("#     Layer-Performance \n")
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            for kk in range(len(K_List)):
-                                f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
-                                f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
-                                f3.write("L" + str(kk) + "=" + str(L_Max_List[kk]) + "\n")
-
-                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
-                                                             "${cardinality}_qhull_layer_" + str(kk) + "\n")
-
-                                f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
-                                                               "${cardinality}_max/result_${d}D" + str(
-                                    kk) + "_${K" + str(kk)
-                                         + "}_${L" + str(kk) + "}" + "\n")
-
-                                f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                                         "} -L ${L" + str(kk) + "} -LI " + str(
-                                    kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
-                                    kk) + "}.simple_LSH \n")
-
-                                f3.write("\n")
-                            # append overall accuracy computation here
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            f3.write("#     Overall-Performance \n")
-                            f3.write(
-                                "# ------------------------------------------------------------------------------ \n")
-                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
-                                     "${tsPath}.mip -of ${overallResult} \n")
-                            f3.close()
+                            # # write to .sh file at save path, max
+                            # f3 = open(bash_file_max, 'w')
+                            # f3.write("#!/bin/bash \n")
+                            # f3.write("# make \n")
+                            # f3.write(saguaro_script_string)
+                            # f3.write("rm *.o \n")
+                            # cur_data_type = data_type[ii]
+                            # cur_cardinality = cardinality[cc]
+                            # cur_dimension = dimensions[k]
+                            # f3.write("datatype=" + cur_data_type + "\n")
+                            # f3.write("cardinality=" + str(cur_cardinality) + "\n")
+                            # f3.write("d=" + str(cur_dimension) + "\n")
+                            # f3.write("qn=" + str(query_count) + "\n")
+                            # f3.write("c0=" + str(ratio) + "\n")
+                            #
+                            # temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
+                            # # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
+                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
+                            # sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_max"
+                            # f3.write("temporalResult=" + temporalResult + "\n")
+                            # f3.write("overallResult=" + overallResult + "\n")
+                            # f3.write("sim_angle=" + sim_angle + "\n")
+                            # f3.write("S=" + str(sim_threshold) + "\n")
+                            # f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            # f3.write("top_k=" + str(top_k) + "\n")
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # f3.write("#     Ground-Truth \n")
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            # f3.write(
+                            #     "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                            # f3.write("qPath=./query/query_${d}D.txt \n")
+                            # f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+                            # f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                            #          "${oFolder}.mip \n")
+                            # f3.write("\n \n \n")
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # f3.write("#     Layer-Performance \n")
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # for kk in range(len(K_List)):
+                            #     f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                            #     f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                            #     f3.write("L" + str(kk) + "=" + str(L_Max_List[kk]) + "\n")
+                            #
+                            #     f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                            #                                  "${cardinality}_qhull_layer_" + str(kk) + "\n")
+                            #
+                            #     f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                            #                                    "${cardinality}_max/result_${d}D" + str(
+                            #         kk) + "_${K" + str(kk)
+                            #              + "}_${L" + str(kk) + "}" + "\n")
+                            #
+                            #     f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                            #              "} -L ${L" + str(kk) + "} -LI " + str(
+                            #         kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                            #              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                            #         kk) + "}.simple_LSH \n")
+                            #
+                            #     f3.write("\n")
+                            # # append overall accuracy computation here
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # f3.write("#     Overall-Performance \n")
+                            # f3.write(
+                            #     "# ------------------------------------------------------------------------------ \n")
+                            # f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                            #          "${tsPath}.mip -of ${overallResult} \n")
+                            # f3.close()
 
 
                             # write to .sh file at save path, uni
@@ -589,10 +643,13 @@ for k in range(dimensions.__len__()):
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
                             # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
                             overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni"
+                            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_uni"
                             f3.write("temporalResult=" + temporalResult + "\n")
                             f3.write("overallResult=" + overallResult + "\n")
+                            f3.write("sim_angle=" + sim_angle + "\n")
                             f3.write("S=" + str(sim_threshold) + "\n")
                             f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            f3.write("top_k=" + str(top_k) + "\n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Ground-Truth \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
@@ -621,8 +678,8 @@ for k in range(dimensions.__len__()):
 
                                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                          "} -L ${L" + str(kk) + "} -LI " + str(
-                                    kk + 1) + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -of ${oFolder" + str(
+                                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
                                     kk) + "}.simple_LSH \n")
 
                                 f3.write("\n")
@@ -630,8 +687,9 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Overall-Performance \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
-                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -it ${temporalResult} -ts "
+                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                      "${tsPath}.mip -of ${overallResult} \n")
                             f3.close()
 f10.close()
+
 print("Done .\n")

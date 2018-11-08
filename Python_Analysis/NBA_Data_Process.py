@@ -41,13 +41,15 @@ for excel_file in files_xls:
         for c_index in range(0, column_indices.__len__()):
             column_index = column_indices[c_index]
             value = worksheet.cell_value(rowx=row, colx=column_index)
+            if value == '' or str(value).isspace() or (c_index == 0 and float(value) < 10):
+                continue
             # if c_index == 0 and (str(value).isspace() or str(value) == ''):
             #     continue
             # else:
             #     cur_record.append(value)
             cur_record.append(value)
         # if cur_record.__len__() > 0: # and cur_record.__len__() == dimension: # and int(cur_record[0]) >= 10:
-        if str(cur_record[0]).isspace() or str(cur_record[0]) == "":
+        if cur_record.__len__() != dimension or str(cur_record[0]).isspace() or str(cur_record[0]) == "":
             continue
         else:
             total_data.append(cur_record)
@@ -55,11 +57,13 @@ for excel_file in files_xls:
 
 print("total number of record: " + str(total_record_count))
 
+
 # normalize data
-def compute_distance_with_origin(point, dimension):
+def compute_distance_with_origin(point, cur_dimension):
     distance = 0
-    for ii in range(dimension):
-        distance = distance + point[ii] * point[ii]
+    # print(point)
+    for ii in range(cur_dimension):
+        distance = distance + float(point[ii]) * float(point[ii])
 
     return math.sqrt(distance)
 
@@ -73,6 +77,8 @@ for i in range(total_record_count):
         maxDistanceFromCenter = temp_distance
     if temp_distance < minDistanceFromCenter:
         minDistanceFromCenter = temp_distance
+    if temp_distance == 0:
+        print(total_data[i])
     scalors.append(temp_distance)
 
 scaled_points = []

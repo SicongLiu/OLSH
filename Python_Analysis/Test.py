@@ -45,9 +45,16 @@
 #
 # file.close()
 import numpy as np
-myarray = np.fromfile('usa_00001.dat', dtype=float)
-print(myarray.size)
-print(myarray.ndim)
-# for data in myarray:
-#     print(data)
+# myarray = np.fromfile('usa_00001.dat', dtype=float)
+# print(myarray.size)
+# print(myarray.ndim)
+# # for data in myarray:
+# #     print(data)
+testList = []
+testList.append(0)
+testList.append(1)
+num = 0
+if num in testList:
+    print("yes")
+
 print("all done")

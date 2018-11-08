@@ -1291,6 +1291,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
                       int   K,                            // number of hash functions
                       int   L,                            // number of hash tables
                       int       layer_index,                 // the index of current onion layer
+					  int   top_k, 						// top 25 or top 50?
                       float  S,                            // number of hash tables
                       float nn_ratio,                        // approximation ratio for nn search
                       const float **data,                    // data set
@@ -1344,15 +1345,41 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
     bool use_threshold_pruning[] = {false};
     string str_array[] = {"without_threshold"};
 	*/
+     int max_round = 4;
+     vector<int> kMIPs;
+     if(top_k == 25)
+     {
+    	 // top-25
+    	 kMIPs.push_back(1);
+    	 kMIPs.push_back(2);
+    	 kMIPs.push_back(5);
+    	 kMIPs.push_back(10);
+    	 kMIPs.push_back(25);
+    	 // int kMIPs[] = { 1, 2, 5, 10, 25};
+    	 max_round = 5;
+     }
 
-    // top-25
-    int kMIPs[] = { 1, 2, 5, 10, 25};
-    int max_round = 5;
-
-    // top-50
-    // int kMIPs[] = { 1, 2, 5, 10, 25, 50};
-    // int max_round = 6;
-
+     else if(top_k == 10)
+     {
+    	 	kMIPs.push_back(1);
+    	 	kMIPs.push_back(2);
+    	 	kMIPs.push_back(5);
+    	 	kMIPs.push_back(10);
+    	 // int kMIPs[] = { 1, 2, 5, 10};
+    	 max_round = 4;
+     }
+     else
+     {
+    	 // top-50
+    	 kMIPs.push_back(1);
+    	 kMIPs.push_back(2);
+    	 kMIPs.push_back(5);
+    	 kMIPs.push_back(10);
+    	 kMIPs.push_back(25);
+    	 kMIPs.push_back(50);
+		 // int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+		 max_round = 6;
+     }
 
     for(int ii = 0; ii < threshold_conditions; ii++)
     {
@@ -1661,6 +1688,7 @@ int overall_performance(                        // output the overall performanc
                         int   d,                                // dimension of space
                         int   qn,                             // number of queries
                         int   layers,                        // number of onion layers
+						int top_k, 							// top 25 or top 50?
                         const char  *temp_output_folder,        // temporal output
                         const char  *ground_truth_folder,    // ground truth folder
                         const char  *output_folder)            // output folder
@@ -1678,13 +1706,41 @@ int overall_performance(                        // output the overall performanc
     string str_array[] = {"_with_threshold"};
     */
 
-    // top-25
-    int kMIPs[] = { 1, 2, 5, 10, 25};
-    int max_round = 5;
+     int max_round = 4;
+     vector<int> kMIPs;
+     if(top_k == 25)
+     {
+    	 // top-25
+    	 // int kMIPs[] = { 1, 2, 5, 10, 25};
+    	 kMIPs.push_back(1);
+    	 kMIPs.push_back(2);
+    	 kMIPs.push_back(5);
+    	 kMIPs.push_back(10);
+    	 kMIPs.push_back(25);
+    	 max_round = 5;
+     }
 
-    // top-50
-    // int kMIPs[] = { 1, 2, 5, 10, 25, 50};
-    // int max_round = 6;
+     else if(top_k == 10)
+     {
+    	 // int kMIPs[] = { 1, 2, 5, 10};
+    	 kMIPs.push_back(1);
+    	 kMIPs.push_back(2);
+    	 kMIPs.push_back(5);
+    	 kMIPs.push_back(10);
+    	 max_round = 4;
+     }
+     else
+     {
+    	 // top-50
+    	 // int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+    	 kMIPs.push_back(1);
+    	 kMIPs.push_back(2);
+    	 kMIPs.push_back(5);
+    	 kMIPs.push_back(10);
+    	 kMIPs.push_back(25);
+    	 kMIPs.push_back(50);
+    	 max_round = 6;
+     }
 
     // -------------------------------------------------------------------------
     //  read the ground truth file

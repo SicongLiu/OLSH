@@ -11,25 +11,28 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-# dimensions = [5]
-dimensions = [4, 5]
+dimensions = [4]
+# dimensions = [4, 5]
 
-card_file_name = ['1M', '500k', '100k', '200k']
-card = [100000, 500000, 100000, 200000]
+# card_file_name = ['1M', '500k', '100k', '200k']
+# card = [1000000, 500000, 100000, 200000]
 # card = [100000]
+card_file_name = ['1M']
+card = [1000000]
 
 # optimized_tops = [10, 25]
-optimized_tops = [25, 50]
+# optimized_tops = [25, 50]
+optimized_tops = [25]
 # comp_types = ['opt', 'max', 'uni']
 comp_types = ['opt', 'uni']
 
 top_ks = [1, 2, 5, 10, 25, 50]
 # budget = ['1M', '500k']
-budget = ['1M']
+budget = ['10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 
-over_reault = result_file_dir + 'all_aggregated_Oct_14.txt'
+over_reault = result_file_dir + 'all_aggregated_Nov_6.txt'
 f = open(over_reault, 'w')
 
 for dd in range(dimensions.__len__()):
