@@ -166,6 +166,7 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
 	int   layer_index, 				// current onion layer index
+	int 	  top_k,						// number of elements want to retrieve
 	float S,							// similarity threshold
 	float nn_ratio,						// approximation ratio for ANN search
 	const float **data,					// data set
@@ -201,6 +202,7 @@ int overall_performance(				// output the overall performance of indexing
 	int   d,							// dimension of space
 	int   qn, 							// number of queries
 	int   layers,						// number of onion layers
+	int   top_k, 						// number of elements to retrieve
 	const char  *temp_output_folder,	// temporal output folder
 	const char  *ground_truth_folder,	// ground truth folder
 	const char  *output_folder);		// output folder

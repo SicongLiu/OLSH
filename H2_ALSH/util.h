@@ -86,4 +86,15 @@ int get_hits(						// get the number of hits between two ID list
 	const Result *R,					// ground truth results 
 	MaxK_List *list);					// results returned by algorithms
 
+// -----------------------------------------------------------------------------
+float calc_norm(						// calc L2 norm of a given point
+	int   dim,						// dimension
+	const float *p);
+
+// -----------------------------------------------------------------------------
+float calc_angle(					// calc angle of two points p1 and p2
+	int   dim,						// dimension
+	const float *p1,					// 1st point
+	const float *p2);				// 2nd point
+
 #endif // __UTIL_H
