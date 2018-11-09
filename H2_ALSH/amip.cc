@@ -1687,223 +1687,225 @@ int persist_candidate_size(                // persist average number of candidat
 int overall_performance(                        // output the overall performance of indexing
                         int   d,                                // dimension of space
                         int   qn,                             // number of queries
-                        int   layers,                        // number of onion layers
+                        int   layers,                        // max amount of onion layers so far
 						int top_k, 							// top 25 or top 50?
                         const char  *temp_output_folder,        // temporal output
                         const char  *ground_truth_folder,    // ground truth folder
                         const char  *output_folder)            // output folder
 {
-    MAX_DIMENSION = d;
+
+	// need to pass max_number_layer we have so far as parameters into function
+	// instead of top_k * top_k, we use max_layer * top_k
+	MAX_DIMENSION = d;
+
+	int threshold_conditions = 2;
+	bool use_threshold_pruning[] = {true, false};
+	string str_array[] = {"with_threshold", "without_threshold"};
 
 
-     int threshold_conditions = 2;
-     bool use_threshold_pruning[] = {true, false};
-     string str_array[] = {"with_threshold", "without_threshold"};
-
-
-    /*int threshold_conditions = 1;
+	/*int threshold_conditions = 1;
     bool use_threshold_pruning[] = {true};
     string str_array[] = {"_with_threshold"};
-    */
+	 */
 
-     int max_round = 4;
-     vector<int> kMIPs;
-     if(top_k == 25)
-     {
-    	 // top-25
-    	 // int kMIPs[] = { 1, 2, 5, 10, 25};
-    	 kMIPs.push_back(1);
-    	 kMIPs.push_back(2);
-    	 kMIPs.push_back(5);
-    	 kMIPs.push_back(10);
-    	 kMIPs.push_back(25);
-    	 max_round = 5;
-     }
+	int max_round = 4;
+	vector<int> kMIPs;
+	if(top_k == 25)
+	{
+		// top-25
+		// int kMIPs[] = { 1, 2, 5, 10, 25};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		max_round = 5;
+	}
 
-     else if(top_k == 10)
-     {
-    	 // int kMIPs[] = { 1, 2, 5, 10};
-    	 kMIPs.push_back(1);
-    	 kMIPs.push_back(2);
-    	 kMIPs.push_back(5);
-    	 kMIPs.push_back(10);
-    	 max_round = 4;
-     }
-     else
-     {
-    	 // top-50
-    	 // int kMIPs[] = { 1, 2, 5, 10, 25, 50};
-    	 kMIPs.push_back(1);
-    	 kMIPs.push_back(2);
-    	 kMIPs.push_back(5);
-    	 kMIPs.push_back(10);
-    	 kMIPs.push_back(25);
-    	 kMIPs.push_back(50);
-    	 max_round = 6;
-     }
+	else if(top_k == 10)
+	{
+		// int kMIPs[] = { 1, 2, 5, 10};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		max_round = 4;
+	}
+	else
+	{
+		// top-50
+		// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		kMIPs.push_back(50);
+		max_round = 6;
+	}
 
-    // -------------------------------------------------------------------------
-    //  read the ground truth file
-    // -------------------------------------------------------------------------
-    Result **R = new Result*[qn];
-    for (int i = 0; i < qn; ++i)
-    {
-        R[i] = new Result[MAXK];
-    }
-    if (read_ground_truth(qn, ground_truth_folder, R) == 1)
-    {
-        printf("Reading Truth Set Error!\n");
-        return 1;
-    }
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i)
+	{
+		R[i] = new Result[MAXK];
+	}
+	if (read_ground_truth(qn, ground_truth_folder, R) == 1)
+	{
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
 
-    for(int ii = 0 ; ii < threshold_conditions; ii++)
-    {
-        bool is_threshold = use_threshold_pruning[ii];
-        string is_threshold_file_name = str_array[ii];
-        // -------------------------------------------------------------------------
-        //  compute precision and recall per query
-        // -------------------------------------------------------------------------
-        float *recall = new float[max_round];
-        float *NDCG = new float[max_round];
-        for (int round = 0; round < max_round; ++round)
-        {
-            recall[round] = 0;
-            NDCG[round] = 0;
-        }
+	for(int ii = 0 ; ii < threshold_conditions; ii++)
+	{
+		bool is_threshold = use_threshold_pruning[ii];
+		string is_threshold_file_name = str_array[ii];
+		// -------------------------------------------------------------------------
+		//  compute precision and recall per query
+		// -------------------------------------------------------------------------
+		float *recall = new float[max_round];
+		float *NDCG = new float[max_round];
+		for (int round = 0; round < max_round; ++round)
+		{
+			recall[round] = 0;
+			NDCG[round] = 0;
+		}
 
-        printf("Top-t c-AMIP of Simple_LSH (overall): \n");
+		printf("Top-t c-AMIP of Simple_LSH (overall): \n");
 
-        for (int round = 0; round < max_round; ++round)
-        {
-            int top_k = kMIPs[round];
-            if(top_k > layers)
-            {
-                break;
-            }
-            char output_set[200];
-            sprintf(output_set, "%s_top_%d_%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
+		for (int round = 0; round < max_round; ++round)
+		{
+			int top_k = kMIPs[round];
+			/*if(top_k > layers)
+			{
+				break;
+			}*/
+			char output_set[200];
+			sprintf(output_set, "%s_top_%d_%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
 
-            // load from file
-            FILE *fp1 = fopen(output_set, "r");
-            if (!fp1)
-            {
-                printf("Could not open %s\n", output_set);
-                return 1;
-            }
+			// load from file
+			FILE *fp1 = fopen(output_set, "r");
+			if (!fp1)
+			{
+				printf("Could not open %s\n", output_set);
+				return 1;
+			}
 
-            /**
-             * Created by Sicong
-             *
-             * The idea essentially is to combine the top-k results of the same
-             * query across different layers, then aggregate different query
-             * results together
-             * */
-            float*** temp_result = new float**[qn];
-            for(int i = 0; i < qn; i++)
-            {
-                temp_result[i] = new float*[top_k * top_k];
-                for(int j=0; j< top_k * top_k; j++)
-                {
-                    temp_result[i][j] = new float[d+1];
-                }
-            }
+			/**
+			 * Created by Sicong
+			 *
+			 * The idea essentially is to combine the top-k results of the same
+			 * query across different layers, then aggregate different query
+			 * results together
+			 * */
+			float*** temp_result = new float**[qn];
+			for(int i = 0; i < qn; i++)
+			{
+				temp_result[i] = new float*[layers * top_k];
+				for(int j=0; j< layers * top_k; j++)
+				{
+					temp_result[i][j] = new float[d+1];
+				}
+			}
 
-            int q_index = 0;
-            int layer_index = 0;
-            int cur_q_line_count = 0;
-            int line_count = 0;
-            // while (!feof(fp1) && line_count < top_k * layers * qn)
-            while (!feof(fp1) && line_count < top_k * top_k * qn)
-            {
-                if(line_count%top_k == 0 && line_count > 0)
-                {
-                    q_index = (++q_index)%qn;
-                    cur_q_line_count = 0;
-                    if(line_count%(top_k * qn) == 0)
-                    {
-                        ++layer_index;
-                    }
-                }
-                for (int j = 0; j < d + 1; ++j)
-                {
-                    fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * top_k][j]);
-                }
-                fscanf(fp1, "\n");
-                ++line_count;
-                ++cur_q_line_count;
+			int q_index = 0;
+			int layer_index = 0;	// range [0, layers - 1]
+			int cur_q_line_count = 0;
+			int line_count = 0;
+			/*while (!feof(fp1) && line_count < top_k * layers * qn)*/
+			while (!feof(fp1) && line_count < layers * top_k * qn)
+			{
+				if(line_count%top_k == 0 && line_count > 0)
+				{
+					q_index = (++q_index)%qn;
+					cur_q_line_count = 0;
+					if(line_count%(top_k * qn) == 0)
+					{
+						++layer_index;
+					}
+				}
+				for (int j = 0; j < d + 1; ++j)
+				{
+					fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * top_k][j]);
+				}
+				fscanf(fp1, "\n");
+				++line_count;
+				++cur_q_line_count;
 
-            }
-            printf("top_k: %d, layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
-            // assert(feof(fp1) && line_count == top_k * layers * qn);
-            assert(feof(fp1) && line_count == top_k * top_k * qn);
+			}
+			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
+			// assert(feof(fp1) && line_count == top_k * layers * qn);
+			assert(feof(fp1) && line_count == layers * top_k * qn);
 
-            MaxK_List* list = new MaxK_List(top_k);
-            for (int i = 0; i < qn; ++i)
-            {
-                list->reset();
-                for(int j = 0; j < top_k * top_k; j++)
-                {
-                    list->insert(temp_result[i][j][d], j + 1);
-                }
+			MaxK_List* list = new MaxK_List(top_k);
+			for (int i = 0; i < qn; ++i)
+			{
+				list->reset();
+				for(int j = 0; j < layers * top_k; j++)
+				{
+					list->insert(temp_result[i][j][d], j + 1);
+				}
 
-                recall[round] += calc_recall(top_k, (const Result *) R[i], list);
-                NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
-            }
-            delete list;
-            list = NULL;
-            fclose(fp1);
+				recall[round] += calc_recall(top_k, (const Result *) R[i], list);
+				NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
+			}
+			delete list;
+			list = NULL;
+			fclose(fp1);
 
-            // -------------------------------------------------------------------------
-            //  free memory space
-            // -------------------------------------------------------------------------
-            for(int i = 0; i < qn; i++)
-            {
-                for(int j = 0; j < top_k * top_k; j++)
-                {
-                    delete[] temp_result[i][j];
-                    temp_result[i][j] = NULL;
-                }
-                delete[] temp_result[i];
-                temp_result[i] = NULL;
-            }
-            delete[] temp_result;
-            temp_result = NULL;
-        }
+			// -------------------------------------------------------------------------
+			//  free memory space
+			// -------------------------------------------------------------------------
+			for(int i = 0; i < qn; i++)
+			{
+				for(int j = 0; j < layers * top_k; j++)
+				{
+					delete[] temp_result[i][j];
+					temp_result[i][j] = NULL;
+				}
+				delete[] temp_result[i];
+				temp_result[i] = NULL;
+			}
+			delete[] temp_result;
+			temp_result = NULL;
+		}
 
-        char output_folder_set[200];
-        // sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
-        sprintf(output_folder_set, "%s_%s.txt", output_folder, is_threshold_file_name.c_str());
+		char output_folder_set[200];
+		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
+		sprintf(output_folder_set, "%s_%s.txt", output_folder, is_threshold_file_name.c_str());
 
-        printf("Output path %s \n ", output_folder_set);
-        FILE *fp2 = fopen(output_folder_set, "a+");
-        if (!fp2)
-        {
-            printf("Could not open %s\n", output_folder_set);
-            return 1;
-        }
-        printf("Top-k\t\tRecall\tNDCG\n");
-        fprintf(fp2, "Top-k\t\tRecall\tNDCG\n");
-        for (int round = 0; round < max_round; ++round)
-        {
-            int top_k = kMIPs[round];
-            recall[round] = recall[round] / qn;
-            NDCG[round] = NDCG[round] * 1.0f / qn;
-            printf("%4d\t\t%.2f\t%.2f\n", top_k,
-                   recall[round], NDCG[round]);
-            fprintf(fp2, "%d\t%f\t%f\n", top_k,
-                    recall[round], NDCG[round]);
-            printf("\n");
-            fprintf(fp2, "\n");
-        }
-        printf("\n");
-        fprintf(fp2, "\n");
-        fclose(fp2);
+		printf("Output path %s \n ", output_folder_set);
+		FILE *fp2 = fopen(output_folder_set, "a+");
+		if (!fp2)
+		{
+			printf("Could not open %s\n", output_folder_set);
+			return 1;
+		}
+		printf("Top-k\t\tRecall\tNDCG\n");
+		fprintf(fp2, "Top-k\t\tRecall\tNDCG\n");
+		for (int round = 0; round < max_round; ++round)
+		{
+			int top_k = kMIPs[round];
+			recall[round] = recall[round] / qn;
+			NDCG[round] = NDCG[round] * 1.0f / qn;
+			printf("%4d\t\t%.2f\t%.2f\n", top_k,
+					recall[round], NDCG[round]);
+			fprintf(fp2, "%d\t%f\t%f\n", top_k,
+					recall[round], NDCG[round]);
+			printf("\n");
+			fprintf(fp2, "\n");
+		}
+		printf("\n");
+		fprintf(fp2, "\n");
+		fclose(fp2);
 
-        delete[] recall; recall = NULL;
-        delete[] NDCG; NDCG = NULL;
-    }
-    delete[] R; R = NULL;
-    return 0;
+		delete[] recall; recall = NULL;
+		delete[] NDCG; NDCG = NULL;
+	}
+	delete[] R; R = NULL;
+	return 0;
 }
 
 // -----------------------------------------------------------------------------
