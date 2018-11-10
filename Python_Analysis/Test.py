@@ -50,11 +50,24 @@ import numpy as np
 # print(myarray.ndim)
 # # for data in myarray:
 # #     print(data)
-testList = []
-testList.append(0)
-testList.append(1)
-num = 0
-if num in testList:
-    print("yes")
 
-print("all done")
+cur_str = '1\n 2\n 3 4 5 6 \n 7 8 9 10'
+print(cur_str)
+lists = cur_str.split('\n')
+print(lists.__len__())
+list1 = lists[2:4]
+list1 = np.asarray(list1)
+print(list1)
+print(type(list1))
+print(list1.__len__())
+
+list2 = np.array(list1)
+print(list2)
+
+list3 = np.asarray(list1[0])
+list4 = np.asarray(list1[1])
+
+final_list = []
+final_list.append(list3)
+final_list.append(list4)
+print(final_list)

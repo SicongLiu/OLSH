@@ -49,7 +49,8 @@ for excel_file in files_xls:
             #     cur_record.append(value)
             cur_record.append(value)
         # if cur_record.__len__() > 0: # and cur_record.__len__() == dimension: # and int(cur_record[0]) >= 10:
-        if cur_record.__len__() != dimension or str(cur_record[0]).isspace() or str(cur_record[0]) == "":
+        if cur_record.__len__() != dimension or str(cur_record[0]).isspace() or str(cur_record[0]) == "" \
+                or '0' in cur_record or 0 in cur_record:
             continue
         else:
             total_data.append(cur_record)
@@ -88,8 +89,10 @@ for i in range(total_record_count):
     for j in range(dimension):
         cur_value = factor * (total_data[i][j] / scalors[i])
         cur_point.append(cur_value)
+    cur_point = np.asarray(cur_point)
     scaled_points.append(cur_point)
 
+scaled_points = np.asarray(scaled_points)
 # print for double check
 maxDistanceFromCenter = 0
 minDistanceFromCenter = sys.float_info.max
@@ -102,15 +105,26 @@ for i in range(total_record_count):
 print("The maximum distance from  the center of the hipershere now is: " + str(maxDistanceFromCenter))
 print("The minimum distance from  the center of the hipershere now is: " + str(minDistanceFromCenter))
 
-file = open("NBA_Data.txt", "w")
-file.write(str(dimension))
-file.write("\n")
-file.write(str(total_record_count))
-file.write("\n")
-# write file in text file
-for i in range(total_record_count):
-    s = "  ".join(map(str, scaled_points[i]))
-    file.write(s)
-    file.write("\n")
-file.close()
+file_name = "NBA_Data.txt"
+temp_data = []
+temp_data.append(dimension)
+temp_data.append(total_record_count)
+temp_data = np.asarray(temp_data)
+np.savetxt(file_name, temp_data, delimiter=',', fmt='%i')
+
+f_handle = open(file_name, 'ab')
+np.savetxt(f_handle, scaled_points, fmt='%10.6f')
+f_handle.close()
+
+# file = open("NBA_Data.txt", "w")
+# file.write(str(dimension))
+# file.write("\n")
+# file.write(str(total_record_count))
+# file.write("\n")
+# # write file in text file
+# for i in range(total_record_count):
+#     s = "  ".join(map(str, scaled_points[i]))
+#     file.write(s)
+#     file.write("\n")
+# file.close()
 print("All Done .\n")
