@@ -32,7 +32,7 @@ budget = ['10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 
-over_reault = result_file_dir + 'all_aggregated_Nov_6.txt'
+over_reault = result_file_dir + 'all_aggregated_Nov_12.txt'
 f = open(over_reault, 'w')
 
 for dd in range(dimensions.__len__()):

@@ -80,7 +80,7 @@ def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name
 
 if __name__ == '__main__':
     command_bin_folder = '/Users/sicongliu/Desktop/StreamingTopK/qhull/bin'
-    dimensions = [5]
+    dimensions = [4]
     # dimensions = [10, 15, 20]
     cardinality = [100000]
 

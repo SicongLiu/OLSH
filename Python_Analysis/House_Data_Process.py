@@ -122,8 +122,10 @@ for i in range(total_record_count):
     for j in range(dimension):
         cur_value = factor * (float(total_data[i][j]) / float(scalors[i]))
         cur_point.append(cur_value)
+    cur_point = np.asarray(cur_point)
     scaled_points.append(cur_point)
 
+scaled_points = np.asarray(scaled_points)
 # print for double check
 maxDistanceFromCenter = 0
 minDistanceFromCenter = sys.float_info.max
@@ -136,15 +138,25 @@ for i in range(total_record_count):
 print("The maximum distance from  the center of the hipershere now is: " + str(maxDistanceFromCenter))
 print("The minimum distance from  the center of the hipershere now is: " + str(minDistanceFromCenter))
 
-file = open(save_data_file, "w")
-file.write(str(dimension))
-file.write("\n")
-file.write(str(total_record_count))
-file.write("\n")
-# write file in text file
-for i in range(total_record_count):
-    s = "  ".join(map(str, scaled_points[i]))
-    file.write(s)
-    file.write("\n")
-file.close()
+temp_data = []
+temp_data.append(dimension)
+temp_data.append(total_record_count)
+temp_data = np.asarray(temp_data)
+np.savetxt(save_data_file, temp_data, delimiter=',', fmt='%i')
+
+f_handle = open(save_data_file, 'ab')
+np.savetxt(f_handle, scaled_points, fmt='%10.6f')
+f_handle.close()
+
+# file = open(save_data_file, "w")
+# file.write(str(dimension))
+# file.write("\n")
+# file.write(str(total_record_count))
+# file.write("\n")
+# # write file in text file
+# for i in range(total_record_count):
+#     s = "  ".join(map(str, scaled_points[i]))
+#     file.write(s)
+#     file.write("\n")
+# file.close()
 print("All Done .\n")

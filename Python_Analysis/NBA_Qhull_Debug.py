@@ -58,11 +58,15 @@ def save_remaining_qhull(data_cardinality, data, current_qhull_output, layer_ind
         current_data_record = np.fromstring(current_data[ii], dtype=float, sep=' ')
         # rows, columns = np.where((data == current_data_record).all(axis=1))
         my_row = np.where((data == current_data_record).all(axis=1))[0]
+        if my_row.size > 1:
+            print(my_row)
+            print(current_data_record)
         data = np.delete(data, my_row, 0)
 
     file_name = cur_output_folder + '/' + aff_name + '_remain_qhull_input_' + str(layer_index)
     remain_qhull.append(np.asarray(int(num_of_dimension)))
-    remain_qhull.append(np.asarray(int(data_cardinality - num_of_points)))
+    # remain_qhull.append(np.asarray(int(data_cardinality - num_of_points)))
+    remain_qhull.append(np.asarray(int(data.__len__())))
     remain_qhull = np.asarray(remain_qhull)
     np.savetxt(file_name, remain_qhull, delimiter=',', fmt='%i')
 
