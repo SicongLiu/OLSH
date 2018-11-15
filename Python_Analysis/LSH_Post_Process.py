@@ -1,9 +1,11 @@
-
 import os
+import re
+from openpyxl import load_workbook
 
 result_file_dir = '../H2_ALSH/'
 
 result_type = ['with_threshold', 'without_threshold']
+result_type_excel = ['w_thresh', 'wo_thresh']
 
 # get obj and hash count from bash_set
 obj_hashsize_prefix = 'bash_set_'
@@ -11,32 +13,90 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-dimensions = [4]
+# dimensions = [4]
+dimensions = [2]
 # dimensions = [4, 5]
 
-# card_file_name = ['1M', '500k', '100k', '200k']
-# card = [1000000, 500000, 100000, 200000]
+card_file_name = ['1M', '500k', '100k', '200k']
+card = [1000000, 500000, 100000, 200000]
 # card = [100000]
-card_file_name = ['1M']
-card = [1000000]
+# card_file_name = ['1M']
+# card = [1000000]
 
 # optimized_tops = [10, 25]
 # optimized_tops = [25, 50]
 optimized_tops = [25]
-# comp_types = ['opt', 'max', 'uni']
-comp_types = ['opt', 'uni']
 
 top_ks = [1, 2, 5, 10, 25, 50]
 # budget = ['1M', '500k']
 budget = ['10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
+# comp_types = ['opt', 'max', 'uni']
+comp_types = ['opt', 'uni']
 
 over_reault = result_file_dir + 'all_aggregated_Nov_12.txt'
+
+def separate_string(input_string):
+    items = []
+    match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
+    if match:
+        items = match.groups()
+    return items
+
+def column_row_index(input_string, column_dist):
+    items = separate_string(input_string)
+    column_index = items[0]
+    row_index = int(items[1]) + column_dist
+    return column_index + str(row_index)
+
+
+anti_log_optimized_recall = ['B5',  'B6', 'B7', 'B8', 'B9', 'B10']
+anti_log_optimized_NDCG = ['C5',  'C6', 'C7', 'C8', 'C9', 'C10']
+anti_log_optimized_cand = ['D5',  'D6', 'D7', 'D8', 'D9', 'D10']
+anti_log_optimized_obj = ['E5',  'E6', 'E7', 'E8', 'E9', 'E10']
+anti_log_optimized_hashsize = ['F5',  'F6', 'F7', 'F8', 'F9', 'F10']
+
+anti_log_optimized_uni_recall = ['L5',  'L6', 'L7', 'L8', 'L9', 'L10']
+anti_log_optimized_uni_NDCG = ['M5',  'M6', 'M7', 'M8', 'M9', 'M10']
+anti_log_optimized_uni_cand = ['N5',  'N6', 'N7', 'N8', 'N9', 'N10']
+anti_log_optimized_uni_obj = ['O5',  'O6', 'O7', 'O8', 'O9', 'O10']
+anti_log_optimized_uni_hashsize = ['P5',  'P6', 'P7', 'P8', 'P9', 'P10']
+
+corr_log_optimized_recall = ['Q5',  'Q6', 'Q7', 'Q8', 'Q9', 'Q10']
+corr_log_optimized_NDCG = ['R5',  'R6', 'R7', 'R8', 'R9', 'R10']
+corr_log_optimized_cand = ['S5',  'S6', 'S7', 'S8', 'S9', 'S10']
+corr_log_optimized_obj = ['T5',  'T6', 'T7', 'T8', 'T9', 'T10']
+corr_log_optimized_hashsize = ['U5',  'U6', 'U7', 'U8', 'U9', 'U10']
+
+corr_log_optimized_uni_recall = ['AA5',  'AA6', 'AA7', 'AA8', 'AA9', 'AA10']
+corr_log_optimized_uni_NDCG = ['AB5',  'AB6', 'AB7', 'AB8', 'AB9', 'AB10']
+corr_log_optimized_uni_cand = ['AC5',  'AC6', 'AC7', 'AC8', 'AC9', 'AC10']
+corr_log_optimized_uni_obj = ['AD5',  'AD6', 'AD7', 'AD8', 'AD9', 'AD10']
+corr_log_optimized_uni_hashsize = ['AE5',  'AE6', 'AE7', 'AE8', 'AE9', 'AE10']
+
+rand_log_optimized_recall = ['AF5',  'AF6', 'AF7', 'AF8', 'AF9', 'AF10']
+rand_log_optimized_NDCG = ['AG5',  'AG6', 'AG7', 'AG8', 'AG9', 'AG10']
+rand_log_optimized_cand = ['AH5',  'AH6', 'AH7', 'AH8', 'AH9', 'AH10']
+rand_log_optimized_obj = ['AI5',  'AI6', 'AI7', 'AI8', 'AI9', 'AI10']
+rand_log_optimized_hashsize = ['AJ5',  'AJ6', 'AJ7', 'AJ8', 'AJ9', 'AJ10']
+
+rand_log_optimized_uni_recall = ['AP5',  'AP6', 'AP7', 'AP8', 'AP9', 'AP10']
+rand_log_optimized_uni_NDCG = ['AQ5',  'AQ6', 'AQ7', 'AQ8', 'AQ9', 'AQ10']
+rand_log_optimized_uni_cand = ['AR5',  'AR6', 'AR7', 'AR8', 'AR9', 'AR10']
+rand_log_optimized_uni_obj = ['AS5',  'AS6', 'AS7', 'AS8', 'AS9', 'AS10']
+rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
+
+
 f = open(over_reault, 'w')
 
 for dd in range(dimensions.__len__()):
     cur_dimension = dimensions[dd]
+
+    # new excel file here
+    excel_file = "Aggregation_" + str(cur_dimension) + "D.xlsx"
+    # wb = load_workbook(filename=excel_file, data_only=True)
+    wb = load_workbook(filename=excel_file)
     for cc in range(card.__len__()):
         # cur_card_name = card_file_name[cc]
         cur_card = card[cc]
@@ -44,12 +104,30 @@ for dd in range(dimensions.__len__()):
             cur_budget = budget[bb]
             for oo in range(optimized_tops.__len__()):
                 cur_top_o = optimized_tops[oo]
-                for tt in range(types.__len__()):
-                    cur_type = types[tt]
-                    for dt in range(data_type.__len__()):
-                        cur_dt = data_type[dt]
-                        for cr in range(result_type.__len__()):
-                            cur_cr = result_type[cr]
+                for cr in range(result_type.__len__()):
+                    cur_cr = result_type[cr]
+
+                    # sheet name goes here
+                    sheet_name = str(cur_dimension) + "D_" + str(card_file_name[cc]) + "_" + \
+                                 result_type_excel[cr] + "_top-" + str()
+                    # ws = wb[sheet_name]
+                    ws = wb.get_sheet_by_name(sheet_name)
+                    for tt in range(types.__len__()):
+                        cur_type = types[tt]
+                        column_dist = 0
+                        if cur_type == 'log':
+                            column_dist = 0
+                        elif cur_type == 'log_minus':
+                            column_dist = 10
+                        elif cur_type == 'log_plus':
+                            column_dist = 20
+                        elif cur_type == 'log_plus_plus':
+                            column_dist = 30
+                        else:
+                            column_dist = 40
+
+                        for dt in range(data_type.__len__()):
+                            cur_dt = data_type[dt]
                             for ct in range(comp_types.__len__()):
                                 cur_ct = comp_types[ct]
                                 obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
@@ -80,6 +158,54 @@ for dd in range(dimensions.__len__()):
                                     obj.append(int(obj_s[top_ks[oh_index] - 1]))
                                     hash.append(int(hash_s[top_ks[oh_index] - 1]))
                                 f1.close()
+
+                                # anti_correlated, correlated, random
+                                # log, log minus, log plus, log plus plus, uni
+                                # threshold, or threshold
+                                start_recall = ''
+                                start_NDCG = ''
+                                start_cand = ''
+                                start_obj = ''
+                                start_hashsize = ''
+                                if cur_dt == 'anti_correlated':
+                                    if cur_ct == 'opt':
+                                        start_recall = anti_log_optimized_recall[0]
+                                        start_NDCG = anti_log_optimized_NDCG[0]
+                                        start_cand = anti_log_optimized_cand[0]
+                                        start_obj = anti_log_optimized_obj[0]
+                                        start_hashsize = anti_log_optimized_hashsize[0]
+                                    else:
+                                        start_recall = anti_log_optimized_uni_recall[0]
+                                        start_NDCG = anti_log_optimized_uni_NDCG[0]
+                                        start_cand = anti_log_optimized_uni_cand[0]
+                                        start_obj = anti_log_optimized_uni_obj[0]
+                                        start_hashsize = anti_log_optimized_uni_hashsize[0]
+                                elif cur_dt == 'correlated':
+                                    if cur_ct == 'opt':
+                                        start_recall = corr_log_optimized_recall[0]
+                                        start_NDCG = corr_log_optimized_NDCG[0]
+                                        start_cand = corr_log_optimized_cand[0]
+                                        start_obj = corr_log_optimized_obj[0]
+                                        start_hashsize = corr_log_optimized_hashsize[0]
+                                    else:
+                                        start_recall = corr_log_optimized_uni_recall[0]
+                                        start_NDCG = corr_log_optimized_uni_NDCG[0]
+                                        start_cand = corr_log_optimized_uni_cand[0]
+                                        start_obj = corr_log_optimized_uni_obj[0]
+                                        start_hashsize = corr_log_optimized_uni_hashsize[0]
+                                else:
+                                    if cur_ct == 'opt':
+                                        start_recall = rand_log_optimized_recall[0]
+                                        start_NDCG = rand_log_optimized_NDCG[0]
+                                        start_cand = rand_log_optimized_cand[0]
+                                        start_obj = rand_log_optimized_obj[0]
+                                        start_hashsize = rand_log_optimized_hashsize[0]
+                                    else:
+                                        start_recall = rand_log_optimized_uni_recall[0]
+                                        start_NDCG = rand_log_optimized_uni_NDCG[0]
+                                        start_cand = rand_log_optimized_uni_cand[0]
+                                        start_obj = rand_log_optimized_uni_obj[0]
+                                        start_hashsize = rand_log_optimized_uni_hashsize[0]
 
                                 temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
                                             str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
@@ -124,7 +250,8 @@ for dd in range(dimensions.__len__()):
                                 # cardinality, dimension, budget, top-10, log, anti_correlated, opt
                                 spec_string = 'cardinality: ' + str(cur_card) + ', dimension: ' + str(cur_dimension) +\
                                               ',  budget: ' + str(cur_budget) + ', top-k: ' + str(cur_top_o) + ', type: ' \
-                                              + cur_type + ', data: ' + cur_dt + ', compute type: ' + cur_ct
+                                              + cur_type + ', data: ' + cur_dt + ', compute type: ' + cur_ct + \
+                                              ', result type: ' + cur_cr
                                 f.write(spec_string + '\n')
                                 for ee in range(top_ks_length):
                                     f.write(str(recall[ee]) + ', ')
@@ -135,5 +262,18 @@ for dd in range(dimensions.__len__()):
                                     f.write('\n')
                                 f.write('\n')
                                 f.write('\n')
+
+                                for ee in range(top_ks_length):
+                                    recall_cell = column_row_index(start_recall, column_dist)
+                                    NDCG_cell = column_row_index(start_NDCG, column_dist)
+                                    start_cand = column_row_index(start_cand, column_dist)
+                                    start_obj = column_row_index(start_obj, column_dist)
+                                    start_hashsize = column_row_index(start_hashsize, column_dist)
+                                    ws[recall_cell] = str(recall[ee])
+                                    ws[NDCG_cell] = str(NDCG[ee])
+                                    ws[start_cand] = str(cand_size_list[ee])
+                                    ws[start_obj] = str(obj[ee])
+                                    ws[start_hashsize] = str(hash[ee])
+    wb.save(excel_file)
 f.close()
 print('Done')

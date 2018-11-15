@@ -166,7 +166,7 @@ for k in range(dimensions.__len__()):
             f33.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
             f33.write(
                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-            f33.write("qPath=./query/query_${d}D.txt \n")
+            f33.write("qPath=./query/NBA/query_${d}D.txt \n")
             f33.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
 
             f33.write(
@@ -361,10 +361,10 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Ground-Truth \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
-                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            f3.write("dPath=./raw_data/NBA/${datatype}_${d}_${cardinality}.txt \n")
                             f3.write(
                                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                            f3.write("qPath=./query/query_${d}D.txt \n")
+                            f3.write("qPath=./query/NBA/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
 
                             f3.write(" # ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
@@ -380,7 +380,7 @@ for k in range(dimensions.__len__()):
                                 f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
                                 f3.write("L" + str(kk) + "=" + str(L_Opt_List[kk]) + "\n")
 
-                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                f3.write("dPath" + str(kk) + "=./qhull_data/NBA/${datatype}_${d}_"
                                                              "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
                                 f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
@@ -504,10 +504,10 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("#     Ground-Truth \n")
                             f3.write("# ------------------------------------------------------------------------------ \n")
-                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            f3.write("dPath=./raw_data/NBA/${datatype}_${d}_${cardinality}.txt \n")
                             f3.write(
                                 "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                            f3.write("qPath=./query/query_${d}D.txt \n")
+                            f3.write("qPath=./query/NBA/query_${d}D.txt \n")
                             f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
                             f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
                                      "${oFolder}.mip \n")
@@ -520,7 +520,7 @@ for k in range(dimensions.__len__()):
                                 f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
                                 f3.write("L" + str(kk) + "=" + str(L_Uni_List[kk]) + "\n")
 
-                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                f3.write("dPath" + str(kk) + "=./qhull_data/NBA/${datatype}_${d}_"
                                                              "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
                                 f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"

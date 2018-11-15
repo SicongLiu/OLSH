@@ -8,7 +8,7 @@ import pandas as pd
 import xlwt
 import xlrd
 
-csv_file_path = '../HOUSE_Data/usa_00005.csv'
+csv_file_path = '../HOUSE_Data/usa_2013_2017.csv'
 save_data_file = "HOUSE_Data.txt"
 # PROPINSR -- 6
 # PROPTX99 -- 7

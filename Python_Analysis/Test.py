@@ -28,30 +28,21 @@
 # s = "  ".join(map(str, a))
 #
 # print(s)
+import re
 
-# file = open(“testfile.txt”, ”w”)
-#
-# file.write(“Hello
-# World”)
-# file.write(“This is our
-# new
-# text
-# file”)
-# file.write(“ and this is another
-# line.”)
-# file.write(“Why? Because
-# we
-# can.”)
-#
-# file.close()
-import numpy as np
-# myarray = np.fromfile('usa_00001.dat', dtype=float)
-# print(myarray.size)
-# print(myarray.ndim)
-# # for data in myarray:
-# #     print(data)
-x = '.09193999999999999'
-g = float("{0:.6f}".format(float(x)))
+def separate_string(input_string):
+    items = []
+    match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
+    if match:
+        items = match.groups()
+        print(items)
+        print(items[0])
+        bb = int(items[1]) + 3
+        print(bb)
+    return items[0] + str(int(items[1]) + 3)
 
-print(x)
-print(g)
+my_string = 'AP32'
+items = separate_string(my_string)
+print(items)
+
+cur = 'A'

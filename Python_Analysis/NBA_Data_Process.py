@@ -93,6 +93,7 @@ for i in range(total_record_count):
     scaled_points.append(cur_point)
 
 scaled_points = np.asarray(scaled_points)
+
 # print for double check
 maxDistanceFromCenter = 0
 minDistanceFromCenter = sys.float_info.max
@@ -114,6 +115,7 @@ np.savetxt(file_name, temp_data, delimiter=',', fmt='%i')
 
 f_handle = open(file_name, 'ab')
 np.savetxt(f_handle, scaled_points, fmt='%10.6f')
+# np.savetxt(f_handle, scaled_points)
 f_handle.close()
 
 # file = open("NBA_Data.txt", "w")
