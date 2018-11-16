@@ -28,21 +28,62 @@
 # s = "  ".join(map(str, a))
 #
 # print(s)
-import re
+# import re
+#
+# def separate_string(input_string):
+#     items = []
+#     match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
+#     if match:
+#         items = match.groups()
+#         print(items)
+#         print(items[0])
+#         bb = int(items[1]) + 3
+#         print(bb)
+#     return items[0] + str(int(items[1]) + 3)
+#
+# my_string = 'AP32'
+# items = separate_string(my_string)
+# print(items)
+#
+# cur = 'A'
+import numpy as np
 
-def separate_string(input_string):
-    items = []
-    match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
-    if match:
-        items = match.groups()
-        print(items)
-        print(items[0])
-        bb = int(items[1]) + 3
-        print(bb)
-    return items[0] + str(int(items[1]) + 3)
+a = [1, 2, 3, 4]
+b = [1, 2, 3, 4]
+c = [2, 3, 4, 5]
+d = [1, 2, 3, 4]
+e = [3, 4, 5, 6]
 
-my_string = 'AP32'
-items = separate_string(my_string)
-print(items)
+a = np.asarray(a)
+b = np.asarray(b)
+c = np.asarray(c)
+d = np.asarray(d)
+e = np.asarray(e)
 
-cur = 'A'
+xx = []
+xx.append(a)
+xx.append(b)
+xx.append(c)
+xx.append(d)
+xx.append(e)
+xx = np.asarray(xx)
+
+print(xx)
+
+my_row = np.where((xx == a).all(axis=1))[0]
+if my_row.size > 1:
+    print(my_row)
+    print(a)
+xx = np.delete(xx, my_row, 0)
+
+print(xx)
+
+
+
+
+
+
+
+
+
+

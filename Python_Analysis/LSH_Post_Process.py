@@ -17,25 +17,26 @@ cand_recall_prefix = 'temp_result_'
 dimensions = [2]
 # dimensions = [4, 5]
 
-card_file_name = ['1M', '500k', '100k', '200k']
-card = [1000000, 500000, 100000, 200000]
+card_file_name = ['2M', '1.5M', '1M', '200k']
+card = [2000000, 1500000, 1000000, 200000]
 # card = [100000]
 # card_file_name = ['1M']
 # card = [1000000]
 
 # optimized_tops = [10, 25]
 # optimized_tops = [25, 50]
-optimized_tops = [25]
+optimized_tops = [25, 50]
 
 top_ks = [1, 2, 5, 10, 25, 50]
 # budget = ['1M', '500k']
-budget = ['10M']
+budget = ['1M', '10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 # comp_types = ['opt', 'max', 'uni']
 comp_types = ['opt', 'uni']
 
-over_reault = result_file_dir + 'all_aggregated_Nov_12.txt'
+over_reault = result_file_dir + 'all_aggregated_Nov_16.txt'
+
 
 def separate_string(input_string):
     items = []
@@ -43,6 +44,7 @@ def separate_string(input_string):
     if match:
         items = match.groups()
     return items
+
 
 def column_row_index(input_string, column_dist):
     items = separate_string(input_string)
@@ -109,55 +111,27 @@ for dd in range(dimensions.__len__()):
 
                     # sheet name goes here
                     sheet_name = str(cur_dimension) + "D_" + str(card_file_name[cc]) + "_" + \
-                                 result_type_excel[cr] + "_top-" + str()
-                    # ws = wb[sheet_name]
-                    ws = wb.get_sheet_by_name(sheet_name)
-                    for tt in range(types.__len__()):
-                        cur_type = types[tt]
-                        column_dist = 0
-                        if cur_type == 'log':
-                            column_dist = 0
-                        elif cur_type == 'log_minus':
-                            column_dist = 10
-                        elif cur_type == 'log_plus':
-                            column_dist = 20
-                        elif cur_type == 'log_plus_plus':
-                            column_dist = 30
-                        else:
-                            column_dist = 40
+                                 result_type_excel[cr] + "_top-" + str(cur_top_o)
 
-                        for dt in range(data_type.__len__()):
-                            cur_dt = data_type[dt]
-                            for ct in range(comp_types.__len__()):
-                                cur_ct = comp_types[ct]
-                                obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
-                                            str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
-                                if not os.path.exists(obj_file_dir):
-                                    continue
-
-                                obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
-                                           str(cur_dimension) + '_' + str(cur_card) + '.txt'
-
-                                f1 = open(obj_file, 'r')
-                                lines = f1.readlines()
-                                obj_s = lines[0].split(',')
-                                # print(obj_s)
-                                hash_s = lines[1].split(',')
-                                # print(hash_s)
-
-                                obj = []
-                                hash = []
-                                top_ks_length = -1
-                                if cur_top_o == 10:
-                                    top_ks_length = 4
-                                elif cur_top_o == 25:
-                                    top_ks_length = 5
+                    for dt in range(data_type.__len__()):
+                        cur_dt = data_type[dt]
+                        for ct in range(comp_types.__len__()):
+                            cur_ct = comp_types[ct]
+                            for tt in range(types.__len__()):
+                                cur_type = types[tt]
+                                column_dist = 0
+                                if cur_type == 'log':
+                                    column_dist = 0
+                                elif cur_type == 'log_minus':
+                                    column_dist = 10
+                                elif cur_type == 'log_plus':
+                                    column_dist = 20
+                                elif cur_type == 'log_plus_plus':
+                                    column_dist = 30
                                 else:
-                                    top_ks_length = 6
-                                for oh_index in range(top_ks_length):
-                                    obj.append(int(obj_s[top_ks[oh_index] - 1]))
-                                    hash.append(int(hash_s[top_ks[oh_index] - 1]))
-                                f1.close()
+                                    column_dist = 40
+
+
 
                                 # anti_correlated, correlated, random
                                 # log, log minus, log plus, log plus plus, uni
@@ -206,6 +180,37 @@ for dd in range(dimensions.__len__()):
                                         start_cand = rand_log_optimized_uni_cand[0]
                                         start_obj = rand_log_optimized_uni_obj[0]
                                         start_hashsize = rand_log_optimized_uni_hashsize[0]
+                                obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
+                                            str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
+                                if not os.path.exists(obj_file_dir):
+                                    continue
+                                # ws = wb[sheet_name]
+                                ws = wb.get_sheet_by_name(sheet_name)
+                                obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
+                                           str(cur_dimension) + '_' + str(cur_card) + '.txt'
+
+                                f1 = open(obj_file, 'r')
+                                lines = f1.readlines()
+                                obj_s = lines[0].split(',')
+                                # print(obj_s)
+                                hash_s = lines[1].split(',')
+                                # print(hash_s)
+
+                                obj = []
+                                hash = []
+                                top_ks_length = -1
+                                if cur_top_o == 10:
+                                    top_ks_length = 4
+                                elif cur_top_o == 25:
+                                    top_ks_length = 5
+                                else:
+                                    top_ks_length = 6
+                                for oh_index in range(top_ks_length):
+                                    obj.append(int(obj_s[top_ks[oh_index] - 1]))
+                                    hash.append(int(hash_s[top_ks[oh_index] - 1]))
+                                f1.close()
+
+
 
                                 temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
                                             str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
@@ -264,16 +269,16 @@ for dd in range(dimensions.__len__()):
                                 f.write('\n')
 
                                 for ee in range(top_ks_length):
-                                    recall_cell = column_row_index(start_recall, column_dist)
-                                    NDCG_cell = column_row_index(start_NDCG, column_dist)
-                                    start_cand = column_row_index(start_cand, column_dist)
-                                    start_obj = column_row_index(start_obj, column_dist)
-                                    start_hashsize = column_row_index(start_hashsize, column_dist)
-                                    ws[recall_cell] = str(recall[ee])
-                                    ws[NDCG_cell] = str(NDCG[ee])
-                                    ws[start_cand] = str(cand_size_list[ee])
-                                    ws[start_obj] = str(obj[ee])
-                                    ws[start_hashsize] = str(hash[ee])
+                                    recall_cell = column_row_index(start_recall, column_dist + ee)
+                                    NDCG_cell = column_row_index(start_NDCG, column_dist + ee)
+                                    cand_cell = column_row_index(start_cand, column_dist + ee)
+                                    obj_cell = column_row_index(start_obj, column_dist + ee)
+                                    hashsize_cell = column_row_index(start_hashsize, column_dist + ee)
+                                    ws[recall_cell] = float(recall[ee])
+                                    ws[NDCG_cell] = float(NDCG[ee])
+                                    ws[cand_cell] = float(cand_size_list[ee])
+                                    ws[obj_cell] = float(obj[ee])
+                                    ws[hashsize_cell] = float(hash[ee])
     wb.save(excel_file)
 f.close()
 print('Done')
