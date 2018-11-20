@@ -60,29 +60,51 @@ print("total number of record: " + str(total_record_count))
 
 
 # normalize data
-def normalize_data_dim(point_, scalors_):
-    process_points = []
-    for ii in range(dimension):
-        process_points.append(point_[ii]/scalors_[ii])
-    return process_points
+def compute_distance_with_origin(point, cur_dimension):
+    distance = 0
+    # print(point)
+    for ii in range(cur_dimension):
+        distance = distance + float(point[ii]) * float(point[ii])
+
+    return math.sqrt(distance)
 
 
+maxDistanceFromCenter = 0
+minDistanceFromCenter = sys.float_info.max
 scalors = []
-for i in range(dimension):
-    scalors.append(0)
-
 for i in range(total_record_count):
-    for ii in range(dimension):
-        if total_data[i][ii] > scalors[ii]:
-            scalors[ii] = total_data[i][ii]
+    temp_distance = compute_distance_with_origin(total_data[i], dimension)
+    if temp_distance > maxDistanceFromCenter:
+        maxDistanceFromCenter = temp_distance
+    if temp_distance < minDistanceFromCenter:
+        minDistanceFromCenter = temp_distance
+    if temp_distance == 0:
+        print(total_data[i])
+    scalors.append(temp_distance)
 
 scaled_points = []
 for i in range(total_record_count):
-    cur_point = normalize_data_dim(total_data[i], scalors)
+    factor = scalors[i]/maxDistanceFromCenter
+    cur_point = []
+    for j in range(dimension):
+        cur_value = factor * (total_data[i][j] / scalors[i])
+        cur_point.append(cur_value)
     cur_point = np.asarray(cur_point)
     scaled_points.append(cur_point)
 
 scaled_points = np.asarray(scaled_points)
+
+# print for double check
+maxDistanceFromCenter = 0
+minDistanceFromCenter = sys.float_info.max
+for i in range(total_record_count):
+    cur_value = compute_distance_with_origin(scaled_points[i], dimension)
+    if cur_value > maxDistanceFromCenter:
+        maxDistanceFromCenter = cur_value
+    if value < minDistanceFromCenter:
+        minDistanceFromCenter = value
+print("The maximum distance from  the center of the hipershere now is: " + str(maxDistanceFromCenter))
+print("The minimum distance from  the center of the hipershere now is: " + str(minDistanceFromCenter))
 
 file_name = "NBA_Data.txt"
 temp_data = []
@@ -93,6 +115,18 @@ np.savetxt(file_name, temp_data, delimiter=',', fmt='%i')
 
 f_handle = open(file_name, 'ab')
 np.savetxt(f_handle, scaled_points, fmt='%10.6f')
+# np.savetxt(f_handle, scaled_points)
 f_handle.close()
 
+# file = open("NBA_Data.txt", "w")
+# file.write(str(dimension))
+# file.write("\n")
+# file.write(str(total_record_count))
+# file.write("\n")
+# # write file in text file
+# for i in range(total_record_count):
+#     s = "  ".join(map(str, scaled_points[i]))
+#     file.write(s)
+#     file.write("\n")
+# file.close()
 print("All Done .\n")

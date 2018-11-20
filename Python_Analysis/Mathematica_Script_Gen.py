@@ -1,104 +1,84 @@
 # data_type = ["anti_correlated", "correlated", "random"]
 
 # data_type = ["anti_correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [200000]
 # query_count = [1000]
-# topk = 21
+# topk = 14
 
 # data_type = ["correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [200000]
 # query_count = [1000]
-# topk = 25
-#
+# topk = 17
+
 # data_type = ["random"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [200000]
 # query_count = [1000]
-# topk = 20
+# topk = 13
 #
 # #########
 #
 # data_type = ["anti_correlated"]
-# dimensions = [6]
-# cardinality = [500000]
+# dimensions = [7]
+# cardinality = [1000000]
 # query_count = [1000]
-# topk = 28
-#
-# data_type = ["correlated"]
-# dimensions = [6]
-# cardinality = [500000]
-# query_count = [1000]
-# topk = 33
+# topk = 21
 # #
-# data_type = ["random"]
-# dimensions = [6]
-# cardinality = [500000]
-# query_count = [1000]
-# topk = 27
-#
-# ###########
-#
-# data_type = ["anti_correlated"]
-# dimensions = [6]
-# cardinality = [1000000]
-# query_count = [1000]
-# topk = 34
-#
 # data_type = ["correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [1000000]
 # query_count = [1000]
-# topk = 40
-
+# topk = 26
+#
 # data_type = ["random"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [1000000]
 # query_count = [1000]
-# topk = 32
+# topk = 21
 #
 # ##############
 #
 # data_type = ["anti_correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [1500000]
 # query_count = [1000]
-# topk = 38
-#
+# topk = 24
+# #
 # data_type = ["correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [1500000]
 # query_count = [1000]
-# topk = 45
-#
-# data_type = ["random"]
-# dimensions = [6]
-# cardinality = [1500000]
-# query_count = [1000]
-# topk = 37
+# topk = 29
 
+# data_type = ["random"]
+# dimensions = [7]
+# cardinality = [1500000]
+# query_count = [1000]
+# topk = 23
+# #
 # ###############
 #
 # data_type = ["anti_correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [2000000]
 # query_count = [1000]
-# topk = 41
+# topk = 26
 #
 # data_type = ["correlated"]
-# dimensions = [6]
+# dimensions = [7]
 # cardinality = [2000000]
 # query_count = [1000]
-# topk = 49
+# topk = 31
+#
+data_type = ["random"]
+dimensions = [7]
+cardinality = [2000000]
+query_count = [1000]
+topk = 16
 
-# data_type = ["random"]
-# dimensions = [6]
-# cardinality = [2000000]
-# query_count = [1000]
-# topk = 40
-
-
+import math
 
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 # KList = [80, 70, 70, 70, 60, 60, 60, 50, 50, 50]
@@ -109,7 +89,7 @@ KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 
 DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-SCRIPT_OUTPUT_DIR = "../H2_ALSH/parameters/6D_partial/"
+SCRIPT_OUTPUT_DIR = "../H2_ALSH/parameters/7D_partial/"
 
 for i in range(len(data_type)):
     for j in range(len(dimensions)):
@@ -131,6 +111,10 @@ for i in range(len(data_type)):
             declare_string = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k])
             count = []
             count1 = []
+            K_Log_List = []
+            K_Log_Minus_List = []
+            K_Log_Plus_List = []
+            K_Log_Plus_Plus_List = []
             f.write("# ------------------------------------------------------------------------------ \n")
             f.write("#     " + declare_string + " \n")
             f.write("# ------------------------------------------------------------------------------ \n")
@@ -148,9 +132,24 @@ for i in range(len(data_type)):
 
                 count.append(cur_cardinality)
                 count1.append(float(cur_cardinality)/float(cardinality[k]))
+
+                k_log = math.ceil(math.log(cur_cardinality, 2))
+                k_log_minus = k_log - 3
+                k_log_plus = k_log + 3
+                k_log_plus_plus = k_log + 6
+
+                K_Log_List.append(k_log)
+                K_Log_Minus_List.append(k_log_minus)
+                K_Log_Plus_List.append(k_log_plus)
+                K_Log_Plus_Plus_List.append(k_log_plus_plus)
                 f1.close()
+
             f.write("count = List" + str(count) + "\n")
             f.write("count1 = List" + str(count1) + "\n")
+            f.write("KList = List" + str(K_Log_List) + "\n")
+            f.write("KList = List" + str(K_Log_Minus_List) + "\n")
+            f.write("KList = List" + str(K_Log_Plus_List) + "\n")
+            f.write("KList = List" + str(K_Log_Plus_Plus_List) + "\n")
             f.write("hashTables = List[" + ','.join(hashTables) + "] \n")
             # f.write("hashTables = List" + str(hashTables) + "\n")
             f.write("KList = List" + str(KList) + "\n")
