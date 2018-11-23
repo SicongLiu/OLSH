@@ -33,13 +33,13 @@ Simple_LSH::~Simple_LSH()			// destructor
 
 // -----------------------------------------------------------------------------
 void Simple_LSH::build(				// build index
-	int   n,							// number of data
-	int   d,							// dimension of data
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
-	float   S,							// similarity threshold
-	float ratio,						// approximation ratio
-	const float** data)					// data objects
+		int   n,							// number of data
+		int   d,							// dimension of data
+		int   K,							// number of hash tables
+		int   L,							// number of hash layers
+		float   S,							// similarity threshold
+		float ratio,						// approximation ratio
+		const float** data)					// data objects
 {
 	// -------------------------------------------------------------------------
 	//  init parameters
@@ -103,7 +103,7 @@ int Simple_LSH::bulkload()			// bulkloading
 	//  indexing the new data using SRP-LSH
 	// -------------------------------------------------------------------------
 	lsh_ = new SRP_LSH(n_pts_, simple_lsh_dim_, K_, L_, S_,
-		(const float **) simple_lsh_data_);
+			(const float **) simple_lsh_data_);
 
 	return 0;
 }
@@ -123,12 +123,12 @@ void Simple_LSH::display()			// display parameters
 
 // -----------------------------------------------------------------------------
 int Simple_LSH::kmip(				// c-k-AMIP search
-	int   top_k,						// top-k value
-	const float *query,				// input query
-	MaxK_List *list,					// top-k MIP results (return)
-	float& angle_threshold,
-	bool is_threshold,
-	int& hash_hits)
+		int   top_k,						// top-k value
+		const float *query,				// input query
+		MaxK_List *list,					// top-k MIP results (return)
+		float& angle_threshold,
+		bool is_threshold,
+		int& hash_hits)
 {
 	// -------------------------------------------------------------------------
 	//  construct Simple_LSH query
@@ -151,7 +151,8 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	// lsh_->kmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
 	// vector<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
 	// unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold);
-	unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
+	// unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
+	unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
 
 	// -------------------------------------------------------------------------
 	//  calc inner product for candidates returned by SRP-LSH
@@ -170,6 +171,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		}
 	}
 
+	printf(" Raw candidates size: %d, list size: %d   ", candidates.size(), list->size());
 	if(is_threshold)
 	{
 		int temp_index_size = min(top_k, list->size());
@@ -214,6 +216,61 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 
 	return candidates.size();
 }
+
+
+
+
+//To-Do: Create another kmip for testing, push candidate calc into that function
+// -----------------------------------------------------------------------------
+int Simple_LSH::kmip_test(				// c-k-AMIP search
+		int   top_k,						// top-k value
+		const float *query,				// input query
+		MaxK_List *list,					// top-k MIP results (return)
+		float& angle_threshold,
+		bool is_threshold,
+		int& hash_hits)
+{
+	// -------------------------------------------------------------------------
+	//  construct Simple_LSH query
+	// -------------------------------------------------------------------------
+	float norm_q = sqrt(calc_inner_product(dim_, query, query));
+	float *simple_lsh_query = new float[simple_lsh_dim_];
+
+	for (int i = 0; i < simple_lsh_dim_; ++i)
+	{
+		if (i < dim_)
+			simple_lsh_query[i] = query[i] / norm_q;
+		else
+			simple_lsh_query[i] = 0.0f;
+	}
+
+	// -------------------------------------------------------------------------
+	//  conduct c-k-AMC search by SRP-LSH
+	// -------------------------------------------------------------------------
+	printf("\n using threshold: %d \n", is_threshold);
+	unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, list, query, angle_threshold, is_threshold, hash_hits);
+
+	// -------------------------------------------------------------------------
+	//  calc inner product for candidates returned by SRP-LSH
+	// -------------------------------------------------------------------------
+
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] simple_lsh_query;
+	simple_lsh_query = NULL;
+
+	// delete mcs_list;
+	// mcs_list = NULL;
+
+	// return 0;
+	// return candidate_size;
+
+	return candidates.size();
+}
+
+
 
 // -----------------------------------------------------------------------------
 void Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file

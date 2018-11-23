@@ -19,23 +19,32 @@ public:
 
 	// -------------------------------------------------------------------------
 	void build(						// build index
-		int   n,						// number of data
-		int   d,						// dimension of data
-		int   K,						// number of hash tables
-		int   L,						// number of hash layers
-		float S,						// similarity threshold
-		float ratio,					// approximation ratio
-		const float** data);			// data objects
+			int   n,						// number of data
+			int   d,						// dimension of data
+			int   K,						// number of hash tables
+			int   L,						// number of hash layers
+			float S,						// similarity threshold
+			float ratio,					// approximation ratio
+			const float** data);			// data objects
 
 	// -------------------------------------------------------------------------
 	int kmip(						// c-k-AMIP search
-		int   top_k,					// top-k value
-		const float* query,			// input query
-		MaxK_List* list,				// top-k mip results
-		float& sim_threshold,
-		bool is_threshold,
-		int& hash_hits);
+			int   top_k,					// top-k value
+			const float* query,			// input query
+			MaxK_List* list,				// top-k mip results
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_hits);
 
+
+	// -------------------------------------------------------------------------
+	int kmip_test(						// c-k-AMIP search
+			int   top_k,					// top-k value
+			const float* query,			// input query
+			MaxK_List* list,				// top-k mip results
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_hits);
 protected:
 	int   n_pts_;					// number of data points
 	int   dim_;						// dimension of data

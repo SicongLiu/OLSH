@@ -124,7 +124,6 @@ int read_ground_truth(				// read ground truth results from disk
 	int tmp2 = -1;
 	fscanf(fp, "%d %d\n", &tmp1, &tmp2);
 	assert(tmp1 == qn && tmp2 == MAXK);
-
 	for (int i = 0; i < qn; ++i)
 	{
 		for (int j = 0; j < MAXK; ++j)

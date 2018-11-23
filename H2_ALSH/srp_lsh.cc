@@ -292,6 +292,185 @@ unordered_set<int> SRP_LSH::mykmc(	// c-k-AMC search
 	return candidates;
 }
 
+unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
+	int   top_k,						// top-k value
+	const float *query,				// input query
+	MaxK_List *list,					// top-k MC results (return)
+	const float *real_query,
+	float& angle_threshold,
+	bool is_threshold,				// sim_threshold from previous layers
+	int& hash_table_hit)
+{
+	bool **mc_query = new bool*[L_];
+	for(int l = 0; l < L_; l++)
+	{
+		mc_query[l] = new bool[K_];
+		get_proj_vector(query, mc_query[l], l);
+	}
+
+	// build hash code for mc_query
+	unordered_set<int> candidates;
+	int current_hamming_ranking = 0;
+	int max_round_ = 3;
+
+	MinK_List_String** lists = new MinK_List_String*[L_];
+	// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
+	for(int i = 0; i < L_; i++)
+	{
+		printf(" threshold: %d, Current hash layer: %d, map size: %d .\n", is_threshold, i, maps_[i].size());
+		char c[K_];
+		for(int j = 0; j < K_; j++)
+		{
+			c[j] = mc_query[i][j] ? '1' : '0';
+		}
+		string str(c);
+		str = str.substr(0, K_);
+
+		// sort binary hash code between data and query
+		// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
+		lists[i] = new MinK_List_String(maps_[i].size()); // first time initlize stuff
+		for (auto const& x : maps_[i])
+		{
+			int temp_dist = hammingDist(str, x.first, K_);
+			lists[i]->insert(temp_dist, x.first);
+		}
+
+		// string str_key = lists[i]->ith_key(current_hamming_ranking);
+		string str_key = lists[i]->ith_id(current_hamming_ranking);
+		str_key = str_key.substr(0, K_);
+		cout << "Hamming key: "<<str_key << " query key: "<<str<< " hamming distance: "<<
+				lists[i]->ith_key(current_hamming_ranking) << ", 2nd hmmaing dist: "<< lists[i]->ith_key(current_hamming_ranking + 1)
+				<< endl;
+
+		// get_candidates(str_key, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+		get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+		printf("1st time, check list size, list size: %d .\n", list->size());
+		memset(c, 0, K_);
+	}
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+
+	// check candidates size
+	printf("check list size, list size: %d .\n", list->size());
+	int cur_round_ = 1;
+	while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
+	// while(list->size() < top_k && cur_round_ < max_round_)
+	{
+		++cur_round_;
+		++current_hamming_ranking;
+		// load candidates again
+		for(int i = 0; i < L_; i++)
+		{
+			printf(" Extra -- Current hash layer: %d, map size: %d .\n", i, maps_[i].size());
+			char c[K_];
+			for(int j = 0; j < K_; j++)
+			{
+				c[j] = mc_query[i][j] ? '1' : '0';
+			}
+
+			string str_key = lists[i]->ith_id(current_hamming_ranking);
+			str_key = str_key.substr(0, K_);
+			// string str_key(c);
+			// str_key = str_key.substr(0, K_);
+			get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+		}
+	}
+
+	if(list->size() < top_k)
+	{
+		for(int i = top_k - list->size(); i >=0;  i--)
+		{
+			int id = -1;
+			float ip = FLT_MIN;
+
+			// list structure -- priority queue using resorted distance of inner prouct as similarity
+			list->insert(ip, id);
+		}
+	}
+	if(list->size() != top_k)
+	{
+		printf("Something is wrong.... \n");
+	}
+
+	delete[] mc_query;
+	mc_query = NULL;
+
+	return candidates;
+}
+
+// -----------------------------------------------------------------------------
+void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
+		const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer)
+{
+	if(maps_[hash_layer].find(str_key) != maps_[hash_layer].end())
+	{
+		vector<int> temp_map = maps_[hash_layer][str_key];
+		if(is_threshold)
+		{
+			// condition: angle_q_mean <= angle_q_topk + angle_i
+			vector<float> cur_angle_vec = maps_interval_[hash_layer][str_key];
+			float angle_i = cur_angle_vec[0];
+			float angle_q_mean = calc_angle(dim_, real_query, &cur_angle_vec[1]);
+			if(angle_threshold + angle_i >= angle_q_mean)
+			{
+				copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
+			}
+			else
+			{
+				// printf("gain size: %lu .\n", temp_map.size());
+			}
+		}
+		else
+		{
+			copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
+		}
+
+		int candidate_size = 0;
+		for(auto it : candidates)
+		{
+			int id = (int)it;
+			float ip = calc_inner_product(dim_, data_[id], query);
+
+			if( ip > threshold_S)
+			{
+				++candidate_size;
+				// list structure -- priority queue using resorted distance of inner product as similarity
+				list->insert(ip, id + 1);
+			}
+		}
+
+		if(is_threshold)
+		{
+			printf("update threshold .\n ");
+			int temp_index_size = min(top_k, list->size());
+			if(temp_index_size > 0)
+			{
+				int current_data_idx = list->ith_id(temp_index_size - 1) - 1;
+				// update angle_threshold
+				angle_threshold = min(calc_angle(dim_, data_[current_data_idx], query), angle_threshold);
+			}
+			else
+			{
+				angle_threshold = 90.0f;
+			}
+		}
+	}
+}
+
+
+// -----------------------------------------------------------------------------
+int SRP_LSH::hammingDist(string str1, string str2, int length)
+{
+	int dist = 0;
+	for(int i = 0 ; i < length; i++)
+	{
+		if(str1.at(i) != str2.at(i))
+			++dist;
+	}
+    return dist;
+}
+
 // -----------------------------------------------------------------------------
 int SRP_LSH::kmc(					// c-k-AMC search
 	int   top_k,						// top-k value

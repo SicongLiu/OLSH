@@ -11,6 +11,11 @@ struct Result {						// structure for furthest neighbor / hash value
 	int   id_;							// object id
 };
 
+struct Result_String {						// structure for furthest neighbor / hash value
+	float key_;							// distance / random projection value
+	std::string   id_;							// object id
+};
+
 // -----------------------------------------------------------------------------
 int ResultComp(						// compare function for qsort (ascending)
 	const void *e1,						// 1st element

@@ -41,6 +41,23 @@ public:
 			int& hash_table_hit);
 
 	// -------------------------------------------------------------------------
+	unordered_set<int> mykmc_test(			// c-k-AMC search
+			int   top_k,					// top-k value
+			const float *query,			// input query
+			MaxK_List *list,				// top-k MC results  (return)
+			const float *real_query,
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_table_hit);
+
+	// -------------------------------------------------------------------------
+	void get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
+			const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer);
+
+	// -------------------------------------------------------------------------
+	int hammingDist(string str1, string str2, int length);
+
+	// -------------------------------------------------------------------------
 	void persistHashTable(const char *fname);		// persist HashTables on file
 	void loadHashTable(const char *fname);			// persist HashTables on file
 	float* compute_vector_mean(float** data, vector<int> data_ids);
