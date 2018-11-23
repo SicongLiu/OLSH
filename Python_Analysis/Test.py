@@ -48,35 +48,39 @@
 # cur = 'A'
 import numpy as np
 
-a = [1, 2, 3, 4]
-b = [1, 2, 3, 4]
-c = [2, 3, 4, 5]
-d = [1, 2, 3, 4]
-e = [3, 4, 5, 6]
+# a = [1, 2, 3, 4]
+# b = [1, 2, 3, 4]
+# c = [2, 3, 4, 5]
+# d = [1, 2, 3, 4]
+# e = [3, 4, 5, 6]
+#
+# a = np.asarray(a)
+# b = np.asarray(b)
+# c = np.asarray(c)
+# d = np.asarray(d)
+# e = np.asarray(e)
+#
+# xx = []
+# xx.append(a)
+# xx.append(b)
+# xx.append(c)
+# xx.append(d)
+# xx.append(e)
+# xx = np.asarray(xx)
+#
+# print(xx)
+#
+# my_row = np.where((xx == a).all(axis=1))[0]
+# if my_row.size > 1:
+#     print(my_row)
+#     print(a)
+# xx = np.delete(xx, my_row, 0)
+#
+# print(xx)
 
-a = np.asarray(a)
-b = np.asarray(b)
-c = np.asarray(c)
-d = np.asarray(d)
-e = np.asarray(e)
-
-xx = []
-xx.append(a)
-xx.append(b)
-xx.append(c)
-xx.append(d)
-xx.append(e)
-xx = np.asarray(xx)
-
-print(xx)
-
-my_row = np.where((xx == a).all(axis=1))[0]
-if my_row.size > 1:
-    print(my_row)
-    print(a)
-xx = np.delete(xx, my_row, 0)
-
-print(xx)
+a = 1.1
+b = 2.34
+print(float(a)/float(b))
 
 
 
