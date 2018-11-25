@@ -60,13 +60,7 @@ import numpy as np
 # d = np.asarray(d)
 # e = np.asarray(e)
 #
-# xx = []
-# xx.append(a)
-# xx.append(b)
-# xx.append(c)
-# xx.append(d)
-# xx.append(e)
-# xx = np.asarray(xx)
+
 #
 # print(xx)
 #
@@ -78,9 +72,38 @@ import numpy as np
 #
 # print(xx)
 
-a = 1.1
-b = 2.34
-print(float(a)/float(b))
+# a = 1.1
+# b = 2.34
+# print(float(a)/float(b))
+import math
+import numpy
+
+# xx = []
+# xx.append(1)
+# xx.append(2)
+# xx.append(3)
+# xx.append(5)
+# xx.append(100)
+# xx.append(0)
+# xx.append(-1)
+#
+# yy = numpy.argsort(xx)
+# print(yy)
+# print(xx)
+#
+# xx = np.asarray(xx)
+# zz = xx.argsort()[::-1][:len(xx)]
+# print(zz)
+
+for i in range(5):
+    print("this is first loop")
+    for j in range(3):
+        print("this is second loop")
+        if i*j == 4:
+            break
+        else:
+            print(i*j)
+
 
 
 
