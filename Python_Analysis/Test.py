@@ -95,17 +95,27 @@ import numpy
 # zz = xx.argsort()[::-1][:len(xx)]
 # print(zz)
 
-for i in range(5):
-    print("this is first loop")
-    for j in range(3):
-        print("this is second loop")
-        if i*j == 4:
-            break
-        else:
-            print(i*j)
+import re
 
 
+def separate_string(input_string):
+    items = []
+    match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
+    if match:
+        items = match.groups()
+    return items
 
+
+def column_row_index(input_string, column_dist):
+    items = separate_string(input_string)
+    column_index = items[0]
+    row_index = int(items[1]) + column_dist
+    return column_index + str(row_index)
+
+for i in range(10):
+    kk = 'B1'
+    tt = column_row_index(kk, i)
+    print(tt)
 
 
 

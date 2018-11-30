@@ -317,7 +317,7 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 	// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
 	for(int i = 0; i < L_; i++)
 	{
-		printf(" threshold: %d, Current hash layer: %d, map size: %d .\n", is_threshold, i, maps_[i].size());
+		// printf(" threshold: %d, Current hash layer: %d, map size: %d .\n", is_threshold, i, maps_[i].size());
 		char c[K_];
 		for(int j = 0; j < K_; j++)
 		{
@@ -338,13 +338,13 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 		// string str_key = lists[i]->ith_key(current_hamming_ranking);
 		string str_key = lists[i]->ith_id(current_hamming_ranking);
 		str_key = str_key.substr(0, K_);
-		cout << "Hamming key: "<<str_key << " query key: "<<str<< " hamming distance: "<<
-				lists[i]->ith_key(current_hamming_ranking) << ", 2nd hmmaing dist: "<< lists[i]->ith_key(current_hamming_ranking + 1)
-				<< endl;
+		// cout << "Hamming key: "<<str_key << " query key: "<<str<< " hamming distance: "<<
+		//		lists[i]->ith_key(current_hamming_ranking) << ", 2nd hmmaing dist: "<< lists[i]->ith_key(current_hamming_ranking + 1)
+		//		<< endl;
 
 		// get_candidates(str_key, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
-		printf("1st time, check list size, list size: %d .\n", list->size());
+		// printf("1st time, check list size, list size: %d .\n", list->size());
 		memset(c, 0, K_);
 	}
 	// -------------------------------------------------------------------------
@@ -352,7 +352,7 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 	// -------------------------------------------------------------------------
 
 	// check candidates size
-	printf("check list size, list size: %d .\n", list->size());
+	// printf("check list size, list size: %d .\n", list->size());
 	int cur_round_ = 1;
 	while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
 	// while(list->size() < top_k && cur_round_ < max_round_)
@@ -362,7 +362,7 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 		// load candidates again
 		for(int i = 0; i < L_; i++)
 		{
-			printf(" Extra -- Current hash layer: %d, map size: %d .\n", i, maps_[i].size());
+			// printf(" Extra -- Current hash layer: %d, map size: %d .\n", i, maps_[i].size());
 			char c[K_];
 			for(int j = 0; j < K_; j++)
 			{
@@ -442,7 +442,7 @@ void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>
 
 		if(is_threshold)
 		{
-			printf("update threshold .\n ");
+			// printf("update threshold .\n ");
 			int temp_index_size = min(top_k, list->size());
 			if(temp_index_size > 0)
 			{

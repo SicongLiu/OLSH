@@ -1466,7 +1466,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				list->reset();
 
 				// top-k computation with threshold from previous layers
-				printf("  query index: %d, top_k: %d  .\n", i, top_k);
+				// printf("  query index: %d, top_k: %d  .\n", i, top_k);
 				// candidate_size += lsh->kmip_test(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				recall += calc_recall(top_k, (const Result *) R[i], list);
@@ -1772,10 +1772,15 @@ int overall_performance(                        // output the overall performanc
 		// -------------------------------------------------------------------------
 		float *recall = new float[max_round];
 		float *NDCG = new float[max_round];
+		float *avg_topk_ground_truth = new float[max_round];
+		float *avg_topk_ret = new float[max_round];
 		for (int round = 0; round < max_round; ++round)
 		{
 			recall[round] = 0;
 			NDCG[round] = 0;
+
+			avg_topk_ground_truth[round] = 0.0f;
+			avg_topk_ret[round] = 0.0f;
 		}
 
 		printf("Top-t c-AMIP of Simple_LSH (overall): \n");
@@ -1820,7 +1825,6 @@ int overall_performance(                        // output the overall performanc
 			int layer_index = 0;	// range [0, layers - 1]
 			int cur_q_line_count = 0;
 			int line_count = 0;
-			/*while (!feof(fp1) && line_count < top_k * layers * qn)*/
 			while (!feof(fp1) && line_count < temp_layer * top_k * qn)
 			{
 				if(line_count%top_k == 0 && line_count > 0)
@@ -1842,7 +1846,6 @@ int overall_performance(                        // output the overall performanc
 
 			}
 			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
-			// assert(feof(fp1) && line_count == top_k * layers * qn);
 			assert(feof(fp1) && line_count == temp_layer * top_k * qn);
 
 			MaxK_List* list = new MaxK_List(top_k);
@@ -1853,9 +1856,11 @@ int overall_performance(                        // output the overall performanc
 				{
 					list->insert(temp_result[i][j][d], j + 1);
 				}
-
 				recall[round] += calc_recall(top_k, (const Result *) R[i], list);
 				NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
+
+				avg_topk_ground_truth[round] += R[i][top_k - 1].key_;
+				avg_topk_ret[round] += list->ith_key(top_k - 1) > 0 ? list->ith_key(top_k - 1) : 0;
 			}
 			delete list;
 			list = NULL;
@@ -1889,17 +1894,21 @@ int overall_performance(                        // output the overall performanc
 			printf("Could not open %s\n", output_folder_set);
 			return 1;
 		}
-		printf("Top-k\t\tRecall\tNDCG\n");
-		fprintf(fp2, "Top-k\t\tRecall\tNDCG\n");
+		printf("Top-k\t\tRecall\tNDCG\tground_truth\treturned_results\n");
+		fprintf(fp2, "Top-k\t\tRecall\tNDCG\tground_truth\treturned_results\n");
 		for (int round = 0; round < max_round; ++round)
 		{
 			int top_k = kMIPs[round];
 			recall[round] = recall[round] / qn;
 			NDCG[round] = NDCG[round] * 1.0f / qn;
-			printf("%4d\t\t%.2f\t%.2f\n", top_k,
-					recall[round], NDCG[round]);
-			fprintf(fp2, "%d\t%f\t%f\n", top_k,
-					recall[round], NDCG[round]);
+
+			avg_topk_ground_truth[round] = avg_topk_ground_truth[round]/qn;
+			avg_topk_ret[round] = avg_topk_ret[round]/qn;
+
+			printf("%4d\t\t%.2f\t%.2f\t%.2f\t%.2f\n", top_k,
+					recall[round], NDCG[round], avg_topk_ground_truth[round], avg_topk_ret[round]);
+			fprintf(fp2, "%d\t%f\t%f\t%f\t%f\n", top_k,
+					recall[round], NDCG[round], avg_topk_ground_truth[round], avg_topk_ret[round]);
 			printf("\n");
 			fprintf(fp2, "\n");
 		}

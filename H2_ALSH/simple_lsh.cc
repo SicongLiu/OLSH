@@ -83,7 +83,8 @@ int Simple_LSH::bulkload()			// bulkloading
 	printf("Construct Simple_LSH Data\n\n");
 
 	simple_lsh_data_ = new float*[n_pts_];
-	for (int i = 0; i < n_pts_; ++i) {
+	for (int i = 0; i < n_pts_; ++i)
+	{
 		simple_lsh_data_[i] = new float[simple_lsh_dim_];
 
 		norm[i] = norm[i] * scale;
@@ -93,7 +94,8 @@ int Simple_LSH::bulkload()			// bulkloading
 			{
 				simple_lsh_data_[i][j] = data_[i][j] * scale;
 			}
-			else {
+			else
+			{
 				simple_lsh_data_[i][j] = sqrt(1.0f - norm[i] * norm[i]);
 			}
 		}
@@ -161,17 +163,18 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	for(auto it : candidates)
 	{
 		int id = (int)it;
-		float ip = calc_inner_product(dim_, data_[id], query);
+		float ip_raw = calc_inner_product(dim_, data_[id], query);
+		// float ip_unit = calc_inner_product(simple_lsh_dim_, simple_lsh_data_[id], simple_lsh_query);
 
-		if( ip > S_)
-		{
-			++candidate_size;
-			// list structure -- priority queue using resorted distance of inner prouct as similarity
-			list->insert(ip, id + 1);
-		}
+		// if( ip_unit > S_)
+		// {
+		++candidate_size;
+		// list structure -- priority queue using [resorted] inner product as similarity
+		list->insert(ip_raw, id + 1);
+		// }
 	}
 
-	printf(" Raw candidates size: %d, list size: %d   ", candidates.size(), list->size());
+	// printf(" Raw candidates size: %d, list size: %d   ", candidates.size(), list->size());
 	if(is_threshold)
 	{
 		int temp_index_size = min(top_k, list->size());
@@ -218,8 +221,6 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 }
 
 
-
-
 //To-Do: Create another kmip for testing, push candidate calc into that function
 // -----------------------------------------------------------------------------
 int Simple_LSH::kmip_test(				// c-k-AMIP search
@@ -247,7 +248,7 @@ int Simple_LSH::kmip_test(				// c-k-AMIP search
 	// -------------------------------------------------------------------------
 	//  conduct c-k-AMC search by SRP-LSH
 	// -------------------------------------------------------------------------
-	printf("\n using threshold: %d \n", is_threshold);
+	// printf("\n using threshold: %d \n", is_threshold);
 	unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, list, query, angle_threshold, is_threshold, hash_hits);
 
 	// -------------------------------------------------------------------------
@@ -269,8 +270,6 @@ int Simple_LSH::kmip_test(				// c-k-AMIP search
 
 	return candidates.size();
 }
-
-
 
 // -----------------------------------------------------------------------------
 void Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file

@@ -198,6 +198,7 @@ float calc_recall(					// calc recall (percentage)
 	while (i >= 0 && R[last].key_ - list->ith_key(i) > FLOATZERO) {
 		i--;
 	}
+	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
 	return (i + 1) * 100.0f / k;
 }
 
