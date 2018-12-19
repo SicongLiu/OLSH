@@ -19,10 +19,9 @@ def float_to_str(f):
 
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["anti_correlated"]
-dimensions = [2]
-cardinality = [2000000]
-query_count = [1000]
-topk = 50
+dimensions = [4]
+cardinality = [100000]
+topk = 25
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
@@ -32,7 +31,7 @@ hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "
 
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
-SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_Parameters_"
+SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/New_Mathematica_Parameters_"
 DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 
 

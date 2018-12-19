@@ -122,7 +122,12 @@ def post_optimization_uni(data_list_, L_List_, hash_used_, hash_budget_):
 types = ["log"]
 Data_Types = ['anti_correlated']
 top_m_cell = 'E1'
+
+
+# need to update budget cell per data type
 budget_cell = 'B4'
+
+
 cardinality_cell = 'B2'
 top_m_cardinality_anti = 0
 top_m_cardinality_corr = 0
