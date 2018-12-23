@@ -17,7 +17,8 @@ saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial p
 data_type = ["anti_correlated", "correlated", "random"]
 budgets = ["1M", "10M"]
 # dimensions = [4, 5]
-dimensions = [2, 3, 4, 5, 6]
+# dimensions = [2, 3, 4, 5, 6]
+dimensions = [4]
 top_ks = [10, 25, 50]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
@@ -74,9 +75,12 @@ l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN1
 l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
 
 
-excel_files = ["../Checkpoint_Result_Oct_23_2D.xlsx", "../Checkpoint_Result_Oct_23_3D.xlsx",
-               "../Checkpoint_Result_Oct_23_4D.xlsx", "../Checkpoint_Result_Oct_23_5D.xlsx",
-               "../Checkpoint_Result_Oct_23_6D.xlsx"]
+# excel_files = ["../Checkpoint_Result_Oct_23_2D.xlsx", "../Checkpoint_Result_Oct_23_3D.xlsx",
+#                "../Checkpoint_Result_Oct_23_4D.xlsx", "../Checkpoint_Result_Oct_23_5D.xlsx",
+#                "../Checkpoint_Result_Oct_23_6D.xlsx"]
+
+excel_files = ["./4D.xlsx"]
+
 for excel_file in excel_files:
     # excel_file = "../Checkpoint_Result_Oct_23_4D.xlsx"
     wb = load_workbook(filename=excel_file, data_only=True)
@@ -138,6 +142,7 @@ for excel_file in excel_files:
                 for cc in range(cardinality.__len__()):
                     sheetname = "Budget_" + str(budget) + "_" + str(dimension) + "D_top" + str(top_k) + "_" + card_excel[cc]
                     if sheetname in wb.sheetnames:
+                        print("Sheetname: " + str(sheetname))
                         ws = wb[sheetname]
                         for m in range(types.__len__()):
                             type_name = types[m]
@@ -284,7 +289,7 @@ ratio = 2
 sim_threshold = 0.9
 
 parameter_path = '../H2_ALSH/parameters/'
-parameter_type = ["opt", "uni"]
+parameter_type = ["opt", "max", "uni"]
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
@@ -377,7 +382,7 @@ for k in range(dimensions.__len__()):
                                             + "_" + str(cardinality[cc]) + "_uni.sh"
 
                             f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh sleep 2\n")
-                            #f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
+                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
                             f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh sleep 2\n")
                             paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
                             f1 = open(paramK_path, 'r')
@@ -551,78 +556,78 @@ for k in range(dimensions.__len__()):
                                      "${tsPath}.mip -of ${overallResult} \n")
                             f3.close()
 
-                            # # write to .sh file at save path, max
-                            # f3 = open(bash_file_max, 'w')
-                            # f3.write("#!/bin/bash \n")
-                            # f3.write("# make \n")
-                            # f3.write(saguaro_script_string)
-                            # f3.write("rm *.o \n")
-                            # cur_data_type = data_type[ii]
-                            # cur_cardinality = cardinality[cc]
-                            # cur_dimension = dimensions[k]
-                            # f3.write("datatype=" + cur_data_type + "\n")
-                            # f3.write("cardinality=" + str(cur_cardinality) + "\n")
-                            # f3.write("d=" + str(cur_dimension) + "\n")
-                            # f3.write("qn=" + str(query_count) + "\n")
-                            # f3.write("c0=" + str(ratio) + "\n")
-                            #
-                            # temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
-                            # # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
-                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
-                            # sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_max"
-                            # f3.write("temporalResult=" + temporalResult + "\n")
-                            # f3.write("overallResult=" + overallResult + "\n")
-                            # f3.write("sim_angle=" + sim_angle + "\n")
-                            # f3.write("S=" + str(sim_threshold) + "\n")
-                            # f3.write("num_layer=" + str(len(K_List)) + "\n")
-                            # f3.write("top_k=" + str(top_k) + "\n")
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # f3.write("#     Ground-Truth \n")
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
-                            # f3.write(
-                            #     "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-                            # f3.write("qPath=./query/query_${d}D.txt \n")
-                            # f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-                            # f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-                            #          "${oFolder}.mip \n")
-                            # f3.write("\n \n \n")
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # f3.write("#     Layer-Performance \n")
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # for kk in range(len(K_List)):
-                            #     f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
-                            #     f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
-                            #     f3.write("L" + str(kk) + "=" + str(L_Max_List[kk]) + "\n")
-                            #
-                            #     f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
-                            #                                  "${cardinality}_qhull_layer_" + str(kk) + "\n")
-                            #
-                            #     f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
-                            #                                    "${cardinality}_max/result_${d}D" + str(
-                            #         kk) + "_${K" + str(kk)
-                            #              + "}_${L" + str(kk) + "}" + "\n")
-                            #
-                            #     f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                            #              "} -L ${L" + str(kk) + "} -LI " + str(
-                            #         kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                            #              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                            #         kk) + "}.simple_LSH \n")
-                            #
-                            #     f3.write("\n")
-                            # # append overall accuracy computation here
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # f3.write("#     Overall-Performance \n")
-                            # f3.write(
-                            #     "# ------------------------------------------------------------------------------ \n")
-                            # f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
-                            #          "${tsPath}.mip -of ${overallResult} \n")
-                            # f3.close()
+                            # write to .sh file at save path, max
+                            f3 = open(bash_file_max, 'w')
+                            f3.write("#!/bin/bash \n")
+                            f3.write("# make \n")
+                            f3.write(saguaro_script_string)
+                            f3.write("rm *.o \n")
+                            cur_data_type = data_type[ii]
+                            cur_cardinality = cardinality[cc]
+                            cur_dimension = dimensions[k]
+                            f3.write("datatype=" + cur_data_type + "\n")
+                            f3.write("cardinality=" + str(cur_cardinality) + "\n")
+                            f3.write("d=" + str(cur_dimension) + "\n")
+                            f3.write("qn=" + str(query_count) + "\n")
+                            f3.write("c0=" + str(ratio) + "\n")
+
+                            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
+                            # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
+                            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
+                            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_max"
+                            f3.write("temporalResult=" + temporalResult + "\n")
+                            f3.write("overallResult=" + overallResult + "\n")
+                            f3.write("sim_angle=" + sim_angle + "\n")
+                            f3.write("S=" + str(sim_threshold) + "\n")
+                            f3.write("num_layer=" + str(len(K_List)) + "\n")
+                            f3.write("top_k=" + str(top_k) + "\n")
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Ground-Truth \n")
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+                            f3.write(
+                                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                            f3.write("qPath=./query/query_${d}D.txt \n")
+                            f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+                            f3.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                                     "${oFolder}.mip \n")
+                            f3.write("\n \n \n")
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Layer-Performance \n")
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            for kk in range(len(K_List)):
+                                f3.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                                f3.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                                f3.write("L" + str(kk) + "=" + str(L_Max_List[kk]) + "\n")
+
+                                f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                                             "${cardinality}_qhull_layer_" + str(kk) + "\n")
+
+                                f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                               "${cardinality}_max/result_${d}D" + str(
+                                    kk) + "_${K" + str(kk)
+                                         + "}_${L" + str(kk) + "}" + "\n")
+
+                                f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                         "} -L ${L" + str(kk) + "} -LI " + str(
+                                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                         + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                                    kk) + "}.simple_LSH \n")
+
+                                f3.write("\n")
+                            # append overall accuracy computation here
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            f3.write("#     Overall-Performance \n")
+                            f3.write(
+                                "# ------------------------------------------------------------------------------ \n")
+                            f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                                     "${tsPath}.mip -of ${overallResult} \n")
+                            f3.close()
 
 
                             # write to .sh file at save path, uni

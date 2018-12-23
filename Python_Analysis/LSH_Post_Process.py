@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 result_file_dir = '../H2_ALSH/'
 
 result_type = ['with_threshold', 'without_threshold']
-result_type_excel = ['w_thresh', 'wo_thresh']
+result_type_excel = ['w_threshold', 'wo_threshold']
 
 # get obj and hash count from bash_set
 obj_hashsize_prefix = 'bash_set_'
@@ -14,26 +14,26 @@ obj_hashsize_prefix = 'bash_set_'
 cand_recall_prefix = 'temp_result_'
 
 # dimensions = [4]
-dimensions = [2]
+dimensions = [4]
 # dimensions = [4, 5]
 
-card_file_name = ['2M', '1.5M', '1M', '200k']
-card = [2000000, 1500000, 1000000, 200000]
+card_file_name = ['2M', '1.5M', '1M', '200k', '100k', '500k']
+card = [2000000, 1500000, 1000000, 200000, 100000, 500000]
 # card = [100000]
 # card_file_name = ['1M']
 # card = [1000000]
 
 # optimized_tops = [10, 25]
 # optimized_tops = [25, 50]
-optimized_tops = [25, 50]
+optimized_tops = [10, 25, 50]
 
 top_ks = [1, 2, 5, 10, 25, 50]
 # budget = ['1M', '500k']
 budget = ['1M', '10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
-# comp_types = ['opt', 'max', 'uni']
-comp_types = ['opt', 'uni']
+comp_types = ['opt', 'max', 'uni']
+# comp_types = ['opt', 'uni']
 
 over_reault = result_file_dir + 'all_aggregated_Nov_16.txt'
 
@@ -59,6 +59,13 @@ anti_log_optimized_cand = ['D5',  'D6', 'D7', 'D8', 'D9', 'D10']
 anti_log_optimized_obj = ['E5',  'E6', 'E7', 'E8', 'E9', 'E10']
 anti_log_optimized_hashsize = ['F5',  'F6', 'F7', 'F8', 'F9', 'F10']
 
+
+anti_log_optimized_max_recall = ['G5',  'G6', 'G7', 'G8', 'G9', 'G10']
+anti_log_optimized_max_NDCG = ['H5',  'H6', 'H7', 'H8', 'H9', 'H10']
+anti_log_optimized_max_cand = ['I5',  'I6', 'I7', 'I8', 'I9', 'I10']
+anti_log_optimized_max_obj = ['J5',  'J6', 'J7', 'J8', 'J9', 'J10']
+anti_log_optimized_max_hashsize = ['K5',  'K6', 'K7', 'K8', 'K9', 'K10']
+
 anti_log_optimized_uni_recall = ['L5',  'L6', 'L7', 'L8', 'L9', 'L10']
 anti_log_optimized_uni_NDCG = ['M5',  'M6', 'M7', 'M8', 'M9', 'M10']
 anti_log_optimized_uni_cand = ['N5',  'N6', 'N7', 'N8', 'N9', 'N10']
@@ -71,6 +78,12 @@ corr_log_optimized_cand = ['S5',  'S6', 'S7', 'S8', 'S9', 'S10']
 corr_log_optimized_obj = ['T5',  'T6', 'T7', 'T8', 'T9', 'T10']
 corr_log_optimized_hashsize = ['U5',  'U6', 'U7', 'U8', 'U9', 'U10']
 
+corr_log_optimized_max_recall = ['V5',  'V6', 'V7', 'V8', 'V9', 'V10']
+corr_log_optimized_max_NDCG = ['W5',  'W6', 'W7', 'W8', 'W9', 'W10']
+corr_log_optimized_max_cand = ['X5',  'X6', 'X7', 'X8', 'X9', 'X10']
+corr_log_optimized_max_obj = ['Y5',  'Y6', 'Y7', 'Y8', 'Y9', 'Y10']
+corr_log_optimized_max_hashsize = ['Z5',  'Z6', 'Z7', 'Z8', 'Z9', 'Z10']
+
 corr_log_optimized_uni_recall = ['AA5',  'AA6', 'AA7', 'AA8', 'AA9', 'AA10']
 corr_log_optimized_uni_NDCG = ['AB5',  'AB6', 'AB7', 'AB8', 'AB9', 'AB10']
 corr_log_optimized_uni_cand = ['AC5',  'AC6', 'AC7', 'AC8', 'AC9', 'AC10']
@@ -82,6 +95,12 @@ rand_log_optimized_NDCG = ['AG5',  'AG6', 'AG7', 'AG8', 'AG9', 'AG10']
 rand_log_optimized_cand = ['AH5',  'AH6', 'AH7', 'AH8', 'AH9', 'AH10']
 rand_log_optimized_obj = ['AI5',  'AI6', 'AI7', 'AI8', 'AI9', 'AI10']
 rand_log_optimized_hashsize = ['AJ5',  'AJ6', 'AJ7', 'AJ8', 'AJ9', 'AJ10']
+
+rand_log_optimized_max_recall = ['AK5',  'AK6', 'AK7', 'AK8', 'AK9', 'AK10']
+rand_log_optimized_max_NDCG = ['AL5',  'AL6', 'AL7', 'AL8', 'AL9', 'AL10']
+rand_log_optimized_max_cand = ['AM5',  'AM6', 'AM7', 'AM8', 'AM9', 'AM10']
+rand_log_optimized_max_obj = ['AN5',  'AN6', 'AN7', 'AN8', 'AN9', 'AN10']
+rand_log_optimized_max_hashsize = ['AO5',  'AO6', 'AO7', 'AO8', 'AO9', 'AO10']
 
 rand_log_optimized_uni_recall = ['AP5',  'AP6', 'AP7', 'AP8', 'AP9', 'AP10']
 rand_log_optimized_uni_NDCG = ['AQ5',  'AQ6', 'AQ7', 'AQ8', 'AQ9', 'AQ10']
@@ -148,6 +167,12 @@ for dd in range(dimensions.__len__()):
                                         start_cand = anti_log_optimized_cand[0]
                                         start_obj = anti_log_optimized_obj[0]
                                         start_hashsize = anti_log_optimized_hashsize[0]
+                                    elif cur_ct == 'max':
+                                        start_recall = anti_log_optimized_max_recall[0]
+                                        start_NDCG = anti_log_optimized_max_NDCG[0]
+                                        start_cand = anti_log_optimized_max_cand[0]
+                                        start_obj = anti_log_optimized_max_obj[0]
+                                        start_hashsize = anti_log_optimized_max_hashsize[0]
                                     else:
                                         start_recall = anti_log_optimized_uni_recall[0]
                                         start_NDCG = anti_log_optimized_uni_NDCG[0]
@@ -161,6 +186,12 @@ for dd in range(dimensions.__len__()):
                                         start_cand = corr_log_optimized_cand[0]
                                         start_obj = corr_log_optimized_obj[0]
                                         start_hashsize = corr_log_optimized_hashsize[0]
+                                    elif cur_ct == 'max':
+                                        start_recall = corr_log_optimized_max_recall[0]
+                                        start_NDCG = corr_log_optimized_max_NDCG[0]
+                                        start_cand = corr_log_optimized_max_cand[0]
+                                        start_obj = corr_log_optimized_max_obj[0]
+                                        start_hashsize = corr_log_optimized_max_hashsize[0]
                                     else:
                                         start_recall = corr_log_optimized_uni_recall[0]
                                         start_NDCG = corr_log_optimized_uni_NDCG[0]
@@ -174,6 +205,12 @@ for dd in range(dimensions.__len__()):
                                         start_cand = rand_log_optimized_cand[0]
                                         start_obj = rand_log_optimized_obj[0]
                                         start_hashsize = rand_log_optimized_hashsize[0]
+                                    elif cur_ct == 'max':
+                                        start_recall = rand_log_optimized_max_recall[0]
+                                        start_NDCG = rand_log_optimized_max_NDCG[0]
+                                        start_cand = rand_log_optimized_max_cand[0]
+                                        start_obj = rand_log_optimized_max_obj[0]
+                                        start_hashsize = rand_log_optimized_max_hashsize[0]
                                     else:
                                         start_recall = rand_log_optimized_uni_recall[0]
                                         start_NDCG = rand_log_optimized_uni_NDCG[0]
@@ -185,6 +222,7 @@ for dd in range(dimensions.__len__()):
                                 if not os.path.exists(obj_file_dir):
                                     continue
                                 # ws = wb[sheet_name]
+                                print("sheet name: " + str(sheet_name))
                                 ws = wb.get_sheet_by_name(sheet_name)
                                 obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
                                            str(cur_dimension) + '_' + str(cur_card) + '.txt'
@@ -215,6 +253,7 @@ for dd in range(dimensions.__len__()):
                                 temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
                                             str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
 
+                                print("result path: " + str(temp_result_dir))
                                 if not os.path.exists(temp_result_dir):
                                     continue
 

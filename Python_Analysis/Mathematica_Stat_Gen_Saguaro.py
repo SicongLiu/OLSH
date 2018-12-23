@@ -19,8 +19,8 @@ def float_to_str(f):
 
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["anti_correlated"]
-dimensions = [4]
-cardinality = [100000]
+dimensions = [6]
+cardinality = [200000]
 topk = 25
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]

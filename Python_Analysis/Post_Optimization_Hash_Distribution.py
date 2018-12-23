@@ -411,8 +411,6 @@ for i in range(len(dimensions)):
             for jj in range(types.__len__()):
                 # read k and l
                 type_name = types[jj]
-                if jj == 1:
-                    print(type_name)
                 start = 2 * jj
                 end = 2 * jj + 1
                 k_anti = []
