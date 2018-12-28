@@ -18,10 +18,12 @@ def float_to_str(f):
 
 
 data_type = ["correlated", "anti_correlated", "random"]
-# data_type = ["anti_correlated"]
+# data_type = ["random"]
 dimensions = [6]
-cardinality = [200000]
+cardinality = [2000000]
 topk = 25
+
+function_str = "ret = queryRet_" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
@@ -92,14 +94,23 @@ for j in range(len(dimensions)):
                 K_Log_Uni_List.append(k_log_max)
 
             f.write("hashTables = List" + str(hashTables) + "\n")
-            f.write("count = List[" + str(', '.join(map(str, count))) + "]\n")
-            f.write("count1 = List" + str(count1) + "\n")
+            f.write("count = List[" + str(', '.join(map(str, count))) + "]; \n")
+            f.write("count1 = List" + str(count1) + "; \n")
 
-            f.write("K_Log_List = List" + str(K_Log_List) + "\n")
-            f.write("K_Log_Minus_List = List" + str(K_Log_Minus_List) + "\n")
-            f.write("K_Log_Plus_List = List" + str(K_Log_Plus_List) + "\n")
-            f.write("K_Log_Plus_Plus_List = List" + str(K_Log_Plus_Plus_List) + "\n")
-            f.write("K_Log_Uni_List = List" + str(K_Log_Uni_List) + "\n")
+            f.write("KList = List" + str(K_Log_List) + "; \n")
+            f.write(function_str + "\n")
+
+            f.write("KList = List" + str(K_Log_Minus_List) + "; \n")
+            f.write(function_str + "\n")
+
+            f.write("KList = List" + str(K_Log_Plus_List) + "; \n")
+            f.write(function_str + "\n")
+
+            f.write("KList = List" + str(K_Log_Plus_Plus_List) + "; \n")
+            f.write(function_str + "\n")
+
+            f.write("KList = List" + str(K_Log_Uni_List) + "; \n")
+            f.write(function_str + "\n")
 
 
             # opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
