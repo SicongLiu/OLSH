@@ -21,9 +21,9 @@ data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["random"]
 dimensions = [6]
 cardinality = [2000000]
-topk = 25
+topk = 40
 
-function_str = "ret = queryRet_" + str(topk) + "[count1, count, KList, fileName, hashTables];"
+function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
 hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 

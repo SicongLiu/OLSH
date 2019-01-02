@@ -121,9 +121,7 @@ def post_optimization_uni(data_list_, L_List_, hash_used_, hash_budget_):
 # Data_Types = ['anti_correlated', 'correlated', 'random']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 Data_Types = ['anti_correlated']
-top_m_cell_anti = 'E1'
-top_m_cell_corr = 'V1'
-top_m_cell_rand = 'AL1'
+top_m_cell = 'E1'
 
 
 # need to update budget cell per data type
@@ -137,121 +135,82 @@ top_m_cardinality_anti = 0
 top_m_cardinality_corr = 0
 top_m_cardinality_random = 0
 
-data_anti_list_28 = ['J6', 'J33', 'J42', 'J69', 'J78', 'J105', 'J114', 'J141', 'J150', 'J177']
-k_ranges_anti_28 = ['E6', 'E33', 'E42', 'E69', 'E78', 'E105', 'E114', 'E141', 'E150', 'E177']
-l_ranges_opt_anti_28 = ['F6', 'F33', 'F42', 'F69', 'F78', 'F105', 'F114', 'F141', 'F150', 'F177']
-l_ranges_max_anti_28 = ['G6', 'G33', 'G42', 'G69', 'G78', 'G105', 'G114', 'G141', 'G150', 'G177']
-l_ranges_uni_anti_28 = ['H6', 'H33', 'H42', 'H69', 'H78', 'H105', 'H114', 'H141', 'H150', 'H177']
-hash_used_anti_opt_cells_28 = ['I34', 'I70', 'I106', 'I142', 'I178']
-hash_used_anti_uni_cells_28 = ['O34', 'O70', 'O106', 'O142', 'O178']
+data_anti_list_10 = ['J6',  'J15', 'J21', 'J30', 'J37', 'J46', 'J51', 'J60', 'J68', 'J77']
+k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
+l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
+l_ranges_max_anti_10 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
+l_ranges_uni_anti_10 = ['H6', 'H15', 'H21', 'H30', 'H37', 'H46', 'H51', 'H60', 'H68', 'H77']
+hash_used_anti_opt_cells_10 = ['I16', 'I31', 'I47', 'I61', 'I78']
+hash_used_anti_uni_cells_10 = ['O16', 'O31', 'O47', 'O61', 'O78']
+
+data_corr_list_10 = ['AA6',  'AA15', 'AA21', 'AA30', 'AA37', 'AA46', 'AA51', 'AA60', 'AA68', 'AA77']
+k_ranges_corr_10 = ['V6', 'V15', 'V21', 'V30', 'V37', 'V46', 'V51', 'V60', 'V68', 'V77']
+l_ranges_opt_corr_10 = ['W6', 'W15', 'W21', 'W30', 'W37', 'W46', 'W51', 'W60', 'W68', 'W77']
+l_ranges_max_corr_10 = ['X6', 'X15', 'X21', 'X30', 'X37', 'X46', 'X51', 'X60', 'X68', 'X77']
+l_ranges_uni_corr_10 = ['Y6', 'Y15', 'Y21', 'Y30', 'Y37', 'Y46', 'Y51', 'Y60', 'Y68', 'Y77']
+hash_used_corr_opt_cells_10 = ['Z16', 'Z31', 'Z47', 'Z61', 'Z78']
+hash_used_corr_uni_cells_10 = ['AF16', 'AF31', 'AF47', 'AF61', 'AF78']
 
 
-data_corr_list_33 = ['AA6', 'AA38', 'AA42', 'AA74', 'AA78', 'AA110', 'AA114', 'AA146', 'AA150', 'AA182']
-k_ranges_corr_33 = ['V6', 'V38', 'V42', 'V74', 'V78', 'V110', 'V114', 'V146', 'V150', 'V182']
-l_ranges_opt_corr_33 = ['W6', 'W38', 'W42', 'W74', 'W78', 'W110', 'W114', 'W146', 'W150', 'W182']
-l_ranges_max_corr_33 = ['X6', 'X38', 'X42', 'X74', 'X78', 'X110', 'X114', 'X146', 'X150', 'X182']
-l_ranges_uni_corr_33 = ['Y6', 'Y38', 'Y42', 'Y74', 'Y78', 'Y110', 'Y114', 'Y146', 'Y150', 'Y182']
-hash_used_corr_opt_cells_33 = ['Z39', 'Z75', 'Z111', 'Z147', 'Z183']
-hash_used_corr_uni_cells_33 = ['AF39', 'AF75', 'AF111', 'AF147', 'AF183']
+data_random_list_10 = ['AQ6',  'AQ15', 'AQ21', 'AQ30', 'AQ37', 'AQ46', 'AQ51', 'AQ60', 'AQ68', 'AQ77']
+k_ranges_random_10 = ['AL6', 'AL15', 'AL21', 'AL30', 'AL37', 'AL46', 'AL51', 'AL60', 'AL68', 'AL77']
+l_ranges_opt_random_10 = ['AM6', 'AM15', 'AM21', 'AM30', 'AM37', 'AM46', 'AM51', 'AM60', 'AM68', 'AM77']
+l_ranges_max_random_10 = ['AN6', 'AN15', 'AN21', 'AN30', 'AN37', 'AN46', 'AN51', 'AN60', 'AN68', 'AN77']
+l_ranges_uni_random_10 = ['AO6', 'AO15', 'AO21', 'AO30', 'AO37', 'AO46', 'AO51', 'AO60', 'AO68', 'AO77']
+hash_used_rand_opt_cells_10 = ['AP6', 'AP31', 'AP47', 'AP61', 'AP78']
+hash_used_rand_uni_cells_10 = ['AV16', 'AV31', 'AV47', 'AV61', 'AV78']
+
+data_anti_list_25 = ['J6', 'J30', 'J38', 'J62', 'J69', 'J93', 'J100', 'J124', 'J131', 'J155']
+k_ranges_anti_25 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
+l_ranges_opt_anti_25 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
+l_ranges_max_anti_25 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
+l_ranges_uni_anti_25 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
+hash_used_anti_opt_cells_25 = ['I31', 'I63', 'I94', 'I125', 'I156']
+hash_used_anti_uni_cells_25 = ['O31', 'O63', 'O94', 'O125', 'O156']
+
+data_corr_list_25 = ['AA6', 'AA30', 'AA38', 'AA62', 'AA69', 'AA93', 'AA100', 'AA124', 'AA131', 'AA155']
+k_ranges_corr_25 = ['V6', 'V30', 'V38', 'V62', 'V69', 'V93', 'V100', 'V124', 'V131', 'V155']
+l_ranges_opt_corr_25 = ['W6', 'W30', 'W38', 'W62', 'W69', 'W93', 'W100', 'W124', 'W131', 'W155']
+l_ranges_max_corr_25 = ['X6', 'X30', 'X38', 'X62', 'X69', 'X93', 'X100', 'X124', 'X131', 'X155']
+l_ranges_uni_corr_25 = ['Y6', 'Y30', 'Y38', 'Y62', 'Y69', 'Y93', 'Y100', 'Y124', 'Y131', 'Y155']
+hash_used_corr_opt_cells_25 = ['Z31', 'Z63', 'Z94', 'Z125', 'Z156']
+hash_used_corr_uni_cells_25 = ['AF31', 'AF63', 'AF94', 'AF125', 'AF156']
 
 
-data_random_list_27 = ['AQ6', 'AQ32', 'AQ42', 'AQ68', 'AQ78', 'AQ104', 'AQ114', 'AQ140', 'AQ150', 'AQ176']
-k_ranges_random_27 = ['AL6', 'AL32', 'AL42', 'AL68', 'AL78', 'AL104', 'AL114', 'AL140', 'AL150', 'AL176']
-l_ranges_opt_random_27 = ['AM6', 'AM32', 'AM42', 'AM68', 'AM78', 'AM104', 'AM114', 'AM140', 'AM150', 'AM176']
-l_ranges_max_random_27 = ['AN6', 'AN32', 'AN42', 'AN68', 'AN78', 'AN104', 'AN114', 'AN140', 'AN150', 'AN176']
-l_ranges_uni_random_27 = ['AO6', 'AO32', 'AO42', 'AO68', 'AO78', 'AO104', 'AO114', 'AO140', 'AO150', 'AO176']
-hash_used_rand_opt_cells_27 = ['AP33', 'AP69', 'AP105', 'AP141', 'AP177']
-hash_used_rand_uni_cells_27 = ['AV33', 'AV69', 'AV105', 'AV141', 'AV177']
+data_random_list_25 = ['AQ6', 'AQ30', 'AQ38', 'AQ62', 'AQ69', 'AQ93', 'AQ100', 'AQ124', 'AQ131', 'AQ155']
+k_ranges_random_25 = ['AL6', 'AL30', 'AL38', 'AL62', 'AL69', 'AL93', 'AL100', 'AL124', 'AL131', 'AL155']
+l_ranges_opt_random_25 = ['AM6', 'AM30', 'AM38', 'AM62', 'AM69', 'AM93', 'AM100', 'AM124', 'AM131', 'AM155']
+l_ranges_max_random_25 = ['AN6', 'AN30', 'AN38', 'AN62', 'AN69', 'AN93', 'AN100', 'AN124', 'AN131', 'AN155']
+l_ranges_uni_random_25 = ['AO6', 'AO30', 'AO38', 'AO62', 'AO69', 'AO93', 'AO100', 'AO124', 'AO131', 'AO155']
+hash_used_rand_opt_cells_25 = ['AP31', 'AP63', 'AP94', 'AP125', 'AP156']
+hash_used_rand_uni_cells_25 = ['AV31', 'AV63', 'AV94', 'AV125', 'AV156']
 
 
+data_anti_list_50 = ['J6', 'J55', 'J63', 'J112', 'J120', 'J169', 'J177', 'J226', 'J234', 'J283']
+k_ranges_anti_50 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
+l_ranges_opt_anti_50 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
+l_ranges_max_anti_50 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
+l_ranges_uni_anti_50 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
+hash_used_anti_opt_cells_50 = ['I56', 'I113', 'I170', 'I227', 'I284']
+hash_used_anti_uni_cells_50 = ['O56', 'O113', 'O170', 'O227', 'O284']
 
 
+data_corr_list_50 = ['AA6', 'AA55', 'AA63', 'AA112', 'AA120', 'AA169', 'AA177', 'AA226', 'AA234', 'AA283']
+k_ranges_corr_50 = ['V6', 'V55', 'V63', 'V112', 'V120', 'V169', 'V177', 'V226', 'V234', 'V283']
+l_ranges_opt_corr_50 = ['W6', 'W55', 'W63', 'W112', 'W120', 'W169', 'W177', 'W226', 'W234', 'W283']
+l_ranges_max_corr_50 = ['X6', 'X55', 'X63', 'X112', 'X120', 'X169', 'X177', 'X226', 'X234', 'X283']
+l_ranges_uni_corr_50 = ['Y6', 'Y55', 'Y63', 'Y112', 'Y120', 'Y169', 'Y177', 'Y226', 'Y234', 'Y283']
+hash_used_corr_opt_cells_50 = ['Z56', 'Z113', 'Z170', 'Z227', 'Z284']
+hash_used_corr_uni_cells_50 = ['AF56', 'AF113', 'AF170', 'AF227', 'AF284']
 
 
-data_anti_list_34 = ['J6', 'J39', 'J53', 'J86', 'J100', 'J133', 'J147', 'J180', 'J194', 'J227']
-k_ranges_anti_34 = ['E6', 'E39', 'E53', 'E86', 'E100', 'E133', 'E147', 'E180', 'E194', 'E227']
-l_ranges_opt_anti_34 = ['F6', 'F39', 'F53', 'F86', 'F100', 'F133', 'F147', 'F180', 'F194', 'F227']
-l_ranges_max_anti_34 = ['G6', 'G39', 'G53', 'G86', 'G100', 'G133', 'G147', 'G180', 'G194', 'G227']
-l_ranges_uni_anti_34 = ['H6', 'H39', 'H53', 'H86', 'H100', 'H133', 'H147', 'H180', 'H194', 'H227']
-hash_used_anti_opt_cells_34 = ['I40', 'I87', 'I134', 'I181', 'I228']
-hash_used_anti_uni_cells_34 = ['O40', 'O87', 'O134', 'O181', 'O228']
-
-
-data_corr_list_40 = ['AA6', 'AA45', 'AA53', 'AA92', 'AA100', 'AA139', 'AA147', 'AA186', 'AA194', 'AA233']
-k_ranges_corr_40 = ['V6', 'V45', 'V53', 'V92', 'V100', 'V139', 'V147', 'V186', 'V194', 'V233']
-l_ranges_opt_corr_40 = ['W6', 'W45', 'W53', 'W92', 'W100', 'W139', 'W147', 'W186', 'W194', 'W233']
-l_ranges_max_corr_40 = ['X6', 'X45', 'X53', 'X92', 'X100', 'X139', 'X147', 'X186', 'X194', 'X233']
-l_ranges_uni_corr_40 = ['Y6', 'Y45', 'Y53', 'Y92', 'Y100', 'Y139', 'Y147', 'Y186', 'Y194', 'Y233']
-hash_used_corr_opt_cells_40 = ['Z46', 'Z93', 'Z140', 'Z187', 'Z234']
-hash_used_corr_uni_cells_40 = ['AF46', 'AF93', 'AF140', 'AF187', 'AF234']
-
-
-data_random_list_32 = ['AQ6', 'AQ37', 'AQ53', 'AQ84', 'AQ91', 'AQ122', 'AQ129', 'AQ160', 'AQ167', 'AQ198']
-k_ranges_random_32 = ['AL6', 'AL37', 'AL53', 'AL84', 'AL91', 'AL122', 'AL129', 'AL160', 'AL167', 'AL198']
-l_ranges_opt_random_32 = ['AM6', 'AM37', 'AM53', 'AM84', 'AM91', 'AM122', 'AM129', 'AM160', 'AM167', 'AM198']
-l_ranges_max_random_32 = ['AN6', 'AN37', 'AN53', 'AN84', 'AN91', 'AN122', 'AN129', 'AN160', 'AN167', 'AN198']
-l_ranges_uni_random_32 = ['AO6', 'AO37', 'AO53', 'AO84', 'AO91', 'AO122', 'AO129', 'AO160', 'AO167', 'AO198']
-hash_used_rand_opt_cells_32 = ['AP38', 'AP85', 'AP123', 'AP161', 'AP199']
-hash_used_rand_uni_cells_32 = ['AV38', 'AV85', 'AV123', 'AV161', 'AV199']
-
-
-
-
-
-data_anti_list_38 = ['J6', 'J43', 'J51', 'J88', 'J96', 'J133', 'J141', 'J178', 'J186', 'J223']
-k_ranges_anti_38 = ['E6', 'E43', 'E51', 'E88', 'E96', 'E133', 'E141', 'E178', 'E186', 'E223']
-l_ranges_opt_anti_38 = ['F6', 'F43', 'F51', 'F88', 'F96', 'F133', 'F141', 'F178', 'F186', 'F223']
-l_ranges_max_anti_38 = ['G6', 'G43', 'G51', 'G88', 'G96', 'G133', 'G141', 'G178', 'G186', 'G223']
-l_ranges_uni_anti_38 = ['H6', 'H43', 'H51', 'H88', 'H96', 'H133', 'H141', 'H178', 'H186', 'H223']
-hash_used_anti_opt_cells_38 = ['I44', 'I89', 'I134', 'I179', 'I224']
-hash_used_anti_uni_cells_38 = ['O44', 'O89', 'O134', 'O179', 'O224']
-
-
-data_corr_list_45 = ['AA6', 'AA50', 'AA58', 'AA102', 'AA110', 'AA154', 'AA162', 'AA206', 'AA214', 'AA258']
-k_ranges_corr_45 = ['V6', 'V50', 'V58', 'V102', 'V110', 'V154', 'V162', 'V206', 'V214', 'V258']
-l_ranges_opt_corr_45 = ['W6', 'W50', 'W58', 'W102', 'W110', 'W154', 'W162', 'W206', 'W214', 'W258']
-l_ranges_max_corr_45 = ['X6', 'X50', 'X58', 'X102', 'X110', 'X154', 'X162', 'X206', 'X214', 'X258']
-l_ranges_uni_corr_45 = ['Y6', 'Y50', 'Y58', 'Y102', 'Y110', 'Y154', 'Y162', 'Y206', 'Y214', 'Y258']
-hash_used_corr_opt_cells_45 = ['Z51', 'Z103', 'Z155', 'Z207', 'Z259']
-hash_used_corr_uni_cells_45 = ['AF51', 'AF103', 'AF155', 'AF207', 'AF259']
-
-
-data_random_list_37 = ['AQ6', 'AQ42', 'AQ50', 'AQ86', 'AQ94', 'AQ130', 'AQ138', 'AQ174', 'AQ182', 'AQ218']
-k_ranges_random_37 = ['AL6', 'AL42', 'AL50', 'AL86', 'AL94', 'AL130', 'AL138', 'AL174', 'AL182', 'AL218']
-l_ranges_opt_random_37 = ['AM6', 'AM42', 'AM50', 'AM86', 'AM94', 'AM130', 'AM138', 'AM174', 'AM182', 'AM218']
-l_ranges_max_random_37 = ['AN6', 'AN42', 'AN50', 'AN86', 'AN94', 'AN130', 'AN138', 'AN174', 'AN182', 'AN218']
-l_ranges_uni_random_37 = ['AO6', 'AO42', 'AO50', 'AO86', 'AO94', 'AO130', 'AO138', 'AO174', 'AO182', 'AO218']
-hash_used_rand_opt_cells_37 = ['AP43', 'AP87', 'AP131', 'AP175', 'AP219']
-hash_used_rand_uni_cells_37 = ['AV43', 'AV87', 'AV131', 'AV175', 'AV219']
-
-
-
-
-data_anti_list_41 = ['J6', 'J46', 'J54', 'J94', 'J102', 'J142', 'J150', 'J190', 'J198', 'J238']
-k_ranges_anti_41 = ['E6', 'E46', 'E54', 'E94', 'E102', 'E142', 'E150', 'E190', 'E198', 'E238']
-l_ranges_opt_anti_41 = ['F6', 'F46', 'F54', 'F94', 'F102', 'F142', 'F150', 'F190', 'F198', 'F238']
-l_ranges_max_anti_41 = ['G6', 'G46', 'G54', 'G94', 'G102', 'G142', 'G150', 'G190', 'G198', 'G238']
-l_ranges_uni_anti_41 = ['H6', 'H46', 'H54', 'H94', 'H102', 'H142', 'H150', 'H190', 'H198', 'H238']
-hash_used_anti_opt_cells_41 = ['I47', 'I95', 'I142', 'I191', 'I239']
-hash_used_anti_uni_cells_41 = ['O47', 'O95', 'O142', 'O191', 'O239']
-
-
-data_corr_list_49 = ['AA6', 'AA54', 'AA62', 'AA110', 'AA118', 'AA166', 'AA174', 'AA222', 'AA230', 'AA278']
-k_ranges_corr_49 = ['V6', 'V54', 'V62', 'V110', 'V118', 'V166', 'V174', 'V222', 'V230', 'V278']
-l_ranges_opt_corr_49 = ['W6', 'W54', 'W62', 'W110', 'W118', 'W166', 'W174', 'W222', 'W230', 'W278']
-l_ranges_max_corr_49 = ['X6', 'X54', 'X62', 'X110', 'X118', 'X166', 'X174', 'X222', 'X230', 'X278']
-l_ranges_uni_corr_49 = ['Y6', 'Y54', 'Y62', 'Y110', 'Y118', 'Y166', 'Y174', 'Y222', 'Y230', 'Y278']
-hash_used_corr_opt_cells_49 = ['Z55', 'Z111', 'Z167', 'Z223', 'Z279']
-hash_used_corr_uni_cells_49 = ['AF55', 'AF111', 'AF167', 'AF223', 'AF279']
-
-
-data_random_list_40 = ['AQ6', 'AQ45', 'AQ53', 'AQ92', 'AQ100', 'AQ139', 'AQ147', 'AQ186', 'AQ194', 'AQ233']
-k_ranges_random_40 = ['AL6', 'AL45', 'AL53', 'AL92', 'AL100', 'AL139', 'AL147', 'AL186', 'AL194', 'AL233']
-l_ranges_opt_random_40 = ['AM6', 'AM45', 'AM53', 'AM92', 'AM100', 'AM139', 'AM147', 'AM186', 'AM194', 'AM233']
-l_ranges_max_random_40 = ['AN6', 'AN45', 'AN53', 'AN92', 'AN100', 'AN139', 'AN147', 'AN186', 'AN194', 'AN233']
-l_ranges_uni_random_40 = ['AO6', 'AO45', 'AO53', 'AO92', 'AO100', 'AO139', 'AO147', 'AO186', 'AO194', 'AO233']
-hash_used_rand_opt_cells_40 = ['AP46', 'AP93', 'AP140', 'AP187', 'AP234']
-hash_used_rand_uni_cells_40 = ['AV46', 'AV93', 'AV140', 'AV187', 'AV234']
+data_random_list_50 = ['AQ6', 'AQ55', 'AQ63', 'AQ112', 'AQ120', 'AQ169', 'AQ177', 'AQ226', 'AQ234', 'AQ283']
+k_ranges_random_50 = ['AL6', 'AL55', 'AL63', 'AL112', 'AL120', 'AL169', 'AL177', 'AL226', 'AL234', 'AL283']
+l_ranges_opt_random_50 = ['AM6', 'AM55', 'AM63', 'AM112', 'AM120', 'AM169', 'AM177', 'AM226', 'AM234', 'AM283']
+l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN177', 'AN226', 'AN234', 'AN283']
+l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
+hash_used_rand_opt_cells_50 = ['AP56', 'AP113', 'AP170', 'AP227', 'AP284']
+hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 
 
 collision_probility = 0.9
@@ -281,9 +240,7 @@ for i in range(len(dimensions)):
         print(wwss)
         ws = wb.get_sheet_by_name(wwss)
         ws1 = wb1.get_sheet_by_name(wwss)
-        top_m_anti = ws[top_m_cell_anti].value
-        top_m_corr = ws[top_m_cell_corr].value
-        top_m_rand = ws[top_m_cell_rand].value
+        top_m = ws[top_m_cell].value
         # ws = wb.get_sheet_by_name(wss[0])
         # ws1 = wb1.get_sheet_by_name(wss[0])
         # top_m = ws[top_m_cell].value
@@ -292,7 +249,7 @@ for i in range(len(dimensions)):
         hash_budget_corr = ws[budget_cell_corr].value
         hash_budget_rand = ws[budget_cell_rand].value
         total_cardinality = ws[cardinality_cell].value
-        if top_m_anti == 10:
+        if top_m == 10:
             top_m_cardinality_anti_cell = 'J16'
             top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
             # hash_used_anti_opt_cell = 'I16'
@@ -334,7 +291,7 @@ for i in range(len(dimensions)):
             l_ranges_opt_random = l_ranges_opt_random_10
             l_ranges_max_random = l_ranges_max_random_10
             l_ranges_uni_random = l_ranges_uni_random_10
-        elif top_m_anti == 25:
+        elif top_m == 25:
             top_m_cardinality_anti_cell = 'J31'
             top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
             # hash_used_anti_opt_cell = 'I31'
