@@ -20,20 +20,20 @@ def column_row_index(input_string, column_dist):
     return column_index + str(row_index)
 
 
-def compute_weights(data_list_):
+def compute_weights(data_list_, top_m_):
     data_list_ = np.asarray(data_list_)
     contribution_list = []
     weight_list_ = []
     data_list_cumsum = np.cumsum(data_list_)
-    for i in range(top_m):
+    for i in range(top_m_):
         c_h = data_list_[i]
         temp_contribution = 0
-        for j in range(i, top_m):
+        for j in range(i, top_m_):
             denominator = data_list_cumsum[j]
             temp_contribution = 1.0 * temp_contribution + (1.0 * c_h/denominator)
         contribution_list.append(temp_contribution)
     sum_contribution = sum(contribution_list)
-    for i in range(top_m):
+    for i in range(top_m_):
         temp_weight = (1.0 * contribution_list[i])/sum_contribution
         weight_list_.append(temp_weight)
     return weight_list_
@@ -174,14 +174,14 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [4]
+dimensions = [5]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_partial.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -257,9 +257,9 @@ for i in range(len(dimensions)):
                 for cell in columns:
                     data_random.append(cell.value)
 
-            weight_anti = compute_weights(data_anti)
-            weight_corr = compute_weights(data_corr)
-            weight_random = compute_weights(data_random)
+            weight_anti = compute_weights(data_anti, len(data_anti))
+            weight_corr = compute_weights(data_corr, len(data_corr))
+            weight_random = compute_weights(data_random, len(data_random))
 
             # for each type, log, log_minus, log_plus, etc
             for jj in range(types.__len__()):
@@ -360,79 +360,21 @@ for i in range(len(dimensions)):
                 # write udpate LList back to excel file
                 for kk in range(len(l_anti_opt)):
                     cur_cell_anti_opt = column_row_index(l_ranges_opt_anti[start], kk)
-                    cur_cell_corr_opt = column_row_index(l_ranges_opt_corr[start], kk)
-                    cur_cell_random_opt = column_row_index(l_ranges_opt_random[start], kk)
-
                     cur_cell_anti_uni = column_row_index(l_ranges_uni_anti[start], kk)
-                    cur_cell_corr_uni = column_row_index(l_ranges_uni_corr[start], kk)
-                    cur_cell_random_uni = column_row_index(l_ranges_uni_random[start], kk)
-
                     ws1[cur_cell_anti_opt] = l_anti_opt[kk]
-                    ws1[cur_cell_corr_opt] = l_corr_opt[kk]
-                    ws1[cur_cell_random_opt] = l_random_opt[kk]
-
                     ws1[cur_cell_anti_uni] = l_anti_uni[kk]
+
+                for kk in range(len(l_corr_opt)):
+                    cur_cell_corr_opt = column_row_index(l_ranges_opt_corr[start], kk)
+                    cur_cell_corr_uni = column_row_index(l_ranges_uni_corr[start], kk)
+                    ws1[cur_cell_corr_opt] = l_corr_opt[kk]
                     ws1[cur_cell_corr_uni] = l_corr_uni[kk]
+
+                for kk in range(len(l_random_opt)):
+                    cur_cell_random_opt = column_row_index(l_ranges_opt_random[start], kk)
+                    cur_cell_random_uni = column_row_index(l_ranges_uni_random[start], kk)
                     ws1[cur_cell_random_uni] = l_random_uni[kk]
+                    ws1[cur_cell_random_opt] = l_random_opt[kk]
         wb1.save(excel_file_name)
 
 print("All done")
-# values below all read from excel sheet
-####################################################################################
-
-# for optimized approach
-anti_weight_list = []
-corr_weight_list = []
-random_weight_list = []
-
-top_m = 25
-top_m_cardinality = 275400
-hash_budget = top_m_cardinality * 2
-hash_used = 534961
-
-data_list = [1519, 2902, 4201, 5435, 6366, 7395, 8147, 8984, 9622, 10307, 11053, 11551, 11982, 12620, 13014, 13552,
-             13894, 14338, 14754, 14810, 15288, 15585, 15876, 16060, 16145]
-weight_list = compute_weights(data_list)
-KList_Log = [11, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]
-L_Opt_List = [26, 14, 10, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-L_Uni_List = [15, 8, 5, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]
-# weight = [0.081600306, 0.079476028, 0.077041773, 0.074457424, 0.069096951, 0.065782109, 0.060756796, 0.057006843,
-#           0.052492599, 0.048674672, 0.04538301, 0.041342773, 0.037406774, 0.034323352, 0.030750563, 0.027688552,
-#           0.024378937, 0.021398294, 0.018482749, 0.015291434, 0.012672056, 0.009973976, 0.0073666, 0.004810476,
-#           0.002344953]
-
-####################################################################################
-# import random
-#
-# flag = False
-# hash_used = 524822
-# data_list = np.asarray(data_list)
-# while hash_used + smallest <= hash_budget:
-#     print("still got hash space left")
-#     # sort in descending order
-#
-#     sorted_index = data_list.argsort()[::-1][:len(data_list)]
-#
-#     temp_pivot_list = []
-#     # first find all the allow current hash re-allocation
-#     for i in range(len(sorted_index)):
-#         temp_pivot_index = sorted_index[i]
-#         if hash_used + data_list[temp_pivot_index] <= hash_budget:
-#             temp_pivot_list.append(temp_pivot_index)
-#     # randomly pick one from those
-#     cur_pivot = random.choice(temp_pivot_list)
-#     # update L_Uni_List, hash_used
-#     L_Uni_List[cur_pivot] = L_Uni_List[cur_pivot] + 1
-#     hash_used = hash_used + data_list[cur_pivot]
-#
-# total_error = 0
-# total_hash_used = 0
-# for i in range(len(L_Uni_List)):
-#     cur_k = KList_Log[i]
-#     cur_l = L_Uni_List[i]
-#     total_error = total_error + weight_list[i] * math.pow((1 - math.pow(collision_probility, cur_k)), cur_l)
-#     total_hash_used = total_hash_used + data_list[i] * cur_l
-# print(L_Uni_List)
-# print("Updated total error: " + str(total_error))
-# print("total hash used: " + str(total_hash_used))
-# print("Uniform approach done")

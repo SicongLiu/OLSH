@@ -18,9 +18,8 @@ data_type = ["anti_correlated", "correlated", "random"]
 budgets = ["1M", "10M"]
 # dimensions = [4, 5]
 # dimensions = [2, 3, 4, 5, 6]
-dimensions = [6]
-top_ks = [25]
-# top_ks = [10, 25, 50]
+dimensions = [5]
+top_ks = [25, 50]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
@@ -80,7 +79,7 @@ l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO1
 #                "../Checkpoint_Result_Oct_23_4D.xlsx", "../Checkpoint_Result_Oct_23_5D.xlsx",
 #                "../Checkpoint_Result_Oct_23_6D.xlsx"]
 
-excel_files = ["./4D_bak.xlsx"]
+excel_files = ["./5D.xlsx"]
 
 for excel_file in excel_files:
     # excel_file = "../Checkpoint_Result_Oct_23_4D.xlsx"

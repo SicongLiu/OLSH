@@ -224,7 +224,7 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [4]
+dimensions = [5]
 excel_file_dir = './'
 
 # for each excel file
