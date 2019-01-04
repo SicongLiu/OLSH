@@ -56,10 +56,10 @@ def post_optimization_opt(collision_probility_, weight_list_, total_error_, data
         for i in range(len(data_list_)):
             cur_k = K_List_[i]
             cur_l = L_List_[i]
-            c_old = math.pow((1 - math.pow(collision_probility_, cur_k)), cur_l)
+            c_old = weight_list_[i] * math.pow((1 - math.pow(collision_probility_, cur_k)), cur_l)
 
             # each time increment hash layer by 1
-            c_new = math.pow((1 - math.pow(collision_probility_, cur_k)), (cur_l+1))
+            c_new = weight_list_[i] * math.pow((1 - math.pow(collision_probility_, cur_k)), (cur_l+1))
             delta_error_list.append((c_old - c_new))
 
         # sort and check each delta_error
@@ -224,7 +224,7 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [5]
+dimensions = [2]
 excel_file_dir = './'
 
 # for each excel file
@@ -486,9 +486,9 @@ for i in range(len(dimensions)):
                 # update LList
                 l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
                                                hash_used_anti_opt, hash_budget_anti)
-                l_corr_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_corr, k_corr, l_corr_opt,
+                l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
                                                hash_used_corr_opt, hash_budget_corr)
-                l_random_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_random, k_anti, l_random_opt,
+                l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_anti, l_random_opt,
                                                hash_used_random_opt, hash_budget_rand)
 
                 hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]

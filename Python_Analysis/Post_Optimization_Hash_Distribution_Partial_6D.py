@@ -73,7 +73,7 @@ def post_optimization_opt(collision_probility_, weight_list_, total_error_, data
             # each time increment hash layer by 1
             # temp_hash_used = hash_used + (LList[cur_index] + 1) * data_list[cur_index]
             temp_hash_used = hash_used_ + data_list_[cur_index]
-            if temp_hash_used < hash_budget_:
+            if temp_hash_used <= hash_budget_:
                 L_List_[cur_index] = L_List_[cur_index] + 1
                 hash_used_ = hash_used_ + data_list_[cur_index]
                 break
@@ -265,14 +265,14 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [4]
+dimensions = [6]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_top50.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -523,9 +523,9 @@ for i in range(len(dimensions)):
                 # update LList
                 l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
                                                hash_used_anti_opt, hash_budget_anti)
-                l_corr_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_corr, k_corr, l_corr_opt,
+                l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
                                                hash_used_corr_opt, hash_budget_corr)
-                l_random_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_random, k_anti, l_random_opt,
+                l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_anti, l_random_opt,
                                                hash_used_random_opt, hash_budget_rand)
 
                 hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
