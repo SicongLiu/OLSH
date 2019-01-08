@@ -161,20 +161,22 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   n,							// number of data points
-	int   qn,							// number of query points
+	int   qn,						// number of query points
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
 	int   layer_index, 				// current onion layer index
 	int 	  top_k,						// number of elements want to retrieve
 	float S,							// similarity threshold
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
+	float nn_ratio,					// approximation ratio for ANN search
+	const float **data,				// data set
 	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *temp_result,			// address to store temporary output from different onion layers
+	const char  *truth_set,			// address of truth set
+	const char  *temp_result,		// address to store temporary output from different onion layers
 	const char  *sim_angle,			// address to store sim-angle from different layers
-	const char  *output_folder);		// output folder
+	const char  *output_folder,		// output folder
+	const char  *temp_hash,
+	bool post_opt);
 
 // -----------------------------------------------------------------------------
 int norm_distribution(				// analyse norm distribution of data

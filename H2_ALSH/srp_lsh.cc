@@ -7,7 +7,9 @@ SRP_LSH::SRP_LSH(					// constructor
 	int K,								// number of hash tables
 	int L,								// number of hash layers
 	float S,							// similarity threshold
-	const float **data)					// data objects
+	const float **data,				// data objects
+	bool post_opt,
+	const char  *temp_hash)
 {
 	// -------------------------------------------------------------------------
 	//  init parameters
@@ -23,13 +25,24 @@ SRP_LSH::SRP_LSH(					// constructor
 	// -------------------------------------------------------------------------
 	//  build hash tables (bulkloading)
 	// -------------------------------------------------------------------------
-	gen_random_vectors();
+	char output_set[200];
+	if(!post_opt)
+	{
+		gen_random_vectors();
+		// sprintf(output_set, "%slayer_%d_vector.txt", temp_result, layer_index);
+		persist_random_vectors(temp_hash);
+	}
+	else
+	{
+		// sprintf(output_set, "%slayer_%d_vector.txt", temp_result, layer_index);
+		load_random_vectors(temp_hash, L);
+	}
 	bulkload();
 	post_process_map();
 }
 
 // -----------------------------------------------------------------------------
-SRP_LSH::~SRP_LSH()					// destructor
+SRP_LSH::~SRP_LSH()
 {
 	for(int l=0; l< L_; l++)
 	{
@@ -77,6 +90,100 @@ void SRP_LSH::gen_random_vectors()	// generate random projection vectors
 	}
 
 }
+
+// -----------------------------------------------------------------------------
+void SRP_LSH::persist_random_vectors(const char *fname)	// persist random vectors on file
+{
+	FILE *fp = fopen(fname, "w");
+	if (!fp)
+	{
+		printf("Could not create %s\n", fname);
+		return;
+	}
+	fprintf(fp, "%d", L_);
+	fprintf(fp, "%d", K_);
+	fprintf(fp, "%d", dim_);
+	fprintf(fp, "\n");
+
+
+	for(int l=0; l< L_; l++)
+	{
+		for(int k = 0; k < K_; k++)
+		{
+			for(int p=0; p < dim_; p++)
+			{
+				fprintf(fp, "%f", proj_[l][k][p]);
+			}
+			fprintf(fp, "\t");
+		}
+		fprintf(fp, "\n");
+	}
+	fclose(fp);
+}
+
+// -----------------------------------------------------------------------------
+void SRP_LSH::load_random_vectors(const char *fname, int input_L)	// load random projected vectors from file
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+	{
+		printf("Could not create %s\n", fname);
+		return;
+	}
+	int temp_L = -1;
+	int temp_K = -1;
+	int temp_dim = -1;
+
+	fprintf(fp, "%d", temp_L);
+	fprintf(fp, "%d", temp_K);
+	fprintf(fp, "%d", temp_dim);
+
+	proj_ = new float**[input_L];
+	for(int l=0; l < input_L; l++)
+	{
+		proj_[l] = new float*[temp_K];
+		for (int i = 0; i < temp_K; ++i)
+		{
+			proj_[l][i] = new float[temp_dim];
+		}
+	}
+
+	// load proj_vectors from previously persisted data
+	for(int l=0; l< temp_L; l++)
+	{
+		for(int k = 0; k < temp_K; k++)
+		{
+			for(int p=0; p < temp_dim; p++)
+			{
+				fprintf(fp, "%f", proj_[l][k][p]);
+			}
+			fscanf(fp, "\t");
+		}
+		fscanf(fp, "\n");
+	}
+
+	// check if there is any extra L left to be processed
+	if(input_L > temp_L)
+	{
+		for(int l=temp_L; l < input_L; l++)
+		{
+			proj_[l] = new float*[K_];
+			for (int i = 0; i < temp_K; ++i)
+			{
+				proj_[l][i] = new float[dim_];
+				for (int j = 0; j < temp_dim; ++j)
+				{
+					proj_[l][i][j] = gaussian(0.0f, 1.0f);
+				}
+			}
+		}
+	}
+
+	L_ = input_L;
+
+	fclose(fp);
+}
+
 
 // -----------------------------------------------------------------------------
 void SRP_LSH::bulkload()			// bulkloading
@@ -273,7 +380,7 @@ unordered_set<int> SRP_LSH::mykmc(	// c-k-AMC search
 				}
 				else
 				{
-					// printf("gain size: %lu .\n", temp_map.size());
+
 				}
 			}
 			else
@@ -317,7 +424,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 	// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
 	for(int i = 0; i < L_; i++)
 	{
-		// printf(" threshold: %d, Current hash layer: %d, map size: %d .\n", is_threshold, i, maps_[i].size());
 		char c[K_];
 		for(int j = 0; j < K_; j++)
 		{
@@ -327,7 +433,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 		str = str.substr(0, K_);
 
 		// sort binary hash code between data and query
-		// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
 		lists[i] = new MinK_List_String(maps_[i].size()); // first time initlize stuff
 		for (auto const& x : maps_[i])
 		{
@@ -335,34 +440,23 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 			lists[i]->insert(temp_dist, x.first);
 		}
 
-		// string str_key = lists[i]->ith_key(current_hamming_ranking);
 		string str_key = lists[i]->ith_id(current_hamming_ranking);
 		str_key = str_key.substr(0, K_);
-		// cout << "Hamming key: "<<str_key << " query key: "<<str<< " hamming distance: "<<
-		//		lists[i]->ith_key(current_hamming_ranking) << ", 2nd hmmaing dist: "<< lists[i]->ith_key(current_hamming_ranking + 1)
-		//		<< endl;
-
-		// get_candidates(str_key, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
-		// printf("1st time, check list size, list size: %d .\n", list->size());
 		memset(c, 0, K_);
 	}
 	// -------------------------------------------------------------------------
 	//  release space
 	// -------------------------------------------------------------------------
 
-	// check candidates size
-	// printf("check list size, list size: %d .\n", list->size());
 	int cur_round_ = 1;
 	while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
-	// while(list->size() < top_k && cur_round_ < max_round_)
 	{
 		++cur_round_;
 		++current_hamming_ranking;
 		// load candidates again
 		for(int i = 0; i < L_; i++)
 		{
-			// printf(" Extra -- Current hash layer: %d, map size: %d .\n", i, maps_[i].size());
 			char c[K_];
 			for(int j = 0; j < K_; j++)
 			{
@@ -371,8 +465,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 
 			string str_key = lists[i]->ith_id(current_hamming_ranking);
 			str_key = str_key.substr(0, K_);
-			// string str_key(c);
-			// str_key = str_key.substr(0, K_);
 			get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		}
 	}
@@ -384,7 +476,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 			int id = -1;
 			float ip = FLT_MIN;
 
-			// list structure -- priority queue using resorted distance of inner prouct as similarity
 			list->insert(ip, id);
 		}
 	}
@@ -432,12 +523,12 @@ void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>
 			int id = (int)it;
 			float ip = calc_inner_product(dim_, data_[id], query);
 
-			if( ip > threshold_S)
-			{
+			// if( ip > threshold_S)
+			// {
 				++candidate_size;
 				// list structure -- priority queue using resorted distance of inner product as similarity
 				list->insert(ip, id + 1);
-			}
+			// }
 		}
 
 		if(is_threshold)

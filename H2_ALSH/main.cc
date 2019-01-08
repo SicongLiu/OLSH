@@ -88,6 +88,7 @@ int main(int nargs, char **args)
 	float S 		= -1.0f;				// similarity threshold
 	float nn_ratio  = -1.0f;			// approximation ratio of ANN search
 	float mip_ratio = -1.0f;			// approximation ratio of AMIP search
+	bool post_opt = false;
 
 	char  data_set[200];				// address of data set
 	char  query_set[200];			// address of query set
@@ -95,6 +96,7 @@ int main(int nargs, char **args)
 	char  temp_set[200];				// address of temporary results per query per onion layer
 	char  output_folder[200];		// output folder
 	char  sim_angle[200];			// address of sim-angle output
+	char  temp_hash[200];			// address of temporal data hash code
 
 	bool  failed = false;
 	int   cnt = 1;
@@ -231,6 +233,27 @@ int main(int nargs, char **args)
 				create_dir(output_folder);
 			}
 		}
+		else if (strcmp(args[cnt], "-hr") == 0) {
+			strncpy(temp_hash, args[++cnt], sizeof(temp_hash));
+			printf("temp_hash     = %s\n", temp_hash);
+		}
+		else if (strcmp(args[cnt], "-pot") == 0) {
+			int post_opt_int = atoi(args[++cnt]);
+			printf("post_opt_int             = %d\n", post_opt_int);
+			if(post_opt_int == 0)
+			{
+				post_opt = false;
+			}
+			else if(post_opt_int == 1)
+			{
+				post_opt = true;
+			}
+			if (post_opt_int < 0)
+			{
+				failed = true;
+				break;
+			}
+		}
 		else {
 			failed = true;
 			usage();
@@ -313,7 +336,8 @@ int main(int nargs, char **args)
 			// simple_lsh_recall(n, qn, d, K, L, layer_index, S, nn_ratio, (const float **) data,
 			//								(const float **) query, truth_set, temp_set, output_folder);
 			simple_lsh_recall(n, qn, d, K, L, layer_index, top_k, S, nn_ratio, (const float **) data,
-											(const float **) query, truth_set, temp_set, sim_angle, output_folder);
+											(const float **) query, truth_set, temp_set, sim_angle, output_folder,
+											temp_hash, post_opt);
 			break;
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);

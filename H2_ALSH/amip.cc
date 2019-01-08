@@ -1299,7 +1299,9 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		const char  *truth_set,                // address of truth set
 		const char  *temp_result,            // address to store temporary output from different onion layers
 		const char  *sim_angle,            // address to store sim-angle from different layers
-		const char  *output_folder)         // output folder
+		const char  *output_folder,
+		const char  *temp_hash,
+		bool post_opt)         // output folder
 {
 	timeval start_time, end_time;
 
@@ -1326,7 +1328,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, S, nn_ratio, data);
+	lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
 
 	gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec +

@@ -25,7 +25,9 @@ public:
 			int   L,						// number of hash layers
 			float S,						// similarity threshold
 			float ratio,					// approximation ratio
-			const float** data);			// data objects
+			const float** data,			// data objects
+			bool post_opt,
+			const char  *temp_hash);
 
 	// -------------------------------------------------------------------------
 	int kmip(						// c-k-AMIP search
@@ -60,7 +62,7 @@ protected:
 	SRP_LSH *lsh_;					// SRP_LSH
 
 	// -------------------------------------------------------------------------
-	int bulkload();					// bulkloading
+	int bulkload(bool post_opt, const char  *temp_hash);					// bulkloading
 
 	// -------------------------------------------------------------------------
 	void display();					// display parameters

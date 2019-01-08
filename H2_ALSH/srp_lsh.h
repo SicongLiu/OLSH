@@ -19,7 +19,9 @@ public:
 		int K,							// number of hash tables
 		int L,							// number of hash layers
 		float S,							// similarity threshold
-		const float **data);				// data objects
+		const float **data,				// data objects
+		bool post_opt,
+		const char  *temp_hash);
 
 	// -------------------------------------------------------------------------
 	~SRP_LSH();							// destructor
@@ -77,6 +79,12 @@ protected:
 
 	// -------------------------------------------------------------------------
 	void gen_random_vectors();		// generate random projection vectors
+
+	// -------------------------------------------------------------------------
+	void persist_random_vectors(const char *fname);		// generate random projection vectors
+
+	// -------------------------------------------------------------------------
+	void load_random_vectors(const char *fname, int input_L);		// generate random projection vectors
 
 	// -------------------------------------------------------------------------
 	void bulkload();					// bulkloading

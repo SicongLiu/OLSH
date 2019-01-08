@@ -39,7 +39,9 @@ void Simple_LSH::build(				// build index
 		int   L,							// number of hash layers
 		float   S,							// similarity threshold
 		float ratio,						// approximation ratio
-		const float** data)					// data objects
+		const float** data,				// data objects
+		bool post_opt,
+		const char  *temp_hash)
 {
 	// -------------------------------------------------------------------------
 	//  init parameters
@@ -56,12 +58,12 @@ void Simple_LSH::build(				// build index
 	// -------------------------------------------------------------------------
 	//  build index
 	// -------------------------------------------------------------------------
-	bulkload();
+	bulkload(post_opt, temp_hash);
 	display();
 }
 
 // -----------------------------------------------------------------------------
-int Simple_LSH::bulkload()			// bulkloading
+int Simple_LSH::bulkload(bool post_opt, const char  *temp_hash)			// bulkloading
 {
 	// -------------------------------------------------------------------------
 	//  calculate the Euclidean norm of data and find the maximum norm of data
@@ -105,7 +107,7 @@ int Simple_LSH::bulkload()			// bulkloading
 	//  indexing the new data using SRP-LSH
 	// -------------------------------------------------------------------------
 	lsh_ = new SRP_LSH(n_pts_, simple_lsh_dim_, K_, L_, S_,
-			(const float **) simple_lsh_data_);
+			(const float **) simple_lsh_data_, post_opt, temp_hash);
 
 	return 0;
 }
@@ -150,10 +152,6 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	//  conduct c-k-AMC search by SRP-LSH
 	// -------------------------------------------------------------------------
 	MaxK_List *mcs_list = new MaxK_List(top_k);
-	// lsh_->kmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
-	// vector<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query);
-	// unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold);
-	// unordered_set<int> candidates = lsh_->mykmc(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
 	unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
 
 	// -------------------------------------------------------------------------
