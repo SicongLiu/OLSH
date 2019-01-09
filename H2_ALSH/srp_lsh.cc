@@ -439,7 +439,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 	int max_round_ = 3;
 
 	MinK_List_String** lists = new MinK_List_String*[L_];
-	// MinK_List_String* list1 = new MinK_List_String(maps_[i].size());
 	for(int i = 0; i < L_; i++)
 	{
 		char c[K_];
@@ -463,9 +462,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 		get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		memset(c, 0, K_);
 	}
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
 
 	int cur_round_ = 1;
 	while(is_threshold && list->size() < top_k && cur_round_ < max_round_)

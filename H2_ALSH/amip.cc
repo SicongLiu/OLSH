@@ -1130,159 +1130,6 @@ int sign_alsh_precision_recall(        // precision recall curve of sign_alsh
 	return 0;
 }
 
-/*
- // -----------------------------------------------------------------------------
- int simple_lsh_precision_recall(    // precision recall curve of simple_lsh
- int   n,                            // number of data points
- int   qn,                            // number of query points
- int   d,                            // dimension of space
- int   K,                            // number of hash functions
- int   L,                            // number of hash tables
- float  S,                            // number of hash tables
- float nn_ratio,                        // approximation ratio for nn search
- const float **data,                    // data set
- const float **query,                // query set
- const char  *truth_set,                // address of truth set
- const char  *temp_result,            // address to store temporary output from different onion layers
- const char  *output_folder)         // output folder
- {
- timeval start_time, end_time;
-
- // -------------------------------------------------------------------------
- //  read the ground truth file
- // -------------------------------------------------------------------------
- gettimeofday(&start_time, NULL);
-
- Result **R = new Result*[qn];
- for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
- if (read_ground_truth(qn, truth_set, R) == 1)
- {
- printf("Reading Truth Set Error!\n");
- return 1;
- }
-
- gettimeofday(&end_time, NULL);
- float read_file_time = end_time.tv_sec - start_time.tv_sec +
- (end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
- printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
- // -------------------------------------------------------------------------
- //  indexing
- // -------------------------------------------------------------------------
- gettimeofday(&start_time, NULL);
- Simple_LSH *lsh = new Simple_LSH();
- lsh->build(n, d, K, L, S, nn_ratio, data);
-
- gettimeofday(&end_time, NULL);
- float indexing_time = end_time.tv_sec - start_time.tv_sec +
- (end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
- printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
- // -------------------------------------------------------------------------
- //  Precision Recall Curve of Simple_LSH
- // -------------------------------------------------------------------------
- char output_set[200];
- sprintf(output_set, "%ssimple_lsh_precision_recall.out", output_folder);
-
- FILE *fp = fopen(output_set, "a+");
- if (!fp)
- {
- printf("Could not create %s\n", output_set);
- return 1;
- }
-
- int tMIPs[] = { 1, 2, 5, 10 };
- //int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
- int kMIPs[] = { 1, 2, 5, 10, 20};
- int maxT_round = 4;
- int maxK_round = 5;
-
- float **pre    = new float*[maxT_round];
- float **recall = new float*[maxT_round];
-
- for (int t_round = 0; t_round < maxT_round; ++t_round)
- {
- pre[t_round]    = new float[maxK_round];
- recall[t_round] = new float[maxK_round];
-
- for (int k_round = 0; k_round < maxK_round; ++k_round)
- {
- pre[t_round][k_round]    = 0;
- recall[t_round][k_round] = 0;
- }
- }
-
- printf("Top-t c-AMIP of Simple_LSH: \n");
- for (int k_round = 0; k_round < maxK_round; ++k_round)
- {
- int top_k = kMIPs[k_round];
- MaxK_List* list = new MaxK_List(top_k);
-
- float candidate_size = 0.0f;
- for (int i = 0; i < qn; ++i)
- {
- list->reset();
- candidate_size +=lsh->kmip(top_k, query[i], list);
-
- // persist on file to compute overall performance
- char output_set[200];
- sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-
- persist_intermediate_on_file(top_k, d, list, data, output_set);
- for (int t_round = 0; t_round < maxT_round; ++t_round)
- {
- int top_t = tMIPs[t_round];
- int hits = get_hits(top_k, top_t, R[i], list);
-
- pre[t_round][k_round]    += hits / (float) top_k;
- recall[t_round][k_round] += hits / (float) top_t;
- }
- }
-
- delete list;
- list = NULL;
- }
-
- for (int t_round = 0; t_round < maxT_round; ++t_round)
- {
- int top_t = tMIPs[t_round];
- printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
- fprintf(fp, "Top-%d\tRecall\t\tPrecision\n", top_t);
-
- for (int k_round = 0; k_round < maxK_round; ++k_round)
- {
- int top_k = kMIPs[k_round];
- pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
- recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;
-
- printf("%4d\t\t%.2f\t\t%.2f\n", top_k,
- recall[t_round][k_round], pre[t_round][k_round]);
- fprintf(fp, "%d\t%f\t%f\n", top_k,
- recall[t_round][k_round], pre[t_round][k_round]);
- }
- printf("\n");
- fprintf(fp, "\n");
- }
- printf("\n");
- fprintf(fp, "\n");
- fclose(fp);
-
- // -------------------------------------------------------------------------
- //  release space
- // -------------------------------------------------------------------------
- delete lsh; lsh = NULL;
- delete[] R; R = NULL;
- for (int i = 0; i < maxT_round; ++i) {
- delete[] pre[i];    pre[i] = NULL;
- delete[] recall[i];    recall[i] = NULL;
- }
- delete[] pre;     pre = NULL;
- delete[] recall; recall = NULL;
-
- return 0;
- }
- */
-
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(    // precision recall curve of simple_lsh
 		int   n,                            // number of data points
@@ -1450,8 +1297,9 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			gettimeofday(&start_time, NULL);
 			float file_processing_time = 0.0f;
 
-			top_k = kMIPs[num];
-			if(top_k < layer_index)
+			top_k = kMIPs[num] - layer_index + 1;
+			// if(top_k < layer_index)
+			if(top_k <=0 )
 			{
 				continue;
 			}
@@ -1468,8 +1316,6 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				list->reset();
 
 				// top-k computation with threshold from previous layers
-				// printf("  query index: %d, top_k: %d  .\n", i, top_k);
-				// candidate_size += lsh->kmip_test(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;
@@ -1479,11 +1325,11 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				// persist on file to compute overall performance
 				char output_set[200];
 				// sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-				sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k, is_threshold_file_name.c_str());
+				sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str());
 
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
-				persist_intermediate_on_file(top_k, d, list, data, output_set);
+				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, output_set);
 				gettimeofday(&file_end_time, NULL);
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
@@ -1495,17 +1341,17 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 					start_time.tv_usec) / 1000000.0f;
 			runtime = runtime - file_processing_time;
-			pair<int, float > dict_time(top_k, runtime);
+			pair<int, float > dict_time(top_k + layer_index - 1, runtime);
 			my_run_time.insert(dict_time);
 
 			candidate_size = candidate_size * 1.0f / qn;
-			pair<int, float > dict_candidate(top_k, candidate_size);
+			pair<int, float > dict_candidate(top_k + layer_index - 1, candidate_size);
 			average_candidate_size.insert(dict_candidate);
 			recall        = recall / qn;
 			runtime       = (runtime * 1000.0f) / qn;
 
-			printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
-			fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
+			printf("  %3d\t\t%.4f\t\t%.2f\n", top_k + layer_index - 1, runtime, recall);
+			fprintf(fp, "%d\t%f\t%f\n", top_k + layer_index - 1, runtime, recall);
 		}
 
 		if(is_threshold)
@@ -1543,8 +1389,6 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		{
 			vector<float>().swap(temp_sim_angle_vec[jj]);
 		}
-		// delete temp_sim_angle_vec; temp_sim_angle_vec = NULL;
-
 	}
 	// -------------------------------------------------------------------------
 	//  release space
@@ -1813,11 +1657,16 @@ int overall_performance(                        // output the overall performanc
 			 * query across different layers, then aggregate different query
 			 * results together
 			 * */
+
+			int total_num = temp_layer * top_k - temp_layer * (temp_layer - 1)/2;
+
 			float*** temp_result = new float**[qn];
 			for(int i = 0; i < qn; i++)
 			{
-				temp_result[i] = new float*[temp_layer * top_k];
-				for(int j=0; j< temp_layer * top_k; j++)
+				// temp_result[i] = new float*[temp_layer * top_k];
+				// for(int j=0; j< temp_layer * top_k; j++)
+				temp_result[i] = new float*[total_num];
+				for(int j=0; j< total_num; j++)
 				{
 					temp_result[i][j] = new float[d+1];
 				}
@@ -1827,29 +1676,42 @@ int overall_performance(                        // output the overall performanc
 			int layer_index = 0;	// range [0, layers - 1]
 			int cur_q_line_count = 0;
 			int line_count = 0;
-			while (!feof(fp1) && line_count < temp_layer * top_k * qn)
+
+			int temp_top_k = top_k;
+			int cur_counter = temp_top_k * qn;
+			int per_query_accumu_index = 0;
+			while (!feof(fp1) && line_count < total_num * qn)
 			{
-				if(line_count%top_k == 0 && line_count > 0)
+				if(cur_q_line_count%temp_top_k == 0 && line_count > 0)
 				{
 					q_index = (++q_index)%qn;
 					cur_q_line_count = 0;
-					if(line_count%(top_k * qn) == 0)
+					if(line_count == cur_counter)
 					{
 						++layer_index;
-						// top_k = top_k - 1;
+						per_query_accumu_index += temp_top_k;
+						temp_top_k = temp_top_k - 1;
+						cur_counter += temp_top_k * qn;
 					}
 				}
 				for (int j = 0; j < d + 1; ++j)
 				{
-					fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * top_k][j]);
+					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * temp_top_k][j]);
+					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * (temp_top_k + 1)][j]);
+					fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + per_query_accumu_index][j]);
 				}
 				fscanf(fp1, "\n");
 				++line_count;
 				++cur_q_line_count;
 
 			}
-			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d .\n", top_k, layers, qn, line_count);
-			assert(feof(fp1) && line_count == temp_layer * top_k * qn);
+
+			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d, total num: %d.\n", top_k, layers, qn, line_count, total_num);
+
+
+
+			// assert(feof(fp1) && line_count == temp_layer * top_k * qn);
+			assert(feof(fp1) && line_count == total_num * qn);
 
 			MaxK_List* list = new MaxK_List(top_k);
 			for (int i = 0; i < qn; ++i)
@@ -1858,7 +1720,8 @@ int overall_performance(                        // output the overall performanc
 
 				// temp_layer * top_k should be the total number of candidates that
 				// top_k, top_k - 1, top_k - 2, top_k - 3 .... top_k - temp_layer + 1
-				for(int j = 0; j < temp_layer * top_k; j++)
+				// for(int j = 0; j < temp_layer * top_k; j++)
+				for(int j = 0; j < total_num ; j++)
 				{
 					list->insert(temp_result[i][j][d], j + 1);
 				}
@@ -1871,13 +1734,12 @@ int overall_performance(                        // output the overall performanc
 			delete list;
 			list = NULL;
 			fclose(fp1);
-
 			// -------------------------------------------------------------------------
 			//  free memory space
 			// -------------------------------------------------------------------------
 			for(int i = 0; i < qn; i++)
 			{
-				for(int j = 0; j < temp_layer * top_k; j++)
+				for(int j = 0; j < total_num; j++)
 				{
 					delete[] temp_result[i][j];
 					temp_result[i][j] = NULL;
@@ -1887,6 +1749,7 @@ int overall_performance(                        // output the overall performanc
 			}
 			delete[] temp_result;
 			temp_result = NULL;
+
 		}
 
 		char output_folder_set[200];

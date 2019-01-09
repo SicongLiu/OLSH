@@ -167,7 +167,6 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		// if( ip_unit > S_)
 		// {
 		++candidate_size;
-		// list structure -- priority queue using [resorted] inner product as similarity
 		list->insert(ip_raw, id + 1);
 		// }
 	}
@@ -211,60 +210,6 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 
 	delete mcs_list;
 	mcs_list = NULL;
-
-	// return 0;
-	// return candidate_size;
-
-	return candidates.size();
-}
-
-
-//To-Do: Create another kmip for testing, push candidate calc into that function
-// -----------------------------------------------------------------------------
-int Simple_LSH::kmip_test(				// c-k-AMIP search
-		int   top_k,						// top-k value
-		const float *query,				// input query
-		MaxK_List *list,					// top-k MIP results (return)
-		float& angle_threshold,
-		bool is_threshold,
-		int& hash_hits)
-{
-	// -------------------------------------------------------------------------
-	//  construct Simple_LSH query
-	// -------------------------------------------------------------------------
-	float norm_q = sqrt(calc_inner_product(dim_, query, query));
-	float *simple_lsh_query = new float[simple_lsh_dim_];
-
-	for (int i = 0; i < simple_lsh_dim_; ++i)
-	{
-		if (i < dim_)
-			simple_lsh_query[i] = query[i] / norm_q;
-		else
-			simple_lsh_query[i] = 0.0f;
-	}
-
-	// -------------------------------------------------------------------------
-	//  conduct c-k-AMC search by SRP-LSH
-	// -------------------------------------------------------------------------
-	// printf("\n using threshold: %d \n", is_threshold);
-	unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, list, query, angle_threshold, is_threshold, hash_hits);
-
-	// -------------------------------------------------------------------------
-	//  calc inner product for candidates returned by SRP-LSH
-	// -------------------------------------------------------------------------
-
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete[] simple_lsh_query;
-	simple_lsh_query = NULL;
-
-	// delete mcs_list;
-	// mcs_list = NULL;
-
-	// return 0;
-	// return candidate_size;
 
 	return candidates.size();
 }
