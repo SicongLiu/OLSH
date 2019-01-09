@@ -1836,6 +1836,7 @@ int overall_performance(                        // output the overall performanc
 					if(line_count%(top_k * qn) == 0)
 					{
 						++layer_index;
+						// top_k = top_k - 1;
 					}
 				}
 				for (int j = 0; j < d + 1; ++j)
@@ -1854,6 +1855,9 @@ int overall_performance(                        // output the overall performanc
 			for (int i = 0; i < qn; ++i)
 			{
 				list->reset();
+
+				// temp_layer * top_k should be the total number of candidates that
+				// top_k, top_k - 1, top_k - 2, top_k - 3 .... top_k - temp_layer + 1
 				for(int j = 0; j < temp_layer * top_k; j++)
 				{
 					list->insert(temp_result[i][j][d], j + 1);

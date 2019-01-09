@@ -101,7 +101,9 @@ void SRP_LSH::persist_random_vectors(const char *fname)	// persist random vector
 		return;
 	}
 	fprintf(fp, "%d", L_);
+	fprintf(fp, "\n");
 	fprintf(fp, "%d", K_);
+	fprintf(fp, "\n");
 	fprintf(fp, "%d", dim_);
 	fprintf(fp, "\n");
 
@@ -112,7 +114,7 @@ void SRP_LSH::persist_random_vectors(const char *fname)	// persist random vector
 		{
 			for(int p=0; p < dim_; p++)
 			{
-				fprintf(fp, "%f", proj_[l][k][p]);
+				fprintf(fp, "%f ", proj_[l][k][p]);
 			}
 			fprintf(fp, "\t");
 		}
@@ -134,9 +136,12 @@ void SRP_LSH::load_random_vectors(const char *fname, int input_L)	// load random
 	int temp_K = -1;
 	int temp_dim = -1;
 
-	fprintf(fp, "%d", temp_L);
-	fprintf(fp, "%d", temp_K);
-	fprintf(fp, "%d", temp_dim);
+	fscanf(fp, "%d", &temp_L);
+	fscanf(fp, "\n");
+	fscanf(fp, "%d", &temp_K);
+	fscanf(fp, "\n");
+	fscanf(fp, "%d", &temp_dim);
+	fscanf(fp, "\n");
 
 	proj_ = new float**[input_L];
 	for(int l=0; l < input_L; l++)
@@ -155,7 +160,8 @@ void SRP_LSH::load_random_vectors(const char *fname, int input_L)	// load random
 		{
 			for(int p=0; p < temp_dim; p++)
 			{
-				fprintf(fp, "%f", proj_[l][k][p]);
+				fscanf(fp, "%f", &proj_[l][k][p]);
+				fscanf(fp, " ");
 			}
 			fscanf(fp, "\t");
 		}
@@ -179,6 +185,18 @@ void SRP_LSH::load_random_vectors(const char *fname, int input_L)	// load random
 		}
 	}
 
+	/*for(int i = 0; i < input_L; i++)
+	{
+		for(int j = 0; j < temp_K; j++)
+		{
+			for(int k = 0; k < temp_dim; k++)
+			{
+				printf("%f ", proj_[i][j][k]);
+			}
+			printf("\t ");
+		}
+		printf("\n");
+	}*/
 	L_ = input_L;
 
 	fclose(fp);
