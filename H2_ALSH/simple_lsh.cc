@@ -171,7 +171,7 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		// }
 	}
 
-	// printf(" Raw candidates size: %d, list size: %d   ", candidates.size(), list->size());
+	// update threshold condition
 	if(is_threshold)
 	{
 		int temp_index_size = min(top_k, list->size());
@@ -186,21 +186,21 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 			angle_threshold = 90.0f;
 		}
 	}
+
+	// there should not be the case where list->size() < top_k
 	if(list->size() < top_k)
 	{
 		for(int i = top_k - list->size(); i >=0;  i--)
 		{
 			int id = -1;
 			float ip = FLT_MIN;
-
-			// list structure -- priority queue using resorted distance of inner prouct as similarity
 			list->insert(ip, id);
 		}
 	}
 
 	if(list->size() != top_k)
 	{
-		printf("Something is wrong.... \n");
+		printf("Something is wrong, at simple_lsh..., using threshold? :%d, candidate size: ?:%d \n", is_threshold, candidate_size);
 	}
 	// -------------------------------------------------------------------------
 	//  release space

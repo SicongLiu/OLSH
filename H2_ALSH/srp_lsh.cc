@@ -435,10 +435,10 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 
 	// build hash code for mc_query
 	unordered_set<int> candidates;
-	int current_hamming_ranking = 0;
-	int max_round_ = 3;
+
 
 	MinK_List_String** lists = new MinK_List_String*[L_];
+	int cur_candidates_size = 0;
 	for(int i = 0; i < L_; i++)
 	{
 		char c[K_];
@@ -457,17 +457,19 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 			lists[i]->insert(temp_dist, x.first);
 		}
 
-		string str_key = lists[i]->ith_id(current_hamming_ranking);
-		str_key = str_key.substr(0, K_);
-		get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+		// use query hash code 'str' to retrieve candidates
+		cur_candidates_size += get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		memset(c, 0, K_);
 	}
 
+	int current_hamming_ranking = 0;
+	int max_round_ = 3;
 	int cur_round_ = 1;
-	while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
+	// while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
+	while(cur_candidates_size < top_k && cur_round_ < max_round_)
 	{
+		// printf("looking into neighbour buckets, using threshold? :%d, cur_candidates_size: ?:%d \n", is_threshold, cur_candidates_size);
 		++cur_round_;
-		++current_hamming_ranking;
 		// load candidates again
 		for(int i = 0; i < L_; i++)
 		{
@@ -476,13 +478,24 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 			{
 				c[j] = mc_query[i][j] ? '1' : '0';
 			}
-
 			string str_key = lists[i]->ith_id(current_hamming_ranking);
 			str_key = str_key.substr(0, K_);
-			get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+
+			/*if(maps_[i].find(str_key) != maps_[i].end())
+			{
+				// printf("we can find the key.... \n");
+			}
+			else
+			{
+				printf("we cannot find the key, wrong! ");
+			}*/
+
+			cur_candidates_size += get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i);
 		}
+		++current_hamming_ranking;
 	}
 
+	/*
 	if(list->size() < top_k)
 	{
 		for(int i = top_k - list->size(); i >=0;  i--)
@@ -493,10 +506,12 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 			list->insert(ip, id);
 		}
 	}
-	if(list->size() != top_k)
+	*/
+
+	/*if(list->size() != top_k)
 	{
-		printf("Something is wrong.... \n");
-	}
+		printf("Something is wrong, at srp_lsh.... \n");
+	}*/
 
 	delete[] mc_query;
 	mc_query = NULL;
@@ -505,12 +520,14 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 }
 
 // -----------------------------------------------------------------------------
-void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
+int SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
 		const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer)
 {
 	if(maps_[hash_layer].find(str_key) != maps_[hash_layer].end())
 	{
 		vector<int> temp_map = maps_[hash_layer][str_key];
+
+		// using threshold, has to constant with the condition
 		if(is_threshold)
 		{
 			// condition: angle_q_mean <= angle_q_topk + angle_i
@@ -523,20 +540,21 @@ void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>
 			}
 			else
 			{
-				// printf("gain size: %lu .\n", temp_map.size());
+
 			}
 		}
+		// not using threshold, simply add candidates
 		else
 		{
 			copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
 		}
 
+		/*
 		int candidate_size = 0;
 		for(auto it : candidates)
 		{
 			int id = (int)it;
 			float ip = calc_inner_product(dim_, data_[id], query);
-
 			// if( ip > threshold_S)
 			// {
 				++candidate_size;
@@ -544,8 +562,10 @@ void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>
 				list->insert(ip, id + 1);
 			// }
 		}
+		*/
 
-		if(is_threshold)
+		// update threshold in the normalized space
+		/*if(is_threshold)
 		{
 			// printf("update threshold .\n ");
 			int temp_index_size = min(top_k, list->size());
@@ -559,8 +579,13 @@ void SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>
 			{
 				angle_threshold = 90.0f;
 			}
-		}
+		}*/
 	}
+	else
+	{
+
+	}
+	return candidates.size();
 }
 
 
