@@ -53,7 +53,7 @@ public:
 			int& hash_table_hit);
 
 	// -------------------------------------------------------------------------
-	void get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
+	int get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
 			const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer);
 
 	// -------------------------------------------------------------------------
