@@ -194,9 +194,10 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
-int persist_candidate_size(				// persist average number of candidate on file, regarding to a specific topk
-		unordered_map<int, float> mymap, 	// average value of candidate size
-		const char  *output_folder,			// output folder
+int persist_candidate_size(								// persist average number of candidate on file, regarding to a specific topk
+		unordered_map<int, float> candidate_map,     	// average value of candidate size
+		unordered_map<int, float> hash_table_hit_map,	// average hash table hit counts
+		const char  *output_folder,						// output folder
 		unordered_map<int, float> my_run_time);			// run time of different top-k
 
 // -----------------------------------------------------------------------------

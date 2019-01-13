@@ -1287,6 +1287,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 		unordered_map<int, float> my_run_time;
 		unordered_map<int, float> average_candidate_size;
+		unordered_map<int, float> total_hash_table_hit;
 
 		printf("Top-k c-AMIP of Simple_LSH: \n");
 		printf("  Top-k\t\tTime (ms)\tRecall\n");
@@ -1345,8 +1346,12 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			my_run_time.insert(dict_time);
 
 			candidate_size = candidate_size * 1.0f / qn;
+			total_hash_hits = total_hash_hits * 1.0f/ qn;
 			pair<int, float > dict_candidate(top_k + layer_index - 1, candidate_size);
+			pair<int, float > dict_hash_table_hit(top_k + layer_index - 1, total_hash_hits);
 			average_candidate_size.insert(dict_candidate);
+			total_hash_table_hit.insert(dict_hash_table_hit);
+
 			recall        = recall / qn;
 			runtime       = (runtime * 1000.0f) / qn;
 
@@ -1378,7 +1383,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		char temp_result_set[200];
 		// sprintf(temp_result_set, "%s_top_%d_%s", temp_result, top_k, is_threshold_file_name.c_str());
 		sprintf(temp_result_set, "%s_%s", temp_result, is_threshold_file_name.c_str());
-		persist_candidate_size(average_candidate_size, temp_result_set, my_run_time);
+		persist_candidate_size(average_candidate_size, total_hash_table_hit, temp_result_set, my_run_time);
 
 		printf("\n");
 		fprintf(fp, "\n");
@@ -1506,17 +1511,22 @@ int persist_intermediate_on_file(        // persist intermediate result per quer
 }
 
 // -----------------------------------------------------------------------------
-int persist_candidate_size(                // persist average number of candidate on file, regarding to a specific topk
-		unordered_map<int, float> mymap,     // average value of candidate size
-		const char  *output_folder,            // output folder
-		unordered_map<int, float> my_run_time)            // run time of different top-k
+int persist_candidate_size(                				// persist average number of candidate on file, regarding to a specific topk
+		unordered_map<int, float> candidate_map,     	// average value of candidate size
+		unordered_map<int, float> hash_table_hit_map,	// average hash table hit counts
+		const char  *output_folder,            			// output folder
+		unordered_map<int, float> my_run_time)   		// run time of different top-k
 {
 	int run_time_index = 0;
-	for ( auto it = mymap.begin(); it != mymap.end(); ++it )
+	for ( auto it = candidate_map.begin(), itt = hash_table_hit_map.begin(); it != candidate_map.end() && itt != hash_table_hit_map.end(); ++it, ++itt)
 	{
 		int top_k_key = (int)it->first;
 		float element_count = (float)it->second;
 		float run_time =  my_run_time[(int)it->first];
+
+		int hash_hit_key = (int)itt->first;
+		float hash_hit_count = (float)itt->second;
+
 		char output_set[200];
 		sprintf(output_set, "%s_top_%d_candidate_size.txt", output_folder, top_k_key);
 		FILE *fp = fopen(output_set, "a+");
@@ -1525,7 +1535,9 @@ int persist_candidate_size(                // persist average number of candidat
 			printf("Could not create %s\n", output_set);
 			return 1;
 		}
-		fprintf(fp, "%f, %f\n", element_count, run_time);
+		// fprintf(fp, "%f, %f\n", element_count, run_time);
+		fprintf(fp, "%f, %f, ", element_count, run_time);
+		fprintf(fp, "%f \n", hash_hit_count);
 
 		fclose(fp);
 	}

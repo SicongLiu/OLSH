@@ -436,7 +436,6 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 	// build hash code for mc_query
 	unordered_set<int> candidates;
 
-
 	MinK_List_String** lists = new MinK_List_String*[L_];
 	int cur_candidates_size = 0;
 	for(int i = 0; i < L_; i++)
@@ -458,16 +457,17 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 		}
 
 		// use query hash code 'str' to retrieve candidates
-		cur_candidates_size += get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+		cur_candidates_size += get_candidates(str, list, candidates,  query, real_query, S_, is_threshold, angle_threshold, top_k, i, hash_table_hit);
 		memset(c, 0, K_);
 	}
 
 	int current_hamming_ranking = 0;
 	int max_round_ = 3;
-	int cur_round_ = 1;
+	int cur_round_ = 1; // already access the bucket, about to begin additional access
 	// while(is_threshold && list->size() < top_k && cur_round_ < max_round_)
 	while(cur_candidates_size < top_k && cur_round_ < max_round_)
 	{
+
 		// printf("looking into neighbour buckets, using threshold? :%d, cur_candidates_size: ?:%d \n", is_threshold, cur_candidates_size);
 		++cur_round_;
 		// load candidates again
@@ -490,10 +490,12 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 				printf("we cannot find the key, wrong! ");
 			}*/
 
-			cur_candidates_size += get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i);
+			cur_candidates_size += get_candidates(str_key, list, candidates, query, real_query, S_, is_threshold, angle_threshold, top_k, i, hash_table_hit);
+			// printf("after looking for neighbours, at layer: %d, ....hash hit: %d .\n", i, hash_table_hit);
 		}
 		++current_hamming_ranking;
 	}
+
 
 	/*
 	if(list->size() < top_k)
@@ -521,7 +523,7 @@ unordered_set<int> SRP_LSH::mykmc_test(	// c-k-AMC search
 
 // -----------------------------------------------------------------------------
 int SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>& candidates,  const float *query,
-		const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer)
+		const float *real_query, float threshold_S, bool is_threshold, float& angle_threshold, int top_k, int hash_layer, int& hash_table_hit)
 {
 	if(maps_[hash_layer].find(str_key) != maps_[hash_layer].end())
 	{
@@ -536,6 +538,7 @@ int SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>&
 			float angle_q_mean = calc_angle(dim_, real_query, &cur_angle_vec[1]);
 			if(angle_threshold + angle_i >= angle_q_mean)
 			{
+				++hash_table_hit;
 				copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
 			}
 			else
@@ -546,6 +549,7 @@ int SRP_LSH::get_candidates(string str_key, MaxK_List *list, unordered_set<int>&
 		// not using threshold, simply add candidates
 		else
 		{
+			++hash_table_hit;
 			copy(temp_map.begin(), temp_map.end(),inserter(candidates, candidates.end()));
 		}
 
