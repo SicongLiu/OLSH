@@ -97,6 +97,14 @@ import numpy
 
 import re
 
+def cal_cumsum(input_num):
+    i = 0
+    count = 0
+    while i <= input_num:
+        count = count + i
+        i = i + 1
+    print(count)
+
 
 def separate_string(input_string):
     items = []
@@ -111,11 +119,49 @@ def column_row_index(input_string, column_dist):
     column_index = items[0]
     row_index = int(items[1]) + column_dist
     return column_index + str(row_index)
+#
+# i = 0
+# num = 100
+# while i < num:
+#     print(str(i))
+#     i = i + 1
+list1 = []
+list1.append(1)
+list1.append(2)
+list2 = [2, 3, 4, 5, 6, 7]
 
-for i in range(10):
-    kk = 'B1'
-    tt = column_row_index(kk, i)
-    print(tt)
+ans = sorted(range(len(list2)), key=lambda i: list2[i], reverse=True)[:2]
+print(ans)
+
+
+list3 = [2, 3, 4, 5, 6]
+
+anss = list2 != list3
+
+print(anss)
+
+num = 2
+cal_cumsum(num)
+# tmap = {}
+#
+# key1 = 1
+# key2 = 2
+#
+# tmap[key1] = list1
+# tmap[key2] = list2
+#
+# print(tmap[key1])
+# print(tmap[key2])
+#
+# tmap1 = {}
+# tmap1[key1] = list2
+# tmap1[key2] = list1
+#
+#
+# for (k,v), (k2,v2) in zip(tmap.items(), tmap1.items()):
+#     print(k, ': ', v)
+#     print(k2, '::', v2)
+
 
 
 

@@ -4,6 +4,16 @@
 import math
 import os
 
+
+def cal_cumsum(input_num):
+    i = 0
+    count = 0
+    while i <= input_num:
+        count = count + i
+        i = i + 1
+    return count
+
+
 # dimensions = [4, 5]
 dimensions = [4]
 #  top_ks = [10, 25, 50]
@@ -32,9 +42,9 @@ for d in dimensions:
                 for dtype in data_types:
                     for budget in budgets:
                         for threshold in thresholds:
-                            anomaly_count_file = data_folder + 'anomaly_count' + str(dtype) + '_' + str(d) + '_' + \
+                            anomaly_count_file = data_folder + 'anomaly_count_' + str(dtype) + '_' + str(d) + '_' + \
                                                  str(card) + '_' + str(budget) + '_' + str(threshold) + '.txt'
-                            f3 = open(cur_file_name, 'r')
+                            f3 = open(anomaly_count_file, 'w')
                             for ii in range(top_k_interest.__len__() - 1):
                                 anomaly_count = 0
                                 cur_topk = top_k_interest[ii]
@@ -44,8 +54,8 @@ for d in dimensions:
                                 next_file_name = data_folder + 'run_test_' + str(dtype) + '_' + str(d) + '_' + str(card) + '_' + \
                                                 str(budget) + '_top_' + str(next_topk) + '_' + str(threshold) + '.txt'
 
-                                print(cur_file_name)
-                                print(next_file_name)
+                                print('cur_file_name: ' + cur_file_name + ' \n')
+                                print('next_file_name: ' + next_file_name + ' \n')
                                 # check if next_file_name contains equal or better ones than cur_file_name element
                                 # while they are not the same
 
@@ -54,15 +64,16 @@ for d in dimensions:
                                 q1 = 0
                                 f1 = open(cur_file_name, 'r')
                                 cur_lines = f1.readlines()
-                                while q1 < qn * cur_topk:
+                                cur_count = cal_cumsum(cur_topk)
+                                while q1 < qn * cur_count:
                                     cur_counter = 0
                                     cur_score_list = []
-                                    while cur_counter < cur_topk:
+                                    while cur_counter < cur_count:
                                         cur_score = float(cur_lines[q1].split('\t')[d])
                                         cur_score_list.append(cur_score)
                                         cur_counter = cur_counter + 1
                                     cur_score_map[q1] = cur_score_list
-                                    q1 = q1 + cur_topk
+                                    q1 = q1 + cur_count
 
                                 f1.close()
 
@@ -71,31 +82,32 @@ for d in dimensions:
                                 q2 = 0
                                 f2 = open(next_file_name, 'r')
                                 next_lines = f2.readlines()
-                                while q2 < qn * next_topk:
+                                next_count = cal_cumsum(next_topk)
+                                while q2 < qn * next_count:
                                     next_score_list = []
                                     next_counter = 0
-                                    while next_counter < next_topk:
+                                    while next_counter < next_count:
                                         next_score = float(next_lines[q2].split('\t')[d])
                                         next_score_list.append(next_score)
                                         next_counter = next_counter + 1
                                     next_score_map[q2] = next_score_list
-                                    q2 = q2 + next_topk
+                                    q2 = q2 + next_count
                                 f2.close()
 
                                 # load score done, now compare values
                                 for (k1, v1), (k2, v2) in zip(cur_score_map.items(), next_score_map.items()):
                                     # compare the cur_topk index from both lists
                                     index1 = sorted(range(len(v1)), key=lambda i: v1[i], reverse=True)[:cur_topk]
-                                    print(index1)
+                                    # print(index1)
 
                                     index2 = sorted(range(len(v2)), key=lambda i: v2[i], reverse=True)[:cur_topk]
-                                    print(index2)
+                                    # print(index2)
 
                                     if index1 != index2:
                                         anomaly_count = anomaly_count + 1
 
                                 # output anormaly_count to file
-                                f3.write('top_k: ' + str(cur_topk) + ', anomaly count: ' + str(anomaly_count))
+                                f3.write('top_k: ' + str(cur_topk) + ', anomaly count: ' + str(anomaly_count) + ' \n')
 
                             f3.close()
 print("Done .\n")

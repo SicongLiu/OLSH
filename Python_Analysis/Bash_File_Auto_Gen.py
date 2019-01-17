@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial partition \n' \
                         '#SBATCH -n 4 # number of cores \n' \
                         '#SBATCH --mem=32000                 # 32 GB \n' \
-                        '#SBATCH -t 0-15:00                  # wall time (D-HH:MM) \n' \
+                        '#SBATCH -t 0-48:00                  # wall time (D-HH:MM) \n' \
                         '#SBATCH -o slurm.%j.out             # STDOUT (%j = JobId) \n' \
                         '#SBATCH -e slurm.%j.err             # STDERR (%j = JobId) \n' \
                         '#SBATCH --mail-type=END,FAIL        # notifications for job done & fail \n' \
@@ -18,15 +18,19 @@ data_type = ["anti_correlated", "correlated", "random"]
 budgets = ["1M", "10M"]
 # dimensions = [4, 5]
 # dimensions = [2, 3, 4, 5, 6]
-dimensions = [5]
-top_ks = [25, 50]
+dimensions = [3]
+excel_files = ["./3D_all_after.xlsx"]
+pot = 1
+
+#  top_ks = [10, 25, 50]
+top_ks = [10, 25, 50]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
 cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 
-# card_excel = ['100k', '200k']
-# cardinality = [100000, 200000]
+# card_excel = ['200k']
+# cardinality = [200000]
 
 k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
 l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
@@ -79,7 +83,8 @@ l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO1
 #                "../Checkpoint_Result_Oct_23_4D.xlsx", "../Checkpoint_Result_Oct_23_5D.xlsx",
 #                "../Checkpoint_Result_Oct_23_6D.xlsx"]
 
-excel_files = ["./5D_all.xlsx"]
+
+
 
 for excel_file in excel_files:
     # excel_file = "../Checkpoint_Result_Oct_23_4D.xlsx"
@@ -286,7 +291,7 @@ print("Done .\n")
 
 query_count = 1000
 ratio = 2
-sim_threshold = 0.9
+sim_threshold = 0.75
 
 parameter_path = '../H2_ALSH/parameters/'
 parameter_type = ["opt", "max", "uni"]
@@ -338,6 +343,18 @@ for k in range(dimensions.__len__()):
 
         for m in range(types.__len__()):
             type_name = types[m]
+            f10.write(
+                'sbatch ./' + "run_test_" + str(dimensions[k]) + "_" + str(
+                    cardinality[cc]) + "_" + str(type_name) + ".sh sleep 2\n")
+            bash_file = BASH_FILE_BASE_FOLDER + "run_test_" + str(dimensions[k]) \
+                        + "_" + str(cardinality[cc]) + "_" + str(type_name) +".sh"
+
+            f3 = open(bash_file, 'w')
+            f3.write("#!/bin/bash \n")
+            f3.write("# make \n")
+            f3.write(saguaro_script_string)
+            f3.write("rm *.o \n")
+
             for j in range(budgets.__len__()):
                 budget = budgets[j]
                 for i in range(top_ks.__len__()):
@@ -371,19 +388,19 @@ for k in range(dimensions.__len__()):
                             L_Max_List = []
                             L_Uni_List = []
                             qhull_data_count = []
-                            bash_file_opt = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
-                                            + "_" + str(cardinality[cc]) + "_opt.sh"
+                            # bash_file_opt = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
+                            #                 + "_" + str(cardinality[cc]) + "_opt.sh"
+                            #
+                            # bash_file_max = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(
+                            #     dimensions[k]) \
+                            #                 + "_" + str(cardinality[cc]) + "_max.sh"
+                            #
+                            # bash_file_uni = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
+                            #                 + "_" + str(cardinality[cc]) + "_uni.sh"
 
-                            bash_file_max = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(
-                                dimensions[k]) \
-                                            + "_" + str(cardinality[cc]) + "_max.sh"
-
-                            bash_file_uni = BASH_FILE_FOLDER + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) \
-                                            + "_" + str(cardinality[cc]) + "_uni.sh"
-
-                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh sleep 2\n")
-                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
-                            f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh sleep 2\n")
+                            # f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_opt.sh sleep 2\n")
+                            # f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_max.sh sleep 2\n")
+                            # f10.write('sbatch ./' + cur_bash_set_dir + "run_test_" + str(data_type[ii]) + "_" + str(dimensions[k]) + "_" + str(cardinality[cc]) + "_uni.sh sleep 2\n")
                             paramK_path = parameter_dir + "k_" + data_type[ii] #str(cardinality[k])
                             f1 = open(paramK_path, 'r')
                             K_lines = f1.readlines()
@@ -488,11 +505,11 @@ for k in range(dimensions.__len__()):
 
 
                             # write to .sh file at save path, opt
-                            f3 = open(bash_file_opt, 'w')
-                            f3.write("#!/bin/bash \n")
-                            f3.write("# make \n")
-                            f3.write(saguaro_script_string)
-                            f3.write("rm *.o \n")
+                            # f3 = open(bash_file_opt, 'w')
+                            # f3.write("#!/bin/bash \n")
+                            # f3.write("# make \n")
+                            # f3.write(saguaro_script_string)
+                            # f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
                             cur_dimension = dimensions[k]
@@ -501,6 +518,7 @@ for k in range(dimensions.__len__()):
                             f3.write("d=" + str(cur_dimension) + "\n")
                             f3.write("qn=" + str(query_count) + "\n")
                             f3.write("c0=" + str(ratio) + "\n")
+                            f3.write("pot=" + str(pot) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
                             # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt.txt"
@@ -540,12 +558,22 @@ for k in range(dimensions.__len__()):
                                 f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
                                                                "${cardinality}_opt/result_${d}D" + str(kk) + "_${K" + str(kk)
                                          + "}_${L" + str(kk) + "}" + "\n")
+                                # temp_hash = TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_opt_" + str(kk)
+
+                                f3.write("temp_hash" + str(
+                                    kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_opt_" + str(kk) + "\n")
 
                                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                          "} -L ${L" + str(kk) + "} -LI " + str(
                                     kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                    kk) + "}.simple_LSH \n")
+                                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                # temp_top_k = top_k - kk
+                                # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                #          "} -L ${L" + str(kk) + "} -LI " + str(
+                                #     kk + 1) + " -tk " + str(temp_top_k) + "" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                #          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                                #     kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
 
                                 f3.write("\n")
                             # append overall accuracy computation here
@@ -554,14 +582,14 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                      "${tsPath}.mip -of ${overallResult} \n")
-                            f3.close()
+                            # f3.close()
 
                             # write to .sh file at save path, max
-                            f3 = open(bash_file_max, 'w')
-                            f3.write("#!/bin/bash \n")
-                            f3.write("# make \n")
-                            f3.write(saguaro_script_string)
-                            f3.write("rm *.o \n")
+                            # f3 = open(bash_file_max, 'w')
+                            # f3.write("#!/bin/bash \n")
+                            # f3.write("# make \n")
+                            # f3.write(saguaro_script_string)
+                            # f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
                             cur_dimension = dimensions[k]
@@ -570,6 +598,7 @@ for k in range(dimensions.__len__()):
                             f3.write("d=" + str(cur_dimension) + "\n")
                             f3.write("qn=" + str(query_count) + "\n")
                             f3.write("c0=" + str(ratio) + "\n")
+                            f3.write("pot=" + str(pot) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
                             # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max.txt"
@@ -611,12 +640,21 @@ for k in range(dimensions.__len__()):
                                                                "${cardinality}_max/result_${d}D" + str(
                                     kk) + "_${K" + str(kk)
                                          + "}_${L" + str(kk) + "}" + "\n")
+                                #C temp_hash = TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_max_" + str(kk)
+                                f3.write("temp_hash" + str(
+                                    kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_max_" + str(kk) + "\n")
 
                                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                          "} -L ${L" + str(kk) + "} -LI " + str(
                                     kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                    kk) + "}.simple_LSH \n")
+                                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                # temp_top_k = top_k - kk
+                                # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                #          "} -L ${L" + str(kk) + "} -LI " + str(
+                                #     kk + 1) + " -tk " + str(temp_top_k) + "" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                #          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                                #     kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
 
                                 f3.write("\n")
                             # append overall accuracy computation here
@@ -627,15 +665,15 @@ for k in range(dimensions.__len__()):
                                 "# ------------------------------------------------------------------------------ \n")
                             f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                      "${tsPath}.mip -of ${overallResult} \n")
-                            f3.close()
+                            # f3.close()
 
 
                             # write to .sh file at save path, uni
-                            f3 = open(bash_file_uni, 'w')
-                            f3.write("#!/bin/bash \n")
-                            f3.write("# make \n")
-                            f3.write(saguaro_script_string)
-                            f3.write("rm *.o \n")
+                            # f3 = open(bash_file_uni, 'w')
+                            # f3.write("#!/bin/bash \n")
+                            # f3.write("# make \n")
+                            # f3.write(saguaro_script_string)
+                            # f3.write("rm *.o \n")
                             cur_data_type = data_type[ii]
                             cur_cardinality = cardinality[cc]
                             cur_dimension = dimensions[k]
@@ -644,6 +682,7 @@ for k in range(dimensions.__len__()):
                             f3.write("d=" + str(cur_dimension) + "\n")
                             f3.write("qn=" + str(query_count) + "\n")
                             f3.write("c0=" + str(ratio) + "\n")
+                            f3.write("pot=" + str(pot) + "\n")
 
                             temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
                             # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni.txt"
@@ -681,11 +720,21 @@ for k in range(dimensions.__len__()):
                                                                "${cardinality}_uni/result_${d}D" + str(kk) + "_${K" + str(kk)
                                          + "}_${L" + str(kk) + "}" + "\n")
 
+                                # temp_hash = TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_uni_" + str(kk)
+
+                                f3.write("temp_hash" + str(kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_uni_" + str(kk) + "\n")
+
                                 f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                          "} -L ${L" + str(kk) + "} -LI " + str(
                                     kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                    kk) + "}.simple_LSH \n")
+                                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                # temp_top_k = top_k - kk
+                                # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                #          "} -L ${L" + str(kk) + "} -LI " + str(
+                                #     kk + 1) + " -tk " + str(temp_top_k) + "" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                #          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                                #     kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
 
                                 f3.write("\n")
                             # append overall accuracy computation here
@@ -694,7 +743,8 @@ for k in range(dimensions.__len__()):
                             f3.write("# ------------------------------------------------------------------------------ \n")
                             f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                      "${tsPath}.mip -of ${overallResult} \n")
-                            f3.close()
-f10.close()
+                            # f3.close()
 
+            f3.close()
+        f10.close()
 print("Done .\n")

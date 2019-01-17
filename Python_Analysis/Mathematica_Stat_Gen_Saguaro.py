@@ -19,9 +19,9 @@ def float_to_str(f):
 
 data_type = ["correlated", "anti_correlated", "random"]
 # data_type = ["random"]
-dimensions = [6]
-cardinality = [2000000]
-topk = 40
+dimensions = [4]
+cardinality = [200000]
+topk = 10
 
 function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
