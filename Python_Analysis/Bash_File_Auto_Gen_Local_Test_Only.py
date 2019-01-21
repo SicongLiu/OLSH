@@ -14,16 +14,17 @@ saguaro_script_string = '#SBATCH -p serial \t \t # Send this job to the serial p
                         '#SBATCH --mail-type=END,FAIL        # notifications for job done & fail \n' \
                         '#SBATCH --mail-user=sliu104@asu.edu # send-to address \n' \
                         'module load gcc/4.9.2 \n'
-data_type = ["anti_correlated", "correlated", "random"]
+# data_type = ["anti_correlated", "correlated", "random"]
+data_type = ["random"]
 budgets = ["1M", "10M"]
 # dimensions = [4, 5]
 # dimensions = [2, 3, 4, 5, 6]
-dimensions = [6]
-excel_files = ["./6D_top25_before.xlsx"]
+dimensions = [4]
+excel_files = ["./4D_all_after_local_only.xlsx"]
 pot = 0
 
 #  top_ks = [10, 25, 50]
-top_ks = [10, 25, 50]
+top_ks = [25]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']

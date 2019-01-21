@@ -227,14 +227,14 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [2]
+dimensions = [6]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_all_before.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_top25.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
