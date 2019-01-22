@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from openpyxl import load_workbook
 
 result_file_dir = '../H2_ALSH/'
@@ -13,7 +14,7 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-dimensions = [4]
+dimensions = [5]
 
 card_file_name = ['2M', '1.5M', '1M', '200k', '100k', '500k']
 card = [2000000, 1500000, 1000000, 200000, 100000, 500000]
@@ -103,13 +104,17 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 f = open(over_reault, 'w')
 
+with_without_opt = str(sys.argv[1])
+run_index = str(sys.argv[2])
+
 for dd in range(dimensions.__len__()):
     cur_dimension = dimensions[dd]
 
     # new excel file here
-    excel_file = "Aggregation_" + str(cur_dimension) + "D.xlsx"
+    excel_file = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + run_index + ".xlsx"
 
-    excel_file_hash_hits = "Aggregation_" + str(cur_dimension) + "D_hash_hits.xlsx"
+    excel_file_hash_hits = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + \
+                           run_index + "_hash_hits.xlsx"
 
     # wb = load_workbook(filename=excel_file, data_only=True)
     wb = load_workbook(filename=excel_file)

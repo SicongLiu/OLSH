@@ -18,7 +18,7 @@ data_type = ["anti_correlated", "correlated", "random"]
 budgets = ["1M", "10M"]
 # dimensions = [4, 5]
 # dimensions = [2, 3, 4, 5, 6]
-dimensions = [6]
+dimensions = [4]
 excel_files = ["./6D_top25_before.xlsx"]
 pot = 0
 
