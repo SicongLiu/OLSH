@@ -18,15 +18,13 @@ dimensions = [4]
 
 card_file_name = ['100k', '200k', '500k', '1M', '15M', '2M']
 card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
-
-optimized_tops = [10, 25, 50]
-top_ks = [1, 2, 5, 10, 25, 50]
-# budget = ['1M', '500k']
-budget = ['1M', '10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 comp_types = ['opt', 'max', 'uni']
 
+optimized_tops = [10, 25, 50]
+top_ks = [1, 2, 5, 10, 25, 50]
+budget = ['1M', '10M']
 over_reault = result_file_dir + 'all_aggregated_Nov_16.txt'
 
 
@@ -116,9 +114,9 @@ for dd in range(dimensions.__len__()):
                            run_index + "_hash_hits.xlsx"
 
     print("Excel file name: " + str(excel_file))
+    print("Excel hash hit file name: " + str(excel_file_hash_hits))
     # wb = load_workbook(filename=excel_file, data_only=True)
     wb = load_workbook(filename=excel_file)
-
     wb_hash_hits = load_workbook(filename=excel_file_hash_hits)
 
     for cc in range(card.__len__()):

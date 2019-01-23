@@ -117,13 +117,8 @@ def post_optimization_uni(data_list_, L_List_, hash_used_, hash_budget_):
 
 
 ####################################################################################
-
-
-
-# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 Data_Types = ['anti_correlated', 'correlated', 'random']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-# Data_Types = ['anti_correlated', 'correlated']
 top_m_cell = 'E1'
 
 

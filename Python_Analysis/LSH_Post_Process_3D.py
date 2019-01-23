@@ -5,8 +5,8 @@ from openpyxl import load_workbook
 
 result_file_dir = '../H2_ALSH/'
 
-result_type = ['with_threshold', 'without_threshold']
-result_type_excel = ['w_threshold', 'wo_threshold']
+result_type = ['without_threshold']
+result_type_excel = ['wo_threshold']
 
 # get obj and hash count from bash_set
 obj_hashsize_prefix = 'bash_set_'
@@ -22,7 +22,6 @@ card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 optimized_tops = [10, 25, 50]
 
 top_ks = [1, 2, 5, 10, 25, 50]
-# budget = ['1M', '500k']
 budget = ['1M', '10M']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]

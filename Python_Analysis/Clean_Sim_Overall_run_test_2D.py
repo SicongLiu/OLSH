@@ -8,17 +8,10 @@ budgets = ["1M", "10M"]
 
 dimensions = [2]
 top_ks = [10, 25, 50]
-
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
 cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
-
-# card_excel = ['200k']
-# cardinality = [200000]
-
-# card_excel = ['100k', '200k']
-# cardinality = [100000, 200000]
 
 pot = 1
 
@@ -27,6 +20,7 @@ ratio = 2
 
 parameter_path = '../H2_ALSH/parameters/'
 parameter_type = ["opt", "max", "uni"]
+BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
 for k in range(dimensions.__len__()):
@@ -52,8 +46,11 @@ for k in range(dimensions.__len__()):
                                       str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
                     TEMPORAL_RESULT_FOR_BASH = "./temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
                                                str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
-                    os.system("rm " + TEMPORAL_RESULT + "s*")
-                    os.system("rm " + TEMPORAL_RESULT + "r*")
-                    os.system("rm " + TEMPORAL_RESULT + "o*")
+                    if not os.path.exists(TEMPORAL_RESULT):
+                        continue
+                    else:
+                        # os.system("rm " + TEMPORAL_RESULT + "s*")
+                        os.system("rm " + TEMPORAL_RESULT + "run_*")
+                        os.system("rm " + TEMPORAL_RESULT + "overall_*")
 
 print("Done .\n")

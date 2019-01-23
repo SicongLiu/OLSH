@@ -54,6 +54,7 @@ l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO1
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
+
 def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, types_, card_excel_, cardinality_, save_file_path_):
     wb = load_workbook(filename=excel_file_, data_only=True)
 
@@ -274,7 +275,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                         parameter_dir = parameter_path_ + str(dimension) + "D_top" + str(
                             top_k) + "_budget_" + str(budget) \
                                         + "_" + type_name + "_" + card_excel_[cc] + "/"
-                        print(parameter_dir)
+                        print(parameter_dir + ' ' + type_name)
                         if not os.path.exists(parameter_dir):
                             continue
                         else:
@@ -605,16 +606,14 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 
 
 data_type = ["anti_correlated", "correlated", "random"]
-
 card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
 cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
-
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
-dimensions = [4]
-excel_file_before = "./4D_075_all_before.xlsx"
-excel_file_after = "./4D_075_all_after.xlsx"
+dimensions = [2]
+excel_file_before = "./2D_075_all_before.xlsx"
+excel_file_after = "./2D_075_all_after.xlsx"
 
 top_ks = [10, 25, 50]
 
