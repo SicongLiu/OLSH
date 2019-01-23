@@ -150,9 +150,6 @@ for dd in range(dimensions.__len__()):
                                     column_dist = 30
                                 else:
                                     column_dist = 40
-
-
-
                                 # anti_correlated, correlated, random
                                 # log, log minus, log plus, log plus plus, uni
                                 # threshold, or threshold
