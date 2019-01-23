@@ -16,8 +16,8 @@ cand_recall_prefix = 'temp_result_'
 
 dimensions = [2]
 
-card_file_name = ['2M', '1.5M', '1M', '200k', '100k', '500k']
-card = [2000000, 1500000, 1000000, 200000, 100000, 500000]
+card_file_name = ['100k', '200k', '500k', '1M', '15M', '2M']
+card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 
 optimized_tops = [10, 25, 50]
 

@@ -46,8 +46,8 @@ for k in range(dimensions.__len__()):
                                       str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
                     TEMPORAL_RESULT_FOR_BASH = "./temp_result_" + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
                                                str(budget) + "_" + type_name + "_" + str(cardinality[cc]) + "/"
-                    os.system("rm " + TEMPORAL_RESULT + "s*")
-                    os.system("rm " + TEMPORAL_RESULT + "r*")
-                    os.system("rm " + TEMPORAL_RESULT + "o*")
+                    os.system("rm " + TEMPORAL_RESULT + "sim*")
+                    os.system("rm " + TEMPORAL_RESULT + "run*")
+                    os.system("rm " + TEMPORAL_RESULT + "over*")
 
 print("Done .\n")
