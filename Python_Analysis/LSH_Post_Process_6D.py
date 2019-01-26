@@ -14,7 +14,7 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-dimensions = [4]
+dimensions = [6]
 
 card_file_name = ['100k', '200k', '500k', '1M', '1.5M', '2M']
 card = [100000, 200000, 500000, 1000000, 1500000, 2000000]

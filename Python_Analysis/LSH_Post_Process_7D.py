@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from openpyxl import load_workbook
 
 result_file_dir = '../H2_ALSH/'
@@ -13,10 +14,10 @@ obj_hashsize_prefix = 'bash_set_'
 # get candidate, recall and NDCG from temp_result
 cand_recall_prefix = 'temp_result_'
 
-dimensions = [6]
+dimensions = [7]
 
-card_file_name = ['100k', '200k', '500k', '1M', '1.5M', '2M']
-card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
+card_file_name = ['200k', '1M', '1.5M', '2M']
+card = [200000, 1000000, 1500000, 2000000]
 
 optimized_tops = [10, 25, 50]
 
@@ -101,6 +102,7 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 
 f = open(over_reault, 'w')
+
 with_without_opt = str(sys.argv[1])
 run_index = str(sys.argv[2])
 
