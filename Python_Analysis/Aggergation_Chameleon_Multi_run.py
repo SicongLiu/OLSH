@@ -25,10 +25,12 @@ row_counts = 6
 
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 budgets = ["1M", "10M"]
-dimensions = [4]
+dimensions = [3]
 
-repeated_run = 10
-excel_folders = '../H2_ALSH/'
+repeated_run = 5
+# excel_folders = '../H2_ALSH/'
+
+excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_3D_Excel/'
 
 aggregated_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_without_opt.xlsx'
 aggregated_hash_hit_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_hash_hits_without_opt.xlsx'
@@ -89,6 +91,10 @@ for rr in range(0, repeated_run):
 
                         ws22[cell_index].value = ws22[cell_index].value + ws2[cell_index].value
                         # wsh22[cell_index].value = wsh22[cell_index].value + wsh2[cell_index].value
+
+                        if rr == repeated_run - 1:
+                            ws11[cell_index].value = ws11[cell_index].value / repeated_run
+                            ws22[cell_index].value = ws22[cell_index].value / repeated_run
 
 wb_11.save(aggregated_file_name_without_opt)
 # wb_hash_hits_11.save(aggregated_hash_hit_file_name_without_opt)

@@ -19,7 +19,7 @@ dimensions = [7]
 card_file_name = ['200k', '1M', '1.5M', '2M']
 card = [200000, 1000000, 1500000, 2000000]
 
-optimized_tops = [10, 25, 50]
+optimized_tops = [25, 50]
 
 top_ks = [1, 2, 5, 10, 25, 50]
 budget = ['1M', '10M']
@@ -103,8 +103,12 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 f = open(over_reault, 'w')
 
-with_without_opt = str(sys.argv[1])
-run_index = str(sys.argv[2])
+# with_without_opt = str(sys.argv[1])
+# run_index = str(sys.argv[2])
+
+
+with_without_opt = 'without_post_opt'
+run_index = '0'
 
 for dd in range(dimensions.__len__()):
     cur_dimension = dimensions[dd]
@@ -248,9 +252,11 @@ for dd in range(dimensions.__len__()):
                                     top_ks_length = 5
                                 else:
                                     top_ks_length = 6
+                                obj_s_length = obj_s.__len__()
                                 for oh_index in range(top_ks_length):
-                                    obj.append(int(obj_s[top_ks[oh_index] - 1]))
-                                    hash.append(int(hash_s[top_ks[oh_index] - 1]))
+                                    temp_index_ = min(obj_s_length - 1, top_ks[oh_index] - 1)
+                                    obj.append(int(obj_s[temp_index_]))
+                                    hash.append(int(hash_s[temp_index_]))
                                 f1.close()
 
 
@@ -272,8 +278,11 @@ for dd in range(dimensions.__len__()):
                                     f1 = open(cand_result_file, 'r')
                                     lines = f1.readlines()
                                     for jj in range(top_ks[ii]):
-                                        cand_size += float(lines[jj].split(',')[0])
-                                        hash_table_hits += float(lines[jj].split(',')[2])
+                                        temp_index_ = min(lines.__len__() - 1, jj)
+                                        # cand_size += float(lines[jj].split(',')[0])
+                                        # hash_table_hits += float(lines[jj].split(',')[2])
+                                        cand_size += float(lines[temp_index_].split(',')[0])
+                                        hash_table_hits += float(lines[temp_index_].split(',')[2])
                                     # cand_size = float(cand_size)/float(top_ks[ii])
                                     cand_size = float(cand_size)
                                     hash_table_hits = float(hash_table_hits)
