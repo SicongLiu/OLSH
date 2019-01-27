@@ -282,7 +282,7 @@ for dd in range(dimensions.__len__()):
                                         # cand_size += float(lines[jj].split(',')[0])
                                         # hash_table_hits += float(lines[jj].split(',')[2])
                                         cand_size += float(lines[temp_index_].split(',')[0])
-                                        hash_table_hits += float(lines[temp_index_].split(',')[2])
+                                        hash_table_hits += float(lines[temp_index_ ].split(',')[2])
                                     # cand_size = float(cand_size)/float(top_ks[ii])
                                     cand_size = float(cand_size)
                                     hash_table_hits = float(hash_table_hits)

@@ -52,28 +52,29 @@ def topk_map(dimension_, cardinality_, type_, top_k_, map_, real_topk):
     map_[temp_key_] = real_topk
     return map_
 
+
 def get_real_topk(dimension_, cardinality_, type_, top_k_, map_):
     temp_key_ = str(dimension_) + '_' + str(cardinality_) + '_' + type_ + '_' + top_k_
     real_topk = map_[temp_key_]
     return real_topk
 
-list_start = ['J6', 'J27', 'J47', 'J67', 'J87']
-top_m = 14
-ret_index = compute_index(list_start, top_m)
-print(ret_index)
-
-start = 'J6'
-resource_used = computer_used_resource_index(start, top_m, 5)
-print(resource_used)
-
-map = {}
-map['what'] = 1
-map[2] = 3
-
-print(map)
-
-print(map[2])
-print(map[3])
+# list_start = ['J6', 'J27', 'J47', 'J67', 'J87']
+# top_m = 14
+# ret_index = compute_index(list_start, top_m)
+# print(ret_index)
+#
+# start = 'J6'
+# resource_used = computer_used_resource_index(start, top_m, 5)
+# print(resource_used)
+#
+# map = {}
+# map['what'] = 1
+# map[2] = 3
+#
+# print(map)
+#
+# print(map[2])
+# print(map[3])
 
 # row_index_start = [5, 15, 25, 35, 45]
 # column_index_start = 2
@@ -94,5 +95,45 @@ print(map[3])
 #     print(cell_index)
 
 
+#
+# def process_line(line_concate_):
+#     processed_line_ = []
+#     temp_arr = line_concate[line_concate.find("{") + 1:line_concate.find("}")].split(',')
+#     for ii in range(len(temp_arr)):
+#         processed_line_.append(int(temp_arr[ii].strip()))
+#     return processed_line_
+#
+#
+# # line_string = '27, 11, 7, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,' \
+# #               ' 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1,1, 1, 1, 1'
+# # line_list_ = line_string.split(',')
+# # print(line_list_[0])
+# read_lines = 3
+# file_name = '4D_2M_Top50_anti.txt'
+# f1 = open(file_name, 'r')
+# line_count = 0
+# bash_count = 0
+# file_dict = {}
+# line_concate = ''
+# for line in f1.readlines():
+#     line_count = line_count + 1
+#     line_concate = line_concate + line.split('\n')[0].strip()
+#     if line_count%read_lines == 0:
+#         line_count = 0
+#         file_dict[bash_count] = process_line(line_concate)
+#         bash_count = bash_count + 1
+#         # print(line_concate[line_concate.find("{")+1:line_concate.find("}")])
+#         line_concate = ''
+# f1.close()
+# for ii in range(file_dict.__len__()):
+#     print(file_dict[ii])
+import re
+str1 = 'Budget_10M_4D_top50_2M'
+str2 = '4D_Top50_2M'
+ret = str1.find(str2)
 
+if re.search(str2, str1, re.IGNORECASE):
+    print('yes')
+
+print(str1.find(str2))
 
