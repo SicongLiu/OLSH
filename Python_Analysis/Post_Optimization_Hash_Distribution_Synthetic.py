@@ -210,9 +210,6 @@ l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO1
 hash_used_rand_opt_cells_50 = ['AP56', 'AP113', 'AP170', 'AP227', 'AP284']
 hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 
-
-collision_probility = 0.75
-total_error = 0
 # K_log_list_start_cell = ['E6', 'V6', 'AL6']
 # K_log_minus_list_start_cell = ['']
 # K_log_plus_list_start_cell = []
@@ -222,14 +219,16 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [6]
+collision_probility = 0.85
+total_error = 0
+dimensions = [2]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_all_before.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_075_all_before.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_085_all_before.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_075_all_before.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

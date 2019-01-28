@@ -606,18 +606,23 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 
 
 data_type = ["anti_correlated", "correlated", "random"]
-card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
-cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
+# card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
+# cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
+
+card_excel = ['200k', '500k', '1M', '15M', '2M']
+cardinality = [200000, 500000, 1000000, 1500000, 2000000]
+
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
-# dimensions = [5]
-# excel_file_before = "./5D_075_all_before.xlsx"
-# excel_file_after = "./5D_075_all_after.xlsx"
+sim_threshold = 0.85
+dimensions = [2]
+excel_file_before = "./2D_085_all_before.xlsx"
+excel_file_after = "./2D_085_all_after.xlsx"
 
-dimensions = [6]
-excel_file_before = "./6D_top25_075_all_before.xlsx"
-excel_file_after = "./6D_top25_075_all_after.xlsx"
+# dimensions = [6]
+# excel_file_before = "./6D_top25_075_all_before.xlsx"
+# excel_file_after = "./6D_top25_075_all_after.xlsx"
 
 top_ks = [10, 25, 50]
 
@@ -630,7 +635,6 @@ separate_string(data_type, budgets, dimensions, excel_file_after, top_ks, types,
 # write and complete ground truth shell
 query_count = 1000
 ratio = 2
-sim_threshold = 0.75
 parameter_path_before = '../H2_ALSH/parameters_before/'
 parameter_path_after = '../H2_ALSH/parameters_after/'
 parameter_type = ["opt", "max", "uni"]

@@ -143,9 +143,8 @@ def computer_used_resource_index(start_, top_m_, count_):
 
 ####################################################################################
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-# Data_Types = ['anti_correlated', 'correlated', 'random']
+Data_Types = ['anti_correlated', 'correlated', 'random']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-Data_Types = ['anti_correlated']
 top_m_cell_anti = 'E1'
 top_m_cell_corr = 'V1'
 top_m_cell_rand = 'AL1'
@@ -809,147 +808,147 @@ for i in range(len(dimensions)):
         data_corr = []
         data_random = []
         # within each excel file, for each data type
-        for j in range(len(Data_Types)):
-            # read data list
-            data_anti_list_start = data_anti_list[0]
-            data_anti_list_end = data_anti_list[1]
+        # for j in range(len(Data_Types)):
+        # read data list
+        data_anti_list_start = data_anti_list[0]
+        data_anti_list_end = data_anti_list[1]
 
-            data_corr_list_start = data_corr_list[0]
-            data_corr_list_end = data_corr_list[1]
+        data_corr_list_start = data_corr_list[0]
+        data_corr_list_end = data_corr_list[1]
 
-            data_random_list_start = data_random_list[0]
-            data_random_list_end = data_random_list[1]
+        data_random_list_start = data_random_list[0]
+        data_random_list_end = data_random_list[1]
 
-            for columns in ws[data_anti_list_start: data_anti_list_end]:
+        for columns in ws[data_anti_list_start: data_anti_list_end]:
+            for cell in columns:
+                data_anti.append(cell.value)
+
+        for columns in ws[data_corr_list_start: data_corr_list_end]:
+            for cell in columns:
+                data_corr.append(cell.value)
+
+        for columns in ws[data_random_list_start: data_random_list_end]:
+            for cell in columns:
+                data_random.append(cell.value)
+
+        weight_anti = compute_weights(data_anti, len(data_anti))
+        weight_corr = compute_weights(data_corr, len(data_corr))
+        weight_random = compute_weights(data_random, len(data_random))
+
+        # for each type, log, log_minus, log_plus, etc
+        for jj in range(types.__len__()):
+            # read k and l
+            type_name = types[jj]
+            start = 2 * jj
+            end = 2 * jj + 1
+            k_anti = []
+            for columns in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
                 for cell in columns:
-                    data_anti.append(cell.value)
+                    k_anti.append(cell.value)
 
-            for columns in ws[data_corr_list_start: data_corr_list_end]:
+            l_anti_opt = []
+            for columns in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
                 for cell in columns:
-                    data_corr.append(cell.value)
+                    l_anti_opt.append(cell.value)
 
-            for columns in ws[data_random_list_start: data_random_list_end]:
+            l_anti_max = []
+            for columns in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
                 for cell in columns:
-                    data_random.append(cell.value)
+                    l_anti_max.append(cell.value)
 
-            weight_anti = compute_weights(data_anti, len(data_anti))
-            weight_corr = compute_weights(data_corr, len(data_corr))
-            weight_random = compute_weights(data_random, len(data_random))
+            l_anti_uni = []
+            for columns in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
+                for cell in columns:
+                    l_anti_uni.append(cell.value)
 
-            # for each type, log, log_minus, log_plus, etc
-            for jj in range(types.__len__()):
-                # read k and l
-                type_name = types[jj]
-                start = 2 * jj
-                end = 2 * jj + 1
-                k_anti = []
-                for columns in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
-                    for cell in columns:
-                        k_anti.append(cell.value)
+            # read data type correlated
+            k_corr = []
+            for columns in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
+                for cell in columns:
+                    k_corr.append(cell.value)
 
-                l_anti_opt = []
-                for columns in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
-                    for cell in columns:
-                        l_anti_opt.append(cell.value)
+            l_corr_opt = []
+            for columns in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
+                for cell in columns:
+                    l_corr_opt.append(cell.value)
 
-                l_anti_max = []
-                for columns in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
-                    for cell in columns:
-                        l_anti_max.append(cell.value)
+            l_corr_max = []
+            for columns in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
+                for cell in columns:
+                    l_corr_max.append(cell.value)
 
-                l_anti_uni = []
-                for columns in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
-                    for cell in columns:
-                        l_anti_uni.append(cell.value)
+            l_corr_uni = []
+            for columns in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
+                for cell in columns:
+                    l_corr_uni.append(cell.value)
 
-                # read data type correlated
-                k_corr = []
-                for columns in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
-                    for cell in columns:
-                        k_corr.append(cell.value)
+            # read data type random
+            k_random = []
+            for columns in ws[k_ranges_random[start]: k_ranges_random[end]]:
+                for cell in columns:
+                    k_random.append(cell.value)
 
-                l_corr_opt = []
-                for columns in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
-                    for cell in columns:
-                        l_corr_opt.append(cell.value)
+            l_random_opt = []
+            for columns in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
+                for cell in columns:
+                    l_random_opt.append(cell.value)
 
-                l_corr_max = []
-                for columns in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
-                    for cell in columns:
-                        l_corr_max.append(cell.value)
+            l_random_max = []
+            for columns in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
+                for cell in columns:
+                    l_random_max.append(cell.value)
 
-                l_corr_uni = []
-                for columns in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
-                    for cell in columns:
-                        l_corr_uni.append(cell.value)
+            l_random_uni = []
+            for columns in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
+                for cell in columns:
+                    l_random_uni.append(cell.value)
 
-                # read data type random
-                k_random = []
-                for columns in ws[k_ranges_random[start]: k_ranges_random[end]]:
-                    for cell in columns:
-                        k_random.append(cell.value)
+            hash_used_anti_opt_cell = hash_used_anti_opt_cells[jj]
+            hash_used_corr_opt_cell = hash_used_corr_opt_cells[jj]
+            hash_used_random_opt_cell = hash_used_rand_opt_cells[jj]
 
-                l_random_opt = []
-                for columns in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
-                    for cell in columns:
-                        l_random_opt.append(cell.value)
+            hash_used_anti_opt = ws[hash_used_anti_opt_cell].value
+            hash_used_corr_opt = ws[hash_used_corr_opt_cell].value
+            hash_used_random_opt = ws[hash_used_random_opt_cell].value
 
-                l_random_max = []
-                for columns in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
-                    for cell in columns:
-                        l_random_max.append(cell.value)
+            # update LList
+            l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
+                                           hash_used_anti_opt, hash_budget_anti)
+            l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
+                                           hash_used_corr_opt, hash_budget_corr)
+            l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_anti, l_random_opt,
+                                           hash_used_random_opt, hash_budget_rand)
 
-                l_random_uni = []
-                for columns in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
-                    for cell in columns:
-                        l_random_uni.append(cell.value)
+            hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
+            hash_used_corr_uni_cell = hash_used_corr_uni_cells[jj]
+            hash_used_random_uni_cell = hash_used_rand_uni_cells[jj]
 
-                hash_used_anti_opt_cell = hash_used_anti_opt_cells[jj]
-                hash_used_corr_opt_cell = hash_used_corr_opt_cells[jj]
-                hash_used_random_opt_cell = hash_used_rand_opt_cells[jj]
+            hash_used_anti_uni = ws[hash_used_anti_uni_cell].value
+            hash_used_corr_uni = ws[hash_used_corr_uni_cell].value
+            hash_used_random_uni = ws[hash_used_random_uni_cell].value
 
-                hash_used_anti_opt = ws[hash_used_anti_opt_cell].value
-                hash_used_corr_opt = ws[hash_used_corr_opt_cell].value
-                hash_used_random_opt = ws[hash_used_random_opt_cell].value
+            l_anti_uni = post_optimization_uni(data_anti, l_anti_uni, hash_used_anti_uni, hash_budget_anti)
+            l_corr_uni = post_optimization_uni(data_corr, l_corr_uni, hash_used_corr_uni, hash_budget_corr)
+            l_random_uni = post_optimization_uni(data_random, l_random_uni, hash_used_random_uni, hash_budget_rand)
 
-                # update LList
-                l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
-                                               hash_used_anti_opt, hash_budget_anti)
-                l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
-                                               hash_used_corr_opt, hash_budget_corr)
-                l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_anti, l_random_opt,
-                                               hash_used_random_opt, hash_budget_rand)
+            # write udpate LList back to excel file
+            for kk in range(len(l_anti_opt)):
+                cur_cell_anti_opt = column_row_index(l_ranges_opt_anti[start], kk)
+                cur_cell_anti_uni = column_row_index(l_ranges_uni_anti[start], kk)
+                ws1[cur_cell_anti_opt] = l_anti_opt[kk]
+                ws1[cur_cell_anti_uni] = l_anti_uni[kk]
 
-                hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
-                hash_used_corr_uni_cell = hash_used_corr_uni_cells[jj]
-                hash_used_random_uni_cell = hash_used_rand_uni_cells[jj]
+            for kk in range(len(l_corr_opt)):
+                cur_cell_corr_opt = column_row_index(l_ranges_opt_corr[start], kk)
+                cur_cell_corr_uni = column_row_index(l_ranges_uni_corr[start], kk)
+                ws1[cur_cell_corr_opt] = l_corr_opt[kk]
+                ws1[cur_cell_corr_uni] = l_corr_uni[kk]
 
-                hash_used_anti_uni = ws[hash_used_anti_uni_cell].value
-                hash_used_corr_uni = ws[hash_used_corr_uni_cell].value
-                hash_used_random_uni = ws[hash_used_random_uni_cell].value
-
-                l_anti_uni = post_optimization_uni(data_anti, l_anti_uni, hash_used_anti_uni, hash_budget_anti)
-                l_corr_uni = post_optimization_uni(data_corr, l_corr_uni, hash_used_corr_uni, hash_budget_corr)
-                l_random_uni = post_optimization_uni(data_random, l_random_uni, hash_used_random_uni, hash_budget_rand)
-
-                # write udpate LList back to excel file
-                for kk in range(len(l_anti_opt)):
-                    cur_cell_anti_opt = column_row_index(l_ranges_opt_anti[start], kk)
-                    cur_cell_anti_uni = column_row_index(l_ranges_uni_anti[start], kk)
-                    ws1[cur_cell_anti_opt] = l_anti_opt[kk]
-                    ws1[cur_cell_anti_uni] = l_anti_uni[kk]
-
-                for kk in range(len(l_corr_opt)):
-                    cur_cell_corr_opt = column_row_index(l_ranges_opt_corr[start], kk)
-                    cur_cell_corr_uni = column_row_index(l_ranges_uni_corr[start], kk)
-                    ws1[cur_cell_corr_opt] = l_corr_opt[kk]
-                    ws1[cur_cell_corr_uni] = l_corr_uni[kk]
-
-                for kk in range(len(l_random_opt)):
-                    cur_cell_random_opt = column_row_index(l_ranges_opt_random[start], kk)
-                    cur_cell_random_uni = column_row_index(l_ranges_uni_random[start], kk)
-                    ws1[cur_cell_random_uni] = l_random_uni[kk]
-                    ws1[cur_cell_random_opt] = l_random_opt[kk]
-        wb1.save(excel_file_name)
+            for kk in range(len(l_random_opt)):
+                cur_cell_random_opt = column_row_index(l_ranges_opt_random[start], kk)
+                cur_cell_random_uni = column_row_index(l_ranges_uni_random[start], kk)
+                ws1[cur_cell_random_uni] = l_random_uni[kk]
+                ws1[cur_cell_random_opt] = l_random_opt[kk]
+    wb1.save(excel_file_name)
 
 print("All done")

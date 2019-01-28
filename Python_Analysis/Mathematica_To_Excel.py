@@ -20,11 +20,12 @@ def column_row_index(input_string, column_dist):
 
 def get_file_info(full_file_name_):
     file_info_ = []
-    file_name_ = full_file_name_.split('.')[0]
+    file_name_ = full_file_name_.split('.txt')[0]
     temp_file_info_ = file_name_.split('_')
     dims_ = temp_file_info_[0]
     topks_ = temp_file_info_[2]
-    cards_= temp_file_info_[1]
+    # cards_= temp_file_info_[1]
+    cards_ = re.sub('[.]', '', temp_file_info_[1])
     types_= temp_file_info_[3]
 
     print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' topks: ' + str(topks_) + ' types: ' + str(types_))
@@ -146,12 +147,12 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 
 
 ####################################################################################
-# text_file_path = '/Users/sicongliu/'
-text_file_path = './'
-dimension = 4
+text_file_path = '/Users/sicongliu/'
+# text_file_path = './'
+dimension = 2
 excel_file_dir = './'
 collision_probility = 0.85
-read_lines = 3
+read_lines = -1
 excel_file_name = excel_file_dir + str(dimension) + 'D_085_all_before.xlsx'
 
 top_m_cell = 'E1'
@@ -165,80 +166,91 @@ for file in os.listdir(text_file_path):
     if file.endswith(".txt"):
         full_file_path = os.path.join(text_file_path, file)
         # print(os.path.join(file_path, file))
-        print(file)
+        # print(file)
+        # file = '3D_1.5M_Top50_anit.txt'
         file_info = get_file_info(file)
         file_endings = file_info[0]
         data_distributed_type = file_info[1]
         sheet_name = find_sheet(wss, file_endings)
-        print('sheet namne: ' + str(sheet_name))
-        # read file data into structure
-        opt_l_info = read_file_lines(full_file_path, read_lines)
+        if sheet_name is not None:
+            print('sheet namne: ' + str(sheet_name) + ' , data type: ' + data_distributed_type)
+            # read file data into structure
+            # opt_l_info = read_file_lines(full_file_path, read_lines)
 
-        ws1 = wb1.get_sheet_by_name(sheet_name)
-        top_m = ws1[top_m_cell].value
+            opt_l_info = []
+            ws1 = wb1.get_sheet_by_name(sheet_name)
+            top_m = ws1[top_m_cell].value
 
-        if top_m == 10:
-            k_ranges_anti = k_ranges_anti_10
-            l_ranges_opt_anti = l_ranges_opt_anti_10
-            l_ranges_max_anti = l_ranges_max_anti_10
-            l_ranges_uni_anti = l_ranges_uni_anti_10
+            if top_m == 10:
+                read_lines = 1
+                k_ranges_anti = k_ranges_anti_10
+                l_ranges_opt_anti = l_ranges_opt_anti_10
+                l_ranges_max_anti = l_ranges_max_anti_10
+                l_ranges_uni_anti = l_ranges_uni_anti_10
 
-            k_ranges_corr = k_ranges_corr_10
-            l_ranges_opt_corr = l_ranges_opt_corr_10
-            l_ranges_max_corr = l_ranges_max_corr_10
-            l_ranges_uni_corr = l_ranges_uni_corr_10
+                k_ranges_corr = k_ranges_corr_10
+                l_ranges_opt_corr = l_ranges_opt_corr_10
+                l_ranges_max_corr = l_ranges_max_corr_10
+                l_ranges_uni_corr = l_ranges_uni_corr_10
 
-            k_ranges_random = k_ranges_random_10
-            l_ranges_opt_random = l_ranges_opt_random_10
-            l_ranges_max_random = l_ranges_max_random_10
-            l_ranges_uni_random = l_ranges_uni_random_10
-        elif top_m == 25:
-            k_ranges_anti = k_ranges_anti_25
-            l_ranges_opt_anti = l_ranges_opt_anti_25
-            l_ranges_max_anti = l_ranges_max_anti_25
-            l_ranges_uni_anti = l_ranges_uni_anti_25
+                k_ranges_random = k_ranges_random_10
+                l_ranges_opt_random = l_ranges_opt_random_10
+                l_ranges_max_random = l_ranges_max_random_10
+                l_ranges_uni_random = l_ranges_uni_random_10
+                opt_l_info = read_file_lines(full_file_path, read_lines)
 
-            k_ranges_corr = k_ranges_corr_25
-            l_ranges_opt_corr = l_ranges_opt_corr_25
-            l_ranges_max_corr = l_ranges_max_corr_25
-            l_ranges_uni_corr = l_ranges_uni_corr_25
+            elif top_m == 25:
+                read_lines = 2
+                k_ranges_anti = k_ranges_anti_25
+                l_ranges_opt_anti = l_ranges_opt_anti_25
+                l_ranges_max_anti = l_ranges_max_anti_25
+                l_ranges_uni_anti = l_ranges_uni_anti_25
 
-            k_ranges_random = k_ranges_random_25
-            l_ranges_opt_random = l_ranges_opt_random_25
-            l_ranges_max_random = l_ranges_max_random_25
-            l_ranges_uni_random = l_ranges_uni_random_25
-        else:
-            k_ranges_anti = k_ranges_anti_50
-            l_ranges_opt_anti = l_ranges_opt_anti_50
-            l_ranges_max_anti = l_ranges_max_anti_50
-            l_ranges_uni_anti = l_ranges_uni_anti_50
+                k_ranges_corr = k_ranges_corr_25
+                l_ranges_opt_corr = l_ranges_opt_corr_25
+                l_ranges_max_corr = l_ranges_max_corr_25
+                l_ranges_uni_corr = l_ranges_uni_corr_25
 
-            k_ranges_corr = k_ranges_corr_50
-            l_ranges_opt_corr = l_ranges_opt_corr_50
-            l_ranges_max_corr = l_ranges_max_corr_50
-            l_ranges_uni_corr = l_ranges_uni_corr_50
+                k_ranges_random = k_ranges_random_25
+                l_ranges_opt_random = l_ranges_opt_random_25
+                l_ranges_max_random = l_ranges_max_random_25
+                l_ranges_uni_random = l_ranges_uni_random_25
+                opt_l_info = read_file_lines(full_file_path, read_lines)
 
-            k_ranges_random = k_ranges_random_50
-            l_ranges_opt_random = l_ranges_opt_random_50
-            l_ranges_max_random = l_ranges_max_random_50
-            l_ranges_uni_random = l_ranges_uni_random_50
+            else:
+                read_lines = 3
+                k_ranges_anti = k_ranges_anti_50
+                l_ranges_opt_anti = l_ranges_opt_anti_50
+                l_ranges_max_anti = l_ranges_max_anti_50
+                l_ranges_uni_anti = l_ranges_uni_anti_50
 
-        l_ranges_opt = []
-        # find data type cells
-        if data_distributed_type == 'anti':
-            l_ranges_opt = l_ranges_opt_anti
-        elif data_distributed_type == 'corr':
-            l_ranges_opt = l_ranges_opt_corr
-        else:
-            l_ranges_opt = l_ranges_opt_random
-        # write values to L_Opt list
+                k_ranges_corr = k_ranges_corr_50
+                l_ranges_opt_corr = l_ranges_opt_corr_50
+                l_ranges_max_corr = l_ranges_max_corr_50
+                l_ranges_uni_corr = l_ranges_uni_corr_50
 
-        for ii in range(opt_l_info.__len__()):
-            start = 2 * ii
-            print(opt_l_info[ii])
-            for jj in range(top_m):
-                cur_cell_opt = column_row_index(l_ranges_opt[start], jj)
-                ws1[cur_cell_opt] = opt_l_info[ii][jj]
+                k_ranges_random = k_ranges_random_50
+                l_ranges_opt_random = l_ranges_opt_random_50
+                l_ranges_max_random = l_ranges_max_random_50
+                l_ranges_uni_random = l_ranges_uni_random_50
+                opt_l_info = read_file_lines(full_file_path, read_lines)
+
+            l_ranges_opt = []
+            # find data type cells
+            if data_distributed_type == 'anti':
+                l_ranges_opt = l_ranges_opt_anti
+            elif data_distributed_type == 'corr':
+                l_ranges_opt = l_ranges_opt_corr
+            else:
+                l_ranges_opt = l_ranges_opt_random
+            # write values to L_Opt list
+
+            for ii in range(opt_l_info.__len__()):
+                start = 2 * ii
+                print(opt_l_info[ii])
+                for jj in range(top_m):
+                    cur_cell_opt = column_row_index(l_ranges_opt[start], jj)
+                    ws1[cur_cell_opt] = opt_l_info[ii][jj]
 
 wb1.save(excel_file_name)
 
