@@ -346,7 +346,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 obj_cumsum = []
                                 hashsize_cumsum = []
                                 obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type_[ii] + "_" + str(
-                                    dimensions_[k]) +  "_" + str(cardinality_[cc]) + ".txt"
+                                    dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + str(with_without_opt_) + ".txt"
                                 f4 = open(obj_hashsize_file, 'w')
                                 for mm in range(len(L_Opt_List)):
                                     if obj_cumsum.__len__() == 0:
@@ -365,7 +365,8 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 obj_cumsum = []
                                 hashsize_cumsum = []
                                 obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_max_" + data_type_[ii] + \
-                                                    "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + ".txt"
+                                                    "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + \
+                                                    str(with_without_opt_) + ".txt"
                                 f4 = open(obj_hashsize_file, 'w')
                                 for mm in range(len(L_Max_List)):
                                     if obj_cumsum.__len__() == 0:
@@ -385,7 +386,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 obj_cumsum = []
                                 hashsize_cumsum = []
                                 obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type_[ii] + "_" + str(
-                                    dimensions_[k]) + "_" + str(cardinality_[cc]) + ".txt"
+                                    dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + str(with_without_opt_) + ".txt"
                                 f4 = open(obj_hashsize_file, 'w')
                                 for mm in range(len(L_Uni_List)):
                                     if obj_cumsum.__len__() == 0:
@@ -616,15 +617,16 @@ types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
 sim_threshold = 0.85
-dimensions = [2]
-excel_file_before = "./2D_085_all_before.xlsx"
-excel_file_after = "./2D_085_all_after.xlsx"
+dimensions = [4]
+excel_file_before = "./4D_075_all_before.xlsx"
+excel_file_after = "./4D_075_all_after.xlsx"
 
 # dimensions = [6]
 # excel_file_before = "./6D_top25_075_all_before.xlsx"
 # excel_file_after = "./6D_top25_075_all_after.xlsx"
 
-top_ks = [10, 25, 50]
+# top_ks = [10, 25, 50]
+top_ks = [25, 50]
 
 save_file_path_before = '../H2_ALSH/parameters_before/'
 save_file_path_after = '../H2_ALSH/parameters_after/'
@@ -643,6 +645,7 @@ with_without_opt = 'without_opt'
 pot = 0
 file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot)
 
+
 with_without_opt = 'with_opt'
 pot = 1
 file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot)
@@ -659,7 +662,7 @@ for rr in range(0, repeated_run):
     temp_str = "aggregating for non-opt round " + str(rr)
     f1.write('echo \"' + temp_str + '\" \n')
 
-    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py without_post_opt ' + str(rr) + ' \n')
+    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py without_opt ' + str(rr) + ' \n')
     f1.write('sleep 3' + '\n')
 
     # before starting pot = 1, clean everything except hash_table
@@ -672,7 +675,7 @@ for rr in range(0, repeated_run):
     temp_str = "aggregating for opt round " + str(rr)
     f1.write('echo \"' + temp_str + '\" \n')
 
-    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py with_post_opt ' + str(rr) + ' \n')
+    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py with_opt ' + str(rr) + ' \n')
     f1.write('sleep 3' + '\n')
 
     # before starting pot = 1, clean everything except hash_table

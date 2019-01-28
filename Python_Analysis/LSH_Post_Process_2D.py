@@ -221,6 +221,7 @@ for dd in range(dimensions.__len__()):
                                         start_hashsize = rand_log_optimized_uni_hashsize[0]
                                 obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
                                             str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
+
                                 if not os.path.exists(obj_file_dir):
                                     continue
                                 # ws = wb[sheet_name]
@@ -230,7 +231,7 @@ for dd in range(dimensions.__len__()):
                                 ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
 
                                 obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
-                                           str(cur_dimension) + '_' + str(cur_card) + '.txt'
+                                           str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
 
                                 f1 = open(obj_file, 'r')
                                 lines = f1.readlines()

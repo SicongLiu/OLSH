@@ -25,13 +25,13 @@ row_counts = 6
 
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 budgets = ["1M", "10M"]
-dimensions = [6]
+dimensions = [5]
 
 repeated_run = 5
 # excel_folders = '../H2_ALSH/'
 
 # excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_4D_Excel/'
-excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_6D_Excel/Top_25/'
+excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_5D_Excel/'
 
 aggregated_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_without_opt.xlsx'
 aggregated_hash_hit_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_hash_hits_without_opt.xlsx'

@@ -229,8 +229,11 @@ for dd in range(dimensions.__len__()):
 
                                 ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
 
+                                # obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
+                                #            str(cur_dimension) + '_' + str(cur_card) + '.txt'
+
                                 obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
-                                           str(cur_dimension) + '_' + str(cur_card) + '.txt'
+                                           str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
 
                                 f1 = open(obj_file, 'r')
                                 lines = f1.readlines()

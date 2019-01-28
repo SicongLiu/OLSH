@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from openpyxl import load_workbook
 
 result_file_dir = '../H2_ALSH/'
@@ -15,10 +16,10 @@ cand_recall_prefix = 'temp_result_'
 
 dimensions = [6]
 
-card_file_name = ['100k', '200k', '500k', '1M', '1.5M', '2M']
-card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
+card_file_name = ['500k', '1M', '1.5M', '2M']
+card = [500000, 1000000, 1500000, 2000000]
 
-optimized_tops = [10, 25, 50]
+optimized_tops = [50]
 
 top_ks = [1, 2, 5, 10, 25, 50]
 budget = ['1M', '10M']
@@ -101,8 +102,13 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 
 f = open(over_reault, 'w')
+
 with_without_opt = str(sys.argv[1])
 run_index = str(sys.argv[2])
+
+
+# with_without_opt = 'without_post_opt'
+# run_index = '0'
 
 for dd in range(dimensions.__len__()):
     cur_dimension = dimensions[dd]
@@ -227,8 +233,11 @@ for dd in range(dimensions.__len__()):
 
                                 ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
 
+                                # obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
+                                #            str(cur_dimension) + '_' + str(cur_card) + '.txt'
+
                                 obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
-                                           str(cur_dimension) + '_' + str(cur_card) + '.txt'
+                                           str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
 
                                 f1 = open(obj_file, 'r')
                                 lines = f1.readlines()
@@ -246,9 +255,11 @@ for dd in range(dimensions.__len__()):
                                     top_ks_length = 5
                                 else:
                                     top_ks_length = 6
+                                obj_s_length = obj_s.__len__()
                                 for oh_index in range(top_ks_length):
-                                    obj.append(int(obj_s[top_ks[oh_index] - 1]))
-                                    hash.append(int(hash_s[top_ks[oh_index] - 1]))
+                                    temp_index_ = min(obj_s_length - 1, top_ks[oh_index] - 1)
+                                    obj.append(int(obj_s[temp_index_]))
+                                    hash.append(int(hash_s[temp_index_]))
                                 f1.close()
 
 
@@ -270,8 +281,11 @@ for dd in range(dimensions.__len__()):
                                     f1 = open(cand_result_file, 'r')
                                     lines = f1.readlines()
                                     for jj in range(top_ks[ii]):
-                                        cand_size += float(lines[jj].split(',')[0])
-                                        hash_table_hits += float(lines[jj].split(',')[2])
+                                        temp_index_ = min(lines.__len__() - 1, jj)
+                                        # cand_size += float(lines[jj].split(',')[0])
+                                        # hash_table_hits += float(lines[jj].split(',')[2])
+                                        cand_size += float(lines[temp_index_].split(',')[0])
+                                        hash_table_hits += float(lines[temp_index_ ].split(',')[2])
                                     # cand_size = float(cand_size)/float(top_ks[ii])
                                     cand_size = float(cand_size)
                                     hash_table_hits = float(hash_table_hits)
