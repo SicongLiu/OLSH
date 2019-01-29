@@ -101,7 +101,7 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 f = open(over_reault, 'w')
 
-with_without_opt = 'without_opt'
+with_without_opt = 'with_opt'
 
 for dd in range(dimensions.__len__()):
     cur_dimension = dimensions[dd]
@@ -263,32 +263,32 @@ for dd in range(dimensions.__len__()):
                                                    str(cur_card) + '_' + cur_ct + '_' + cur_cr + '_top_' + str(top_ks[ii]) + '_candidate_size.txt'
                                     cand_size = 0
                                     hash_table_hits = 0
-                                    f1 = open(cand_result_file, 'r')
-                                    lines = f1.readlines()
-                                    for jj in range(top_ks[ii]):
-                                        cand_size += float(lines[jj].split(',')[0])
-                                        hash_table_hits += float(lines[jj].split(',')[2])
-                                    # cand_size = float(cand_size)/float(top_ks[ii])
-                                    cand_size = float(cand_size)
-                                    hash_table_hits = float(hash_table_hits)
-                                    cand_size_list.append(cand_size)
-                                    hash_table_hits_list.append(hash_table_hits)
-                                    f1.close()
+                                    # f1 = open(cand_result_file, 'r')
+                                    # lines = f1.readlines()
+                                    # for jj in range(top_ks[ii]):
+                                    #     cand_size += float(lines[jj].split(',')[0])
+                                    #     hash_table_hits += float(lines[jj].split(',')[2])
+                                    # # cand_size = float(cand_size)/float(top_ks[ii])
+                                    # cand_size = float(cand_size)
+                                    # hash_table_hits = float(hash_table_hits)
+                                    # cand_size_list.append(cand_size)
+                                    # hash_table_hits_list.append(hash_table_hits)
+                                    # f1.close()
 
-                                overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
-                                    cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '_' + cur_cr + '.txt'
-                                # print(overall_result_file)
-                                f1 = open(overall_result_file, 'r')
-                                lines = f1.readlines()
-                                recall = []
-                                NDCG = []
-                                # for ll in range(top_ks.__len__()):
-                                for ll in range(top_ks_length):
-                                    # print (lines[2*ll+1])
-                                    ttt = lines[2*ll+1].split('\t')[0]
-                                    # print(ttt)
-                                    recall.append(float(lines[2*ll+1].split('\t')[1]))
-                                    NDCG.append(float(lines[2*ll+1].split('\t')[2]))
+                                # overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
+                                #     cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '_' + cur_cr + '.txt'
+                                # # print(overall_result_file)
+                                # f1 = open(overall_result_file, 'r')
+                                # lines = f1.readlines()
+                                # recall = []
+                                # NDCG = []
+                                # # for ll in range(top_ks.__len__()):
+                                # for ll in range(top_ks_length):
+                                #     # print (lines[2*ll+1])
+                                #     ttt = lines[2*ll+1].split('\t')[0]
+                                #     # print(ttt)
+                                #     recall.append(float(lines[2*ll+1].split('\t')[1]))
+                                #     NDCG.append(float(lines[2*ll+1].split('\t')[2]))
                                 # print(recall)
                                 # print(NDCG)
 
@@ -302,9 +302,9 @@ for dd in range(dimensions.__len__()):
                                               ', result type: ' + cur_cr
                                 f.write(spec_string + '\n')
                                 for ee in range(top_ks_length):
-                                    f.write(str(recall[ee]) + ', ')
-                                    f.write(str(NDCG[ee]) + ', ')
-                                    f.write(str(cand_size_list[ee])  + ', ')
+                                    # f.write(str(recall[ee]) + ', ')
+                                    # f.write(str(NDCG[ee]) + ', ')
+                                    # f.write(str(cand_size_list[ee])  + ', ')
                                     f.write(str(obj[ee]) + ', ')
                                     f.write(str(hash[ee]) + ', ')
                                     f.write('\n')
@@ -317,13 +317,13 @@ for dd in range(dimensions.__len__()):
                                     cand_cell = column_row_index(start_cand, column_dist + ee)
                                     obj_cell = column_row_index(start_obj, column_dist + ee)
                                     hashsize_cell = column_row_index(start_hashsize, column_dist + ee)
-                                    ws[recall_cell] = float(recall[ee])
-                                    ws[NDCG_cell] = float(NDCG[ee])
-                                    ws[cand_cell] = float(cand_size_list[ee])
+                                    # ws[recall_cell] = float(recall[ee])
+                                    # ws[NDCG_cell] = float(NDCG[ee])
+                                    # ws[cand_cell] = float(cand_size_list[ee])
                                     ws[obj_cell] = float(obj[ee])
                                     ws[hashsize_cell] = float(hash[ee])
-                                for ee in range(top_ks_length):
-                                    ws_hash_hits[hashsize_cell] = float(hash_table_hits_list[ee])
+                                # for ee in range(top_ks_length):
+                                #     ws_hash_hits[hashsize_cell] = float(hash_table_hits_list[ee])
     wb.save(excel_file)
     wb_hash_hits.save(excel_file_hash_hits)
 f.close()

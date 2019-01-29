@@ -21,8 +21,8 @@ card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 data_type = ["anti_correlated", "correlated", "random"]
 comp_types = ['opt', 'max', 'uni']
-
 optimized_tops = [10, 25, 50]
+
 top_ks = [1, 2, 5, 10, 25, 50]
 budget = ['1M', '10M']
 over_reault = result_file_dir + 'all_aggregated_Nov_16.txt'

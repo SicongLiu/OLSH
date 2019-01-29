@@ -25,13 +25,13 @@ row_counts = 6
 
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 budgets = ["1M", "10M"]
-dimensions = [5]
+dimensions = [4]
 
 repeated_run = 5
 # excel_folders = '../H2_ALSH/'
 
-# excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_4D_Excel/'
-excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_5D_Excel/'
+excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_4D_Excel/'
+# excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_5D_Excel/'
 
 aggregated_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_without_opt.xlsx'
 aggregated_hash_hit_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_hash_hits_without_opt.xlsx'
@@ -46,14 +46,14 @@ wb_22 = load_workbook(filename=aggregated_file_name_with_opt)
 wb_hash_hits_22 = load_workbook(filename=aggregated_hash_hit_file_name_with_opt)
 
 for rr in range(0, repeated_run):
-    file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_post_opt_' + str(rr) + '.xlsx'
-    hash_hit_file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_post_opt_' + str(rr) + '_hash_hits.xlsx'
+    file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_opt_' + str(rr) + '.xlsx'
+    hash_hit_file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_opt_' + str(rr) + '_hash_hits.xlsx'
 
     wb_1 = load_workbook(filename=file_name_without_opt)
     wb_hash_hits_1 = load_workbook(filename=hash_hit_file_name_without_opt)
 
-    file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_post_opt_' + str(rr) + '.xlsx'
-    hash_hit_file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_post_opt_' + str(rr) + '_hash_hits.xlsx'
+    file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_opt_' + str(rr) + '.xlsx'
+    hash_hit_file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_opt_' + str(rr) + '_hash_hits.xlsx'
 
     wb_2 = load_workbook(filename=file_name_with_opt)
     wb_hash_hits_2 = load_workbook(filename=hash_hit_file_name_with_opt)

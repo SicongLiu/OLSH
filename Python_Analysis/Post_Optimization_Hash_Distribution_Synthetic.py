@@ -219,15 +219,15 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-collision_probility = 0.85
+collision_probility = 0.75
 total_error = 0
-dimensions = [2]
+dimensions = [4]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_085_all_before.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_redudancy_2_200k_top25_fixed.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_075_all_before.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
