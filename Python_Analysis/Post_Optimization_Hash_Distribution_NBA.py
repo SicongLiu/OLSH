@@ -153,7 +153,7 @@ excel_file_dir = './'
 # for each excel file
 
 
-excel_file_name = excel_file_dir + 'NBA_before.xlsx'
+excel_file_name = excel_file_dir + 'NBA_075_redudant_2_before.xlsx'
 wb = load_workbook(filename=excel_file_name, data_only=True)
 wb1 = load_workbook(filename=excel_file_name)
 wss = wb.get_sheet_names()
