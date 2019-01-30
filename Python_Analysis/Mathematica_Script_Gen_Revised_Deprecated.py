@@ -72,11 +72,11 @@
 # query_count = [1000]
 # topk = 31
 #
-data_type = ["random"]
-dimensions = [4]
-cardinality = [2000000]
+data_type = ["anti_correlated"]
+dimensions = [6]
+cardinality = [200000]
 query_count = [1000]
-topk = 16
+topk = 21
 
 import math
 
@@ -89,7 +89,7 @@ KList = [25, 20, 15, 10, 9, 8, 7, 6, 5, 4]
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 
 DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-SCRIPT_OUTPUT_DIR = "../H2_ALSH/parameters/4D_sum/"
+SCRIPT_OUTPUT_DIR = "../H2_ALSH/parameters/6D_sum/"
 
 for i in range(len(data_type)):
     for j in range(len(dimensions)):

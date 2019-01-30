@@ -30,7 +30,7 @@ dimensions = [4]
 repeated_run = 5
 # excel_folders = '../H2_ALSH/'
 
-excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_4D_Excel/'
+excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_085_4D_Excel/'
 # excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_5D_Excel/'
 
 aggregated_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_without_opt.xlsx'

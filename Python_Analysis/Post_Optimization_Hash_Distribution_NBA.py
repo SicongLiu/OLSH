@@ -143,7 +143,7 @@ l_ranges_uni_anti_9 = ['H6', 'H14', 'H20', 'H28', 'H35', 'H43', 'H48', 'H56', 'H
 hash_used_anti_opt_cells_9 = ['I15', 'I29', 'I44', 'I57', 'I73']
 hash_used_anti_uni_cells_9 = ['O15', 'O29', 'O44', 'O57', 'O73']
 
-collision_probility = 0.9
+collision_probility = 0.75
 total_error = 0
 
 
@@ -153,7 +153,7 @@ excel_file_dir = './'
 # for each excel file
 
 
-excel_file_name = excel_file_dir + 'NBA.xlsx'
+excel_file_name = excel_file_dir + 'NBA_before.xlsx'
 wb = load_workbook(filename=excel_file_name, data_only=True)
 wb1 = load_workbook(filename=excel_file_name)
 wss = wb.get_sheet_names()
@@ -172,7 +172,7 @@ for wwss in wss:
     hash_budget_rand = ws[budget_cell_rand].value
     total_cardinality = ws[cardinality_cell].value
 
-    top_m_cardinality_anti_cell = 'J16'
+    top_m_cardinality_anti_cell = 'J15'
     top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
 
     hash_used_anti_opt_cells = hash_used_anti_opt_cells_9

@@ -149,11 +149,12 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 ####################################################################################
 text_file_path = '/Users/sicongliu/'
 # text_file_path = './'
-dimension = 2
+dimension = 4
 excel_file_dir = './'
-collision_probility = 0.85
+collision_probility = 0.75
 read_lines = -1
-excel_file_name = excel_file_dir + str(dimension) + 'D_085_all_before.xlsx'
+# excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_3_all_before.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_065_redundancy_2_all_before.xlsx'
 
 top_m_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]

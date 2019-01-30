@@ -17,11 +17,11 @@ def float_to_str(f):
     return format(d1, 'f')
 
 
-data_type = ["correlated", "anti_correlated", "random"]
-# data_type = ["random"]
-dimensions = [4]
-cardinality = [200000]
-topk = 10
+# data_type = ["correlated", "anti_correlated", "random"]
+data_type = ["NBA"]
+dimensions = [7]
+cardinality = [23338]
+topk = 9
 
 function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
@@ -34,7 +34,8 @@ hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/New_Mathematica_Parameters_"
-DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+# DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+DATA_FOLDER = "../H2_ALSH/qhull_data/NBA/"
 
 
 for j in range(len(dimensions)):
