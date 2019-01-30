@@ -21,7 +21,8 @@ optimized_tops = [25]
 
 cardinality = 23338
 top_ks = [1, 2, 5, 10, 25, 50]
-types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+types = ["log"]
 data_type = "NBA"
 comp_types = ['opt', 'max', 'uni']
 
