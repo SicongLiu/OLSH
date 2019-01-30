@@ -441,10 +441,7 @@ def write_script(data_type_, dimensions_, top_ks_, types_, card_excel_, cardinal
 data_type = "NBA"
 card_excel = ['23338']
 cardinality = [23338]
-
-#  types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-
-types = ["log"]
+types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 sim_threshold = 0.75
 dimensions = [7]

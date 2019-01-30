@@ -24,35 +24,31 @@ column_counts = 45
 row_counts = 6
 
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-dimensions = [6]
 
-repeated_run = 5
-# excel_folders = '../H2_ALSH/'
+repeateNBA_run = 5
+excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_Redundant_2_NBA_Excel/'
 
-# excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_Redundant_3_4D_Excel/'
-excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_6D_Excel/'
+aggregateNBA_file_name_without_opt = excel_folders + 'NBA_all_without_opt.xlsx'
+aggregateNBA_hash_hit_file_name_without_opt = excel_folders + 'NBA_all_hash_hits_without_opt.xlsx'
 
-aggregated_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_without_opt.xlsx'
-aggregated_hash_hit_file_name_without_opt = excel_folders + str(dimensions[0]) + 'D_all_hash_hits_without_opt.xlsx'
+wb_11 = load_workbook(filename=aggregateNBA_file_name_without_opt)
+wb_hash_hits_11 = load_workbook(filename=aggregateNBA_hash_hit_file_name_without_opt)
 
-wb_11 = load_workbook(filename=aggregated_file_name_without_opt)
-wb_hash_hits_11 = load_workbook(filename=aggregated_hash_hit_file_name_without_opt)
+aggregateNBA_file_name_with_opt = excel_folders + 'NBA_all_with_opt.xlsx'
+aggregateNBA_hash_hit_file_name_with_opt = excel_folders + 'NBA_all_hash_hits_with_opt.xlsx'
 
-aggregated_file_name_with_opt = excel_folders + str(dimensions[0]) + 'D_all_with_opt.xlsx'
-aggregated_hash_hit_file_name_with_opt = excel_folders + str(dimensions[0]) + 'D_all_hash_hits_with_opt.xlsx'
+wb_22 = load_workbook(filename=aggregateNBA_file_name_with_opt)
+wb_hash_hits_22 = load_workbook(filename=aggregateNBA_hash_hit_file_name_with_opt)
 
-wb_22 = load_workbook(filename=aggregated_file_name_with_opt)
-wb_hash_hits_22 = load_workbook(filename=aggregated_hash_hit_file_name_with_opt)
-
-for rr in range(0, repeated_run):
-    file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_opt_' + str(rr) + '.xlsx'
-    hash_hit_file_name_without_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_without_opt_' + str(rr) + '_hash_hits.xlsx'
+for rr in range(0, repeateNBA_run):
+    file_name_without_opt = excel_folders + 'Aggregation_' + 'NBA_without_opt_' + str(rr) + '.xlsx'
+    hash_hit_file_name_without_opt = excel_folders + 'Aggregation_' + 'NBA_without_opt_' + str(rr) + '_hash_hits.xlsx'
 
     wb_1 = load_workbook(filename=file_name_without_opt)
     wb_hash_hits_1 = load_workbook(filename=hash_hit_file_name_without_opt)
 
-    file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_opt_' + str(rr) + '.xlsx'
-    hash_hit_file_name_with_opt = excel_folders + 'Aggregation_' + str(dimensions[0]) + 'D_with_opt_' + str(rr) + '_hash_hits.xlsx'
+    file_name_with_opt = excel_folders + 'Aggregation_' + 'NBA_with_opt_' + str(rr) + '.xlsx'
+    hash_hit_file_name_with_opt = excel_folders + 'Aggregation_' + 'NBA_with_opt_' + str(rr) + '_hash_hits.xlsx'
 
     wb_2 = load_workbook(filename=file_name_with_opt)
     wb_hash_hits_2 = load_workbook(filename=hash_hit_file_name_with_opt)
@@ -92,14 +88,14 @@ for rr in range(0, repeated_run):
                         ws22[cell_index].value = ws22[cell_index].value + ws2[cell_index].value
                         # wsh22[cell_index].value = wsh22[cell_index].value + wsh2[cell_index].value
 
-                        if rr == repeated_run - 1:
-                            ws11[cell_index].value = ws11[cell_index].value / repeated_run
-                            ws22[cell_index].value = ws22[cell_index].value / repeated_run
+                        if rr == repeateNBA_run - 1:
+                            ws11[cell_index].value = ws11[cell_index].value / repeateNBA_run
+                            ws22[cell_index].value = ws22[cell_index].value / repeateNBA_run
 
-wb_11.save(aggregated_file_name_without_opt)
-# wb_hash_hits_11.save(aggregated_hash_hit_file_name_without_opt)
+wb_11.save(aggregateNBA_file_name_without_opt)
+# wb_hash_hits_11.save(aggregateNBA_hash_hit_file_name_without_opt)
 
-wb_22.save(aggregated_file_name_with_opt)
-# wb_hash_hits_22.save(aggregated_hash_hit_file_name_with_opt)
+wb_22.save(aggregateNBA_file_name_with_opt)
+# wb_hash_hits_22.save(aggregateNBA_hash_hit_file_name_with_opt)
 
 
