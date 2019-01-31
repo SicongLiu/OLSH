@@ -83,16 +83,4 @@ np.savetxt(save_data_file, temp_data, delimiter=',', fmt='%i')
 f_handle = open(save_data_file, 'ab')
 np.savetxt(f_handle, scaled_points, fmt='%10.6f')
 f_handle.close()
-
-# file = open(save_data_file, "w")
-# file.write(str(dimension))
-# file.write("\n")
-# file.write(str(total_record_count))
-# file.write("\n")
-# # write file in text file
-# for i in range(total_record_count):
-#     s = "  ".join(map(str, scaled_points[i]))
-#     file.write(s)
-#     file.write("\n")
-# file.close()
 print("All Done .\n")

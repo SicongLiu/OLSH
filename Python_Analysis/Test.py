@@ -127,13 +127,19 @@ def get_real_topk(dimension_, cardinality_, type_, top_k_, map_):
 # f1.close()
 # for ii in range(file_dict.__len__()):
 #     print(file_dict[ii])
-import re
-str1 = 'Budget_10M_4D_top50_2M'
-str2 = '4D_Top50_2M'
-ret = str1.find(str2)
+# import re
+# str1 = 'Budget_10M_4D_top50_2M'
+# str2 = '4D_Top50_2M'
+# ret = str1.find(str2)
+#
+# if re.search(str2, str1, re.IGNORECASE):
+#     print('yes')
+#
+# print(str1.find(str2))
 
-if re.search(str2, str1, re.IGNORECASE):
-    print('yes')
-
-print(str1.find(str2))
+tt1 = [[2, 3, 4], [1, 2, 3]]
+tt2 = [[7,8,9], [2,3,4], [9,10,3]]
+tt1.append(tt2)
+print(tt1)
+print(tt2[1:])
 
