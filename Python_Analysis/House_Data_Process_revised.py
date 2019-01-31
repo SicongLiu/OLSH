@@ -9,7 +9,10 @@ import xlwt
 import xlrd
 
 csv_file_path = '../HOUSE_Data/usa_2013_2017.csv'
-save_data_file = "HOUSE_Data.txt"
+
+cardinality = '10M'
+# csv_file_path = 'HOUSE_' + str(cardinality) + '.csv'
+save_data_file = 'HOUSE_Data_' + str(cardinality) + '.txt'
 # PROPINSR -- 6
 # PROPTX99 -- 7
 # COSTELEC -- 8
@@ -35,10 +38,6 @@ with open(csv_file_path, 'r') as f:
                 # value = worksheet.cell_value(rowx=row, colx=column_index)
                 if value == '' or str(value).isspace() or value == '0':
                     continue
-                # if c_index == 0 and (str(value).isspace() or str(value) == ''):
-                #     continue
-                # else:
-                #     cur_record.append(value)
                 cur_record.append(float(value))
             # if cur_record.__len__() > 0: # and cur_record.__len__() == dimension: # and int(cur_record[0]) >= 10:
             if cur_record.__len__() != dimension or '0' in cur_record or 0 in cur_record:
@@ -49,31 +48,12 @@ with open(csv_file_path, 'r') as f:
         row_count = row_count + 1
 print("total number of record: " + str(total_record_count))
 
-
-# normalize data
-def normalize_data_dim(point_, scalors_):
-    process_points = []
-    for ii in range(dimension):
-        process_points.append(point_[ii]/scalors_[ii])
-    return process_points
-
-
-scalors = []
-for i in range(dimension):
-    scalors.append(0)
-
+my_points = []
 for i in range(total_record_count):
-    for ii in range(dimension):
-        if total_data[i][ii] > scalors[ii]:
-            scalors[ii] = total_data[i][ii]
+    cur_point = np.asarray(total_data[i])
+    my_points.append(cur_point)
 
-scaled_points = []
-for i in range(total_record_count):
-    cur_point = normalize_data_dim(total_data[i], scalors)
-    cur_point = np.asarray(cur_point)
-    scaled_points.append(cur_point)
-
-scaled_points = np.asarray(scaled_points)
+my_points = np.asarray(my_points)
 temp_data = []
 temp_data.append(dimension)
 temp_data.append(total_record_count)
@@ -81,18 +61,7 @@ temp_data = np.asarray(temp_data)
 np.savetxt(save_data_file, temp_data, delimiter=',', fmt='%i')
 
 f_handle = open(save_data_file, 'ab')
-np.savetxt(f_handle, scaled_points, fmt='%10.6f')
+np.savetxt(f_handle, my_points, fmt='%10.6f')
 f_handle.close()
 
-# file = open(save_data_file, "w")
-# file.write(str(dimension))
-# file.write("\n")
-# file.write(str(total_record_count))
-# file.write("\n")
-# # write file in text file
-# for i in range(total_record_count):
-#     s = "  ".join(map(str, scaled_points[i]))
-#     file.write(s)
-#     file.write("\n")
-# file.close()
 print("All Done .\n")
