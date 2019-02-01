@@ -455,8 +455,8 @@ types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 sim_threshold = 0.75
 dimensions = [6]
-excel_file_before = "./HOUSE_075_redundancy_4_before.xlsx"
-excel_file_after = "./HOUSE_075_redundancy_4_after.xlsx"
+excel_file_before = "./HOUSE_075_redundancy_10_before.xlsx"
+excel_file_after = "./HOUSE_075_redundancy_10_after.xlsx"
 top_ks = [25]
 
 

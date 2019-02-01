@@ -531,7 +531,7 @@ cardinality = ['95149', '63751', '105366']
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 sim_threshold = 0.75
 dimension = 4
-excel_file_before = "./4D_redundancy_2_200k_top25_Merged.xlsx"
+excel_file_before = "./4D_redundancy_3_200k_top25_Merged.xlsx"
 top_ks = 25
 
 

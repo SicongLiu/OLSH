@@ -1129,7 +1129,7 @@ with_without_opt = 'with_opt'
 pot = 1
 file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot, map_after, data_type_for_keys)
 
-repeated_run = 5
+repeated_run = 1
 
 aggregated_file_name = BASH_FILE_BASE_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
 f1 = open(aggregated_file_name, 'w')
