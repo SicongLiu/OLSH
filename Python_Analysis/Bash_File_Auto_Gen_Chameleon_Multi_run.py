@@ -629,11 +629,11 @@ card_excel = ['200k']
 cardinality = [200000]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 budgets = ["1M", "10M"]
-sim_threshold = 0.65
+sim_threshold = 0.75
 dimensions = [4]
-excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
-excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
-top_ks = [10, 25, 50]
+excel_file_before = "./4D_075_redundancy_4_before.xlsx"
+excel_file_after = "./4D_075_redundancy_4_after.xlsx"
+top_ks = [10, 25]
 
 
 ################################################################

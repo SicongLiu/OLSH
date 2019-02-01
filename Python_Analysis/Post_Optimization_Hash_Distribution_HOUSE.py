@@ -135,15 +135,15 @@ top_m_cardinality_anti = 0
 top_m_cardinality_corr = 0
 top_m_cardinality_random = 0
 
-data_anti_list_9 = ['J6',  'J11', 'J17', 'J22', 'J29', 'J34', 'J39', 'J44', 'J52', 'J57']
-k_ranges_anti_9 = ['E6',  'E11', 'E17', 'E22', 'E29', 'E34', 'E39', 'E44', 'E52', 'E57']
-l_ranges_opt_anti_9 = ['F6', 'F11', 'F17', 'F22', 'F29', 'F34', 'F39', 'F44', 'F52', 'F57']
-l_ranges_max_anti_9 = ['G6', 'G11', 'G17', 'G22', 'G29', 'G34', 'G39', 'G44', 'G52', 'G57']
-l_ranges_uni_anti_9 = ['H6', 'H11', 'H17', 'H22', 'H29', 'H34', 'H39', 'H44', 'H52', 'H57']
-hash_used_anti_opt_cells_9 = ['I12', 'I23', 'I35', 'I45', 'I58']
-hash_used_anti_uni_cells_9 = ['O12', 'O23', 'O35', 'O45', 'O58']
+data_anti_list_6 = ['J6',  'J11', 'J17', 'J22', 'J29', 'J34', 'J39', 'J44', 'J52', 'J57']
+k_ranges_anti_6 = ['E6',  'E11', 'E17', 'E22', 'E29', 'E34', 'E39', 'E44', 'E52', 'E57']
+l_ranges_opt_anti_6 = ['F6', 'F11', 'F17', 'F22', 'F29', 'F34', 'F39', 'F44', 'F52', 'F57']
+l_ranges_max_anti_6 = ['G6', 'G11', 'G17', 'G22', 'G29', 'G34', 'G39', 'G44', 'G52', 'G57']
+l_ranges_uni_anti_6 = ['H6', 'H11', 'H17', 'H22', 'H29', 'H34', 'H39', 'H44', 'H52', 'H57']
+hash_used_anti_opt_cells_6 = ['I12', 'I23', 'I35', 'I45', 'I58']
+hash_used_anti_uni_cells_6 = ['O12', 'O23', 'O35', 'O45', 'O58']
 
-collision_probility = 0.9
+collision_probility = 0.75
 total_error = 0
 
 
@@ -152,8 +152,7 @@ excel_file_dir = './'
 
 # for each excel file
 
-
-excel_file_name = excel_file_dir + 'HOUSE.xlsx'
+excel_file_name = excel_file_dir + 'HOUSE_075_redundancy_4_before.xlsx'
 wb = load_workbook(filename=excel_file_name, data_only=True)
 wb1 = load_workbook(filename=excel_file_name)
 wss = wb.get_sheet_names()
@@ -172,16 +171,16 @@ for wwss in wss:
     hash_budget_rand = ws[budget_cell_rand].value
     total_cardinality = ws[cardinality_cell].value
 
-    top_m_cardinality_anti_cell = 'J16'
+    top_m_cardinality_anti_cell = 'J15'
     top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
 
-    hash_used_anti_opt_cells = hash_used_anti_opt_cells_9
-    hash_used_anti_uni_cells = hash_used_anti_uni_cells_9
-    data_anti_list = data_anti_list_9
-    k_ranges_anti = k_ranges_anti_9
-    l_ranges_opt_anti = l_ranges_opt_anti_9
-    l_ranges_max_anti = l_ranges_max_anti_9
-    l_ranges_uni_anti = l_ranges_uni_anti_9
+    hash_used_anti_opt_cells = hash_used_anti_opt_cells_6
+    hash_used_anti_uni_cells = hash_used_anti_uni_cells_6
+    data_anti_list = data_anti_list_6
+    k_ranges_anti = k_ranges_anti_6
+    l_ranges_opt_anti = l_ranges_opt_anti_6
+    l_ranges_max_anti = l_ranges_max_anti_6
+    l_ranges_uni_anti = l_ranges_uni_anti_6
 
     data_anti = []
     data_corr = []
