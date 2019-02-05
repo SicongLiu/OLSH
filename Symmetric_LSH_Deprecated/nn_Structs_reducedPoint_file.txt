@@ -1,3 +1,0 @@
-Flushing reducedPoint to file... 
-0.832050 
-0.554700 
