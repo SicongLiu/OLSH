@@ -9,17 +9,17 @@ Introduction
 --------
 
 This implementation is written in C++, which provides an angular LSH framework 
-using Onion layer technique based on Simple LSH.
+using Onion layer technique based on Simple LSH[1].
 
 
 DataSet
 --------
 
-* NBA: https://drive.google.com/open?id=1dAFbjQWoBIAW30lGzTXaf_w7DxBSUzoN
+* NBA: https://www.basketball-reference.com
 
-* HOUSE: https://drive.google.com/open?id=1r1rsSm6-IdWX2-8eFJkChFfP0Ej7TYM4
+* HOUSE: https://www.ipums.org
 
-* Synthetic Data Generator: https://drive.google.com/open?id=1bJQftqxlC8u4ijDf5gpEnw1tJE2nLfoG
+* Synthetic Data Generator: We modified the original implementation from original github folder: https://github.com/sofiabravo103/builder, and the revised version of synthetic data generator is listed in this github repository as Synthetic_Data_Gen.cpp
 
 
 Authors
@@ -52,3 +52,7 @@ displayed as follows:
 OLSH: Onion-LSH with Layer-Aware Resource Allocation for Approximate Top-K Query Processing. VLDB 2019**
 
 
+References
+--------
+
+[1] Neyshabur, Behnam, and Nathan Srebro. "On symmetric and asymmetric LSHs for inner product search." arXiv preprint arXiv:1410.5518 (2014).
