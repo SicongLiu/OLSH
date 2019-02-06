@@ -25,7 +25,7 @@ DataSet
 CodeBase
 --------
 
-We adopted the implemention of Simple LSH from paper [2] of 2018 SIGKDD, with github link [3]
+We adopted the implemention of Simple LSH from paper[2] of 2018 SIGKDD, with github link: https://github.com/HuangQiang/H2_ALSH
 
 Authors
 --------
@@ -64,4 +64,3 @@ References
 
 [2] Qiang Huang, Guihong Ma, Jianlin Feng, Qiong Fang, and Anthony K. H. Tung. Accurate and Fast Asymmetric Locality-Sensitive Hashing Scheme for Maximum Inner Product Search. SIGKDD, pages 1561-1570, 2018.
 
-[3] https://github.com/HuangQiang/H2_ALSH
