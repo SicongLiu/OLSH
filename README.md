@@ -22,6 +22,11 @@ DataSet
 * Synthetic Data Generator: We modified the original implementation from original github folder: https://github.com/sofiabravo103/builder, and the revised version of synthetic data generator is listed in this github repository as Synthetic_Data_Gen.cpp
 
 
+CodeBase
+--------
+
+We adopted the implemention of Simple LSH from paper [2] of 2018 SIGKDD, with github link [3]
+
 Authors
 --------
 
@@ -56,3 +61,7 @@ References
 --------
 
 [1] Neyshabur, Behnam, and Nathan Srebro. "On symmetric and asymmetric LSHs for inner product search." arXiv preprint arXiv:1410.5518 (2014).
+
+[2] Qiang Huang, Guihong Ma, Jianlin Feng, Qiong Fang, and Anthony K. H. Tung. Accurate and Fast Asymmetric Locality-Sensitive Hashing Scheme for Maximum Inner Product Search. SIGKDD, pages 1561-1570, 2018.
+
+[3] https://github.com/HuangQiang/H2_ALSH
