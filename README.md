@@ -25,7 +25,7 @@ DataSet
 CodeBase
 --------
 
-We adopted the implemention of Simple LSH from paper[2] of 2018 SIGKDD, with github link: https://github.com/HuangQiang/H2_ALSH
+We adopted and modified the implemention of Simple LSH provided by paper[2] from 2018 SIGKDD, with github link: https://github.com/HuangQiang/H2_ALSH
 
 Authors
 --------
