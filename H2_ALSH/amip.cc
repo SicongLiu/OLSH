@@ -1509,8 +1509,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 			// the ones in between original data and real query
 
 			// fprintf(fp, "%f\n", list->ith_key(i));    // flush the similarity value to file
-			float temp_sim = calc_inner_product(d, data[current_data_idx], query);
-			fprintf(fp, "%f\n", temp_sim);    // flush the similarity value to file
+			float temp_sim_original = calc_inner_product(d, data[current_data_idx], query);
+			fprintf(fp, "%f\n", temp_sim_original);    // flush the similarity value to file
 
 		}
 	}
