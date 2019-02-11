@@ -190,7 +190,8 @@ int persist_intermediate_on_file(		// persist intermediate result per query per 
 	int   topk, 						// topk results of interest
 	int   d,							// dimension of space
 	MaxK_List* list,					// list that contains the topk result per query per onion layer
-	const float **data,					// data set
+	const float **data,					// original data set
+	const float *query,					// original query
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------

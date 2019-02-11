@@ -1330,7 +1330,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
-				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, output_set);
+				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set);
 				gettimeofday(&file_end_time, NULL);
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
@@ -1469,12 +1469,13 @@ int norm_distribution(                // analyse norm distribution of data
 }
 
 // -----------------------------------------------------------------------------
-int persist_intermediate_on_file(        // persist intermediate result per query per onion layer on file, for aggregation
-		int   topk,                         // topk results of interest
-		int   d,                            // dimension of space
-		MaxK_List* list,                    // list that contains the topk result per query per onion layer
-		const float **data,                    // data set
-		const char  *output_folder)            // output folder
+int persist_intermediate_on_file(        		// persist intermediate result per query per onion layer on file, for aggregation
+		int   topk,                         	// topk results of interest
+		int   d,                            	// dimension of space
+		MaxK_List* list,                    	// list that contains the topk result per query per onion layer
+		const float **data,                    	// original data set
+		const float *query,						// original query
+		const char  *output_folder)            	// output folder
 {
 	FILE *fp = fopen(output_folder, "a+");
 	if (!fp)
@@ -1482,6 +1483,8 @@ int persist_intermediate_on_file(        // persist intermediate result per quer
 		printf("Could not create %s\n", output_folder);
 		return 1;
 	}
+
+	// persist the dot product in between query and original data
 
 	for(int i = 0; i < list->size(); i++)
 	{
@@ -1502,7 +1505,13 @@ int persist_intermediate_on_file(        // persist intermediate result per quer
 			{
 				fprintf(fp, "%f\t", data[current_data_idx][j]);
 			}
-			fprintf(fp, "%f\n", list->ith_key(i));    // flush the similarity value to file
+			// value is based on scaled similarity, need to update to
+			// the ones in between original data and real query
+
+			// fprintf(fp, "%f\n", list->ith_key(i));    // flush the similarity value to file
+			float temp_sim = calc_inner_product(d, data[current_data_idx], query);
+			fprintf(fp, "%f\n", temp_sim);    // flush the similarity value to file
+
 		}
 	}
 	fclose(fp);
