@@ -39,6 +39,66 @@ def compute_weights(data_list_):
     return weight_list_
 
 
+def compute_collision_prob(dimension_, data_list_):
+    prob_list_ = []
+    for ii in data_list_:
+        theta = (2 * math.pi/ii) ^ (1/(dimension_ - 1))
+        collision = 1 - theta / math.pi
+        prob_list_.append(collision)
+    return prob_list_
+
+
+def post_optimization_opt_revised(collision_probilities_, weight_list_, total_error_, data_list_, K_List_, L_List_, hash_used_, hash_budget_):
+    smallest = min(data_list_)
+    smallest_index = data_list_.index(min(data_list_))
+
+    # total_error = 0.412502654
+    total_error_gain = 0
+    flag = False
+    while hash_used_ + smallest <= hash_budget_:
+        # the condition of improvement is to check if the total error rate drops
+
+        # loop through, keep track of hash-relocation and error rate drop
+        # find the biggest error gain, while keep hash-resources constraints
+        # update hash_used, LList
+        delta_error_list = []
+        for i in range(len(data_list_)):
+            cur_k = K_List_[i]
+            cur_l = L_List_[i]
+            c_old = weight_list_[i] * math.pow((1 - math.pow(collision_probilities_[i], cur_k)), cur_l)
+
+            # each time increment hash layer by 1
+            c_new = weight_list_[i] * math.pow((1 - math.pow(collision_probilities_[i], cur_k)), (cur_l + 1))
+            delta_error_list.append((c_old - c_new))
+
+        # sort and check each delta_error
+        delta_error_list = np.asarray(delta_error_list)
+        # sort in descending order
+        sorted_index = delta_error_list.argsort()[::-1][:len(delta_error_list)]
+        sorted_pivot = 0
+        while sorted_pivot < len(sorted_index):
+            cur_index = sorted_index[sorted_pivot]
+
+            # each time increment hash layer by 1
+            # temp_hash_used = hash_used + (LList[cur_index] + 1) * data_list[cur_index]
+            temp_hash_used = hash_used_ + data_list_[cur_index]
+            if temp_hash_used <= hash_budget_:
+                L_List_[cur_index] = L_List_[cur_index] + 1
+                hash_used_ = hash_used_ + data_list_[cur_index]
+                break
+            sorted_pivot = sorted_pivot + 1
+    total_error = 0
+    total_hash_used = 0
+    for i in range(len(L_List_)):
+        cur_k = K_List_[i]
+        cur_l = L_List_[i]
+        total_error = total_error + weight_list_[i] * math.pow((1 - math.pow(collision_probility_, cur_k)), cur_l)
+        total_hash_used = total_hash_used + data_list_[i] * cur_l
+    # print("Updated total error: " + str(total_error))
+    # print("total hash used: " + str(total_hash_used))
+    # print("Optimized approach done")
+    return L_List_
+
 def post_optimization_opt(collision_probility_, weight_list_, total_error_, data_list_, K_List_, L_List_, hash_used_, hash_budget_):
     smallest = min(data_list_)
     smallest_index = data_list_.index(min(data_list_))
@@ -527,12 +587,30 @@ for i in range(len(dimensions)):
                 hash_used_random_opt = ws[hash_used_random_opt_cell].value
 
                 # update LList
-                l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
-                                               hash_used_anti_opt, hash_budget_anti)
-                l_corr_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_corr, k_corr, l_corr_opt,
-                                               hash_used_corr_opt, hash_budget_corr)
-                l_random_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_random, k_anti, l_random_opt,
-                                               hash_used_random_opt, hash_budget_rand)
+                # l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
+                #                                hash_used_anti_opt, hash_budget_anti)
+                # l_corr_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_corr, k_corr, l_corr_opt,
+                #                                hash_used_corr_opt, hash_budget_corr)
+                # l_random_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_random, k_anti, l_random_opt,
+                #                                hash_used_random_opt, hash_budget_rand)
+
+                collision_probility_anti = compute_collision_prob(cur_d, data_anti)
+                collision_probility_corr = compute_collision_prob(cur_d, data_corr)
+                collision_probility_random = compute_collision_prob(cur_d, data_random)
+
+                l_anti_opt = post_optimization_opt_revised(collision_probility_anti, weight_anti, total_error,
+                                                           data_anti, k_anti,
+                                                           l_anti_opt,
+                                                           hash_used_anti_opt, hash_budget_anti)
+                l_corr_opt = post_optimization_opt_revised(collision_probility_corr, weight_corr, total_error,
+                                                           data_corr, k_corr,
+                                                           l_corr_opt,
+                                                           hash_used_corr_opt, hash_budget_corr)
+                l_random_opt = post_optimization_opt_revised(collision_probility_random, weight_random, total_error,
+                                                             data_random, k_anti,
+                                                             l_random_opt,
+                                                             hash_used_random_opt, hash_budget_rand)
+
 
                 hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
                 hash_used_corr_uni_cell = hash_used_corr_uni_cells[jj]
