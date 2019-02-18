@@ -154,7 +154,7 @@ excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
 # excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_3_all_before.xlsx'
-excel_file_name = excel_file_dir + str(dimension) + 'D_065_redundancy_2_all_before.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_all_new.xlsx'
 
 top_m_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]

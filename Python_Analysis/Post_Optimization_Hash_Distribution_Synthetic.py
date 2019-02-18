@@ -42,7 +42,7 @@ def compute_weights(data_list_):
 def compute_collision_prob(dimension_, data_list_):
     prob_list_ = []
     for ii in data_list_:
-        theta = (2 * math.pi/ii) ^ (1/(dimension_ - 1))
+        theta = pow((2 * math.pi/ii), (1/(dimension_ - 1)))
         collision = 1 - theta / math.pi
         prob_list_.append(collision)
     return prob_list_
@@ -92,7 +92,7 @@ def post_optimization_opt_revised(collision_probilities_, weight_list_, total_er
     for i in range(len(L_List_)):
         cur_k = K_List_[i]
         cur_l = L_List_[i]
-        total_error = total_error + weight_list_[i] * math.pow((1 - math.pow(collision_probility_, cur_k)), cur_l)
+        total_error = total_error + weight_list_[i] * math.pow((1 - math.pow(collision_probilities_[i], cur_k)), cur_l)
         total_hash_used = total_hash_used + data_list_[i] * cur_l
     # print("Updated total error: " + str(total_error))
     # print("total hash used: " + str(total_hash_used))
@@ -287,9 +287,10 @@ excel_file_dir = './'
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_before.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_before.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_085_all_before.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_075_all_before.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_before_new.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -547,12 +548,23 @@ for i in range(len(dimensions)):
             hash_used_random_opt = ws[hash_used_random_opt_cell].value
 
             # update LList
-            l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
-                                           hash_used_anti_opt, hash_budget_anti)
-            l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
-                                           hash_used_corr_opt, hash_budget_corr)
-            l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_random, l_random_opt,
-                                           hash_used_random_opt, hash_budget_rand)
+            # l_anti_opt = post_optimization_opt(collision_probility, weight_anti, total_error, data_anti, k_anti, l_anti_opt,
+            #                                hash_used_anti_opt, hash_budget_anti)
+            # l_corr_opt = post_optimization_opt(collision_probility, weight_corr, total_error, data_corr, k_corr, l_corr_opt,
+            #                                hash_used_corr_opt, hash_budget_corr)
+            # l_random_opt = post_optimization_opt(collision_probility, weight_random, total_error, data_random, k_random, l_random_opt,
+            #                                hash_used_random_opt, hash_budget_rand)
+
+            collision_probilities_anti = compute_collision_prob(cur_d, data_anti)
+            collision_probilities_corr = compute_collision_prob(cur_d, data_corr)
+            collision_probilities_random = compute_collision_prob(cur_d, data_random)
+
+            l_anti_opt = post_optimization_opt_revised(collision_probilities_anti, weight_anti, total_error, data_anti, k_anti,
+                                               l_anti_opt, hash_used_anti_opt, hash_budget_anti)
+            l_corr_opt = post_optimization_opt_revised(collision_probilities_corr, weight_corr, total_error, data_corr, k_corr,
+                                               l_corr_opt, hash_used_corr_opt, hash_budget_corr)
+            l_random_opt = post_optimization_opt_revised(collision_probilities_random, weight_random, total_error, data_random, k_random,
+                                                 l_random_opt, hash_used_random_opt, hash_budget_rand)
 
             hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
             hash_used_corr_uni_cell = hash_used_corr_uni_cells[jj]
@@ -586,62 +598,3 @@ for i in range(len(dimensions)):
     wb1.save(excel_file_name)
 
 print("All done")
-# values below all read from excel sheet
-####################################################################################
-
-# for optimized approach
-anti_weight_list = []
-corr_weight_list = []
-random_weight_list = []
-
-top_m = 25
-top_m_cardinality = 275400
-hash_budget = top_m_cardinality * 2
-hash_used = 534961
-
-data_list = [1519, 2902, 4201, 5435, 6366, 7395, 8147, 8984, 9622, 10307, 11053, 11551, 11982, 12620, 13014, 13552,
-             13894, 14338, 14754, 14810, 15288, 15585, 15876, 16060, 16145]
-weight_list = compute_weights(data_list)
-KList_Log = [11, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]
-L_Opt_List = [26, 14, 10, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-L_Uni_List = [15, 8, 5, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]
-# weight = [0.081600306, 0.079476028, 0.077041773, 0.074457424, 0.069096951, 0.065782109, 0.060756796, 0.057006843,
-#           0.052492599, 0.048674672, 0.04538301, 0.041342773, 0.037406774, 0.034323352, 0.030750563, 0.027688552,
-#           0.024378937, 0.021398294, 0.018482749, 0.015291434, 0.012672056, 0.009973976, 0.0073666, 0.004810476,
-#           0.002344953]
-
-####################################################################################
-# import random
-#
-# flag = False
-# hash_used = 524822
-# data_list = np.asarray(data_list)
-# while hash_used + smallest <= hash_budget:
-#     print("still got hash space left")
-#     # sort in descending order
-#
-#     sorted_index = data_list.argsort()[::-1][:len(data_list)]
-#
-#     temp_pivot_list = []
-#     # first find all the allow current hash re-allocation
-#     for i in range(len(sorted_index)):
-#         temp_pivot_index = sorted_index[i]
-#         if hash_used + data_list[temp_pivot_index] <= hash_budget:
-#             temp_pivot_list.append(temp_pivot_index)
-#     # randomly pick one from those
-#     cur_pivot = random.choice(temp_pivot_list)
-#     # update L_Uni_List, hash_used
-#     L_Uni_List[cur_pivot] = L_Uni_List[cur_pivot] + 1
-#     hash_used = hash_used + data_list[cur_pivot]
-#
-# total_error = 0
-# total_hash_used = 0
-# for i in range(len(L_Uni_List)):
-#     cur_k = KList_Log[i]
-#     cur_l = L_Uni_List[i]
-#     total_error = total_error + weight_list[i] * math.pow((1 - math.pow(collision_probility, cur_k)), cur_l)
-#     total_hash_used = total_hash_used + data_list[i] * cur_l
-# print(L_Uni_List)
-# print("Updated total error: " + str(total_error))
-# print("total hash used: " + str(total_hash_used))
-# print("Uniform approach done")
