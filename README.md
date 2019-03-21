@@ -1,15 +1,4 @@
-# OLSH: Onion LSH
-
-Version: 1.0.0
-
-Release date: 01-02-2019
-
-
-Introduction
---------
-
-This implementation is written in C++, which provides an angular LSH framework 
-using Onion layer technique based on Simple LSH[1].
+# TopK
 
 
 DataSet
@@ -45,16 +34,6 @@ Authors
   Turin, Italy
   
   poccia@di.unito.it
-
-
-Relevant Papers
---------
-
-The paper for the package of OLSH has been submitted in VLDB 2019 which is 
-displayed as follows:
-
-* **Sicong Liu, Silvestro R. Poccia, K. Selçuk Candan, Maria Luisa Sapino. 
-OLSH: Onion-LSH with Layer-Aware Resource Allocation for Approximate Top-K Query Processing. VLDB 2019**
 
 
 References
