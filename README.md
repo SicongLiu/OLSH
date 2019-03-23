@@ -16,7 +16,7 @@ CodeBase
 
 We adopted and modified the implemention of Simple LSH provided by paper[2] from 2018 SIGKDD, with github link: https://github.com/HuangQiang/H2_ALSH
 
-Authors
+Contact
 --------
 
 * **Sicong Liu**
