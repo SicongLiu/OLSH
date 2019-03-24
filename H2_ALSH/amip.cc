@@ -775,6 +775,8 @@ int linear_scan(                    // find top-k mip using linear_scan
 		int   n,                            // number of data points
 		int   qn,                            // number of query points
 		int   d,                            // dimension of space
+		int layer_index,
+		int top_k,
 		const float **data,                    // data set
 		const float **query,                // query set
 		const char  *truth_set,                // address of truth set
@@ -811,9 +813,41 @@ int linear_scan(                    // find top-k mip using linear_scan
 		return 1;
 	}
 
-	int kMIPs[] = { 1, 2, 5, 10 };
 	int max_round = 4;
-	int top_k = -1;
+	vector<int> kMIPs;
+	if(top_k == 25)
+	{
+		// top-25
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		// int kMIPs[] = { 1, 2, 5, 10, 25};
+		max_round = 5;
+	}
+
+	else if(top_k == 10)
+	{
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		// int kMIPs[] = { 1, 2, 5, 10};
+		max_round = 4;
+	}
+	else
+	{
+		// top-50
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		kMIPs.push_back(50);
+		// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+		max_round = 6;
+	}
 
 	float runtime = -1.0f;
 	float overall_ratio = -1.0f;
@@ -823,21 +857,27 @@ int linear_scan(                    // find top-k mip using linear_scan
 	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
 	for (int num = 0; num < max_round; num++) {
 		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
+		// top_k = kMIPs[num];
+
+		top_k = kMIPs[num] - layer_index + 1;
+
 		MaxK_List* list = new MaxK_List(top_k);
 
 		overall_ratio = 0.0f;
 		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
+		for (int i = 0; i < qn; ++i)
+		{
 			list->reset();
-			for (int j = 0; j < n; ++j) {
+			for (int j = 0; j < n; ++j)
+			{
 				float ip = calc_inner_product(d, data[j], query[i]);
 				list->insert(ip, j + 1);
 			}
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
+			for (int j = 0; j < top_k; ++j)
+			{
 				ratio += R[i][j].key_ / list->ith_key(j);
 			}
 			overall_ratio += ratio / top_k;
