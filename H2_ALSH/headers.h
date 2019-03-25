@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <float.h>
+#include <math.h>
+#include <numeric>
 
 #include <algorithm>
 #include <cassert>
@@ -24,6 +26,8 @@
 #include <stack>
 #include <string>
 #include <vector>
+#include <set>
+#include <iterator>
 #include <unordered_map>
 #include <unordered_set>
 

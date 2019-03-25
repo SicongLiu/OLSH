@@ -838,6 +838,7 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 		int   d,                            	// number of space
 		int   n,                            	// dimension of data points
 		int 	  top_k,
+		MaxK_List* seen_sim,
 		const float **data,                	// data set
 		const float *query)         			// output folder
 {
@@ -869,18 +870,14 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 		sorted_indexes(i, sim_matrix, sorted_sim_index);
 	}
 
-	// seenDist can be replaced with the priority queue --> MaxList
-
-	MaxK_List *seen_sim = new MaxK_List(top_k);
-
 	while(flag == false)
 	{
 		current_best = vector_sum(sim_matrix, d, round);
 		set<int> current_seen = comp_current_seen(sorted_sim_index, d, round);
 		set<int> newly_added;
 
-		set_difference(current_seen.begin(), current_seen.end(), TA_seen.begin(), TA_seen.end(), insert(newly_added, newly_added,end()));
-		vector<int> newly_added_vector(newly_added.begin(). newly_added.end());
+		set_difference(current_seen.begin(), current_seen.end(), TA_seen.begin(), TA_seen.end(), inserter(newly_added, newly_added.end()));
+		vector<int> newly_added_vector(newly_added.begin(), newly_added.end());
 
 		for(vector<int>::iterator it = newly_added_vector.begin(); it != newly_added_vector.end(); ++it)
 		{
@@ -900,8 +897,8 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 			seen_sim->insert(current_sim, obj_index);
 			TA_seen.insert(newly_added.begin(), newly_added.end());
 
-			int cur_k = min(top_k, seen_sim.size());
-			float current_worst = seen_sim.get(seen_sim.size() - 1);
+			int cur_k = min(top_k, seen_sim->size());
+			float current_worst = seen_sim->ith_key(seen_sim->size() - 1);
 
 			if(current_worst < current_best && cur_k == top_k)
 			{
@@ -1018,16 +1015,13 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 			list->reset();
 
 			// compute TA_TopK here, return as list
-			compute_TA(d, n, data, top_k, query[i]);
-			for (int j = 0; j < n; ++j)
+			compute_TA(d, n, top_k, list, data, query[i]);
+
+			/*for (int j = 0; j < n; ++j)
 			{
-
-
-
-
 				float ip = calc_inner_product(d, data[j], query[i]);
 				list->insert(ip, j + 1);
-			}
+			}*/
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;

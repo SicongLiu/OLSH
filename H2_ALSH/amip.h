@@ -213,6 +213,56 @@ int overall_performance(				// output the overall performance of indexing
 	const char  *ground_truth_folder,	// ground truth folder
 	const char  *output_folder);		// output folder
 
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+set<int> comp_current_seen(vector<vector<int>> sorted_sim_index, int dim, int round);
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+float vector_sum(
+		vector<vector<float>> sim_matrix,
+		int dim,
+		int round);
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+int sorted_indexes(
+		int   dim_index,                          	// dimension index of sim_matrix
+		vector<vector<float>> &sim_matrix,			// reference pass sim_matrix in for update purpose
+		vector<vector<int>> &sorted_sim_index);  		// sorted index vector structure
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+int compute_TA(                    		  	// find top-k mip using linear_scan
+		int   d,                            	// number of space
+		int   n,                            	// dimension of data points
+		int 	  top_k,
+		MaxK_List* seen_sim,
+		const float **data,                	// data set
+		const float *query);         			// output folder
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+int TA_Topk(                    		  		// find top-k mip using linear_scan
+		int   n,                            	// number of data points
+		int   qn,                           	// number of query points
+		int   d,                            	// dimension of space
+		int   layer_index,
+		int   top_k,
+		const float **data,                	// data set
+		const float **query,                	// query set
+		const char  *truth_set,             	// address of truth set
+		const char  *output_folder);         	// output folder
+
+
+
+
 int my_sort_col(const void *a, const void *b);
 
 #endif // __AMIP_H
