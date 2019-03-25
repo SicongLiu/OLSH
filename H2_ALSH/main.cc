@@ -325,7 +325,7 @@ int main(int nargs, char **args)
 			//		(const float **) query, truth_set, output_folder);
 			break;
 		case 7:
-			linear_scan(n, qn, d, (const float **) data, (const float **) query,
+			linear_scan(n, qn, d, layer_index, top_k, (const float **) data, (const float **) query,
 					truth_set, output_folder);
 			break;
 		case 8:

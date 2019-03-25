@@ -775,8 +775,8 @@ int linear_scan(                    // find top-k mip using linear_scan
 		int   n,                            // number of data points
 		int   qn,                            // number of query points
 		int   d,                            // dimension of space
-		int layer_index,
-		int top_k,
+		int   layer_index,
+		int   top_k,
 		const float **data,                    // data set
 		const float **query,                // query set
 		const char  *truth_set,                // address of truth set
