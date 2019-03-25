@@ -771,16 +771,310 @@ int sign_alsh(                        // mip search via sign_alsh
  */
 
 // -----------------------------------------------------------------------------
-int linear_scan(                    // find top-k mip using linear_scan
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+set<int> comp_current_seen(vector<vector<int>> sorted_sim_index, int dim, int round)
+{
+	set<int> current_seen;
+	for(int i = 0; i < dim; i++)
+	{
+		current_seen.insert(sorted_sim_index.at(i).at(round));
+	}
+
+	return current_seen;
+}
+
+
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+float vector_sum(
+		vector<vector<float>> sim_matrix,
+		int dim,
+		int round)
+{
+	float sum = 0;
+	for(int i = 0; i < dim; i++)
+	{
+		sum += sim_matrix.at(i).at(round);
+	}
+	return sum;
+}
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+int sorted_indexes(
+		int   dim_index,                          	// dimension index of sim_matrix
+		vector<vector<float>> &sim_matrix,			// reference pass sim_matrix in for update purpose
+		vector<vector<int>> &sorted_sim_index)  		// sorted index vector structure
+{
+	vector<float> vec_interest = sim_matrix.at(dim_index);
+	vector<int> idx(vec_interest.size());
+	iota(idx.begin(), idx.end(), 0);
+
+	sort(idx.begin(), idx.end(), [&vec_interest](int i1, int i2) {return vec_interest[i1] > vec_interest[i2]; });
+
+	vector<float> v1;
+
+	// update sim_matrix[dim_index]
+	for(int i = 0; i < idx.size(); i++)
+	{
+		v1.push_back(vec_interest[idx[i]]);
+	}
+	sorted_sim_index.push_back(idx);
+	sim_matrix[dim_index] = vec_interest;
+
+	vector<float>().swap(vec_interest);
+	return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+// NOTE: TA_algorithm, the way we organize the column and row structure index
+// -----------------------------------------------------------------------------
+int compute_TA(                    		  	// find top-k mip using linear_scan
+		int   d,                            	// number of space
+		int   n,                            	// dimension of data points
+		int 	  top_k,
+		const float **data,                	// data set
+		const float *query)         			// output folder
+{
+	bool flag = false;
+	float current_best = 0;
+	int round = 0;
+
+	set<int> TA_seen;
+
+	// compute similarity matrix
+	vector<vector<float>> sim_matrix;
+	vector<vector<int>> sorted_sim_index;
+	for(int i = 0; i < d; i++)
+	{
+		vector<float> column_sim;
+		float query_pt = query[i];
+		for(int j = 0; j < n; j++)
+		{
+			float data_pt = data[j][i];
+			float sim_comb = query_pt * data_pt;
+			column_sim.push_back(sim_comb);
+		}
+		sim_matrix.push_back(column_sim);
+	}
+
+	// sort sim_matrix, along each dimension
+	for(int i = 0; i < d; i++)
+	{
+		sorted_indexes(i, sim_matrix, sorted_sim_index);
+	}
+
+	// seenDist can be replaced with the priority queue --> MaxList
+
+	MaxK_List *seen_sim = new MaxK_List(top_k);
+
+	while(flag == false)
+	{
+		current_best = vector_sum(sim_matrix, d, round);
+		set<int> current_seen = comp_current_seen(sorted_sim_index, d, round);
+		set<int> newly_added;
+
+		set_difference(current_seen.begin(), current_seen.end(), TA_seen.begin(), TA_seen.end(), insert(newly_added, newly_added,end()));
+		vector<int> newly_added_vector(newly_added.begin(). newly_added.end());
+
+		for(vector<int>::iterator it = newly_added_vector.begin(); it != newly_added_vector.end(); ++it)
+		{
+			int obj_index = *it;
+			int current_sim = 0;
+
+			for(int j = 0; j < d; j++)
+			{
+				vector<int> temp_index = sorted_sim_index.at(j);
+				vector<float> temp_sim = sim_matrix.at(j);
+				int pos = find(temp_index.begin(), temp_index.end(), obj_index) - temp_index.begin();
+				current_sim += temp_sim.at(pos);
+
+				// for each window, update seen object_id
+			}
+
+			seen_sim->insert(current_sim, obj_index);
+			TA_seen.insert(newly_added.begin(), newly_added.end());
+
+			int cur_k = min(top_k, seen_sim.size());
+			float current_worst = seen_sim.get(seen_sim.size() - 1);
+
+			if(current_worst < current_best && cur_k == top_k)
+			{
+				flag = true;
+				cout<< "Total run: " << round << endl;
+			}
+			round++;
+		}
+	}
+
+
+	// delete sim_matrix
+	return 0;
+}
+
+
+// -----------------------------------------------------------------------------
+int TA_Topk(                    		  		// find top-k mip using linear_scan
+		int   n,                            	// number of data points
+		int   qn,                           	// number of query points
+		int   d,                            	// dimension of space
 		int   layer_index,
 		int   top_k,
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
+		const float **data,                	// data set
+		const float **query,                	// query set
+		const char  *truth_set,             	// address of truth set
+		const char  *output_folder)         	// output folder
+{
+	timeval start_time, end_time;
+
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R) == 1) {
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	gettimeofday(&end_time, NULL);
+	float read_file_time = end_time.tv_sec - start_time.tv_sec +
+			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
+
+	// -------------------------------------------------------------------------
+	//  c-AMIP search via linear scan
+	// -------------------------------------------------------------------------
+	char output_set[200];
+	sprintf(output_set, "%slinear.out", output_folder);
+
+	FILE *fp = fopen(output_set, "a+");
+	if (!fp) {
+		printf("Could not create %s\n", output_set);
+		return 1;
+	}
+
+	int max_round = 4;
+	vector<int> kMIPs;
+	if(top_k == 25)
+	{
+		// top-25
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		// int kMIPs[] = { 1, 2, 5, 10, 25};
+		max_round = 5;
+	}
+
+	else if(top_k == 10)
+	{
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		// int kMIPs[] = { 1, 2, 5, 10};
+		max_round = 4;
+	}
+	else
+	{
+		// top-50
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		kMIPs.push_back(50);
+		// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+		max_round = 6;
+	}
+
+	float runtime = -1.0f;
+	float overall_ratio = -1.0f;
+	float recall = -1.0f;
+
+	printf("Top-k MIP of Linear Scan:\n");
+	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
+	for (int num = 0; num < max_round; num++) {
+		gettimeofday(&start_time, NULL);
+		// top_k = kMIPs[num];
+
+		top_k = kMIPs[num] - layer_index + 1;
+
+		MaxK_List* list = new MaxK_List(top_k);
+
+		overall_ratio = 0.0f;
+		recall = 0.0f;
+		for (int i = 0; i < qn; ++i)
+		{
+			list->reset();
+
+			// compute TA_TopK here, return as list
+			compute_TA(d, n, data, top_k, query[i]);
+			for (int j = 0; j < n; ++j)
+			{
+
+
+
+
+				float ip = calc_inner_product(d, data[j], query[i]);
+				list->insert(ip, j + 1);
+			}
+			recall += calc_recall(top_k, (const Result *) R[i], list);
+
+			float ratio = 0.0f;
+			for (int j = 0; j < top_k; ++j)
+			{
+				ratio += R[i][j].key_ / list->ith_key(j);
+			}
+			overall_ratio += ratio / top_k;
+		}
+		delete list; list = NULL;
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+				start_time.tv_usec) / 1000000.0f;
+
+		overall_ratio = overall_ratio / qn;
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
+				runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+	}
+	printf("\n");
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] R; R = NULL;
+
+	return 0;
+}
+
+
+
+// -----------------------------------------------------------------------------
+int linear_scan(                    		  	// find top-k mip using linear_scan
+		int   n,                            	// number of data points
+		int   qn,                           	// number of query points
+		int   d,                            	// dimension of space
+		int   layer_index,
+		int   top_k,
+		const float **data,                	// data set
+		const float **query,                	// query set
+		const char  *truth_set,             	// address of truth set
+		const char  *output_folder)         	// output folder
 {
 	timeval start_time, end_time;
 
