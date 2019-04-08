@@ -56,719 +56,6 @@ int ground_truth(                    // find the ground truth results
 	return 0;
 }
 
-// -----------------------------------------------------------------------------
-int h2_alsh(                        // mip search via h2_alsh
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		float nn_ratio,                        // approximation ratio for nn search
-		float mip_ratio,                    // approximation ratio for mip search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)            // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	H2_ALSH *lsh = new H2_ALSH();
-	lsh->build(n, d, nn_ratio, mip_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via H2_ALSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%sh2_alsh.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float overall_ratio = -1.0f;
-	float recall = -1.0f;
-
-	printf("Top-k c-AMIP of H2_ALSH: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-int l2_alsh(                        // mip search via l2_alsh
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		int   m,                            // param of l2_alsh
-		float U,                            // param of l2_alsh
-		float nn_ratio,                        // approximation ratio for nn search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	L2_ALSH *lsh = new L2_ALSH();
-	lsh->build(n, d, m, U, nn_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via L2_ALSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%sl2_alsh.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float overall_ratio = -1.0f;
-	float recall = -1.0f;
-
-	printf("Top-k c-AMIP of L2_ALSH: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-int l2_alsh2(                        // mip search via l2_alsh2
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		int   m,                            // param of l2_alsh2
-		float U,                            // param of l2_alsh2
-		float nn_ratio,                        // approximation ratio for nn search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	L2_ALSH2 *lsh = new L2_ALSH2();
-	lsh->build(n, qn, d, m, U, nn_ratio, data, query);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via L2_ALSH2
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%sl2_alsh2.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float overall_ratio = -1.0f;
-	float recall = -1.0f;
-
-	printf("Top-k c-AMIP of L2_ALSH2: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-int xbox(                            // mip search via xbox
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		float nn_ratio,                        // approximation ratio for nn search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	XBox *lsh = new XBox();
-	lsh->build(n, d, nn_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via XBox
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float overall_ratio = -1.0f;
-	float recall = -1.0f;
-
-	sprintf(output_set, "%sxbox.out", output_folder);
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	printf("Top-k c-AMIP of XBox: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, false, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via H2-ALSH-
-	// -------------------------------------------------------------------------
-	sprintf(output_set, "%sh2_alsh_minus.out", output_folder);
-	fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	printf("Top-k c-AMIP of H2-ALSH-: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, true, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-int sign_alsh(                        // mip search via sign_alsh
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		int   K,                            // number of hash tables
-		int   m,                            // param of sign_alsh
-		float U,                            // param of sign_alsh
-		float nn_ratio,                        // approximation ratio for nn search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	Sign_ALSH *lsh = new Sign_ALSH();
-	lsh->build(n, d, K, m, U, nn_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  c-AMIP search via Sign_ALSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%ssign_alsh.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int kMIPs[] = { 1, 2, 5, 10 };
-	int max_round = 4;
-	int top_k = -1;
-
-	float runtime = -1.0f;
-	float overall_ratio = -1.0f;
-	float recall = -1.0f;
-
-	printf("Top-k c-AMIP of Sign_ALSH: \n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
-	for (int num = 0; num < max_round; num++) {
-		gettimeofday(&start_time, NULL);
-		top_k = kMIPs[num];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		overall_ratio = 0.0f;
-		recall = 0.0f;
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-			recall += calc_recall(top_k, (const Result *) R[i], list);
-
-			float ratio = 0.0f;
-			for (int j = 0; j < top_k; ++j) {
-				ratio += list->ith_key(j) / R[i][j].key_;
-			}
-			overall_ratio += ratio / top_k;
-		}
-		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
-
-		overall_ratio = overall_ratio / qn;
-		recall        = recall / qn;
-		runtime       = (runtime * 1000.0f) / qn;
-
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-/*int simple_lsh(                        // mip search via simple_lsh
- int   n,                            // number of data points
- int   qn,                            // number of query points
- int   d,                            // dimension of space
- int   K,                            // number of hash tables
- int   L,                            // number of hash layers
- float S,
- float nn_ratio,                        // approximation ratio for nn search
- const float **data,                    // data set
- const float **query,                // query set
- const char  *truth_set,                // address of truth set
- const char  *output_folder)         // output folder
- {
- timeval start_time, end_time;
-
- // -------------------------------------------------------------------------
- //  read the ground truth file
- // -------------------------------------------------------------------------
- gettimeofday(&start_time, NULL);
-
- Result **R = new Result*[qn];
- for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
- if (read_ground_truth(qn, truth_set, R) == 1)
- {
- printf("Reading Truth Set Error!\n");
- return 1;
- }
-
- gettimeofday(&end_time, NULL);
- float read_file_time = end_time.tv_sec - start_time.tv_sec +
- (end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
- printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
- // -------------------------------------------------------------------------
- //  indexing
- // -------------------------------------------------------------------------
- gettimeofday(&start_time, NULL);
- Simple_LSH *lsh = new Simple_LSH();
- lsh->build(n, d, K, L, S, nn_ratio, data);
-
- gettimeofday(&end_time, NULL);
- float indexing_time = end_time.tv_sec - start_time.tv_sec +
- (end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
- printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
- // -------------------------------------------------------------------------
- //  c-AMIP search via Simple_LSH
- // -------------------------------------------------------------------------
- char output_set[200];
- sprintf(output_set, "%ssimple_lsh.out", output_folder);
-
- FILE *fp = fopen(output_set, "a+");
- if (!fp)
- {
- printf("Could not create %s\n", output_set);
- return 1;
- }
-
- // Top-K result of interest
- int kMIPs[] = { 1, 2, 5, 10 };
-
- // max_round : size of kMIPs array
- int max_round = 4;
- int top_k = -1;
-
- float runtime = -1.0f;
- float overall_ratio = -1.0f;
- float recall = -1.0f;
-
- printf("Top-k c-AMIP of Simple_LSH: \n");
- printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
- for (int num = 0; num < max_round; num++)
- {
- gettimeofday(&start_time, NULL);
- top_k = kMIPs[num];
- MaxK_List* list = new MaxK_List(top_k);
-
- overall_ratio = 0.0f;
- recall = 0.0f;
- for (int i = 0; i < qn; ++i)
- {
- list->reset();
- lsh->kmip(top_k, query[i], list);
- recall += calc_recall(top_k, (const Result *) R[i], list);
-
- float ratio = 0.0f;
- for (int j = 0; j < top_k; ++j)
- {
- ratio += list->ith_key(j) / R[i][j].key_;
- }
- overall_ratio += ratio / top_k;
- }
- delete list; list = NULL;
- gettimeofday(&end_time, NULL);
- runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
- start_time.tv_usec) / 1000000.0f;
-
- overall_ratio = overall_ratio / qn;
- recall        = recall / qn;
- runtime       = (runtime * 1000.0f) / qn;
-
- printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
- runtime, recall);
- fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
- }
- printf("\n");
- fprintf(fp, "\n");
- fclose(fp);
-
- // -------------------------------------------------------------------------
- //  release space
- // -------------------------------------------------------------------------
- delete lsh; lsh = NULL;
- delete[] R; R = NULL;
-
- return 0;
- }
- */
 
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
@@ -1196,269 +483,6 @@ int linear_scan(                    		  	// find top-k mip using linear_scan
 }
 
 // -----------------------------------------------------------------------------
-int h2_alsh_precision_recall(        // precision recall curve of h2_alsh
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		float nn_ratio,                        // approximation ratio for nn search
-		float mip_ratio,                    // approximation ratio for mip search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	H2_ALSH *lsh = new H2_ALSH();
-	lsh->build(n, d, nn_ratio, mip_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  Precision Recall Curve of H2_ALSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%sh2_alsh_precision_recall.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int tMIPs[] = { 1, 2, 5, 10 };
-	int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
-	int maxT_round = 4;
-	int maxK_round = 16;
-
-	float **pre    = new float*[maxT_round];
-	float **recall = new float*[maxT_round];
-
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
-		pre[t_round]    = new float[maxK_round];
-		recall[t_round] = new float[maxK_round];
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
-			pre[t_round][k_round]    = 0;
-			recall[t_round][k_round] = 0;
-		}
-	}
-
-	printf("Top-t c-AMIP of H2_ALSH: \n");
-	for (int k_round = 0; k_round < maxK_round; ++k_round) {
-		int top_k = kMIPs[k_round];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-
-			for (int t_round = 0; t_round < maxT_round; ++t_round) {
-				int top_t = tMIPs[t_round];
-				int hits = get_hits(top_k, top_t, R[i], list);
-
-				pre[t_round][k_round]    += hits / (float) top_k;
-				recall[t_round][k_round] += hits / (float) top_t;
-			}
-		}
-		delete list; list = NULL;
-	}
-
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
-		int top_t = tMIPs[t_round];
-		printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
-		fprintf(fp, "Top-%d\tRecall\t\tPrecision\n", top_t);
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
-			int top_k = kMIPs[k_round];
-			pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
-			recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;
-
-			printf("%4d\t\t%.2f\t\t%.2f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-			fprintf(fp, "%d\t%f\t%f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-		}
-		printf("\n");
-		fprintf(fp, "\n");
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-	for (int i = 0; i < maxT_round; ++i) {
-		delete[] pre[i];    pre[i] = NULL;
-		delete[] recall[i];    recall[i] = NULL;
-	}
-	delete[] pre;     pre = NULL;
-	delete[] recall; recall = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
-int sign_alsh_precision_recall(        // precision recall curve of sign_alsh
-		int   n,                            // number of data points
-		int   qn,                            // number of query points
-		int   d,                            // dimension of space
-		int   K,                            // number of hash tables
-		int   m,                            // param of sign_alsh
-		float U,                            // param of sign_alsh
-		float nn_ratio,                        // approximation ratio for nn search
-		const float **data,                    // data set
-		const float **query,                // query set
-		const char  *truth_set,                // address of truth set
-		const char  *output_folder)         // output folder
-{
-	timeval start_time, end_time;
-
-	// -------------------------------------------------------------------------
-	//  read the ground truth file
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-
-	Result **R = new Result*[qn];
-	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
-	if (read_ground_truth(qn, truth_set, R) == 1) {
-		printf("Reading Truth Set Error!\n");
-		return 1;
-	}
-
-	gettimeofday(&end_time, NULL);
-	float read_file_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
-
-	// -------------------------------------------------------------------------
-	//  indexing
-	// -------------------------------------------------------------------------
-	gettimeofday(&start_time, NULL);
-	Sign_ALSH *lsh = new Sign_ALSH();
-	lsh->build(n, d, K, m, U, nn_ratio, data);
-
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
-
-	// -------------------------------------------------------------------------
-	//  Precision Recall Curve of Sign-ALSH
-	// -------------------------------------------------------------------------
-	char output_set[200];
-	sprintf(output_set, "%ssign_alsh_precision_recall.out", output_folder);
-
-	FILE *fp = fopen(output_set, "a+");
-	if (!fp) {
-		printf("Could not create %s\n", output_set);
-		return 1;
-	}
-
-	int tMIPs[] = { 1, 2, 5, 10 };
-	int kMIPs[] = { 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000 };
-	int maxT_round = 4;
-	int maxK_round = 16;
-
-	float **pre    = new float*[maxT_round];
-	float **recall = new float*[maxT_round];
-
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
-		pre[t_round]    = new float[maxK_round];
-		recall[t_round] = new float[maxK_round];
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
-			pre[t_round][k_round]    = 0;
-			recall[t_round][k_round] = 0;
-		}
-	}
-
-	printf("Top-t c-AMIP of Sign_ALSH: \n");
-	for (int k_round = 0; k_round < maxK_round; ++k_round) {
-		int top_k = kMIPs[k_round];
-		MaxK_List* list = new MaxK_List(top_k);
-
-		for (int i = 0; i < qn; ++i) {
-			list->reset();
-			lsh->kmip(top_k, query[i], list);
-
-			for (int t_round = 0; t_round < maxT_round; ++t_round) {
-				int top_t = tMIPs[t_round];
-				int hits = get_hits(top_k, top_t, R[i], list);
-
-				pre[t_round][k_round]    += hits / (float) top_k;
-				recall[t_round][k_round] += hits / (float) top_t;
-			}
-		}
-		delete list; list = NULL;
-	}
-
-	for (int t_round = 0; t_round < maxT_round; ++t_round) {
-		int top_t = tMIPs[t_round];
-		printf("Top-%d\t\tRecall\t\tPrecision\n", top_t);
-		fprintf(fp, "Top-%d\tRecall\t\tPrecision\n", top_t);
-
-		for (int k_round = 0; k_round < maxK_round; ++k_round) {
-			int top_k = kMIPs[k_round];
-			pre[t_round][k_round]    = pre[t_round][k_round]    * 100.0f / qn;
-			recall[t_round][k_round] = recall[t_round][k_round] * 100.0f / qn;
-
-			printf("%4d\t\t%.2f\t\t%.2f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-			fprintf(fp, "%d\t%f\t%f\n", top_k,
-					recall[t_round][k_round], pre[t_round][k_round]);
-		}
-		printf("\n");
-		fprintf(fp, "\n");
-	}
-	printf("\n");
-	fprintf(fp, "\n");
-	fclose(fp);
-
-	// -------------------------------------------------------------------------
-	//  release space
-	// -------------------------------------------------------------------------
-	delete lsh; lsh = NULL;
-	delete[] R; R = NULL;
-
-	for (int i = 0; i < maxT_round; ++i) {
-		delete[] pre[i];    pre[i] = NULL;
-		delete[] recall[i];    recall[i] = NULL;
-	}
-	delete[] pre;    pre = NULL;
-	delete[] recall;    recall = NULL;
-
-	return 0;
-}
-
-// -----------------------------------------------------------------------------
 int simple_lsh_recall(    // precision recall curve of simple_lsh
 		int   n,                            // number of data points
 		int   qn,                            // number of query points
@@ -1467,6 +491,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		int   L,                            // number of hash tables
 		int       layer_index,                 // the index of current onion layer
 		int   top_k, 						// top 25 or top 50?
+		int   sample_index,
 		float  S,                            // number of hash tables
 		float nn_ratio,                        // approximation ratio for nn search
 		const float **data,                    // data set
@@ -1567,7 +592,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		string is_threshold_file_name = str_array[ii];
 
 		char output_set[200];
-		sprintf(output_set, "%ssimple_lsh_recall_%s.out", output_folder, is_threshold_file_name.c_str());
+		sprintf(output_set, "%ssimple_lsh_recall_%s_%d.out", output_folder, is_threshold_file_name.c_str(), sample_index);
 
 		FILE *fp = fopen(output_set, "a+");
 		if (!fp)
@@ -1648,13 +673,11 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;
-				// printf("query index: %d, round: %d, using threshold? -- %d, candidate size: %f .\n", i, num, is_threshold, candidate_size);
-				// printf("  query index: %d, top_k: %d, raw candidate size: %d .\n", i, top_k, candidate_size);
+
 
 				// persist on file to compute overall performance
 				char output_set[200];
-				// sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-				sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str());
+				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str(), sample_index);
 
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
@@ -1710,7 +733,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 		char temp_result_set[200];
 		// sprintf(temp_result_set, "%s_top_%d_%s", temp_result, top_k, is_threshold_file_name.c_str());
-		sprintf(temp_result_set, "%s_%s", temp_result, is_threshold_file_name.c_str());
+		sprintf(temp_result_set, "%s_%s_%d", temp_result, is_threshold_file_name.c_str(), sample_index);
 		persist_candidate_size(average_candidate_size, total_hash_table_hit, temp_result_set, my_run_time);
 
 		printf("\n");
@@ -1730,7 +753,6 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	delete[] R; R = NULL;
 	return 0;
 }
-
 
 // -----------------------------------------------------------------------------
 int norm_distribution(                // analyse norm distribution of data
@@ -1881,17 +903,35 @@ int persist_candidate_size(                				// persist average number of cand
 	return 0;
 }
 
+// -----------------------------------------------------------------------------
+int persist_sample_results(int max_top_k, MaxK_List* list, FILE *fp)
+{
+	assert(fp != NULL && list->size() == max_top_k);
+
+	// persist current sample top-k results on file
+	for(int i = 0; i < list->size(); i++)
+	{
+		int current_data_idx = list->ith_id(i) - 1;
+		current_data_idx = current_data_idx < 0 ? -1 : current_data_idx;
+		float temp_value = current_data_idx < 0 ? -1.0f : list->ith_key(i);
+		fprintf(fp, "%d %f ", current_data_idx, temp_value);
+	}
+	fprintf(fp, "\n");
+	return 0;
+}
+
 // -------------------------------------------------------------------------
 //  read all candidates per top_k, per query per onion layer
 // -------------------------------------------------------------------------
-int overall_performance(                        // output the overall performance of indexing
-		int   d,                                // dimension of space
-		int   qn,                             // number of queries
-		int   layers,                        // max amount of onion layers so far
-		int top_k, 							// top 25 or top 50?
-		const char  *temp_output_folder,        // temporal output
-		const char  *ground_truth_folder,    // ground truth folder
-		const char  *output_folder)            // output folder
+int overall_performance(                        	// output the overall performance of indexing
+		int   d,                                	// dimension of space
+		int   qn,                             		// number of queries
+		int   layers,                        		// max amount of onion layers so far
+		int   top_k, 								// top 25 or top 50?
+		int   sample_index,							// sample index of current operation
+		const char  *temp_output_folder,        	// temporal output
+		const char  *ground_truth_folder,    		// ground truth folder
+		const char  *output_folder)            		// output folder
 {
 
 	// need to pass max_number_layer we have so far as parameters into function
@@ -1979,6 +1019,7 @@ int overall_performance(                        // output the overall performanc
 		}
 
 		printf("Top-t c-AMIP of Simple_LSH (overall): \n");
+		FILE *query_sample_file_handle = NULL;
 
 		for (int round = 0; round < max_round; ++round)
 		{
@@ -2063,6 +1104,22 @@ int overall_performance(                        // output the overall performanc
 			assert(feof(fp1) && line_count == total_num * qn);
 
 			MaxK_List* list = new MaxK_List(top_k);
+
+			/**
+			 * Added by Sicong, April-08-2019
+			 * */
+			// collect at final round
+			// persist top-k candidates from each query, each optimized top_k and each topk, each sample on file
+			if(round == max_round)
+			{
+				char query_sample_file_name[100];
+				sprintf(query_sample_file_name, "%s_top_%d_%s_%d.txt", temp_output_folder, top_k, is_threshold_file_name.c_str(), sample_index);
+				// create file handle
+				query_sample_file_handle = fopen(query_sample_file_name, "a+");
+			}
+
+
+
 			for (int i = 0; i < qn; ++i)
 			{
 				list->reset();
@@ -2074,12 +1131,19 @@ int overall_performance(                        // output the overall performanc
 				{
 					list->insert(temp_result[i][j][d], j + 1);
 				}
+
+				if(round == max_round - 1 && query_sample_file_handle != NULL)
+				{
+					persist_sample_results(top_k, list, query_sample_file_handle);
+				}
+
 				recall[round] += calc_recall(top_k, (const Result *) R[i], list);
 				NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
 
 				avg_topk_ground_truth[round] += R[i][top_k - 1].key_;
 				avg_topk_ret[round] += list->ith_key(top_k - 1) > 0 ? list->ith_key(top_k - 1) : 0;
 			}
+
 			delete list;
 			list = NULL;
 			fclose(fp1);
@@ -2101,9 +1165,12 @@ int overall_performance(                        // output the overall performanc
 
 		}
 
+		// close file handle
+		fclose(query_sample_file_handle);
+
 		char output_folder_set[200];
 		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
-		sprintf(output_folder_set, "%s_%s.txt", output_folder, is_threshold_file_name.c_str());
+		sprintf(output_folder_set, "%s_%s_%d.txt", output_folder, is_threshold_file_name.c_str(), sample_index);
 
 		printf("Output path %s \n ", output_folder_set);
 		FILE *fp2 = fopen(output_folder_set, "a+");

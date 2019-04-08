@@ -13,83 +13,6 @@ int ground_truth(					// find the ground truth results
 	const char  *truth_set);			// address of truth set
 
 // -----------------------------------------------------------------------------
-int h2_alsh(						// c-AMIP search via h2_alsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	float nn_ratio,						// approximation ratio for ANN search
-	float mip_ratio,					// approximation ratio for AMIP search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int l2_alsh(						// c-AMIP search via l2_alsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   m,							// param of l2_alsh
-	float U,							// param of l2_alsh
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int l2_alsh2(						// c-AMIP search via l2_alsh2
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   m,							// param of l2_alsh2
-	float U,							// param of l2_alsh2
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int xbox(							// c-AMIP search via xbox
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int sign_alsh(						// c-AMIP search via sign_alsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   m,							// param of sign_alsh
-	float U,							// param of sign_alsh
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int simple_lsh(						// c-AMIP search via simple_lsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
-	float S,							// similarity threshold
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
 int linear_scan(					// find top-k mip using linear_scan
 	int   n,							// number of data points
 	int   qn,							// number of query points
@@ -102,65 +25,6 @@ int linear_scan(					// find top-k mip using linear_scan
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
-int h2_alsh_precision_recall(		// precision recall curve of h2_alsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	float nn_ratio,						// approximation ratio for ANN search
-	float mip_ratio,					// approximation ratio for AMIP search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int sign_alsh_precision_recall(		// precision recall curve of sign_alsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   m,							// param of sign_alsh
-	float U,							// param of sign_alsh
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *output_folder);		// output folder
-
-// -----------------------------------------------------------------------------
-int simple_lsh_precision_recall(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
-	float S,							// similarity threshold
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *temp_result,			// address to store temporary output from different onion layers
-	const char  *output_folder);		// output folder
-
-/*
-// -----------------------------------------------------------------------------
-int simple_lsh_recall(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
-	int   qn,							// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
-	int   layer_index, 				// current onion layer index
-	float S,							// similarity threshold
-	float nn_ratio,						// approximation ratio for ANN search
-	const float **data,					// data set
-	const float **query,				// query set
-	const char  *truth_set,				// address of truth set
-	const char  *temp_result,			// address to store temporary output from different onion layers
-	const char  *output_folder);		// output folder
-*/
-
-// -----------------------------------------------------------------------------
 int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   n,							// number of data points
 	int   qn,						// number of query points
@@ -168,7 +32,8 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 	int   K,							// number of hash tables
 	int   L,							// number of hash layers
 	int   layer_index, 				// current onion layer index
-	int 	  top_k,						// number of elements want to retrieve
+	int   top_k,						// number of elements want to retrieve
+	int   sample_index, 					// sample index of current operation
 	float S,							// similarity threshold
 	float nn_ratio,					// approximation ratio for ANN search
 	const float **data,				// data set
@@ -209,6 +74,7 @@ int overall_performance(				// output the overall performance of indexing
 	int   qn, 							// number of queries
 	int   layers,						// number of onion layers
 	int   top_k, 						// number of elements to retrieve
+	int   sample_index,
 	const char  *temp_output_folder,	// temporal output folder
 	const char  *ground_truth_folder,	// ground truth folder
 	const char  *output_folder);		// output folder
@@ -264,5 +130,6 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 
 
 int my_sort_col(const void *a, const void *b);
+int persist_sample_results(int max_top_k, MaxK_List* list, FILE *fp);
 
 #endif // __AMIP_H
