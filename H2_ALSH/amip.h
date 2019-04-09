@@ -131,5 +131,15 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 
 int my_sort_col(const void *a, const void *b);
 int persist_sample_results(int max_top_k, MaxK_List* list, FILE *fp);
+int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder);
+// -----------------------------------------------------------------------------
+int read_ground_truth_from_sample(						// read ground truth results from disk
+	int qn, 											// # of result-sets (one per query)
+	int top_k,											// number of query objects
+	const char *fname,									// address of truth set
+	unordered_map<int, float>* map_array);
+
+
+
 
 #endif // __AMIP_H

@@ -1223,7 +1223,7 @@ int my_sort_col(const void *pa, const void *pb )
  *
  * And Delete intermediate files afterwards
  * */
-int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result)
+int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder)
 {
 	int threshold_conditions = 2;
 	bool use_threshold_pruning[] = {true, false};
@@ -1263,28 +1263,167 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 		kMIPs.push_back(50);
 		max_round = 6;
 	}
+
+
+	float *recall = new float[max_round];
+	float *NDCG = new float[max_round];
+	float *avg_topk_ground_truth = new float[max_round];
+	float *avg_topk_ret = new float[max_round];
+	for (int round = 0; round < max_round; ++round)
+	{
+		recall[round] = 0;
+		NDCG[round] = 0;
+
+		avg_topk_ground_truth[round] = 0.0f;
+		avg_topk_ret[round] = 0.0f;
+	}
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i)
+	{
+		R[i] = new Result[MAXK];
+	}
+	if (read_ground_truth(qn, ground_truth_folder, R) == 1)
+	{
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
 	for (int ii = 0; ii < threshold_conditions; ii++)
 	{
 		bool is_threshold = use_threshold_pruning[ii];
 		string is_threshold_file_name = str_array[ii];
 
+		// for each top-k [optimized top-k as function input]
 		for (int jj = 0; jj < max_round; jj++)
 		{
 			int top_k = kMIPs[jj];
 			// a vector of maps with size qn
 			// key : value = data_index_id : aggrgated_sim_value
-			unordered_map<string, vector<int>>* maps_ = new unordered_map<string, vector<int> >[qn];
-			for(int i = 0; i < sample_space; i++)
+			unordered_map<int, float>* map_array = new unordered_map<int, float>[qn];
+
+			// load data into map-array
+			for(int sample_index = 0; sample_index < sample_space; sample_index++)
 			{
 				char output_set[200];
-				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k, is_threshold_file_name.c_str(), i);
+				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k, is_threshold_file_name.c_str(), sample_index);
 				// read results and combine (sim_value, data_index_id) and compute recall
 
-				delete[] output_set; output_set = NULL;
+				// load data into maps
+				read_ground_truth_from_sample(qn, top_k, output_set, map_array);
+
+				// delete[] output_set;
+				// output_set = NULL;
 			}
+
+			// aggregate rank, and compute recall for current top_k
+
+			// read ground truth of data from original dimension-space
+
+
+			MaxK_List* list = new MaxK_List(top_k);
+
+			// load returned results from map to list, one list per query
+			for(int kk = 0; kk < qn; kk++)
+			{
+				list->reset();
+
+				// iterate map
+				for (auto it = map_array[kk].begin(); it != map_array[kk].end(); ++it)
+				{
+					list->insert(it->second, (it->first + 1));
+				}
+
+				recall[jj] += calc_recall(top_k, (const Result *) R[kk], list);
+				NDCG[jj] += calc_NDCG(top_k, (const Result *) R[kk], list);
+
+				avg_topk_ground_truth[jj] += R[kk][top_k - 1].key_;
+				avg_topk_ret[jj] += list->ith_key(top_k - 1) > 0 ? list->ith_key(top_k - 1) : 0;
+			}
+			delete list;
+			list = NULL;
 		}
+		char output_folder_set_final[200];
+		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
+		sprintf(output_folder_set_final, "%s_%s_%d.txt", output_folder, is_threshold_file_name.c_str());
+
+		printf("Output path %s \n ", output_folder_set_final);
+		FILE *fp2 = fopen(output_folder_set_final, "a+");
+		if (!fp2)
+		{
+			printf("Could not open %s\n", output_folder_set_final);
+			return 1;
+		}
+		printf("Top-k\t\tRecall\tNDCG\tground_truth\treturned_results\n");
+		fprintf(fp2, "Top-k\t\tRecall\tNDCG\tground_truth\treturned_results\n");
+		for (int round = 0; round < max_round; ++round)
+		{
+			int top_k = kMIPs[round];
+			recall[round] = recall[round] / qn;
+			NDCG[round] = NDCG[round] * 1.0f / qn;
+
+			avg_topk_ground_truth[round] = avg_topk_ground_truth[round]/qn;
+			avg_topk_ret[round] = avg_topk_ret[round]/qn;
+
+			printf("%4d\t\t%.2f\t%.2f\t%.2f\t%.2f\n", top_k,
+					recall[round], NDCG[round], avg_topk_ground_truth[round], avg_topk_ret[round]);
+			fprintf(fp2, "%d\t%f\t%f\t%f\t%f\n", top_k,
+					recall[round], NDCG[round], avg_topk_ground_truth[round], avg_topk_ret[round]);
+			printf("\n");
+			fprintf(fp2, "\n");
+		}
+		printf("\n");
+		fprintf(fp2, "\n");
+		fclose(fp2);
+
+		delete[] recall; recall = NULL;
+		delete[] NDCG; NDCG = NULL;
+	}
+	delete[] R; R = NULL;
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
+int read_ground_truth_from_sample(						// read ground truth results from disk
+	int qn, 											// # of result-sets (one per query)
+	int top_k,											// number of query objects
+	const char *fname,									// address of truth set
+	unordered_map<int, float>* map_array)										// ground truth results (return)
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+	{
+		printf("Could not open %s\n", fname);
+		return 1;
 	}
 
+	// int tmp1 = -1;
+	// int tmp2 = -1;
+	// fscanf(fp, "%d %d\n", &tmp1, &tmp2);
+	// assert(tmp1 == qn && tmp2 == MAXK);
+	for (int i = 0; i < qn; ++i)
+	{
+		for (int j = 0; j < top_k; ++j)
+		{
+			int temp_id = -1;
+			float temp_sim_value = -1;
+			fscanf(fp, "%d %f ", &temp_id, &temp_sim_value);
 
+			if(map_array[i].find(temp_id) != map_array[i].end())
+			{
+				map_array[i][temp_id] = map_array[i][temp_id] + temp_sim_value;
+			}
+			else
+			{
+				map_array[i][temp_id] = temp_sim_value;
+			}
 
+		}
+		fscanf(fp, "\n");
+	}
+	fclose(fp);
+
+	return 0;
 }
+
+
+
