@@ -1216,4 +1216,75 @@ int my_sort_col(const void *pa, const void *pb )
 	return (a[MAX_DIMENSION] < b[MAX_DIMENSION]) - (a[MAX_DIMENSION] > b[MAX_DIMENSION]);
 }
 
+// -----------------------------------------------------------------------------
+/**
+ * Added by Sicong, April-08-2019
+ * Combine result from each sampled portion
+ *
+ * And Delete intermediate files afterwards
+ * */
+int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result)
+{
+	int threshold_conditions = 2;
+	bool use_threshold_pruning[] = {true, false};
+	string str_array[] = {"with_threshold", "without_threshold"};
+	int max_round = 4;
+	vector<int> kMIPs;
+	if(optimized_topk == 25)
+	{
+		// top-25
+		// int kMIPs[] = { 1, 2, 5, 10, 25};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		max_round = 5;
+	}
 
+	else if(optimized_topk == 10)
+	{
+		// int kMIPs[] = { 1, 2, 5, 10};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		max_round = 4;
+	}
+	else
+	{
+		// top-50
+		// int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+		kMIPs.push_back(1);
+		kMIPs.push_back(2);
+		kMIPs.push_back(5);
+		kMIPs.push_back(10);
+		kMIPs.push_back(25);
+		kMIPs.push_back(50);
+		max_round = 6;
+	}
+	for (int ii = 0; ii < threshold_conditions; ii++)
+	{
+		bool is_threshold = use_threshold_pruning[ii];
+		string is_threshold_file_name = str_array[ii];
+
+		for (int jj = 0; jj < max_round; jj++)
+		{
+			int top_k = kMIPs[jj];
+			// a vector of maps with size qn
+			// key : value = data_index_id : aggrgated_sim_value
+			unordered_map<string, vector<int>>* maps_ = new unordered_map<string, vector<int> >[qn];
+			for(int i = 0; i < sample_space; i++)
+			{
+				char output_set[200];
+				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k, is_threshold_file_name.c_str(), i);
+				// read results and combine (sim_value, data_index_id) and compute recall
+
+				delete[] output_set; output_set = NULL;
+			}
+		}
+	}
+
+
+
+}
