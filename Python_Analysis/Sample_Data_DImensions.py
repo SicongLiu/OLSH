@@ -58,9 +58,15 @@ if __name__ == '__main__':
     reps = 3
     sample_dim = 3
 
+    # sample data
     assert(sample_dim <= dimension)
     load_sample(input_path, output_dir, dimension, sample_dim, reps)
 
+    # sample query
+    input_path = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/random_" + str(dimension) + "_1000.txt"
+    output_dir = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/"
+
+    load_sample(input_path, output_dir, dimension, sample_dim, reps)
     print("input_path: ", input_path)
     print("Done.")
 

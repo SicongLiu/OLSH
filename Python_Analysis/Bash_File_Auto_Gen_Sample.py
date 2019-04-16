@@ -581,7 +581,7 @@ for ss in range(sample_range):
 
                                     f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                              "} -L ${L" + str(kk) + "} -LI " + str(
-                                        kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                        kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
                                         kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
@@ -596,7 +596,7 @@ for ss in range(sample_range):
                                 f3.write("# ------------------------------------------------------------------------------ \n")
                                 f3.write("#     Overall-Performance \n")
                                 f3.write("# ------------------------------------------------------------------------------ \n")
-                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -si ${sample_index} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n")
                                 # f3.close()
 
@@ -662,7 +662,7 @@ for ss in range(sample_range):
 
                                     f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                              "} -L ${L" + str(kk) + "} -LI " + str(
-                                        kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                        kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
                                         kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
@@ -679,7 +679,7 @@ for ss in range(sample_range):
                                 f3.write("#     Overall-Performance \n")
                                 f3.write(
                                     "# ------------------------------------------------------------------------------ \n")
-                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -si ${sample_index} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n")
                                 # f3.close()
 
@@ -743,7 +743,7 @@ for ss in range(sample_range):
 
                                     f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                              "} -L ${L" + str(kk) + "} -LI " + str(
-                                        kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                        kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
                                         kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
@@ -758,7 +758,7 @@ for ss in range(sample_range):
                                 f3.write("# ------------------------------------------------------------------------------ \n")
                                 f3.write("#     Overall-Performance \n")
                                 f3.write("# ------------------------------------------------------------------------------ \n")
-                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                                f3.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -si ${sample_index} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n")
                                 # f3.close()
 
