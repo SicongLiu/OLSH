@@ -23,7 +23,7 @@ def load_sample(input_path, output_dir, total_dim, sample_dim, reps):
 
     for i in range(reps):
         dim_index = np.random.choice(total_dim, sample_dim, replace=False)
-        print("dim_index: ", dim_index)
+        print("Current reps: ", i, " dim_index: ", dim_index)
 
         output_path = output_dir + str(i) + ".txt"
         # extra dim_index and output data
@@ -47,21 +47,22 @@ def load_sample(input_path, output_dir, total_dim, sample_dim, reps):
 
 
 if __name__ == '__main__':
-    dimension = 5
-    cardinality = 1000
+    dimension = 7
+    cardinality = 1000000
     data_type = 'random_'
-    MAX_LAYERS = 10
+    MAX_LAYERS = 50
 
-    input_path = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/random_" + str(dimension) + "_1000.txt"
-    output_dir = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/"
+    reps = 5
+    sample_dim = 4
 
-    reps = 3
-    sample_dim = 3
+    input_path = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/random_" + str(dimension) + "_" + str(cardinality) + ".txt"
+    output_dir = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/sampled_" + str(sample_dim) + "_100000_"
 
     assert(sample_dim <= dimension)
+    print("input_path: ", input_path)
     load_sample(input_path, output_dir, dimension, sample_dim, reps)
 
-    print("input_path: ", input_path)
+
     print("Done.")
 
 
