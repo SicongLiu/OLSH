@@ -50,18 +50,25 @@ if __name__ == '__main__':
     dimension = 7
     cardinality = 1000000
     data_type = 'random_'
-    MAX_LAYERS = 50
 
+    # MAX_LAYERS = 50
     reps = 5
     sample_dim = 4
 
-    input_path = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/random_" + str(dimension) + "_" + str(cardinality) + ".txt"
-    output_dir = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/sampled_" + str(sample_dim) + "_100000_"
+    # sample data
+    input_path = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/random_" + str(dimension) + "_1000.txt"
+    output_dir = "/Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/"
 
     assert(sample_dim <= dimension)
     print("input_path: ", input_path)
-    load_sample(input_path, output_dir, dimension, sample_dim, reps)
+    # load_sample(input_path, output_dir, dimension, sample_dim, reps)
 
+    # sample query
+    query_path = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/query_" + str(dimension) + "D.txt"
+    output_query_dir = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/"
+
+    print("query_path: ", query_path)
+    load_sample(query_path, output_query_dir, dimension, sample_dim, reps)
 
     print("Done.")
 
