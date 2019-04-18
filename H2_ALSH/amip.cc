@@ -501,6 +501,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		const char  *sim_angle,            // address to store sim-angle from different layers
 		const char  *output_folder,
 		const char  *temp_hash,
+		const char  *data_index_set,
 		bool post_opt)         // output folder
 {
 	timeval start_time, end_time;
@@ -521,6 +522,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	gettimeofday(&end_time, NULL);
 	float read_file_time = end_time.tv_sec - start_time.tv_sec +
 			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+
 	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
 
 	// -------------------------------------------------------------------------
@@ -538,14 +540,14 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	//  Precision Recall Curve of Simple_LSH
 	// -------------------------------------------------------------------------
-	int threshold_conditions = 2;
+	/*int threshold_conditions = 2;
      bool use_threshold_pruning[] = {true, false};
-     string str_array[] = {"with_threshold", "without_threshold"};
+     string str_array[] = {"with_threshold", "without_threshold"};*/
 
 
-	/*int threshold_conditions = 1;
+	int threshold_conditions = 1;
 	bool use_threshold_pruning[] = {false};
-	string str_array[] = {"without_threshold"};*/
+	string str_array[] = {"without_threshold"};
 
 	int max_round = 4;
 	vector<int> kMIPs;
@@ -583,6 +585,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 		max_round = 6;
 	}
 
+	printf("Ground truth path: %s layer_index: %d, top_k: %d, sample_index: %d \n", truth_set, layer_index, top_k, sample_index);
 	for(int ii = 0; ii < threshold_conditions; ii++)
 	{
 		int top_k = -1;
@@ -674,14 +677,14 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;
 
-
+				// printf("list size: %d, id: %f, value: %d \n", list->size(), list->ith_key(top_k-1), list->ith_id(top_k-1));
 				// persist on file to compute overall performance
 				char output_set[200];
 				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str(), sample_index);
 
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
-				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set);
+				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set, data_index_set);
 				gettimeofday(&file_end_time, NULL);
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
@@ -825,7 +828,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 		MaxK_List* list,                    	// list that contains the topk result per query per onion layer
 		const float **data,                    	// original data set
 		const float *query,						// original query
-		const char  *output_folder)            	// output folder
+		const char  *output_folder,
+		const char *data_index_set)            	// output folder
 {
 	FILE *fp = fopen(output_folder, "a+");
 	if (!fp)
@@ -834,6 +838,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 		return 1;
 	}
 
+	vector<int> index_vector;
+	read_sample_index_from_sample(data_index_set, index_vector);
 	// persist the dot product in between query and original data
 
 	for(int i = 0; i < list->size(); i++)
@@ -860,8 +866,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 
 			// fprintf(fp, "%f\n", list->ith_key(i));    // flush the similarity value to file
 			float temp_sim_original = calc_inner_product(d, data[current_data_idx], query);
-			fprintf(fp, "%f\n", temp_sim_original);    // flush the similarity value to file
-
+			fprintf(fp, "%f\t", temp_sim_original);    // flush the similarity value to file
+			fprintf(fp, "%d\n", index_vector.at(current_data_idx));    // flush the similarity value to file
 		}
 	}
 	fclose(fp);
@@ -938,14 +944,14 @@ int overall_performance(                        	// output the overall performan
 	// instead of top_k * top_k, we use max_layer * top_k
 	MAX_DIMENSION = d;
 
-	int threshold_conditions = 2;
+	/*int threshold_conditions = 2;
 	bool use_threshold_pruning[] = {true, false};
-	string str_array[] = {"with_threshold", "without_threshold"};
+	string str_array[] = {"with_threshold", "without_threshold"};*/
 
 
-	/*int threshold_conditions = 1;
+	int threshold_conditions = 1;
 	bool use_threshold_pruning[] = {false};
-	string str_array[] = {"without_threshold"};*/
+	string str_array[] = {"without_threshold"};
 
 
 	int max_round = 4;
@@ -1019,10 +1025,11 @@ int overall_performance(                        	// output the overall performan
 		}
 
 		printf("Top-t c-AMIP of Simple_LSH (overall): \n");
-		FILE *query_sample_file_handle = NULL;
+
 
 		for (int round = 0; round < max_round; ++round)
 		{
+			FILE *query_sample_file_handle = NULL;
 			int top_k = kMIPs[round];
 			int temp_layer = min(top_k, layers);
 			/*if(top_k > layers)
@@ -1030,7 +1037,7 @@ int overall_performance(                        	// output the overall performan
 				break;
 			}*/
 			char output_set[200];
-			sprintf(output_set, "%s_top_%d_%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
+			sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_output_folder, top_k, is_threshold_file_name.c_str(), sample_index);
 
 			// load from file
 			FILE *fp1 = fopen(output_set, "r");
@@ -1108,18 +1115,6 @@ int overall_performance(                        	// output the overall performan
 			/**
 			 * Added by Sicong, April-08-2019
 			 * */
-			// collect at final round
-			// persist top-k candidates from each query, each optimized top_k and each topk, each sample on file
-			if(round == max_round)
-			{
-				char query_sample_file_name[100];
-				sprintf(query_sample_file_name, "%s_top_%d_%s_%d.txt", temp_output_folder, top_k, is_threshold_file_name.c_str(), sample_index);
-				// create file handle
-				query_sample_file_handle = fopen(query_sample_file_name, "a+");
-			}
-
-
-
 			for (int i = 0; i < qn; ++i)
 			{
 				list->reset();
@@ -1131,12 +1126,6 @@ int overall_performance(                        	// output the overall performan
 				{
 					list->insert(temp_result[i][j][d], j + 1);
 				}
-
-				if(round == max_round - 1 && query_sample_file_handle != NULL)
-				{
-					persist_sample_results(top_k, list, query_sample_file_handle);
-				}
-
 				recall[round] += calc_recall(top_k, (const Result *) R[i], list);
 				NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
 
@@ -1147,6 +1136,7 @@ int overall_performance(                        	// output the overall performan
 			delete list;
 			list = NULL;
 			fclose(fp1);
+
 			// -------------------------------------------------------------------------
 			//  free memory space
 			// -------------------------------------------------------------------------
@@ -1165,8 +1155,7 @@ int overall_performance(                        	// output the overall performan
 
 		}
 
-		// close file handle
-		fclose(query_sample_file_handle);
+
 
 		char output_folder_set[200];
 		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
@@ -1223,11 +1212,19 @@ int my_sort_col(const void *pa, const void *pb )
  *
  * And Delete intermediate files afterwards
  * */
-int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder)
+int combine_sample_result(int qn, int optimized_topk, int sample_space, int layers, int d, const char *ground_truth_folder, const char  *temp_result, const char *output_folder, const char  *temp_result_str)
 {
-	int threshold_conditions = 2;
+
+	printf("inside combine_sample_result function. \n");
+	/*int threshold_conditions = 2;
 	bool use_threshold_pruning[] = {true, false};
-	string str_array[] = {"with_threshold", "without_threshold"};
+	string str_array[] = {"with_threshold", "without_threshold"};*/
+
+	MAX_DIMENSION = d;
+	int threshold_conditions = 1;
+	bool use_threshold_pruning[] = {false};
+	string str_array[] = {"without_threshold"};
+
 	int max_round = 4;
 	vector<int> kMIPs;
 	if(optimized_topk == 25)
@@ -1265,18 +1262,6 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 	}
 
 
-	float *recall = new float[max_round];
-	float *NDCG = new float[max_round];
-	float *avg_topk_ground_truth = new float[max_round];
-	float *avg_topk_ret = new float[max_round];
-	for (int round = 0; round < max_round; ++round)
-	{
-		recall[round] = 0;
-		NDCG[round] = 0;
-
-		avg_topk_ground_truth[round] = 0.0f;
-		avg_topk_ret[round] = 0.0f;
-	}
 
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i)
@@ -1293,10 +1278,23 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 		bool is_threshold = use_threshold_pruning[ii];
 		string is_threshold_file_name = str_array[ii];
 
+		float *recall = new float[max_round];
+		float *NDCG = new float[max_round];
+		float *avg_topk_ground_truth = new float[max_round];
+		float *avg_topk_ret = new float[max_round];
+		for (int round = 0; round < max_round; ++round)
+		{
+			recall[round] = 0;
+			NDCG[round] = 0;
+
+			avg_topk_ground_truth[round] = 0.0f;
+			avg_topk_ret[round] = 0.0f;
+		}
 		// for each top-k [optimized top-k as function input]
 		for (int jj = 0; jj < max_round; jj++)
 		{
 			int top_k = kMIPs[jj];
+			int temp_layer = min(top_k, layers);
 			// a vector of maps with size qn
 			// key : value = data_index_id : aggrgated_sim_value
 			unordered_map<int, float>* map_array = new unordered_map<int, float>[qn];
@@ -1305,14 +1303,89 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 			for(int sample_index = 0; sample_index < sample_space; sample_index++)
 			{
 				char output_set[200];
-				sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k, is_threshold_file_name.c_str(), sample_index);
-				// read results and combine (sim_value, data_index_id) and compute recall
+				// sprintf(output_set, "%s_top_%d_%s_%d.txt", temp_result, top_k, is_threshold_file_name.c_str(), sample_index);
 
+				printf("sample index: %d \n", sample_index);
+				// temp_result_str should look like this: run_test_random_4_1000000_opt_0
+				sprintf(output_set, "%s_%d/%s_%d_top_%d_%s_%d.txt", temp_result, sample_index, temp_result_str, sample_index, top_k, is_threshold_file_name.c_str(), sample_index);
+				// read results and combine (sim_value, data_index_id) and compute recall
+				printf("outputset to read results from: %s .\n", output_set);
+
+				FILE *fp1 = fopen(output_set, "r");
+				if(!fp1)
+				{
+					printf("Could not open %s \n", output_set);
+					return 1;
+				}
 				// load data into maps
-				read_ground_truth_from_sample(qn, top_k, output_set, map_array);
+				// read_ground_truth_from_sample(qn, top_k, output_set, map_array);
+
+				// load retrieved results index
+				// int read_sample_index_from_sample(const char *fname, vector<vector<int>> &sample_data_index)
 
 				// delete[] output_set;
 				// output_set = NULL;
+				int total_num = temp_layer * top_k - temp_layer * (temp_layer - 1)/2;
+
+				float*** temp_result = new float**[qn];
+				for(int i = 0; i < qn; i++)
+				{
+					// temp_result[i] = new float*[temp_layer * top_k];
+					// for(int j=0; j< temp_layer * top_k; j++)
+					temp_result[i] = new float*[total_num];
+					for(int j=0; j< total_num; j++)
+					{
+						temp_result[i][j] = new float[d+2];
+					}
+				}
+
+				int q_index = 0;
+				int layer_index = 0;	// range [0, layers - 1]
+				int cur_q_line_count = 0;
+				int line_count = 0;
+
+				int temp_top_k = top_k;
+				int cur_counter = temp_top_k * qn;
+				int per_query_accumu_index = 0;
+				while (!feof(fp1) && line_count < total_num * qn)
+				{
+					if(cur_q_line_count%temp_top_k == 0 && line_count > 0)
+					{
+						q_index = (++q_index)%qn;
+						cur_q_line_count = 0;
+						if(line_count == cur_counter)
+						{
+							++layer_index;
+							per_query_accumu_index += temp_top_k;
+							temp_top_k = temp_top_k - 1;
+							cur_counter += temp_top_k * qn;
+						}
+					}
+					for (int j = 0; j < d + 2; ++j)
+					{
+						// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * temp_top_k][j]);
+						// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * (temp_top_k + 1)][j]);
+						fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + per_query_accumu_index][j]);
+					}
+
+					// load into map
+					float temp_sim_value = temp_result[q_index][cur_q_line_count + per_query_accumu_index][d];
+					int temp_id = temp_result[q_index][cur_q_line_count + per_query_accumu_index][d + 1];
+					printf("temp_id: %d, temp_sim_value: %f .\n", temp_id, temp_sim_value);
+					if(map_array[q_index].find(temp_id) != map_array[q_index].end())
+					{
+						map_array[q_index][temp_id] = map_array[q_index][temp_id] + temp_sim_value;
+					}
+					else
+					{
+						map_array[q_index][temp_id] = temp_sim_value;
+					}
+
+					fscanf(fp1, "\n");
+					++line_count;
+					++cur_q_line_count;
+
+				}
 			}
 
 			// aggregate rank, and compute recall for current top_k
@@ -1330,6 +1403,7 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 				// iterate map
 				for (auto it = map_array[kk].begin(); it != map_array[kk].end(); ++it)
 				{
+					/****** index update here later ********/
 					list->insert(it->second, (it->first + 1));
 				}
 
@@ -1344,7 +1418,9 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 		}
 		char output_folder_set_final[200];
 		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
-		sprintf(output_folder_set_final, "%s_%s_%d.txt", output_folder, is_threshold_file_name.c_str());
+
+		// printf("input outputfolder: %s. \n", output_folder);
+		sprintf(output_folder_set_final, "%s%s.txt", output_folder, is_threshold_file_name.c_str());
 
 		printf("Output path %s \n ", output_folder_set_final);
 		FILE *fp2 = fopen(output_folder_set_final, "a+");
@@ -1382,6 +1458,16 @@ int combine_sample_result(int sample_space, int optimized_topk, int qn, const ch
 	return 0;
 }
 
+
+
+
+
+
+
+
+
+
+// Two functions below are deprecated
 // -----------------------------------------------------------------------------
 int read_ground_truth_from_sample(						// read ground truth results from disk
 	int qn, 											// # of result-sets (one per query)
@@ -1407,6 +1493,7 @@ int read_ground_truth_from_sample(						// read ground truth results from disk
 			int temp_id = -1;
 			float temp_sim_value = -1;
 			fscanf(fp, "%d %f ", &temp_id, &temp_sim_value);
+			printf("temp_id: %d, temp_sim_value: %f .\n", temp_id, temp_sim_value);
 
 			if(map_array[i].find(temp_id) != map_array[i].end())
 			{
@@ -1426,4 +1513,24 @@ int read_ground_truth_from_sample(						// read ground truth results from disk
 }
 
 
+int read_sample_index_from_sample(
+	const char *fname,
+	vector<int> &sample_data_index)
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+	{
+		printf("Could not open %s\n", fname);
+		return 1;
+	}
+	int temp_value = -1;
+	while (fscanf(fp,"%d", &temp_value) == 1)
+	{
+		sample_data_index.push_back(temp_value);
+		fscanf(fp, "\n");
+	}
+	fclose(fp);
+
+	return 0;
+}
 

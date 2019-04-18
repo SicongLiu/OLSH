@@ -164,7 +164,8 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 		// float ip_raw = calc_inner_product(dim_, data_[id], query);
 
 		// use processed layer for dot product value
-		float ip_scaled = calc_inner_product_scaled(dim_, data_[id], query, M_);
+		// float ip_scaled = calc_inner_product_scaled(dim_, data_[id], query, M_);
+		float ip_scaled = calc_inner_product(dim_, data_[id], query);
 		// float ip_unit = calc_inner_product(simple_lsh_dim_, simple_lsh_data_[id], simple_lsh_query);
 
 		// if( ip_unit > S_)

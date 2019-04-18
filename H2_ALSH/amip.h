@@ -25,26 +25,26 @@ int linear_scan(					// find top-k mip using linear_scan
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
-int simple_lsh_recall(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
-	int   qn,						// number of query points
-	int   d,							// dimension of space
-	int   K,							// number of hash tables
-	int   L,							// number of hash layers
-	int   layer_index, 				// current onion layer index
-	int   top_k,						// number of elements want to retrieve
-	int   sample_index, 					// sample index of current operation
-	float S,							// similarity threshold
-	float nn_ratio,					// approximation ratio for ANN search
-	const float **data,				// data set
-	const float **query,				// query set
-	const char  *truth_set,			// address of truth set
-	const char  *temp_result,		// address to store temporary output from different onion layers
-	const char  *sim_angle,			// address to store sim-angle from different layers
-	const char  *output_folder,		// output folder
-	const char  *temp_hash,
-	bool post_opt);
-
+int simple_lsh_recall(    // precision recall curve of simple_lsh
+		int   n,                            // number of data points
+		int   qn,                            // number of query points
+		int   d,                            // dimension of space
+		int   K,                            // number of hash functions
+		int   L,                            // number of hash tables
+		int       layer_index,                 // the index of current onion layer
+		int   top_k, 						// top 25 or top 50?
+		int   sample_index,
+		float  S,                            // number of hash tables
+		float nn_ratio,                        // approximation ratio for nn search
+		const float **data,                    // data set
+		const float **query,                // query set
+		const char  *truth_set,                // address of truth set
+		const char  *temp_result,            // address to store temporary output from different onion layers
+		const char  *sim_angle,            // address to store sim-angle from different layers
+		const char  *output_folder,
+		const char  *temp_hash,
+		const char  *data_index_set,
+		bool post_opt);         // output folder
 // -----------------------------------------------------------------------------
 int norm_distribution(				// analyse norm distribution of data
 	int   n,							// number of data points
@@ -53,13 +53,14 @@ int norm_distribution(				// analyse norm distribution of data
 	const char  *output_folder);		// output folder
 
 // -----------------------------------------------------------------------------
-int persist_intermediate_on_file(		// persist intermediate result per query per onion layer on file, for aggregation
-	int   topk, 						// topk results of interest
-	int   d,							// dimension of space
-	MaxK_List* list,					// list that contains the topk result per query per onion layer
-	const float **data,					// original data set
-	const float *query,					// original query
-	const char  *output_folder);		// output folder
+int persist_intermediate_on_file(        		// persist intermediate result per query per onion layer on file, for aggregation
+		int   topk,                         	// topk results of interest
+		int   d,                            	// dimension of space
+		MaxK_List* list,                    	// list that contains the topk result per query per onion layer
+		const float **data,                    	// original data set
+		const float *query,						// original query
+		const char  *output_folder,
+		const char *data_index_set);            	// output folder
 
 // -----------------------------------------------------------------------------
 int persist_candidate_size(								// persist average number of candidate on file, regarding to a specific topk
@@ -131,15 +132,16 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 
 int my_sort_col(const void *a, const void *b);
 int persist_sample_results(int max_top_k, MaxK_List* list, FILE *fp);
-int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder);
+// int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder, const char  *temp_result_str);
+int combine_sample_result(int qn, int optimized_topk, int sample_space, int layers, int d, const char *ground_truth_folder, const char  *temp_result, const char *output_folder, const char  *temp_result_str);
+int read_sample_index_from_sample(
+	const char *fname,
+	vector<int> &sample_data_index);
 // -----------------------------------------------------------------------------
 int read_ground_truth_from_sample(						// read ground truth results from disk
 	int qn, 											// # of result-sets (one per query)
 	int top_k,											// number of query objects
 	const char *fname,									// address of truth set
 	unordered_map<int, float>* map_array);
-
-
-
 
 #endif // __AMIP_H

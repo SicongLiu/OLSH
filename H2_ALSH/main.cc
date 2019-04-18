@@ -85,6 +85,7 @@ int main(int nargs, char **args)
 	int   layer_index = -1;			// current onion layer index
 	int 	  top_k = -1;
 	int   sample_index = -1;
+	int 	  sample_space = -1;
 	int   L1         = -1;			// # of onion layers
 	float S 		= -1.0f;				// similarity threshold
 	float nn_ratio  = -1.0f;			// approximation ratio of ANN search
@@ -98,6 +99,9 @@ int main(int nargs, char **args)
 	char  output_folder[200];		// output folder
 	char  sim_angle[200];			// address of sim-angle output
 	char  temp_hash[200];			// address of temporal data hash code
+	char  data_index_set[200];			// address of data_index_file
+
+	char  temp_result_str[200];		// result collection str info
 
 	bool  failed = false;
 	int   cnt = 1;
@@ -106,7 +110,7 @@ int main(int nargs, char **args)
 		if (strcmp(args[cnt], "-alg") == 0) {
 			alg = atoi(args[++cnt]);
 			printf("alg           = %d\n", alg);
-			if (alg < 0 || alg > 12) {
+			if (alg < 0 || alg > 14) {
 				failed = true;
 				break;
 			}
@@ -184,6 +188,14 @@ int main(int nargs, char **args)
 				break;
 			}
 		}
+		else if (strcmp(args[cnt], "-sp") == 0) {
+					sample_space = atoi(args[++cnt]);
+					printf("sample_space             = %d\n", sample_space);
+					if (sample_space < 0) {
+						failed = true;
+						break;
+					}
+				}
 		else if (strcmp(args[cnt], "-S") == 0) {
 			S = (float) atof(args[++cnt]);
 			printf("S            = %.2f\n", S);
@@ -246,6 +258,10 @@ int main(int nargs, char **args)
 			strncpy(temp_hash, args[++cnt], sizeof(temp_hash));
 			printf("temp_hash     = %s\n", temp_hash);
 		}
+		else if (strcmp(args[cnt], "-dis") == 0) {
+			strncpy(data_index_set, args[++cnt], sizeof(data_index_set));
+			printf("data_index_set     = %s\n", data_index_set);
+		}
 		else if (strcmp(args[cnt], "-pot") == 0) {
 			int post_opt_int = atoi(args[++cnt]);
 			printf("post_opt_int             = %d\n", post_opt_int);
@@ -262,6 +278,10 @@ int main(int nargs, char **args)
 				failed = true;
 				break;
 			}
+		}
+		else if (strcmp(args[cnt], "-trs") == 0) { // temp_result_str
+			strncpy(temp_result_str, args[++cnt], sizeof(temp_result_str));
+			printf("temp_result_str     = %s\n", temp_result_str);
 		}
 		else {
 			failed = true;
@@ -280,6 +300,13 @@ int main(int nargs, char **args)
 	{
 		overall_performance(d, qn, L1, top_k, sample_index, temp_set, truth_set, output_folder);
 	}
+	else if(alg == 14)
+	{
+		printf("Calling combine_sample_result function...\n");
+		//combine_sample_result(sample_space, top_k, qn, temp_set, truth_set, output_folder, temp_result_str);
+
+		combine_sample_result(qn, top_k, sample_space, L1, d, truth_set, temp_set, output_folder, temp_result_str);
+	}
 	else
 	{
 		timeval start_time, end_time;
@@ -290,6 +317,8 @@ int main(int nargs, char **args)
 		{
 			data[i] = new float[d];
 		}
+
+		printf("data path: %s, query path: %s \n", data_set, query_set);
 		if (read_data(n, d, data_set, data) == 1)
 		{
 			printf("Reading dataset error!\n");
@@ -328,7 +357,7 @@ int main(int nargs, char **args)
 		case 10:
 			simple_lsh_recall(n, qn, d, K, L, layer_index, top_k, sample_index, S, nn_ratio, (const float **) data,
 											(const float **) query, truth_set, temp_set, sim_angle, output_folder,
-											temp_hash, post_opt);
+											temp_hash, data_index_set, post_opt);
 			break;
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);
