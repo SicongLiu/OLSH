@@ -303,3 +303,18 @@ float calc_inner_product_scaled(			// calc inner product
 	return ret;
 }
 
+// -----------------------------------------------------------------------------
+float calc_recall_sample_combine(					// calc recall (percentage)
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	MaxK_List *list)					// results returned by algorithms
+{
+	int i = k - 1;
+	int last = k - 1;
+	while (i >= 0 && R[last].id_ - list->ith_id(i) != 0) {
+		i--;
+	}
+	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
+	return (i + 1) * 100.0f / k;
+}
+

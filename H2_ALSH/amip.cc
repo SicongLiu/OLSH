@@ -852,7 +852,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 				fprintf(fp, "%f\t", -1.0f);
 
 			}
-			fprintf(fp, "%f\n", -100.0f);    // flush the similarity value to file
+			fprintf(fp, "%f\t", -100.0f);    // flush the similarity value to file
+			fprintf(fp, "%f\n", -100.0f);    // flush the temp data_index value to file
 		}
 		else
 		{
@@ -1065,7 +1066,7 @@ int overall_performance(                        	// output the overall performan
 				temp_result[i] = new float*[total_num];
 				for(int j=0; j< total_num; j++)
 				{
-					temp_result[i][j] = new float[d+1];
+					temp_result[i][j] = new float[d+2];
 				}
 			}
 
@@ -1091,12 +1092,14 @@ int overall_performance(                        	// output the overall performan
 						cur_counter += temp_top_k * qn;
 					}
 				}
-				for (int j = 0; j < d + 1; ++j)
+				for (int j = 0; j < d + 2; ++j)
 				{
 					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * temp_top_k][j]);
 					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * (temp_top_k + 1)][j]);
 					fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + per_query_accumu_index][j]);
 				}
+				// int original_data_index = -1;
+				// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + per_query_accumu_index][j]);
 				fscanf(fp1, "\n");
 				++line_count;
 				++cur_q_line_count;
@@ -1212,10 +1215,12 @@ int my_sort_col(const void *pa, const void *pb )
  *
  * And Delete intermediate files afterwards
  * */
-int combine_sample_result(int qn, int optimized_topk, int sample_space, int layers, int d, const char *ground_truth_folder, const char  *temp_result, const char *output_folder, const char  *temp_result_str)
+int combine_sample_result(int d, int qn, int layers, int optimized_topk, int sample_space, const char  *temp_result, const char *ground_truth_folder, const char *output_folder, const char  *temp_result_str)
+// int combine_sample_result(int qn, int optimized_topk, int sample_space, int layers, int d, const char *ground_truth_folder, const char  *temp_result, const char *output_folder, const char  *temp_result_str)
 {
 
 	printf("inside combine_sample_result function. \n");
+	printf("ground truth path: %s \n", ground_truth_folder);
 	/*int threshold_conditions = 2;
 	bool use_threshold_pruning[] = {true, false};
 	string str_array[] = {"with_threshold", "without_threshold"};*/
@@ -1268,6 +1273,8 @@ int combine_sample_result(int qn, int optimized_topk, int sample_space, int laye
 	{
 		R[i] = new Result[MAXK];
 	}
+
+	printf("reading ground truth \n");
 	if (read_ground_truth(qn, ground_truth_folder, R) == 1)
 	{
 		printf("Reading Truth Set Error!\n");
@@ -1293,6 +1300,7 @@ int combine_sample_result(int qn, int optimized_topk, int sample_space, int laye
 		// for each top-k [optimized top-k as function input]
 		for (int jj = 0; jj < max_round; jj++)
 		{
+			printf("max round: %d \n", max_round);
 			int top_k = kMIPs[jj];
 			int temp_layer = min(top_k, layers);
 			// a vector of maps with size qn
@@ -1371,7 +1379,7 @@ int combine_sample_result(int qn, int optimized_topk, int sample_space, int laye
 					// load into map
 					float temp_sim_value = temp_result[q_index][cur_q_line_count + per_query_accumu_index][d];
 					int temp_id = temp_result[q_index][cur_q_line_count + per_query_accumu_index][d + 1];
-					printf("temp_id: %d, temp_sim_value: %f .\n", temp_id, temp_sim_value);
+					// printf("temp_id: %d, temp_sim_value: %f .\n", temp_id, temp_sim_value);
 					if(map_array[q_index].find(temp_id) != map_array[q_index].end())
 					{
 						map_array[q_index][temp_id] = map_array[q_index][temp_id] + temp_sim_value;
@@ -1407,7 +1415,8 @@ int combine_sample_result(int qn, int optimized_topk, int sample_space, int laye
 					list->insert(it->second, (it->first + 1));
 				}
 
-				recall[jj] += calc_recall(top_k, (const Result *) R[kk], list);
+				// recall[jj] += calc_recall(top_k, (const Result *) R[kk], list);
+				recall[jj] += calc_recall_sample_combine(top_k, (const Result *) R[kk], list);
 				NDCG[jj] += calc_NDCG(top_k, (const Result *) R[kk], list);
 
 				avg_topk_ground_truth[jj] += R[kk][top_k - 1].key_;
@@ -1415,6 +1424,18 @@ int combine_sample_result(int qn, int optimized_topk, int sample_space, int laye
 			}
 			delete list;
 			list = NULL;
+
+			// output map_array for testing
+			for(int kk = 0; kk < qn; kk++)
+			{
+				for (auto it = map_array[kk].begin(); it != map_array[kk].end(); ++it)
+				{
+					printf("query index: %d, data_id_index: %d, sim_value: %f \n", kk, it->first, it->second);
+				}
+			}
+
+
+
 		}
 		char output_folder_set_final[200];
 		// sprintf(output_folder_set, "%s_top_%d%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());

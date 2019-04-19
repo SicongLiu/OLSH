@@ -109,4 +109,11 @@ float calc_inner_product_scaled(			// calc inner product
 	const float *query,					// 2nd point
 	const float M);						// largest norm to be scaled with
 
+// -----------------------------------------------------------------------------
+float calc_recall_sample_combine(					// calc recall (percentage)
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	MaxK_List *list);					// results returned by algorithms
+
+
 #endif // __UTIL_H

@@ -305,7 +305,8 @@ int main(int nargs, char **args)
 		printf("Calling combine_sample_result function...\n");
 		//combine_sample_result(sample_space, top_k, qn, temp_set, truth_set, output_folder, temp_result_str);
 
-		combine_sample_result(qn, top_k, sample_space, L1, d, truth_set, temp_set, output_folder, temp_result_str);
+		// combine_sample_result(qn, top_k, sample_space, L1, d, truth_set, temp_set, output_folder, temp_result_str);
+		combine_sample_result(d, qn, L1, top_k, sample_space,  temp_set, truth_set, output_folder, temp_result_str);
 	}
 	else
 	{

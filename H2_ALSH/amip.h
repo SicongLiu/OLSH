@@ -133,7 +133,9 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 int my_sort_col(const void *a, const void *b);
 int persist_sample_results(int max_top_k, MaxK_List* list, FILE *fp);
 // int combine_sample_result(int sample_space, int optimized_topk, int qn, const char  *temp_result, const char *ground_truth_folder, const char *output_folder, const char  *temp_result_str);
-int combine_sample_result(int qn, int optimized_topk, int sample_space, int layers, int d, const char *ground_truth_folder, const char  *temp_result, const char *output_folder, const char  *temp_result_str);
+int combine_sample_result(int d, int qn, int layers, int optimized_topk, int sample_space, const char  *temp_result, const char *ground_truth_folder, const char *output_folder, const char  *temp_result_str);
+
+
 int read_sample_index_from_sample(
 	const char *fname,
 	vector<int> &sample_data_index);
