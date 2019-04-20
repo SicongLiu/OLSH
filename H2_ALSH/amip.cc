@@ -674,7 +674,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 				// top-k computation with threshold from previous layers
 				candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
-				recall += calc_recall(top_k, (const Result *) R[i], list);
+				// recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;
 
 				// printf("list size: %d, id: %f, value: %d \n", list->size(), list->ith_key(top_k-1), list->ith_id(top_k-1));
@@ -685,6 +685,9 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
 				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set, data_index_set);
+
+				recall += calc_recall(top_k, (const Result *) R[i], list);
+
 				gettimeofday(&file_end_time, NULL);
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
@@ -869,6 +872,8 @@ int persist_intermediate_on_file(        		// persist intermediate result per qu
 			float temp_sim_original = calc_inner_product(d, data[current_data_idx], query);
 			fprintf(fp, "%f\t", temp_sim_original);    // flush the similarity value to file
 			fprintf(fp, "%d\n", index_vector.at(current_data_idx));    // flush the similarity value to file
+
+			list->set_ith_id(i, index_vector.at(current_data_idx) + 1);
 		}
 	}
 	fclose(fp);
@@ -1127,7 +1132,8 @@ int overall_performance(                        	// output the overall performan
 				// for(int j = 0; j < temp_layer * top_k; j++)
 				for(int j = 0; j < total_num ; j++)
 				{
-					list->insert(temp_result[i][j][d], j + 1);
+					// list->insert(temp_result[i][j][d], j + 1);
+					list->insert(temp_result[i][j][d], temp_result[i][j][d+1] + 1);
 				}
 				recall[round] += calc_recall(top_k, (const Result *) R[i], list);
 				NDCG[round] += calc_NDCG(top_k, (const Result *) R[i], list);
@@ -1430,7 +1436,7 @@ int combine_sample_result(int d, int qn, int layers, int optimized_topk, int sam
 			{
 				for (auto it = map_array[kk].begin(); it != map_array[kk].end(); ++it)
 				{
-					printf("query index: %d, data_id_index: %d, sim_value: %f \n", kk, it->first, it->second);
+					printf("query index: %d, data_id_index: %d, sim_value: %f \n", kk, (it->first + 1), it->second);
 				}
 			}
 

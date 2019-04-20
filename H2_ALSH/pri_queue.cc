@@ -87,7 +87,14 @@ float MaxK_List::insert(			// insert item
 	return min_key();
 }
 
-
+// -----------------------------------------------------------------------------
+void MaxK_List::set_ith_id(			// insert item
+	int i,							// key of item
+	int new_id)								// id of item
+{
+	if( i < num_)
+		list_[i].id_ = new_id;
+}
 
 // -----------------------------------------------------------------------------
 MinK_List_String::MinK_List_String(				// constructor (given max size)
