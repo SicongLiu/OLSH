@@ -20,12 +20,13 @@ budgets = ["1M", "10M"]
 # dimensions = [4, 5]
 # dimensions = [2, 3, 4, 5, 6]
 dimensions = [4]
-sample_range = 5
+# sample_range = 5
+sample_range = 10
 excel_files = ["./4D_before_sample.xlsx"]
 # excel_files = ["./4D_top25_before.xlsx"]
 pot = 0
 
-#  top_ks = [10, 25, 50]
+# top_ks = [10, 25, 50]
 # top_ks = [10, 25, 50]
 top_ks = [25]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -552,7 +553,7 @@ for ss in range(sample_range):
                                 f3.write("# ------------------------------------------------------------------------------ \n")
                                 f3.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}.txt \n")
                                 f3.write(
-                                    "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+                                    "tsPath=./result/result_${datatype}_${d}D_${cardinality}_${sample_index} # path for the ground truth \n")
                                 f3.write("qPath=./query/query_${d}D_${sample_index}.txt \n")
                                 f3.write("oFolder=./result/result_${datatype}_${d}D_${cardinality}_${sample_index} \n")
 
@@ -572,6 +573,9 @@ for ss in range(sample_range):
                                     f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
                                                                  "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
+                                    f3.write("data_index_set" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "_data_index \n")
+
                                     f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
                                                                    "${cardinality}_opt_${sample_index}/result_${d}D" + str(kk) + "_${K" + str(kk)
                                              + "}_${L" + str(kk) + "}" + "\n")
@@ -583,7 +587,7 @@ for ss in range(sample_range):
                                              "} -L ${L" + str(kk) + "} -LI " + str(
                                         kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -dis ${data_index_set" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
                                     # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                     #          "} -L ${L" + str(kk) + "} -LI " + str(
@@ -652,6 +656,10 @@ for ss in range(sample_range):
                                     f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
                                                                  "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
+                                    f3.write("data_index_set" + str(
+                                        kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "_data_index \n")
+
                                     f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
                                                                    "${cardinality}_max_${sample_index}/result_${d}D" + str(
                                         kk) + "_${K" + str(kk)
@@ -664,7 +672,7 @@ for ss in range(sample_range):
                                              "} -L ${L" + str(kk) + "} -LI " + str(
                                         kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -dis ${data_index_set" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
                                     # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                     #          "} -L ${L" + str(kk) + "} -LI " + str(
@@ -733,6 +741,10 @@ for ss in range(sample_range):
                                     f3.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
                                                                  "${cardinality}_qhull_layer_" + str(kk) + "\n")
 
+                                    f3.write("data_index_set" + str(
+                                        kk) + "=./qhull_data/Synthetic/${datatype}_${d}_${cardinality}_${sample_index}/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "_data_index \n")
+
                                     f3.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
                                                                    "${cardinality}_uni_${sample_index}/result_${d}D" + str(kk) + "_${K" + str(kk)
                                              + "}_${L" + str(kk) + "}" + "\n")
@@ -745,7 +757,7 @@ for ss in range(sample_range):
                                              "} -L ${L" + str(kk) + "} -LI " + str(
                                         kk + 1) + " -tk ${top_k}" + " -si ${sample_index}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
                                              + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -dis ${data_index_set" + str(kk) + "} -pot ${pot} \n")
                                     # temp_top_k = top_k - kk
                                     # f3.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
                                     #          "} -L ${L" + str(kk) + "} -LI " + str(

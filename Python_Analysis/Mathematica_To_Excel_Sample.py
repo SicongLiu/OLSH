@@ -164,7 +164,8 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 
 
 ####################################################################################
-sample_range = 5
+# sample_range = 5
+sample_range = 10
 text_file_path = '/Users/sicongliu/'
 # text_file_path = './'
 dimension = 4

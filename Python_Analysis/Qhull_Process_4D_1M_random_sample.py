@@ -26,12 +26,20 @@ def save_remaining_qhull(data_cardinality, data, current_qhull_output, layer_ind
     num_of_dimension = int(current_data[0])
     num_of_points = int(current_data[1])
     data_len = 2 + int(current_data[1])
+
+    data_index_list = list()
     for i in range(2, data_len):
         current_data_record = np.fromstring(current_data[i], dtype=float, sep=' ')
         # rows, columns = np.where((data == current_data_record).all(axis=1))
         my_row = np.where((data == current_data_record).all(axis=1))[0]
+        data_index_list = data_index_list + my_row
         data = np.delete(data, my_row, 0)
-    
+
+    qhull_index_file_name = cur_output_folder + '/' + aff_name + '_qhull_layer_' + str(layer_index) + '_data_index'
+    f = open(qhull_index_file_name, 'w')
+    f.write(data_index_list)
+    f.close()
+
     file_name = cur_output_folder + '/' + aff_name + '_remain_qhull_input_'+str(layer_index)
     remain_qhull.append(np.asarray(int(num_of_dimension)))
     remain_qhull.append(np.asarray(int(data_cardinality - num_of_points)))
