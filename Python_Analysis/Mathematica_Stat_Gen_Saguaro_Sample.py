@@ -23,7 +23,8 @@ data_type = ["random"]
 dimensions = [4]
 cardinality = [1000000]
 topk = 25
-sample_range = 5
+# sample_range = 5
+sample_range = 10
 
 
 function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
@@ -47,7 +48,7 @@ for ss in range(sample_range):
             f = open(save_data_file, 'w')
             for i in range(len(data_type)):
 
-                temp_sample_folder = data_type[i] + "_" + str(dimensions[j]) + "_Sample_" + str(ss) + "/"
+                temp_sample_folder = data_type[i] + "_" + str(dimensions[j]) + "_" + str(cardinality[k]) + "_" + str(ss) + "/"
 
                 K_Log_List = []
                 K_Log_Minus_List = []
