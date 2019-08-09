@@ -641,11 +641,11 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
     return file_names
 
 
-# data_type = ["anti_correlated", "correlated", "random"]
-# data_type_for_keys = ['anti', 'corr', 'random']
+data_type = ["anti_correlated", "correlated", "random"]
+data_type_for_keys = ['anti', 'corr', 'random']
 
-data_type = ["correlated"]
-data_type_for_keys = ['corr']
+# data_type = ["correlated"]
+# data_type_for_keys = ['corr']
 
 
 card_excel = ['200k']

@@ -39,21 +39,12 @@ def compute_weights(data_list_, top_m_):
     return weight_list_
 
 
-# def compute_collision_prob(dimension_, data_list_):
-#     prob_list_ = []
-#     for ii in data_list_:
-#         theta = (2 * math.pi/ii) ^ (1/(dimension_ - 1))
-#         collision = 1 - theta / math.pi
-#         prob_list_.append(collision)
-#     return prob_list_
-
 def compute_collision_prob(dimension_, data_list_):
     prob_list_ = []
     for ii in data_list_:
-        theta = pow((2 * math.pi/ii), (1/(dimension_ - 1)))
+        theta = (2 * math.pi/ii) ^ (1/(dimension_ - 1))
         collision = 1 - theta / math.pi
-        # prob_list_.append(collision)
-        prob_list_.append(0.75)
+        prob_list_.append(collision)
     return prob_list_
 
 
@@ -101,7 +92,7 @@ def post_optimization_opt_revised(collision_probilities_, weight_list_, total_er
     for i in range(len(L_List_)):
         cur_k = K_List_[i]
         cur_l = L_List_[i]
-        total_error = total_error + weight_list_[i] * math.pow((1 - math.pow(collision_probilities_[i], cur_k)), cur_l)
+        total_error = total_error + weight_list_[i] * math.pow((1 - math.pow(collision_probility_, cur_k)), cur_l)
         total_hash_used = total_hash_used + data_list_[i] * cur_l
     # print("Updated total error: " + str(total_error))
     # print("total hash used: " + str(total_hash_used))
@@ -295,7 +286,8 @@ excel_file_dir = './'
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_top25_200k_after.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_200k_before.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_200k.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

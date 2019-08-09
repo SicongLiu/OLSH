@@ -149,7 +149,7 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 ####################################################################################
 text_file_path = '/Users/sicongliu/'
 # text_file_path = './'
-dimension = 4
+dimension = 5
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1

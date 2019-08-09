@@ -634,7 +634,7 @@ excel_file_dir = './'
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_before_new.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_2_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

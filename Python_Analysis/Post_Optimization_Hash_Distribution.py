@@ -314,7 +314,7 @@ hash_used_rand_opt_cells_40 = ['AP46', 'AP93', 'AP140', 'AP187', 'AP234']
 hash_used_rand_uni_cells_40 = ['AV46', 'AV93', 'AV140', 'AV187', 'AV234']
 
 
-collision_probility = 0.9
+collision_probility = 0.75
 total_error = 0
 # K_log_list_start_cell = ['E6', 'V6', 'AL6']
 # K_log_minus_list_start_cell = ['']
@@ -325,14 +325,14 @@ total_error = 0
 ####################################################################################
 
 # dimensions = [2, 3, 4, 5, 6, 7]
-dimensions = [4]
+dimensions = [3]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
