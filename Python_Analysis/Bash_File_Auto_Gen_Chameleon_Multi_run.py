@@ -607,34 +607,40 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 
 
 ################################################################
-# data_type = ["anti_correlated", "correlated", "random"]
-# # card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
-# # cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
-# card_excel = ['200k']
-# cardinality = [200000]
-#
-# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-#
-# budgets = ["1M", "10M"]
-# sim_threshold = 0.75
-# dimensions = [4]
-# excel_file_before = "./4D_075_redundancy_3_all_before.xlsx"
-# excel_file_after = "./4D_075_redundancy_3_all_after.xlsx"
-# top_ks = [10, 25, 50]
-
-
-################################################################
 data_type = ["anti_correlated", "correlated", "random"]
+# card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
+# cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 card_excel = ['200k']
 cardinality = [200000]
+
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+
 budgets = ["1M", "10M"]
 sim_threshold = 0.75
-dimensions = [7]
-excel_file_before = "./7D_075_redundancy_2_before.xlsx"
-excel_file_after = "./7D_075_redundancy_2_after.xlsx"
-top_ks = [10, 25]
-repeated_run = 1
+# dimensions = [4]
+dimensions = [3]
+# excel_file_before = "./4D_075_redundancy_3_all_before.xlsx"
+# excel_file_after = "./4D_075_redundancy_3_all_after.xlsx"
+# excel_file_before = "./4D_075_redundancy_2_all_before.xlsx"
+# excel_file_after = "./4D_075_redundancy_2_all_after.xlsx"
+excel_file_before = "./3D_075_redundancy_2_all_before.xlsx"
+excel_file_after = "./3D_075_redundancy_2_all_after.xlsx"
+top_ks = [25]
+# top_ks = [25, 50]
+repeated_run = 5
+
+################################################################
+# data_type = ["anti_correlated", "correlated", "random"]
+# card_excel = ['200k']
+# cardinality = [200000]
+# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+# budgets = ["1M", "10M"]
+# sim_threshold = 0.75
+# dimensions = [5]
+# excel_file_before = "./5D_075_redundancy_2_before.xlsx"
+# excel_file_after = "./5D_075_redundancy_2_after.xlsx"
+# top_ks = [25]
+# repeated_run = 5
 
 ################################################################
 
