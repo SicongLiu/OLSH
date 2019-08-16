@@ -37,7 +37,7 @@ def find_skyline_bnl(data_, dim_, card_):
 
     # Use the first row to initialize the skyline
     skyline = {0}
-    total_index = range(len(data_) + 1)
+    total_index = range(len(data_))
     total_index = set(total_index)
     # Loop through the rest of the rows
     for i in range(1, card_):
@@ -67,9 +67,11 @@ def find_skyline_bnl(data_, dim_, card_):
 
     skyline_list = list(skyline)
     skyline_data_ = data_[skyline_list, :]
-    remain_data_ = data_[list(total_index.difference(skyline)), :]
+    skyline_cardinality = len(skyline_data_)
+    remain_data_index = list(total_index.difference(skyline))
+    remain_data_ = data_[remain_data_index, :]
     remain_card_ = card_ - len(skyline_data_)
-    return skyline_data_, remain_data_, remain_card_
+    return skyline_data_, skyline_cardinality, remain_data_, remain_card_
 
 
 def save_current_qhull(current_qhull_list_output, layer, cur_output_folder, aff_name, dim_, card_):
@@ -145,10 +147,10 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
     for i in range(max_layers):
         # command_line = command_bin_folder + '/qhull p < ' + input_path
         # output = os.popen(command_line).read()
-        output, remain_data, remain_cardinality = find_skyline_bnl(data, cur_dimension, cur_cardinality)
+        output, output_cardinality, remain_data, remain_cardinality = find_skyline_bnl(data, cur_dimension, cur_cardinality)
 
         # flush current qhull list to file
-        save_current_qhull(output, i, output_folder, aff_name, cur_dimension, cur_cardinality)
+        save_current_qhull(output, i, output_folder, aff_name, cur_dimension, output_cardinality)
         # save remaining points to file
         # input_path, data = save_remaining_qhull(cur_cardinality, data, output, i, output_folder, aff_name)
 
@@ -169,9 +171,9 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
 if __name__ == '__main__':
     dimensions = [4]
     # dimensions = [10, 15, 20]
-    cardinality = [100000]
-    data_type = ['anti_correlated_', 'correlated_', 'random_']
-    # data_type = ['correlated_', 'random_']
+    cardinality = [100]
+    # data_type = ['anti_correlated_', 'correlated_', 'random_']
+    data_type = ['anti_correlated_']
     MAX_LAYERS = 1
 
     MY_DATA_FILE_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
