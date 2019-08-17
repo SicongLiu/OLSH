@@ -174,7 +174,7 @@ if __name__ == '__main__':
     cardinality = [100]
     # data_type = ['anti_correlated_', 'correlated_', 'random_']
     data_type = ['anti_correlated_']
-    MAX_LAYERS = 1
+    MAX_LAYERS = 2
 
     MY_DATA_FILE_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
     OUTPUT_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
