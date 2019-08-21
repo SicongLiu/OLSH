@@ -176,8 +176,8 @@ if __name__ == '__main__':
     data_type = ['anti_correlated_']
     MAX_LAYERS = 2
 
-    MY_DATA_FILE_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-    OUTPUT_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
+    MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+    OUTPUT_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
     # MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
     # OUTPUT_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
     # OUTPUT_PATH = '/Users/sicongliu/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'

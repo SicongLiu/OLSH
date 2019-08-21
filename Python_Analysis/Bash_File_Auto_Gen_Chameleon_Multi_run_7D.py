@@ -1100,8 +1100,8 @@ types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
 dimensions = [7]
-excel_file_before = "./7D_075_all_before.xlsx"
-excel_file_after = "./7D_075_all_after.xlsx"
+excel_file_before = "./7D_075_redundancy_2_all_before.xlsx"
+excel_file_after = "./7D_075_redundancy_2_all_after.xlsx"
 
 top_ks = [10, 25, 50]
 

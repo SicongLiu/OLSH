@@ -281,7 +281,7 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 # dimensions = [2, 3, 4, 5, 6, 7]
 collision_probility = 0.75
 total_error = 0
-dimensions = [3]
+dimensions = [4]
 excel_file_dir = './'
 
 # for each excel file

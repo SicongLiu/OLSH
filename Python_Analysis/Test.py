@@ -23,6 +23,11 @@ a = np.asarray(a)
 dim = 3
 card = 4
 command_bin_folder = '/Users/sicongliu/Desktop/StreamingTopK'
-command_line = command_bin_folder + '/main ' + a + ' ' + str(dim) + ' ' + str(card)
-output = os.popen(command_line).read()
-print(output)
+# command_line = command_bin_folder + '/main ' + a + ' ' + str(dim) + ' ' + str(card)
+# output = os.popen(command_line).read()
+# print(output)
+
+result = np.arange(20, dtype=np.float).reshape((2, 10))
+
+print(type(result))
+print(type(a))
