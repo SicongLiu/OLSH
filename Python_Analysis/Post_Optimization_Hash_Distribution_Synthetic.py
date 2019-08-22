@@ -290,7 +290,8 @@ for i in range(len(dimensions)):
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_before.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_085_all_before.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_top25_075_all_before.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_2_all_after.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_Skyline-redundancy_2_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

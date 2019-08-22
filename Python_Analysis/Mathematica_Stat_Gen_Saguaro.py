@@ -17,11 +17,11 @@ def float_to_str(f):
     return format(d1, 'f')
 
 
-# data_type = ["correlated", "anti_correlated", "random"]
-data_type = ["NBA"]
-dimensions = [7]
-cardinality = [23338]
-topk = 9
+data_type = ["correlated", "anti_correlated", "random"]
+# data_type = ["NBA"]
+dimensions = [4]
+cardinality = [200000]
+topk = 25
 
 function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
@@ -35,7 +35,7 @@ hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/New_Mathematica_Parameters_"
 # DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-DATA_FOLDER = "../H2_ALSH/qhull_data/NBA/"
+DATA_FOLDER = "../H2_ALSH/qhull_data/Skyline_qhull/"
 
 
 for j in range(len(dimensions)):
@@ -79,8 +79,8 @@ for j in range(len(dimensions)):
 
                 count.append(float_to_str(float(cur_cardinality)/float(cardinality[k])))
                 count1.append(cur_cardinality)
-                k_log = math.ceil(math.log(cur_cardinality, 2))
-                k_log_minus = k_log - 3
+                k_log = max(math.ceil(math.log(cur_cardinality, 2)), 1)
+                k_log_minus = max(k_log - 3, 1)
                 k_log_plus = k_log + 3
                 k_log_plus_plus = k_log + 6
 

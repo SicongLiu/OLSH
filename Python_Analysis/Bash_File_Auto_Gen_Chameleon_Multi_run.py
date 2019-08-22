@@ -51,7 +51,8 @@ l_ranges_opt_random_50 = ['AM6', 'AM55', 'AM63', 'AM112', 'AM120', 'AM169', 'AM1
 l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN177', 'AN226', 'AN234', 'AN283']
 l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
 
-BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+# BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+BASE_FOLDER = "/Users/sicongliu/Desktop/Skyline_computation/Skyline_qhull/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
 
@@ -620,14 +621,17 @@ sim_threshold = 0.75
 dimensions = [4]
 # dimensions = [3]
 # dimensions = [2]
-# excel_file_before = "./4D_075_redundancy_3_all_before.xlsx"
-# excel_file_after = "./4D_075_redundancy_3_all_after.xlsx"
-excel_file_before = "./4D_reverse_075_redundancy_2_all_before.xlsx"
-excel_file_after = "./4D_reverse_075_redundancy_2_all_after.xlsx"
-# excel_file_before = "./3D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./3D_075_redundancy_2_all_after.xlsx"
+# excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
+# excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
+# excel_file_before = "./4D_reverse_075_redundancy_2_all_before.xlsx"
+# excel_file_after = "./4D_reverse_075_redundancy_2_all_after.xlsx"
+# excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
+# excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
 # excel_file_before = "./2D_075_redundancy_2_all_before.xlsx"
 # excel_file_after = "./2D_075_redundancy_2_all_after.xlsx"
+excel_file_before = "./4D_075_Skyline-redundancy_2_all_before.xlsx"
+excel_file_after = "./4D_075_Skyline-redundancy_2_all_after.xlsx"
+
 top_ks = [25]
 # top_ks = [25, 50]
 repeated_run = 5
