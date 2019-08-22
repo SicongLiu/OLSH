@@ -267,9 +267,13 @@ for dd in range(dimensions.__len__()):
                                     hash_table_hits = 0
                                     f1 = open(cand_result_file, 'r')
                                     lines = f1.readlines()
-                                    for jj in range(top_ks[ii]):
-                                        cand_size += float(lines[jj].split(',')[0])
-                                        hash_table_hits += float(lines[jj].split(',')[2])
+                                    for jj in range(min(top_ks[ii], lines.__len__())):
+                                        if lines[jj].split(',').__len__() < 1:
+                                            cand_size += 0
+                                            hash_table_hits += 0
+                                        else:
+                                            cand_size += float(lines[jj].split(',')[0])
+                                            hash_table_hits += float(lines[jj].split(',')[2])
                                     # cand_size = float(cand_size)/float(top_ks[ii])
                                     cand_size = float(cand_size)
                                     hash_table_hits = float(hash_table_hits)
