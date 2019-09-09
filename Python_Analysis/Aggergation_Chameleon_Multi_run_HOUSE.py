@@ -26,7 +26,7 @@ row_counts = 6
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 repeateHOUSE_run = 5
-excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_Redundant_10_HOUSE_Excel/'
+excel_folders = '/Users/sicongliu/Desktop/StreamingTopK/August_19_corrected_original_math/HOUSE_Skyline/'
 # excel_folders = '../H2_ALSH/'
 
 aggregateHOUSE_file_name_without_opt = excel_folders + 'HOUSE_all_without_opt.xlsx'

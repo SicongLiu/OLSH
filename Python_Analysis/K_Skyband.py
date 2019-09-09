@@ -62,6 +62,7 @@ def find_skyline_bnl(data_, dim_, card_):
         if is_dominated:
             continue
 
+        # drop skyline points that are not supposed to be in the skyline list
         skyline = skyline.difference(to_drop)
         skyline.add(i)
 

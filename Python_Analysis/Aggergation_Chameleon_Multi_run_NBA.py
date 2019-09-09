@@ -26,8 +26,8 @@ row_counts = 6
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 repeateNBA_run = 5
-# excel_folders = '/Users/sicongliu/Desktop/Chameleon/Results_075_Redundant_10_NBA_Excel/'
-excel_folders = '../H2_ALSH/'
+excel_folders = '/Users/sicongliu/Desktop/StreamingTopK/August_19_corrected_original_math/NBA_Skyline/'
+# excel_folders = '../H2_ALSH/'
 
 aggregateNBA_file_name_without_opt = excel_folders + 'NBA_all_without_opt.xlsx'
 aggregateNBA_hash_hit_file_name_without_opt = excel_folders + 'NBA_all_hash_hits_without_opt.xlsx'

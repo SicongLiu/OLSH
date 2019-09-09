@@ -45,13 +45,13 @@ def dot(K, L):
 
 chunks = 25
 top_k = 25
-query_num = 10
+query_num = 100
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
-data_type = 'random_'
-dimension = 4
-cardinality = 200000
+data_type = 'correlated_'
+dimension = 100
+cardinality = 100000
 
 file_name = data_folder + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
 f = open(file_name, 'r')

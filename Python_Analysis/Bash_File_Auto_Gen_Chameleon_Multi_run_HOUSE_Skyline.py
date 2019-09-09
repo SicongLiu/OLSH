@@ -10,7 +10,9 @@ l_ranges_opt_25 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F13
 l_ranges_max_25 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
 l_ranges_uni_25 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
 
-BASE_FOLDER = "../H2_ALSH/qhull_data/NBA/"
+
+
+BASE_FOLDER = "../H2_ALSH/qhull_data/HOUSE/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
 
@@ -61,22 +63,22 @@ def separate_string(data_type_, dimensions_, excel_file_, top_ks_, types_, card_
 
                         if not os.path.exists(save_file_dir):
                             os.makedirs(save_file_dir)
-                        nba_k_name = save_file_dir + "k_NBA"
+                        nba_k_name = save_file_dir + "k_HOUSE"
                         f = open(nba_k_name, 'w')
                         f.write(','.join(map(str, k_nba)))
                         f.close()
 
-                        nba_opt_name = save_file_dir + "l_nba_opt"
+                        nba_opt_name = save_file_dir + "l_HOUSE_opt"
                         f = open(nba_opt_name, 'w')
                         f.write(','.join(map(str, l_nba_opt)))
                         f.close()
 
-                        nba_max_name = save_file_dir + "l_nba_max"
+                        nba_max_name = save_file_dir + "l_HOUSE_max"
                         f = open(nba_max_name, 'w')
                         f.write(','.join(map(str, l_nba_max)))
                         f.close()
 
-                        nba_uni_name = save_file_dir + "l_nba_uni"
+                        nba_uni_name = save_file_dir + "l_HOUSE_uni"
                         f = open(nba_uni_name, 'w')
                         f.write(','.join(map(str, l_nba_uni)))
                         f.close()
@@ -438,15 +440,15 @@ def write_script(data_type_, dimensions_, top_ks_, types_, card_excel_, cardinal
 
 
 ################################################################
-data_type = "NBA"
-card_excel = ['23338']
-cardinality = [23338]
+data_type = "HOUSE"
+card_excel = ['10717764']
+cardinality = [10717764]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 sim_threshold = 0.75
-dimensions = [7]
-excel_file_before = "./NBA_075_redundancy_4_before.xlsx"
-excel_file_after = "./NBA_075_redundancy_4_after.xlsx"
+dimensions = [6]
+excel_file_before = "./HOUSE_075_redundancy_4_before.xlsx"
+excel_file_after = "./HOUSE_075_redundancy_4_after.xlsx"
 top_ks = [25]
 
 
