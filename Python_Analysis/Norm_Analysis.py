@@ -49,7 +49,7 @@ query_num = 100
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
-data_type = 'correlated_'
+data_type = 'random_'
 dimension = 100
 cardinality = 100000
 
