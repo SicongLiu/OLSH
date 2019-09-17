@@ -8,18 +8,12 @@ import numpy as np
 import math
 from  collections import Counter
 
+list1 = []
+list2 = [1, 2, 3, 4]
+list3 = [2, 3, 4, 5]
+list1.extend(list2)
+list1.extend(list3)
 
-def dot(K, L):
-    if len(K) != len(L):
-        return 0
-    return sum(i[0] * i[1] for i in zip(K, L))
-
-
-def angle(data_, norm_data_, query_, norm_query_):
-    return math.acos(dot(data_, query_) / (norm_data_ * norm_query_))
-
-
-# print(math.acos(0.950794 / (1 * 0.95079)))
-print(0.950794 / (1 * 0.95079))
-
-3 * (-1)
+list1 = set(list1)
+print(list1)
+print(list1.__len__())

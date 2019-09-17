@@ -6,12 +6,33 @@ import math
 # import pandas as pd
 # import matplotlib.pyplot as plt
 from collections import Counter
+import random
+
+
+def select_dim(nums_, min_, max_):
+    dim_list_ = []
+    for x in range(nums_):
+        dim_list_.append(random.randint(min_, max_))
+    return dim_list_
+
 
 
 def dot(K, L):
     if len(K) != len(L):
         return 0
     return float("{0:.5f}".format(sum(i[0] * i[1] for i in zip(K, L))))
+
+
+def compute_ground_truth(query_list_, data_list_, top_k_):
+    grountTruth_ = []
+    for ii in range(query_list_.__len__()):
+        dot_val_list_ = []
+        for jj in range(query_list_.__len__()):
+            dot_val_list_.append(dot(query_list_[ii], data_list_[jj]))  # dot product value, the larger the better
+        temp_grountTruth_ = np.argsort(dot_val_list_)[::-1]
+        temp_grountTruth_ = temp_grountTruth_[0:top_k_]
+        grountTruth_.append(temp_grountTruth_)
+    return grountTruth_
 
 
 def angle(data_, norm_data_, query_, norm_query_):
@@ -43,7 +64,6 @@ def transform_data(data_, data_norm_, pivot_, pivot_norm_):
     tuple_.append(t1_)
     tuple_.append(t2_)
     return tuple_
-
 
 
 dimension = 100
@@ -87,44 +107,57 @@ for i in range(cur_card):
 f.close()
 
 # compute and rank results based on theta_min = beta - alpha
-top_k = 50
-pivot = np.zeros(dimension)
-pivot[77] = 1
-pivot_norm = 1
+top_k = 25
+grountTruth = compute_ground_truth(query_list, data_list, top_k)
+
 
 recall_list = []
 recall_list_transform = []
+
+min_ = 0
+max_ = dimension - 1
+nums_ = 10
+dim_list = select_dim(nums_, min_, max_)
+
+# for each query pick 10 dimensions out of 100 dimensions
 for ii in range(query_list.__len__()):  # for each query we have top_k results
-    theta_list = []
-    alpha = angle(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+    transform_list_ground_truth = []
+    # set pivot
+    for jj in range(nums_):
+        pivot = np.zeros(dimension)
+        pivot_index = dim_list[jj]
+        pivot[pivot_index] = 1
+        pivot_norm = 1
+        theta_list = []
+        dot_val_transform_list = []
 
-    tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-    dot_val_list = []
-    dot_val_transform_list = []
-    for jj in range(data_list.__len__()):
+        alpha = angle(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+        tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
 
-        beta = angle(data_list[jj], data_norm_list[jj], pivot, pivot_norm)
-        tuple_data = transform_data(data_list[jj], data_norm_list[jj], pivot, pivot_norm)
+        for kk in range(data_list.__len__()):
+            beta = angle(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+            tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+            dot_val_transform_list.append(dot(tuple_query, tuple_data))
 
-        dot_val_transform_list.append(dot(tuple_query, tuple_data))
-        # use Jaccard set similarity as ground truth
-        theta = abs(beta - alpha)
-        theta_list.append(theta)
-        dot_val_list.append(dot(query_list[ii], data_list[jj]))  # dot product value, the larger the better
+            # use Jaccard set similarity as ground truth
+            theta = abs(beta - alpha)
+            theta_list.append(theta)
 
-    grountTruth = np.argsort(dot_val_list)[::-1]
-    grountTruth = grountTruth[0:top_k]
+        transform_list_ground_truth.extend(np.argsort(dot_val_transform_list)[::-1][0: top_k])
+    # aggregate all index
+    transform_list_ground_truth = set(transform_list_ground_truth)
+    transform_list_ground_truth = list(transform_list_ground_truth)
 
-    transform_list_ground_truth = np.argsort(dot_val_transform_list)[::-1]
-    transform_list_ground_truth = transform_list_ground_truth[0:top_k]
+    # ret_index = np.argsort(theta_list)  # rank angle-distance theta, ascending order -- the smaller the better
+    # ret_index = ret_index[0:top_k]
+    # recall_val = compute_recall(grountTruth[ii], ret_index)
+    # recall_list.append(recall_val)
+    recall_val = compute_recall(grountTruth[ii], transform_list_ground_truth)
+    print("Query index: " + str(ii) + ", current recall value: " + str(recall_val))
+    # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
+    recall_list_transform.append(recall_val)
 
-    ret_index = np.argsort(theta_list)  # rank angle-distance theta, ascending order -- the smaller the better
-    ret_index = ret_index[0:top_k]
-    recall_val = compute_recall(grountTruth, ret_index)
-    recall_list.append(recall_val)
-    recall_list_transform.append(compute_recall(grountTruth, transform_list_ground_truth))
-
-print(1.0 * sum(recall_list)/recall_list.__len__())
+# print(1.0 * sum(recall_list)/recall_list.__len__())
 print(1.0 * sum(recall_list_transform)/recall_list_transform.__len__())
 
 print('Done')
