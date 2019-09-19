@@ -112,52 +112,57 @@ grountTruth = compute_ground_truth(query_list, data_list, top_k)
 
 
 recall_list = []
-recall_list_transform = []
+
 
 min_ = 0
 max_ = dimension - 1
-nums_ = 10
-dim_list = select_dim(nums_, min_, max_)
+my_nums_ = [75]
+# my_nums_ = [10, 15, 20, 25]
+total_round = 3
 
-# for each query pick 10 dimensions out of 100 dimensions
-for ii in range(query_list.__len__()):  # for each query we have top_k results
-    transform_list_ground_truth = []
-    # set pivot
-    for jj in range(nums_):
-        pivot = np.zeros(dimension)
-        pivot_index = dim_list[jj]
-        pivot[pivot_index] = 1
-        pivot_norm = 1
-        theta_list = []
-        dot_val_transform_list = []
+for nn in range(my_nums_.__len__()):
+    nums_ = my_nums_[nn]
+    recall_list_transform = []
+    for tt in range(total_round):
+        dim_list = select_dim(nums_, min_, max_)
+        print("Current dims: " + str(nums_) + ", current round: " + str(tt), " dimension chosen: " + str(dim_list))
+        for ii in range(query_list.__len__()):  # for each query we have top_k results
+            transform_list_ground_truth = []
+            # set pivot
+            for jj in range(nums_):
+                dot_val_transform_list = []
+                theta_list = []
+                pivot = np.zeros(dimension)
+                pivot_index = dim_list[jj]
+                pivot[pivot_index] = 1
+                pivot_norm = 1
+                alpha = angle(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+                tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
 
-        alpha = angle(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-        tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+                for kk in range(data_list.__len__()):
+                    beta = angle(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+                    tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+                    dot_val_transform_list.append(dot(tuple_query, tuple_data))
 
-        for kk in range(data_list.__len__()):
-            beta = angle(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-            tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-            dot_val_transform_list.append(dot(tuple_query, tuple_data))
+                    # use Jaccard set similarity as ground truth
+                    theta = abs(beta - alpha)
+                    theta_list.append(theta)
 
-            # use Jaccard set similarity as ground truth
-            theta = abs(beta - alpha)
-            theta_list.append(theta)
+                transform_list_ground_truth.extend(np.argsort(dot_val_transform_list)[::-1][0: top_k])
+            # aggregate all index
+            transform_list_ground_truth = set(transform_list_ground_truth)
+            transform_list_ground_truth = list(transform_list_ground_truth)
 
-        transform_list_ground_truth.extend(np.argsort(dot_val_transform_list)[::-1][0: top_k])
-    # aggregate all index
-    transform_list_ground_truth = set(transform_list_ground_truth)
-    transform_list_ground_truth = list(transform_list_ground_truth)
+            # ret_index = np.argsort(theta_list)  # rank angle-distance theta, ascending order -- the smaller the better
+            # ret_index = ret_index[0:top_k]
+            # recall_val = compute_recall(grountTruth[ii], ret_index)
+            # recall_list.append(recall_val)
+            recall_val = compute_recall(grountTruth[ii], transform_list_ground_truth)
+            # print("Current dims: " + str(nums_) + ", current round: " + str(tt) + ", Query index: " + str(ii) + ", current recall value: " + str(recall_val))
+            # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
+            recall_list_transform.append(recall_val)
 
-    # ret_index = np.argsort(theta_list)  # rank angle-distance theta, ascending order -- the smaller the better
-    # ret_index = ret_index[0:top_k]
-    # recall_val = compute_recall(grountTruth[ii], ret_index)
-    # recall_list.append(recall_val)
-    recall_val = compute_recall(grountTruth[ii], transform_list_ground_truth)
-    print("Query index: " + str(ii) + ", current recall value: " + str(recall_val))
-    # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
-    recall_list_transform.append(recall_val)
-
-# print(1.0 * sum(recall_list)/recall_list.__len__())
-print(1.0 * sum(recall_list_transform)/recall_list_transform.__len__())
+        # print(1.0 * sum(recall_list)/recall_list.__len__())
+        print("current selected dim:  " + str(nums_) + " --  " + str(1.0 * sum(recall_list_transform)/recall_list_transform.__len__()))
 
 print('Done')
