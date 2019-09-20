@@ -273,7 +273,7 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
     f_handle.close()
 
 
-def save_transformed_query(data_type_, selected_index_, cardinality_, transform_list_):
+def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_):
     raw_data_ = []
     file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + ".txt"
     raw_data_.append(np.asarray(int(pivot_index)))
@@ -312,7 +312,7 @@ def load_transformed_query(query_file_name_):
         current_data_record = np.asarray(current_data_record)
         data_list.append(current_data_record)
     f.close()
-    return data_list
+    return data_list, cur_card
 
 
 def save_ground_truth(ground_truth_file_, ground_truth_):
@@ -320,6 +320,18 @@ def save_ground_truth(ground_truth_file_, ground_truth_):
     # np.savetxt(f_handle, ground_truth_, fmt='%10.6f')
     np.savetxt(f_handle, ground_truth_, fmt='%i')
     f_handle.close()
+
+
+def load_ground_truth(ground_truth_file_, card_):
+    f = open(ground_truth_file_, 'r')
+    lines = f.readlines()
+    data_list = []
+    for i in range(card_):
+        current_data_record = np.fromstring(lines[i], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        data_list.append(current_data_record)
+    f.close()
+    return data_list
 
 
 dimension = 100
@@ -332,13 +344,13 @@ data_list, data_norm_list = load_data(data_file)
 query_list, query_norm_list = load_query(query_file)
 
 # compute and rank results based on theta_min = beta - alpha
-top_k = 25
 # ground_truth = compute_ground_truth(query_list, data_list, top_k)
 # ground_truth_file = "./ground_truth.txt"
 # save_ground_truth(ground_truth_file, ground_truth)
 
 # compute and rank results based on theta_min = beta - alpha
 projected_dim = 2
+query_size = 100
 top_k = 25
 min_ = 0
 max_ = dimension - 1
@@ -370,7 +382,41 @@ for jj in range(nums_):
 
 
 print('Transformed data and query saved')
-# # compute Skyline
+# # compute Skyline, using C++ script
+
+# now do query
+#  at j-th layers, select top-(k - j + 1)
+
+global_result = []
+ground_truth = load_ground_truth(ground_truth_file, query_size)
+for ii in range(nums_):
+    cur_dim = dim_list[ii]
+    local_query_file = '2D_' + str(cur_dim) + '.txt'
+    local_trans_query, query_size = load_transformed_query(local_query_file)
+
+    for jj in range(query_size):
+        local_result = []
+        temp_dot_val = []
+        for kk in range(top_k):
+            local_data_file = data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(kk) +".txt"
+            local_trans_data, data_size = load_transformed_query(local_data_file)
+            for tt in range(local_trans_data.__len__()):
+                temp_dot_val.append(dot(local_trans_query[jj], local_trans_data[tt]))
+            local_result.extend(local_trans_data(np.argsort(temp_dot_val)[::-1][0: top_k - kk + 1], 2))
+        local_result = set(local_result)
+        local_result = list(local_result)
+
+        recall_val = compute_recall(ground_truth[jj], local_result)
+        # print("Current dims: " + str(nums_) + ", current round: " + str(tt) + ", Query index: " + str(ii) + ", current recall value: " + str(recall_val))
+        # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
+        recall_list_transform.append(recall_val)
+
+
+
+
+    global_result.extend()
+
+
 
 
 # # query using skyline
