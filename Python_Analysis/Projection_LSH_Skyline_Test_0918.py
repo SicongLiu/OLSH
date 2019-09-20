@@ -386,36 +386,63 @@ print('Transformed data and query saved')
 
 # now do query
 #  at j-th layers, select top-(k - j + 1)
-
-global_result = []
+# use dict{} to store results for each query
+global_result = {}
 ground_truth = load_ground_truth(ground_truth_file, query_size)
 for ii in range(nums_):
     cur_dim = dim_list[ii]
     local_query_file = '2D_' + str(cur_dim) + '.txt'
     local_trans_query, query_size = load_transformed_query(local_query_file)
 
-    for jj in range(query_size):
-        local_result = []
-        temp_dot_val = []
-        for kk in range(top_k):
-            local_data_file = data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(kk) +".txt"
-            local_trans_data, data_size = load_transformed_query(local_data_file)
+    for kk in range(top_k):
+        local_data_file = data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(kk) + ".txt"
+        local_trans_data, data_size = load_transformed_query(local_data_file)
+
+        for jj in range(query_size):
+            temp_dot_val = []
             for tt in range(local_trans_data.__len__()):
                 temp_dot_val.append(dot(local_trans_query[jj], local_trans_data[tt]))
-            local_result.extend(local_trans_data(np.argsort(temp_dot_val)[::-1][0: top_k - kk + 1], 2))
-        local_result = set(local_result)
-        local_result = list(local_result)
+            local_trans_data = np.asarray(local_trans_data)
 
-        recall_val = compute_recall(ground_truth[jj], local_result)
-        # print("Current dims: " + str(nums_) + ", current round: " + str(tt) + ", Query index: " + str(ii) + ", current recall value: " + str(recall_val))
-        # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
-        recall_list_transform.append(recall_val)
+            min_length = min(top_k - kk + 1, data_size)
 
+            temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
+            # local_result.extend(local_trans_data[temp_index, 2])
+            local_result = local_trans_data[temp_index, 2]
+        if jj in global_result.keys():
+            global_result[jj].extend(local_result)
+        else:
+            global_result[jj] = local_result
 
+recall_list_transform = []
+for ii in global_result.keys():
+    global_result[ii] = list(set(global_result[ii]))
+    recall_val = compute_recall(ground_truth[ii], global_result[ii])
+    # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
+    recall_list_transform.append(recall_val)
 
+print("current selected dim:  " + str(nums_) + " --  " + str(1.0 * sum(recall_list_transform) / recall_list_transform.__len__()))
 
-    global_result.extend()
-
+    # for jj in range(query_size):
+    #     local_result = []
+    #     temp_dot_val = []
+    #     for kk in range(top_k):
+    #         local_data_file = data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(kk) +".txt"
+    #         local_trans_data, data_size = load_transformed_query(local_data_file)
+    #         for tt in range(local_trans_data.__len__()):
+    #             temp_dot_val.append(dot(local_trans_query[jj], local_trans_data[tt]))
+    #         local_trans_data = np.asarray(local_trans_data)
+    #         temp_index = np.argsort(temp_dot_val)[::-1][0: top_k - kk + 1]
+    #         local_result.extend(local_trans_data[temp_index, 2])
+    #     local_result = set(local_result)
+    #     local_result = list(local_result)
+    #
+    #     if jj in global_result.keys():
+    #         global_result[jj].extend(local_result)
+    #     else:
+    #         global_result[jj] = local_result
+    #     # recall_val = compute_recall(ground_truth[jj], local_result)
+    #     # recall_list_transform.append(recall_val)
 
 
 
