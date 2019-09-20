@@ -97,10 +97,6 @@ def save_current_qhull(current_qhull_list_output, layer, cur_output_folder, aff_
     f_handle.close()
     # return file_name, data
 
-
-
-
-
 def save_remaining_qhull(data_cardinality, data, current_qhull_output, layer_index, cur_output_folder, aff_name):
     remain_qhull = []
     current_data = current_qhull_output.split('\n')
@@ -137,7 +133,8 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
     first_line = lines[0]
     second_line = lines[1]
 
-    cur_dimension = int(first_line.split('\n')[0])
+    # cur_dimension = int(first_line.split('\n')[0])
+    cur_dimension = 2
     cur_cardinality = int(second_line.split('\n')[0])
     data = []
     for i in range(2, len(lines)):
@@ -149,14 +146,11 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
     print(type(data))
     # compute qhull till max_layer of interest
     for i in range(max_layers):
-        # command_line = command_bin_folder + '/qhull p < ' + input_path
-        # output = os.popen(command_line).read()
         output, output_cardinality, remain_data, remain_cardinality = find_skyline_bnl(data, cur_dimension, cur_cardinality)
 
         # flush current qhull list to file
         save_current_qhull(output, i, output_folder, aff_name, cur_dimension, output_cardinality)
         # save remaining points to file
-        # input_path, data = save_remaining_qhull(cur_cardinality, data, output, i, output_folder, aff_name)
 
         # update data
         data = remain_data
@@ -164,12 +158,6 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
 
         if remain_cardinality < cur_dimension + 1:
             break
-
-        # if cur_cardinality - int(output.split('\n')[1]) >= cur_dimension + 1:
-        #     cur_cardinality = cur_cardinality - int(output.split('\n')[1])
-        #     continue
-        # else:
-        #     break
 
 
 def select_dim(nums_, min_, max_):
@@ -209,7 +197,9 @@ def compute_recall(grountTruth_, ret_index_):
 def transform_query(query_, query_norm_, pivot_, pivot_norm_):
     alpha_ = angle(query_, query_norm_, pivot_, pivot_norm_)
     tuple_ = []
-    t1_ = (math.sin(alpha_) * math.sin(alpha_) - 1)/(2 * math.cos(alpha_))
+    # convert minus to plus
+    # t1_ = (math.sin(alpha_) * math.sin(alpha_) - 1)/(2 * math.cos(alpha_))
+    t1_ = (-1.0) * (math.sin(alpha_) * math.sin(alpha_) - 1) / (2 * math.cos(alpha_))
     t2_ = math.cos(alpha_)
     tuple_.append(t1_)
     tuple_.append(t2_)
@@ -219,7 +209,9 @@ def transform_query(query_, query_norm_, pivot_, pivot_norm_):
 def transform_data(data_, data_norm_, pivot_, pivot_norm_):
     beta_ = angle(data_, data_norm_, pivot_, pivot_norm_)
     tuple_ =[]
-    t1_ = (-1.0) * data_norm_ * math.cos(beta_)
+    # convert minus to plus
+    # t1_ = (-1.0) * data_norm_ * math.cos(beta_)
+    t1_ = data_norm_ * math.cos(beta_)
     t2_ = (-1.0) * data_norm_ * (math.sin(beta_) * math.sin(beta_) - 1) / (2 * math.cos(beta_))
     # t1_ = data_norm_ * math.cos(beta_)
     # t2_ = data_norm_ * (math.sin(beta_) * math.sin(beta_) - 1) / (2 * math.cos(beta_))
@@ -227,131 +219,209 @@ def transform_data(data_, data_norm_, pivot_, pivot_norm_):
     tuple_.append(t2_)
     return tuple_
 
-#
-# dimension = 100
-# cardinality = 100000
-# data_type = 'random_'
-# data_file = './' + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
-#
-# # load data
-# f = open(data_file, 'r')
-# lines = f.readlines()
-# cur_dim = int(lines[0])
-# cur_card = int(lines[1])
-# data_list = []
-# data_norm_list = []
-# for i in range(cur_card):
-#     current_data_record = np.fromstring(lines[i + 2], dtype=float, sep=' ')
-#     current_data_record = np.asarray(current_data_record)
-#     temp_norm = np.linalg.norm(current_data_record)
-#     data_norm_list.append(float("{0:.5f}".format(temp_norm)))
-#     data_list.append(current_data_record)
-# f.close()
-#
-# # compute and rank results based on theta_min = beta - alpha
-# projected_dim = 2
+
+def load_data(data_file):
+    # load data
+    f = open(data_file, 'r')
+    lines = f.readlines()
+    cur_dim = int(lines[0])
+    cur_card = int(lines[1])
+    data_list = []
+    data_norm_list = []
+    for i in range(cur_card):
+        current_data_record = np.fromstring(lines[i + 2], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        temp_norm = np.linalg.norm(current_data_record)
+        data_norm_list.append(float("{0:.5f}".format(temp_norm)))
+        data_list.append(current_data_record)
+    f.close()
+    return data_list, data_norm_list
+
+
+def load_query(query_file):
+    # load query
+    f = open(query_file, 'r')
+    lines = f.readlines()
+
+    cur_dim = int(lines[0])
+    cur_card = int(lines[1])
+    query_list = []
+    query_norm_list = []
+    for i in range(cur_card):
+        current_data_record = np.fromstring(lines[i + 2], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        # compute ground truth
+        query_list.append(current_data_record)
+        temp_norm = np.linalg.norm(current_data_record)
+        # data_norm_list.append(format(temp_norm, '.5f'))
+        query_norm_list.append(float("{0:.5f}".format(temp_norm)))
+    f.close()
+    return query_list, query_norm_list
+
+
+def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_):
+    raw_data_ = []
+    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + ".txt"
+    raw_data_.append(np.asarray(int(pivot_index)))
+    raw_data_.append(np.asarray(int(cardinality)))
+    raw_data_ = np.asarray(raw_data_)
+    np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
+
+    # separate metadata and data points, appending data points to metadata text saved on file
+    f_handle = open(file_name_, 'ab')
+    np.savetxt(f_handle, transform_list_, fmt='%10.6f')
+    f_handle.close()
+
+
+def save_transformed_query(data_type_, selected_index_, cardinality_, transform_list_):
+    raw_data_ = []
+    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + ".txt"
+    raw_data_.append(np.asarray(int(pivot_index)))
+    raw_data_.append(np.asarray(int(cardinality)))
+    raw_data_ = np.asarray(raw_data_)
+    np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
+
+    # separate metadata and data points, appending data points to metadata text saved on file
+    f_handle = open(file_name_, 'ab')
+    np.savetxt(f_handle, transform_list_, fmt='%10.6f')
+    f_handle.close()
+
+
+def save_transformed_query(query_type_, selected_index_, transform_query_):
+    raw_data_ = []
+    file_name_ = query_type_ + "_" + str(selected_index_) + ".txt"
+    raw_data_.append(np.asarray(int(pivot_index)))
+    raw_data_.append(np.asarray(int(cardinality)))
+    raw_data_ = np.asarray(raw_data_)
+    np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
+
+    # separate metadata and data points, appending data points to metadata text saved on file
+    f_handle = open(file_name_, 'ab')
+    np.savetxt(f_handle, transform_query_, fmt='%10.6f')
+    f_handle.close()
+
+
+def load_transformed_query(query_file_name_):
+    f = open(query_file_name_, 'r')
+    lines = f.readlines()
+    cur_dim = int(lines[0])
+    cur_card = int(lines[1])
+    data_list = []
+    for i in range(cur_card):
+        current_data_record = np.fromstring(lines[i + 2], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        data_list.append(current_data_record)
+    f.close()
+    return data_list
+
+
+def save_ground_truth(ground_truth_file_, ground_truth_):
+    f_handle = open(ground_truth_file_, 'ab')
+    # np.savetxt(f_handle, ground_truth_, fmt='%10.6f')
+    np.savetxt(f_handle, ground_truth_, fmt='%i')
+    f_handle.close()
+
+
+dimension = 100
+cardinality = 100000
+data_type = 'random'
+query_type = '2D'
+data_file = './' + data_type + "_" + str(dimension) + '_' + str(cardinality) + '.txt'
+query_file = 'query_' + str(dimension) + 'D' + '.txt'
+data_list, data_norm_list = load_data(data_file)
+query_list, query_norm_list = load_query(query_file)
+
+# compute and rank results based on theta_min = beta - alpha
 top_k = 25
-# min_ = 0
-# max_ = dimension - 1
-# my_nums_ = [1]
-# total_round = 1
-# for nn in range(my_nums_.__len__()):
-#     nums_ = my_nums_[nn]
-#     for tt in range(total_round):
-#         dim_list = select_dim(nums_, min_, max_)
-#         raw_data = []
-#         for jj in range(nums_):
-#             print("Current dims: " + str(nums_) + ", current round: " + str(tt), " dimension chosen: " + str(dim_list))
-#             transform_list = []
-#             theta_list = []
-#             pivot = np.zeros(dimension)
-#             pivot_index = dim_list[jj]
-#             pivot[pivot_index] = 1
-#             pivot_norm = 1
-#             for kk in range(data_list.__len__()):
-#                 tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-#                 transform_list.append(tuple_data)
-#             transform_list = np.asarray(transform_list)
-#             # compute skyline over transform_list
-#             file_name = "input_" + str(pivot_index) + ".txt"
-#             raw_data.append(np.asarray(int(projected_dim)))
-#             raw_data.append(np.asarray(int(cardinality)))
-#             raw_data = np.asarray(raw_data)
-#             np.savetxt(file_name, raw_data, delimiter=',', fmt='%i')
+# ground_truth = compute_ground_truth(query_list, data_list, top_k)
+# ground_truth_file = "./ground_truth.txt"
+# save_ground_truth(ground_truth_file, ground_truth)
+
+# compute and rank results based on theta_min = beta - alpha
+projected_dim = 2
+top_k = 25
+min_ = 0
+max_ = dimension - 1
+total_round = 1 # for each list of dims, selected round to deal with randomness
+
+nums_ = 25
+dim_list = select_dim(nums_, min_, max_)
+# dim_list = [57]
+for jj in range(nums_):
+    print("Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
+    transform_list = []
+    theta_list = []
+    pivot = np.zeros(dimension)
+    pivot_index = dim_list[jj]
+    pivot[pivot_index] = 1
+    pivot_norm = 1
+    for kk in range(data_list.__len__()):
+        tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+        transform_list.append(tuple_data)
+    transform_list = np.asarray(transform_list)
+
+    save_transformed_data(data_type, pivot_index, cardinality, transform_list)
+    # query transformed based on this dimension
+    total_transformed_query = []
+    for ii in range(query_list.__len__()):
+        tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+        total_transformed_query.append(tuple_query)
+    save_transformed_query(query_type, pivot_index, total_transformed_query)
+
+
+print('Transformed data and query saved')
+# # compute Skyline
+
+
+# # query using skyline
+# skyline_folder = "./"
+# query_folder = "./"
 #
-#             # separate metadata and data points, appending data points to metadata text saved on file
-#             f_handle = open(file_name, 'ab')
-#             np.savetxt(f_handle, transform_list, fmt='%10.6f')
-#             f_handle.close()
+# for jj in nums_:
+#     pivot_index = dim_list[jj]
+#     transformed_query_file = query_folder + query_type + "_" + str(pivot_index) + '.txt'
+#     # load query
+#     transform_query_list = load_transformed_query(transformed_query_file)
+#     for kk in range(top_k):
+#         skyline_file = skyline_folder + data_type + "_" + str(pivot_index) + "_" + str(cardinality) + "_qhull_layer_" + str(kk)
+#         # load transformed_data via skyline layer
+#         transformed_skyline_data = load_transformed_query(skyline_file)
+#
+#         # query top-(top_k - kk)
+#
+#     # aggregate result and compute recall
 
 
-dimensions = [2]
-cardinality = [100000]
-data_type = ['input']
-dim_selected = 57
-MAX_LAYERS = top_k
 
-# MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-MY_DATA_FILE_PATH = './'
-OUTPUT_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
 
-for i in range(len(dimensions)):
-    for j in range(len(cardinality)):
-        for k in range(len(data_type)):
-            data_file_name = MY_DATA_FILE_PATH + data_type[k] + "_" + str(dim_selected) + ".txt"
-            # data_file_name = MY_DATA_FILE_PATH + data_type[k] + "_" + str(cardinality[j]) + \
-            #                  ".txt"
-            print("data name: " + data_file_name)
-            my_aff_name = data_type[k] + str(dimensions[i]) + "_" + str(cardinality[j])
-            computer_qhull_index(data_file_name, OUTPUT_PATH, my_aff_name, MAX_LAYERS)
+
+
+
+
+
+
+# dimensions = [57]
+# cardinality = [100000]
+# data_type = ['random']
+# dim_selected = 57
+# MAX_LAYERS = top_k
+#
+# # MY_DATA_FILE_PATH = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+# MY_DATA_FILE_PATH = './'
+# OUTPUT_PATH = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test'
+#
+# for i in range(len(dimensions)):
+#     for j in range(len(cardinality)):
+#         for k in range(len(data_type)):
+#             data_file_name = MY_DATA_FILE_PATH + data_type[k] + "_" + str(dim_selected) + "_"+ str(cardinality[j]) + ".txt"
+#             # data_file_name = MY_DATA_FILE_PATH + data_type[k] + "_" + str(cardinality[j]) + \
+#             #                  ".txt"
+#             print("data name: " + data_file_name)
+#             my_aff_name = data_type[k] + str(dimensions[i]) + "_" + str(cardinality[j])
+#             computer_qhull_index(data_file_name, OUTPUT_PATH, my_aff_name, MAX_LAYERS)
+
+# query
+
+
 
 print('Done')
-
-
-
-# for nn in range(my_nums_.__len__()):
-#     nums_ = my_nums_[nn]
-#     recall_list_transform = []
-#     for tt in range(total_round):
-#         dim_list = select_dim(nums_, min_, max_)
-#         print("Current dims: " + str(nums_) + ", current round: " + str(tt), " dimension chosen: " + str(dim_list))
-#         for ii in range(query_list.__len__()):  # for each query we have top_k results
-#             transform_list_ground_truth = []
-#             # set pivot
-#             for jj in range(nums_):
-#                 dot_val_transform_list = []
-#                 theta_list = []
-#                 pivot = np.zeros(dimension)
-#                 pivot_index = dim_list[jj]
-#                 pivot[pivot_index] = 1
-#                 pivot_norm = 1
-#                 alpha = angle(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-#                 tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-#
-#                 for kk in range(data_list.__len__()):
-#                     beta = angle(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-#                     tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-#                     dot_val_transform_list.append(dot(tuple_query, tuple_data))
-#
-#                     # use Jaccard set similarity as ground truth
-#                     theta = abs(beta - alpha)
-#                     theta_list.append(theta)
-#
-#                 transform_list_ground_truth.extend(np.argsort(dot_val_transform_list)[::-1][0: top_k])
-#             # aggregate all index
-#             transform_list_ground_truth = set(transform_list_ground_truth)
-#             transform_list_ground_truth = list(transform_list_ground_truth)
-#
-#             # ret_index = np.argsort(theta_list)  # rank angle-distance theta, ascending order -- the smaller the better
-#             # ret_index = ret_index[0:top_k]
-#             # recall_val = compute_recall(grountTruth[ii], ret_index)
-#             # recall_list.append(recall_val)
-#             recall_val = compute_recall(grountTruth[ii], transform_list_ground_truth)
-#             # print("Current dims: " + str(nums_) + ", current round: " + str(tt) + ", Query index: " + str(ii) + ", current recall value: " + str(recall_val))
-#             # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
-#             recall_list_transform.append(recall_val)
-#
-#         # print(1.0 * sum(recall_list)/recall_list.__len__())
-#         print("current selected dim:  " + str(nums_) + " --  " + str(1.0 * sum(recall_list_transform)/recall_list_transform.__len__()))
-
-
