@@ -348,7 +348,7 @@ nums_ = 25
 dim_list = select_dim(nums_, min_, max_)
 # dim_list = [57]
 for jj in range(nums_):
-    print("Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
+    print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
     transform_list = []
     theta_list = []
     pivot = np.zeros(dimension)
