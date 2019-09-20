@@ -44,10 +44,44 @@ dim_75.append(0.9144)
 dim_75.append(0.8788)
 dim_75.append(0.880133333333)
 
-print(1.0 * sum(dim_1)/dim_1.__len__())
-print(1.0 * sum(dim_10)/dim_10.__len__())
-print(1.0 * sum(dim_15)/dim_15.__len__())
-print(1.0 * sum(dim_20)/dim_20.__len__())
-print(1.0 * sum(dim_25)/dim_25.__len__())
-print(1.0 * sum(dim_50)/dim_50.__len__())
-print(1.0 * sum(dim_75)/dim_75.__len__())
+# print(1.0 * sum(dim_1)/dim_1.__len__())
+# print(1.0 * sum(dim_10)/dim_10.__len__())
+# print(1.0 * sum(dim_15)/dim_15.__len__())
+# print(1.0 * sum(dim_20)/dim_20.__len__())
+# print(1.0 * sum(dim_25)/dim_25.__len__())
+# print(1.0 * sum(dim_50)/dim_50.__len__())
+# print(1.0 * sum(dim_75)/dim_75.__len__())
+
+list1 = [1, 2, 3, 4, 5]
+list2 = [2, 3, 4, 5, 6]
+my_dict = {}
+a = 1
+b = 2
+my_dict[a] = list1
+my_dict[b] = list2
+
+key = 1
+temp = my_dict[key]
+temp.extend(list2)
+print(my_dict[key])
+my_dict[b].extend(list1)
+#
+# print(my_dict)
+#
+# if key in my_dict.keys():
+#     temp = list(my_dict[key])
+#     print(temp)
+#     print(temp.extend(list(list2)))
+#     print(type(temp))
+#     print(temp)
+#     # print(temp.extend(list2))
+
+# print(my_dict)
+matrix = np.random.rand(10, 3)
+print(matrix)
+index = [0, 1, 2, 3]
+print(matrix[index, 2])
+
+for ii in my_dict.keys():
+    my_dict[ii] = list(set(my_dict[ii]))
+    print(my_dict[ii])
