@@ -53,6 +53,7 @@ dim_75.append(0.880133333333)
 # print(1.0 * sum(dim_75)/dim_75.__len__())
 
 list1 = [1, 2, 3, 4, 5]
+list1 = np.asarray(list1)
 list2 = [2, 3, 4, 5, 6]
 my_dict = {}
 a = 1
@@ -62,9 +63,13 @@ my_dict[b] = list2
 
 key = 1
 temp = my_dict[key]
-temp.extend(list2)
+print(temp)
+# np.concatenate((a, b), axis=None)
+my_dict[key] = np.asarray(np.concatenate((my_dict[key], list2), axis=None))
 print(my_dict[key])
-my_dict[b].extend(list1)
+list1 = np.asarray(list1)
+# np.concatenate(my_dict[b], list1)
+print(my_dict)
 #
 # print(my_dict)
 #
@@ -77,11 +82,15 @@ my_dict[b].extend(list1)
 #     # print(temp.extend(list2))
 
 # print(my_dict)
-matrix = np.random.rand(10, 3)
-print(matrix)
-index = [0, 1, 2, 3]
-print(matrix[index, 2])
+# matrix = np.random.rand(10, 3)
+# print(matrix)
+# index = [0, 1, 2, 3]
+# print(matrix[index, 2])
+#
+# for ii in my_dict.keys():
+#     my_dict[ii] = list(set(my_dict[ii]))
+#     print(my_dict[ii])
 
-for ii in my_dict.keys():
-    my_dict[ii] = list(set(my_dict[ii]))
-    print(my_dict[ii])
+
+s2 = "Item \"Aaron\" RollNo Item \"Barry\" RollNo"
+print(s2)

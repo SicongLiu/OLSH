@@ -177,7 +177,7 @@ def compute_ground_truth(query_list_, data_list_, top_k_):
     grountTruth_ = []
     for ii in range(query_list_.__len__()):
         dot_val_list_ = []
-        for jj in range(query_list_.__len__()):
+        for jj in range(data_list_.__len__()):
             dot_val_list_.append(dot(query_list_[ii], data_list_[jj]))  # dot product value, the larger the better
         temp_grountTruth_ = np.argsort(dot_val_list_)[::-1]
         temp_grountTruth_ = temp_grountTruth_[0:top_k_]
@@ -301,7 +301,21 @@ def save_transformed_query(query_type_, selected_index_, transform_query_):
     f_handle.close()
 
 
-def load_transformed_query(query_file_name_):
+def load_transformed_query(query_file_name_, query_size_):
+    f = open(query_file_name_, 'r')
+    lines = f.readlines()
+    cur_dim = int(lines[0])
+    cur_card = int(lines[1])
+    data_list = []
+    for i in range(query_size_):
+        current_data_record = np.fromstring(lines[i + 2], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        data_list.append(current_data_record)
+    f.close()
+    return data_list, query_size_
+
+
+def load_transformed_data(query_file_name_, query_size_):
     f = open(query_file_name_, 'r')
     lines = f.readlines()
     cur_dim = int(lines[0])
@@ -313,7 +327,6 @@ def load_transformed_query(query_file_name_):
         data_list.append(current_data_record)
     f.close()
     return data_list, cur_card
-
 
 def save_ground_truth(ground_truth_file_, ground_truth_):
     f_handle = open(ground_truth_file_, 'ab')
@@ -340,45 +353,48 @@ data_type = 'random'
 query_type = '2D'
 data_file = './' + data_type + "_" + str(dimension) + '_' + str(cardinality) + '.txt'
 query_file = 'query_' + str(dimension) + 'D' + '.txt'
-data_list, data_norm_list = load_data(data_file)
-query_list, query_norm_list = load_query(query_file)
+# data_list, data_norm_list = load_data(data_file)
+# query_list, query_norm_list = load_query(query_file)
+
+top_k = 25
 
 # compute and rank results based on theta_min = beta - alpha
 # ground_truth = compute_ground_truth(query_list, data_list, top_k)
-# ground_truth_file = "./ground_truth.txt"
+ground_truth_file = "./ground_truth.txt"
 # save_ground_truth(ground_truth_file, ground_truth)
 
 # compute and rank results based on theta_min = beta - alpha
 projected_dim = 2
 query_size = 100
-top_k = 25
+
 min_ = 0
 max_ = dimension - 1
 total_round = 1 # for each list of dims, selected round to deal with randomness
 
 nums_ = 25
-dim_list = select_dim(nums_, min_, max_)
-# dim_list = [57]
-for jj in range(nums_):
-    print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
-    transform_list = []
-    theta_list = []
-    pivot = np.zeros(dimension)
-    pivot_index = dim_list[jj]
-    pivot[pivot_index] = 1
-    pivot_norm = 1
-    for kk in range(data_list.__len__()):
-        tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-        transform_list.append(tuple_data)
-    transform_list = np.asarray(transform_list)
+# dim_list = select_dim(nums_, min_, max_)
+dim_list = [17, 80, 26, 88, 90, 96, 57, 76, 70, 55, 54, 57, 61, 11, 38, 53, 94, 94, 92, 21, 23, 3, 45, 73, 41]
 
-    save_transformed_data(data_type, pivot_index, cardinality, transform_list)
-    # query transformed based on this dimension
-    total_transformed_query = []
-    for ii in range(query_list.__len__()):
-        tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-        total_transformed_query.append(tuple_query)
-    save_transformed_query(query_type, pivot_index, total_transformed_query)
+# for jj in range(nums_):
+#     print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
+#     transform_list = []
+#     theta_list = []
+#     pivot = np.zeros(dimension)
+#     pivot_index = dim_list[jj]
+#     pivot[pivot_index] = 1
+#     pivot_norm = 1
+#     for kk in range(data_list.__len__()):
+#         tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+#         transform_list.append(tuple_data)
+#     transform_list = np.asarray(transform_list)
+#
+#     save_transformed_data(data_type, pivot_index, cardinality, transform_list)
+#     # query transformed based on this dimension
+#     total_transformed_query = []
+#     for ii in range(query_list.__len__()):
+#         tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+#         total_transformed_query.append(tuple_query)
+#     save_transformed_query(query_type, pivot_index, total_transformed_query)
 
 
 print('Transformed data and query saved')
@@ -387,37 +403,39 @@ print('Transformed data and query saved')
 # now do query
 #  at j-th layers, select top-(k - j + 1)
 # use dict{} to store results for each query
+skyline_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/"
 global_result = {}
 ground_truth = load_ground_truth(ground_truth_file, query_size)
 for ii in range(nums_):
-    cur_dim = dim_list[ii]
+    cur_dim = dim_list[ii] # projected dimension
     local_query_file = '2D_' + str(cur_dim) + '.txt'
-    local_trans_query, query_size = load_transformed_query(local_query_file)
+    local_trans_query, query_size = load_transformed_query(local_query_file, query_size) # locate query file
 
     for kk in range(top_k):
-        local_data_file = data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(kk) + ".txt"
-        local_trans_data, data_size = load_transformed_query(local_data_file)
+        local_data_file = skyline_folder + data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_qhull_layer_" + str(kk)
+        local_trans_data, data_size = load_transformed_data(local_data_file, query_size) # locate top-k data file
 
-        for jj in range(query_size):
+        for jj in range(query_size): # for each query compute top-k, use map for cache
             temp_dot_val = []
             for tt in range(local_trans_data.__len__()):
                 temp_dot_val.append(dot(local_trans_query[jj], local_trans_data[tt]))
             local_trans_data = np.asarray(local_trans_data)
 
-            min_length = min(top_k - kk + 1, data_size)
+            min_length = min(top_k - kk, data_size)
 
             temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
             # local_result.extend(local_trans_data[temp_index, 2])
             local_result = local_trans_data[temp_index, 2]
-        if jj in global_result.keys():
-            global_result[jj].extend(local_result)
-        else:
-            global_result[jj] = local_result
+            if jj in global_result.keys():
+                global_result[jj] = np.asarray(np.concatenate((global_result[jj], local_result), axis=None))
+            else:
+                global_result[jj] = local_result
 
 recall_list_transform = []
 for ii in global_result.keys():
     global_result[ii] = list(set(global_result[ii]))
     recall_val = compute_recall(ground_truth[ii], global_result[ii])
+    print("Current key: " + str(ii) + ", current recall_val: " + str(recall_val))
     # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
     recall_list_transform.append(recall_val)
 

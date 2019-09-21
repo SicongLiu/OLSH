@@ -9,6 +9,18 @@ from collections import Counter
 import random
 
 
+def load_ground_truth(ground_truth_file_, card_):
+    f = open(ground_truth_file_, 'r')
+    lines = f.readlines()
+    data_list = []
+    for i in range(card_):
+        current_data_record = np.fromstring(lines[i], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        data_list.append(current_data_record)
+    f.close()
+    return data_list
+
+
 def select_dim(nums_, min_, max_):
     dim_list_ = []
     for x in range(nums_):
@@ -27,7 +39,7 @@ def compute_ground_truth(query_list_, data_list_, top_k_):
     grountTruth_ = []
     for ii in range(query_list_.__len__()):
         dot_val_list_ = []
-        for jj in range(query_list_.__len__()):
+        for jj in range(data_list_.__len__()):
             dot_val_list_.append(dot(query_list_[ii], data_list_[jj]))  # dot product value, the larger the better
         temp_grountTruth_ = np.argsort(dot_val_list_)[::-1]
         temp_grountTruth_ = temp_grountTruth_[0:top_k_]
@@ -108,15 +120,17 @@ f.close()
 
 # compute and rank results based on theta_min = beta - alpha
 top_k = 25
-grountTruth = compute_ground_truth(query_list, data_list, top_k)
-
+# grountTruth = compute_ground_truth(query_list, data_list, top_k)
+ground_truth_file = "./ground_truth.txt"
+query_size = 100
+ground_truth = load_ground_truth(ground_truth_file, query_size)
 
 recall_list = []
 
 
 min_ = 0
 max_ = dimension - 1
-my_nums_ = [75]
+my_nums_ = [25]
 # my_nums_ = [10, 15, 20, 25]
 total_round = 3
 
@@ -157,7 +171,7 @@ for nn in range(my_nums_.__len__()):
             # ret_index = ret_index[0:top_k]
             # recall_val = compute_recall(grountTruth[ii], ret_index)
             # recall_list.append(recall_val)
-            recall_val = compute_recall(grountTruth[ii], transform_list_ground_truth)
+            recall_val = compute_recall(ground_truth[ii], transform_list_ground_truth)
             # print("Current dims: " + str(nums_) + ", current round: " + str(tt) + ", Query index: " + str(ii) + ", current recall value: " + str(recall_val))
             # recall_list_transform.append(compute_recall(grountTruth[ii], transform_list_ground_truth))
             recall_list_transform.append(recall_val)
