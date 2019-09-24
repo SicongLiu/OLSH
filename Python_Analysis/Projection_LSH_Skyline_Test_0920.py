@@ -84,6 +84,7 @@ result = {}
 query_size = 100
 for ii in range(dim_list.__len__()):
     dim_interest = dim_list[ii]
+    print("current dim of interest: " + str(dim_interest))
     query_file = query_folder + str(projected_dim) + "D_" + str(dim_interest) + ".txt"
     raw_data_file = raw_data_folder + data_type + "_" + str(dim_interest) + "_" + str(cardinality) + ".txt"
     raw_data = load_data(raw_data_file, cardinality, projected_dim)
@@ -110,8 +111,8 @@ for ii in range(dim_list.__len__()):
             temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
             local_result = skyline_data[temp_index, 2]
             temp_local_result.extend(local_result)
-        print(groud_truth)
-        print(temp_local_result)
+        # print(groud_truth)
+        # print(temp_local_result)
         temp_recall = compute_recall(temp_ground_truth, set(temp_local_result))
         print(temp_recall)
 
