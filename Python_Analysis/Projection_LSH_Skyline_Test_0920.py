@@ -8,8 +8,9 @@ import math
 from collections import Counter
 import random
 
-dim_list = [17, 80, 26, 88, 90, 96, 57, 76, 70, 55, 54, 57, 61, 11, 38, 53, 94, 94, 92, 21, 23, 3, 45, 73, 41]
-skyline_folder = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/"
+# dim_list = [17, 80, 26, 88, 90, 96, 57, 76, 70, 55, 54, 57, 61, 11, 38, 53, 94, 94, 92, 21, 23, 3, 45, 73, 41]
+dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
+skyline_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/"
 query_folder = "./"
 raw_data_folder = "./"
 projected_dim = 2
@@ -80,8 +81,23 @@ def compute_recall(grountTruth_, ret_index_):
     intersection = len(list(set(grountTruth_).intersection(set(ret_index_))))
     return float(1.0 * intersection / len(grountTruth_))
 
+
+def load_ground_truth(ground_truth_file_, card_):
+    f = open(ground_truth_file_, 'r')
+    lines = f.readlines()
+    data_list = []
+    for i in range(card_):
+        current_data_record = np.fromstring(lines[i], dtype=float, sep=' ')
+        current_data_record = np.asarray(current_data_record)
+        data_list.append(current_data_record)
+    f.close()
+    return data_list
+
+
 result = {}
 query_size = 100
+ground_truth_file = "./ground_truth_100k.txt"
+ground_truth = load_ground_truth(ground_truth_file, query_size)
 for ii in range(dim_list.__len__()):
     dim_interest = dim_list[ii]
     query_file = query_folder + str(projected_dim) + "D_" + str(dim_interest) + ".txt"
@@ -91,8 +107,10 @@ for ii in range(dim_list.__len__()):
 
     temp_ground_truth = []
     for jj in range(query_size):  # for each query compute top-k, use map for cache
-        groud_truth = compute_ground_truth(query_data[jj], raw_data, top_k) # for each query a top-k result
-        temp_ground_truth = groud_truth
+        # groud_truth = compute_ground_truth(query_data[jj], raw_data, top_k) # for each query a top-k result
+        # temp_ground_truth = groud_truth
+
+        temp_ground_truth = ground_truth[jj]
         temp_local_result = []
 
         for kk in range(top_k):
@@ -110,10 +128,11 @@ for ii in range(dim_list.__len__()):
             temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
             local_result = skyline_data[temp_index, 2]
             temp_local_result.extend(local_result)
-        print(groud_truth)
-        print(temp_local_result)
+        # print(temp_ground_truth)
+        # print(temp_local_result)
         temp_recall = compute_recall(temp_ground_truth, set(temp_local_result))
-        print(temp_recall)
+        print("current selected dimension: " + str(dim_interest) + ", query index: " + str(jj) + ", current recall: " + str(temp_recall))
+        # print(temp_recall)
 
 print('Done')
 
