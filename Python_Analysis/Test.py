@@ -53,17 +53,20 @@ dim_75.append(0.880133333333)
 # print(1.0 * sum(dim_50)/dim_50.__len__())
 # print(1.0 * sum(dim_75)/dim_75.__len__())
 
-list1 = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
-set1 = set(list1)
-
-print(set1)
-# dim_list_ = []
-# a = 0
-# b = 9
-# c = 5
-# for x in range(c):
-#     xx = random.randint(a, b)
-#     while set1.__contains__(xx):
-#         xx = random.randint(a, b)
-#     set1.add(xx)
+# list1 = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
+# set1 = set(list1)
+#
 # print(set1)
+
+
+dict1 = {}
+dict3 = {}
+dict3[4] = 5
+dict1[1] = dict3
+dict1[2] = 3
+list1 = []
+list1.__len__()
+if dict1.__contains__(1):
+    temp = dict1[1]
+    temp[2] = 5
+    print(dict1)

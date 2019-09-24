@@ -7,7 +7,7 @@ import math
 # import matplotlib.pyplot as plt
 from collections import Counter
 import random
-
+import json
 
 
 '''run skyline query k-times'''
@@ -287,7 +287,7 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
 def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_):
     raw_data_ = []
     file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + ".txt"
-    raw_data_.append(np.asarray(int(pivot_index)))
+    raw_data_.append(np.asarray(int(selected_index_)))
     raw_data_.append(np.asarray(int(cardinality)))
     raw_data_ = np.asarray(raw_data_)
     np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
@@ -301,7 +301,7 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
 def save_transformed_query(query_type_, selected_index_, transform_query_):
     raw_data_ = []
     file_name_ = query_type_ + "_" + str(selected_index_) + ".txt"
-    raw_data_.append(np.asarray(int(pivot_index)))
+    raw_data_.append(np.asarray(int(selected_index_)))
     raw_data_.append(np.asarray(int(cardinality)))
     raw_data_ = np.asarray(raw_data_)
     np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
@@ -358,8 +358,18 @@ def load_ground_truth(ground_truth_file_, card_):
     return data_list
 
 
-def load_into_dict(my_dict_, index_, val_, query_index_):
-
+def load_into_dict(my_dict_, data_index_list_, val_list_, query_index_):
+    temp_dict = {}
+    if my_dict_.__contains__(query_index_):
+        temp_dict = my_dict_[query_index_]
+    else:
+        temp_dict = {}
+    for dd in range(data_index_list_.__len__()):
+        if temp_dict.__contains__(data_index_list_[dd]):
+            temp_dict[data_index_list_[dd]] = data_index_list_[dd] + val_list_[dd]
+        else:
+            temp_dict[data_index_list_[dd]] = val_list_[dd]
+    my_dict_[query_index_] = temp_dict
     return my_dict_
 
 
@@ -368,7 +378,9 @@ def save_dict_to_file(my_dict_):
     file_name_ = "./global_val_dict.txt"
     f_handle = open(file_name_, 'ab')
     # np.savetxt(f_handle, ground_truth_, fmt='%10.6f')
-    np.savetxt(f_handle, my_dict_, fmt='%i')
+    for dd in my_dict_.keys():
+        f_handle.write(json.dumps(my_dict_[dd]))  # use `json.loads` to do the reverse
+        f_handle.write("\n")
     f_handle.close()
 
 
@@ -437,7 +449,7 @@ print('Transformed data and query saved')
 skyline_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/"
 global_result = {}
 ground_truth = load_ground_truth(ground_truth_file, query_size)
-global_value_dict = {}
+global_value_dict = {}# key: query id. value: dict.
 for ii in range(nums_):
     cur_dim = dim_list[ii] # projected dimension
     local_query_file = '2D_' + str(cur_dim) + '.txt'
