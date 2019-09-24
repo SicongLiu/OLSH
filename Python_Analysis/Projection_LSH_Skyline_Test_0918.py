@@ -161,13 +161,24 @@ def computer_qhull_index(input_path, output_folder, aff_name, max_layers):
 
 
 def select_dim(nums_, min_, max_):
-    dim_list_ = []
+    # current_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
+    current_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95]
+
+    temp_list_ = set(current_list)
+    dim_list_ = set()
     for x in range(nums_):
-        dim_list_.append(random.randint(min_, max_))
-    return dim_list_
+        xx = random.randint(min_, max_)
+        while temp_list_.__contains__(xx):
+            xx = random.randint(min_, max_)
+        dim_list_.add(xx)
+        temp_list_.add(xx)
+    return list(dim_list_), list(temp_list_)
 
 
 def dot(K, L):
+    # if len(K) != len(L):
+    #     return 0
+    L = L[0: 2]
     if len(K) != len(L):
         return 0
     return float("{0:.5f}".format(sum(i[0] * i[1] for i in zip(K, L))))
@@ -347,6 +358,20 @@ def load_ground_truth(ground_truth_file_, card_):
     return data_list
 
 
+def load_into_dict(my_dict_, index_, val_, query_index_):
+
+    return my_dict_
+
+
+def save_dict_to_file(my_dict_):
+    # save global dict to file
+    file_name_ = "./global_val_dict.txt"
+    f_handle = open(file_name_, 'ab')
+    # np.savetxt(f_handle, ground_truth_, fmt='%10.6f')
+    np.savetxt(f_handle, my_dict_, fmt='%i')
+    f_handle.close()
+
+
 dimension = 100
 cardinality = 100000
 data_type = 'random'
@@ -360,7 +385,7 @@ top_k = 25
 
 # compute and rank results based on theta_min = beta - alpha
 # ground_truth = compute_ground_truth(query_list, data_list, top_k)
-ground_truth_file = "./ground_truth.txt"
+ground_truth_file = "./ground_truth_100k.txt"
 # save_ground_truth(ground_truth_file, ground_truth)
 
 # compute and rank results based on theta_min = beta - alpha
@@ -371,10 +396,16 @@ min_ = 0
 max_ = dimension - 1
 total_round = 1 # for each list of dims, selected round to deal with randomness
 
-nums_ = 25
-# dim_list = select_dim(nums_, min_, max_)
-dim_list = [17, 80, 26, 88, 90, 96, 57, 76, 70, 55, 54, 57, 61, 11, 38, 53, 94, 94, 92, 21, 23, 3, 45, 73, 41]
+nums_ = 100
+# dim_list, total_list = select_dim(nums_, min_, max_)
+# dim_list = [17, 80, 26, 88, 90, 96, 57, 76, 70, 55, 54, 57, 61, 11, 38, 53, 94, 94, 92, 21, 23, 3, 45, 73, 41]
+# dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
+# dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88]
+# dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95]
+dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95, 32, 97, 2, 67, 64, 44, 43, 12, 77, 78, 56, 20, 24, 84, 27]
 
+print(set(dim_list).__len__())
+# print(set(total_list).__len__())
 # for jj in range(nums_):
 #     print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
 #     transform_list = []
@@ -406,6 +437,7 @@ print('Transformed data and query saved')
 skyline_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/"
 global_result = {}
 ground_truth = load_ground_truth(ground_truth_file, query_size)
+global_value_dict = {}
 for ii in range(nums_):
     cur_dim = dim_list[ii] # projected dimension
     local_query_file = '2D_' + str(cur_dim) + '.txt'
@@ -420,6 +452,9 @@ for ii in range(nums_):
             for tt in range(local_trans_data.__len__()):
                 temp_dot_val.append(dot(local_trans_query[jj], local_trans_data[tt]))
             local_trans_data = np.asarray(local_trans_data)
+
+            global_value_dict = load_into_dict(global_value_dict, local_trans_data[:, 2], temp_dot_val, jj)
+            save_dict_to_file(global_value_dict)
 
             min_length = min(top_k - kk, data_size)
 

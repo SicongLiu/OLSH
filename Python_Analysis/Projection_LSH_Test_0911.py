@@ -79,7 +79,7 @@ def transform_data(data_, data_norm_, pivot_, pivot_norm_):
 
 
 dimension = 100
-cardinality = 1000
+cardinality = 100000
 data_type = 'random_'
 data_file = data_type + str(dimension) + '_' + str(cardinality) + '.txt'
 query_file = 'query_' + str(dimension) + 'D' + '.txt'
