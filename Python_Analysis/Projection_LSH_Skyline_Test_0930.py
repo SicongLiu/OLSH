@@ -290,9 +290,9 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
     f_handle.close()
 
 
-def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_):
+def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_, bin_index_):
     raw_data_ = []
-    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + ".txt"
+    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + "_" + str(bin_index_) + ".txt"
     raw_data_.append(np.asarray(int(selected_index_)))
     raw_data_.append(np.asarray(int(cardinality)))
     raw_data_ = np.asarray(raw_data_)
@@ -304,9 +304,9 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
     f_handle.close()
 
 
-def save_transformed_query(query_type_, selected_index_, transform_query_):
+def save_transformed_query(query_type_, selected_index_, transform_query_, bin_index_):
     raw_data_ = []
-    file_name_ = query_type_ + "_" + str(selected_index_) + ".txt"
+    file_name_ = query_type_ + "_" + str(selected_index_) + str(bin_index_) + ".txt"
     raw_data_.append(np.asarray(int(selected_index_)))
     raw_data_.append(np.asarray(int(cardinality)))
     raw_data_ = np.asarray(raw_data_)
@@ -421,6 +421,8 @@ def norm_partition(data_list_, data_norm_list_, bin_count_, data_type_, dimensio
 
     bin_edge = histedges_equalN(data_norm_list_, bin_count_)
     digitize_index_ = np.digitize(data_list_, bin_edge)
+    bined_data_ = {}
+    bined_data_norm_ = {}
 
     # bin_aggregate, bin_edge = np.histogram(data_norm_list_, bins=bin_count_)
     # digitize_index_ = np.digitize(data_norm_list_, bin_edge)
@@ -435,13 +437,17 @@ def norm_partition(data_list_, data_norm_list_, bin_count_, data_type_, dimensio
         np.savetxt(current_file, temp_batch, delimiter=',', fmt='%i')
 
         temp_batch = []
-
+        temp_batch_norm = []
         for dd in range(data_index_.__len__()):
             temp_batch.append(data_list_[dd])
+            temp_batch_norm.append(data_norm_list_[dd])
         # separate metadata and data points, appending data points to metadata text saved on file
         f_handle = open(current_file, 'ab')
         np.savetxt(f_handle, temp_batch, fmt='%10.6f')
         f_handle.close()
+        bined_data_[bb] = temp_batch
+        bined_data_norm_[bb] = temp_batch_norm
+    return bined_data_, bined_data_norm_
 
 
 
@@ -488,18 +494,20 @@ for bb in range(bin_count):
         pivot_index = dim_list[jj]
         pivot[pivot_index] = 1
         pivot_norm = 1
+        data_list = bined_data[bb]
+        data_norm_list = bined_data_norm[bb]
         for kk in range(data_list.__len__()):
             tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
             transform_list.append(tuple_data)
         transform_list = np.asarray(transform_list)
 
-        save_transformed_data(data_type, pivot_index, cardinality, transform_list)
+        save_transformed_data(data_type, pivot_index, cardinality, transform_list, bb)
         # query transformed based on this dimension
         total_transformed_query = []
         for ii in range(query_list.__len__()):
             tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
             total_transformed_query.append(tuple_query)
-        save_transformed_query(query_type, pivot_index, total_transformed_query)
+        save_transformed_query(query_type, pivot_index, total_transformed_query, bb)
 
 
 print('Transformed data and query saved')
@@ -512,40 +520,37 @@ skyline_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthe
 global_result = {}
 ground_truth = load_ground_truth(ground_truth_file, query_size)
 global_value_dict = {}# key: query id. value: dict.
-for ii in range(nums_):
-    cur_dim = dim_list[ii] # projected dimension
-    local_query_file = '2D_' + str(cur_dim) + '.txt'
-    local_trans_query, query_size = load_transformed_query(local_query_file, query_size) # locate query file
+for bb in range(bin_count):
+    for ii in range(nums_):
+        cur_dim = dim_list[ii] # projected dimension
+        local_query_file = '2D_' + str(cur_dim) + "_" + str(bb) + '.txt'
+        local_trans_query, query_size = load_transformed_query(local_query_file, query_size) # locate query file
 
+        for kk in range(top_k):
+            local_data_file = skyline_folder + data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_qhull_layer_" + str(kk) + "_" + str(bb)
+            local_trans_data, data_size = load_transformed_data(local_data_file, query_size) # locate top-k data file
 
-    for kk in range(top_k):
-        local_data_file = skyline_folder + data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_qhull_layer_" + str(kk)
-        local_trans_data, data_size = load_transformed_data(local_data_file, query_size) # locate top-k data file
+            for jj in range(query_size): # for each query compute top-k, use map for cache
+                temp_dot_val = []
+                for tt in range(local_trans_data.__len__()):
+                    temp_dot_val.append(dot_update(local_trans_query[jj], local_trans_data[tt]))
+                local_trans_data = np.asarray(local_trans_data)
+                # save_dict_to_file(global_value_dict)
 
-        for jj in range(query_size): # for each query compute top-k, use map for cache
-            temp_dot_val = []
-            for tt in range(local_trans_data.__len__()):
-                temp_dot_val.append(dot_update(local_trans_query[jj], local_trans_data[tt]))
-            local_trans_data = np.asarray(local_trans_data)
+                min_length = min(top_k - kk, data_size)
 
-
-
-            # save_dict_to_file(global_value_dict)
-
-            min_length = min(top_k - kk, data_size)
-
-            temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
-            # local_result.extend(local_trans_data[temp_index, 2])
-            local_result = local_trans_data[temp_index, 2]
-            # global_value_dict = load_into_dict(global_value_dict, local_trans_data[:, 2], temp_dot_val, jj)
-            global_value_dict = load_into_dict(global_value_dict, local_result, temp_dot_val, jj)
-            if jj in global_result.keys():
-                global_result[jj] = np.asarray(np.concatenate((global_result[jj], local_result), axis=None))
-            else:
-                global_result[jj] = local_result
-    # temp_dict = global_value_dict[0]
-    # print(temp_dict)
-    # print(len(temp_dict))
+                temp_index = np.argsort(temp_dot_val)[::-1][0: min_length]
+                # local_result.extend(local_trans_data[temp_index, 2])
+                local_result = local_trans_data[temp_index, 2]
+                # global_value_dict = load_into_dict(global_value_dict, local_trans_data[:, 2], temp_dot_val, jj)
+                global_value_dict = load_into_dict(global_value_dict, local_result, temp_dot_val, jj)
+                if jj in global_result.keys():
+                    global_result[jj] = np.asarray(np.concatenate((global_result[jj], local_result), axis=None))
+                else:
+                    global_result[jj] = local_result
+        # temp_dict = global_value_dict[0]
+        # print(temp_dict)
+        # print(len(temp_dict))
 
 recall_list_transform = []
 for ii in global_result.keys():

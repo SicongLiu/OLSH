@@ -484,28 +484,29 @@ nums_ = 100
 dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95, 32, 97, 2, 67, 64, 44, 43, 12, 77, 78, 56, 20, 24, 84, 27]
 # dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17]
 
-# print(set(dim_list).__len__())
-# # print(set(total_list).__len__())
-# for jj in range(nums_):
-#     print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
-#     transform_list = []
-#     theta_list = []
-#     pivot = np.zeros(dimension)
-#     pivot_index = dim_list[jj]
-#     pivot[pivot_index] = 1
-#     pivot_norm = 1
-#     for kk in range(data_list.__len__()):
-#         tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-#         transform_list.append(tuple_data)
-#     transform_list = np.asarray(transform_list)
-#
-#     save_transformed_data(data_type, pivot_index, cardinality, transform_list)
-#     # query transformed based on this dimension
-#     total_transformed_query = []
-#     for ii in range(query_list.__len__()):
-#         tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-#         total_transformed_query.append(tuple_query)
-#     save_transformed_query(query_type, pivot_index, total_transformed_query)
+print(set(dim_list).__len__())
+# print(set(total_list).__len__())
+for bb in range(bin_count):
+    for jj in range(nums_):
+        print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
+        transform_list = []
+        theta_list = []
+        pivot = np.zeros(dimension)
+        pivot_index = dim_list[jj]
+        pivot[pivot_index] = 1
+        pivot_norm = 1
+        for kk in range(data_list.__len__()):
+            tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+            transform_list.append(tuple_data)
+        transform_list = np.asarray(transform_list)
+
+        save_transformed_data(data_type, pivot_index, cardinality, transform_list)
+        # query transformed based on this dimension
+        total_transformed_query = []
+        for ii in range(query_list.__len__()):
+            tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+            total_transformed_query.append(tuple_query)
+        save_transformed_query(query_type, pivot_index, total_transformed_query)
 
 
 print('Transformed data and query saved')
