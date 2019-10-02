@@ -75,8 +75,8 @@ def histedges_equalN(x, nbin):
     return np.interp(np.linspace(0, npt, nbin + 1),
                      np.arange(npt),
                      np.sort(x))
-set1 = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
-set1 = list(set(set1))
+# set1 = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99]
+# set1 = list(set(set1))
 # bin_aggregate, bin_edge = np.histogram(set1, bins=10)
 # print(bin_edge)
 # ret = np.digitize(set1, bin_edge)
@@ -84,7 +84,24 @@ set1 = list(set(set1))
 # result = np.where(ret == 11)
 # print(result[0])
 
+#
+# bin_edge = histedges_equalN(set1, 10)
+# print(bin_edge)
+# digitize_index_ = np.digitize(set1, bin_edge)
+# bb = 1
+# data_index_= np.where(digitize_index_ == bb + 1)  # those data save as bb
+# set1 = np.asarray(set1)
+# print(type(data_index_))
+# print(set1[data_index_[0]])
+#
+# tt = range(0, 10)
+#
+# print(tt)
 
-bin_edge = histedges_equalN(set1, 10)
-ret = np.digitize(set1, bin_edge)
-print(ret)
+aa = [[1, 2, 3], [3, 4, 5], [6, 7, 8]]
+aa = np.asarray(aa)
+bb = [0, 1, 2]
+# print(aa)
+tt = np.column_stack((aa, bb))
+# print(tt)
+print(tt[:, 0:4])

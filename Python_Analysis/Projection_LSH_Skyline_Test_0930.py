@@ -207,6 +207,7 @@ def angle(data_, norm_data_, query_, norm_query_):
 
 def compute_recall(grountTruth_, ret_index_, top_k_):
     temp_ground_truth = take_ground_truth(grountTruth_, top_k_)
+    print(len(set(ret_index_)))
     intersection = len(list(set(temp_ground_truth).intersection(set(ret_index_))))
     return float(1.0 * intersection / len(temp_ground_truth))
 
@@ -290,23 +291,23 @@ def save_transformed_data(data_type_, selected_index_, cardinality_, transform_l
     f_handle.close()
 
 
-def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_, bin_index_):
+def save_transformed_data(data_type_, selected_index_, cardinality_, transform_list_, bin_index_, original_cardinality_, index_list_):
     raw_data_ = []
-    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(cardinality_) + "_" + str(bin_index_) + ".txt"
+    file_name_ = data_type_ + "_" + str(selected_index_) + "_" + str(original_cardinality_) + "_" + str(bin_index_) + ".txt"
     raw_data_.append(np.asarray(int(selected_index_)))
-    raw_data_.append(np.asarray(int(cardinality)))
+    raw_data_.append(np.asarray(int(cardinality_)))
     raw_data_ = np.asarray(raw_data_)
     np.savetxt(file_name_, raw_data_, delimiter=',', fmt='%i')
 
     # separate metadata and data points, appending data points to metadata text saved on file
     f_handle = open(file_name_, 'ab')
-    np.savetxt(f_handle, transform_list_, fmt='%10.6f')
+    np.savetxt(f_handle, np.column_stack((transform_list_, index_list_)), fmt='%10.6f')
     f_handle.close()
 
 
 def save_transformed_query(query_type_, selected_index_, transform_query_, bin_index_):
     raw_data_ = []
-    file_name_ = query_type_ + "_" + str(selected_index_) + str(bin_index_) + ".txt"
+    file_name_ = query_type_ + "_" + str(selected_index_) + "_" + str(bin_index_) + ".txt"
     raw_data_.append(np.asarray(int(selected_index_)))
     raw_data_.append(np.asarray(int(cardinality)))
     raw_data_ = np.asarray(raw_data_)
@@ -420,9 +421,11 @@ def norm_partition(data_list_, data_norm_list_, bin_count_, data_type_, dimensio
     norm_max = max(data_norm_list_)
 
     bin_edge = histedges_equalN(data_norm_list_, bin_count_)
-    digitize_index_ = np.digitize(data_list_, bin_edge)
+    digitize_index_ = np.digitize(data_norm_list_, bin_edge)
     bined_data_ = {}
     bined_data_norm_ = {}
+    data_list_ = np.asarray(data_list_)
+    data_norm_list_ = np.asarray(data_norm_list_)
 
     # bin_aggregate, bin_edge = np.histogram(data_norm_list_, bins=bin_count_)
     # digitize_index_ = np.digitize(data_norm_list_, bin_edge)
@@ -431,16 +434,20 @@ def norm_partition(data_list_, data_norm_list_, bin_count_, data_type_, dimensio
         temp_batch = []
         temp_batch.append(np.asarray(int(dimension_)))
         data_index_ = np.where(digitize_index_ == bb + 1)  # those data save as bb
-        temp_batch.append(np.asarray(int(data_index_.__len__())))
+        temp_batch.append(np.asarray(int(data_index_[0].__len__())))
         current_file = "./" + data_type_ + "_" + str(dimension_) + "_" + str(cardinality) + "_" + str(bb) + ".txt"
         temp_batch = np.asarray(temp_batch)
         np.savetxt(current_file, temp_batch, delimiter=',', fmt='%i')
 
         temp_batch = []
         temp_batch_norm = []
-        for dd in range(data_index_.__len__()):
-            temp_batch.append(data_list_[dd])
-            temp_batch_norm.append(data_norm_list_[dd])
+        
+        # temp_batch = data_list_[data_index_[0]]
+        temp_batch = np.column_stack((data_list_[data_index_[0]], data_index_[0]))
+        temp_batch_norm = data_norm_list_[data_index_[0]]
+        # for dd in range(data_index_.__len__()):
+        #     temp_batch.append(data_list_[dd])
+        #     temp_batch_norm.append(data_norm_list_[dd])
         # separate metadata and data points, appending data points to metadata text saved on file
         f_handle = open(current_file, 'ab')
         np.savetxt(f_handle, temp_batch, fmt='%10.6f')
@@ -453,7 +460,8 @@ def norm_partition(data_list_, data_norm_list_, bin_count_, data_type_, dimensio
 
 
 dimension = 100
-cardinality = 100000
+cardinality = 5000
+bin_count = 10
 data_type = 'random'
 query_type = '2D'
 data_file = './' + data_type + "_" + str(dimension) + '_' + str(cardinality) + '.txt'
@@ -461,8 +469,8 @@ query_file = 'query_' + str(dimension) + 'D' + '.txt'
 data_list, data_norm_list = load_data(data_file)
 query_list, query_norm_list = load_query(query_file)
 
-bin_count = 10
-bined_data, bined_data_norm = norm_partition(data_list, data_norm_list, bin_count, data_type, dimension, cardinality)
+
+# bined_data, bined_data_norm = norm_partition(data_list, data_norm_list, bin_count, data_type, dimension, cardinality)
 
 
 
@@ -470,7 +478,7 @@ top_k = 25
 
 # compute and rank results based on theta_min = beta - alpha
 # ground_truth = compute_ground_truth(query_list, data_list, top_k)
-ground_truth_file = "./ground_truth_1000.txt"
+ground_truth_file = "./ground_truth_5000.txt"
 # save_ground_truth(ground_truth_file, ground_truth)
 
 # compute and rank results based on theta_min = beta - alpha
@@ -481,33 +489,37 @@ min_ = 0
 max_ = dimension - 1
 total_round = 1 # for each list of dims, selected round to deal with randomness
 
-nums_ = 100
-# dim_list, total_list = select_dim(nums_, min_, max_)
-dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95, 32, 97, 2, 67, 64, 44, 43, 12, 77, 78, 56, 20, 24, 84, 27]
+nums_ = 50
+#dim_list, total_list = select_dim(nums_, min_, max_)
+# dim_list = [0, 1, 4, 6, 7, 8, 11, 14, 16, 17, 18, 19, 21, 22, 26, 28, 31, 33, 34, 35, 36, 37, 40, 42, 45, 47, 50, 51, 52, 54, 55, 57, 59, 60, 63, 65, 69, 71, 75, 81, 82, 87, 89, 91, 92, 93, 94, 96, 98, 99, 3, 9, 10, 13, 15, 23, 25, 29, 30, 38, 39, 46, 48, 49, 53, 58, 61, 62, 68, 72, 73, 76, 79, 83, 88, 66, 5, 70, 41, 74, 80, 85, 86, 90, 95, 32, 97, 2, 67, 64, 44, 43, 12, 77, 78, 56, 20, 24, 84, 27]
+dim_list = range(0, nums_)
 
-for bb in range(bin_count):
-    for jj in range(nums_):
-        print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
-        transform_list = []
-        theta_list = []
-        pivot = np.zeros(dimension)
-        pivot_index = dim_list[jj]
-        pivot[pivot_index] = 1
-        pivot_norm = 1
-        data_list = bined_data[bb]
-        data_norm_list = bined_data_norm[bb]
-        for kk in range(data_list.__len__()):
-            tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
-            transform_list.append(tuple_data)
-        transform_list = np.asarray(transform_list)
-
-        save_transformed_data(data_type, pivot_index, cardinality, transform_list, bb)
-        # query transformed based on this dimension
-        total_transformed_query = []
-        for ii in range(query_list.__len__()):
-            tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
-            total_transformed_query.append(tuple_query)
-        save_transformed_query(query_type, pivot_index, total_transformed_query, bb)
+# for bb in range(bin_count):
+#     for jj in range(nums_):
+#         print("Current round: " + str(jj) + ", Current dims: " + str(nums_) + " dimension chosen: " + str(dim_list))
+#         transform_list = []
+#         theta_list = []
+#         pivot = np.zeros(dimension)
+#         pivot_index = dim_list[jj]
+#         pivot[pivot_index] = 1
+#         pivot_norm = 1
+#         data_list = bined_data[bb][:, 0:dimension]
+#         index_list = bined_data[bb][:, dimension]
+#         data_norm_list = bined_data_norm[bb]
+#         for kk in range(data_list.__len__()):
+#             tuple_data = transform_data(data_list[kk], data_norm_list[kk], pivot, pivot_norm)
+#             transform_list.append(tuple_data)
+#         transform_list = np.asarray(transform_list)
+#
+#         temp_card = len(bined_data_norm[bb])
+#         # temp_card = cardinality/bin_count
+#         save_transformed_data(data_type, pivot_index, temp_card, transform_list, bb, cardinality, index_list)
+#         # query transformed based on this dimension
+#         total_transformed_query = []
+#         for ii in range(query_list.__len__()):
+#             tuple_query = transform_query(query_list[ii], query_norm_list[ii], pivot, pivot_norm)
+#             total_transformed_query.append(tuple_query)
+#         save_transformed_query(query_type, pivot_index, total_transformed_query, bb)
 
 
 print('Transformed data and query saved')
@@ -527,7 +539,7 @@ for bb in range(bin_count):
         local_trans_query, query_size = load_transformed_query(local_query_file, query_size) # locate query file
 
         for kk in range(top_k):
-            local_data_file = skyline_folder + data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_qhull_layer_" + str(kk) + "_" + str(bb)
+            local_data_file = skyline_folder + data_type + "_" + str(cur_dim) + "_" + str(cardinality) + "_" + str(bb) + "_qhull_layer_" + str(kk)
             local_trans_data, data_size = load_transformed_data(local_data_file, query_size) # locate top-k data file
 
             for jj in range(query_size): # for each query compute top-k, use map for cache
@@ -548,6 +560,7 @@ for bb in range(bin_count):
                     global_result[jj] = np.asarray(np.concatenate((global_result[jj], local_result), axis=None))
                 else:
                     global_result[jj] = local_result
+    print(len(set(global_result[jj])))
         # temp_dict = global_value_dict[0]
         # print(temp_dict)
         # print(len(temp_dict))
