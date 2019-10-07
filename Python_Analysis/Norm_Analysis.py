@@ -43,7 +43,7 @@ def dot(K, L):
    return sum(i[0] * i[1] for i in zip(K, L))
 
 
-chunks = 25
+chunks = 10
 top_k = 25
 query_num = 100
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
