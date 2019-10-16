@@ -3,7 +3,7 @@ import re
 import sys
 import numpy as np
 # import pandas as pd
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from collections import Counter
 
 # chunks = 25
@@ -35,6 +35,18 @@ from collections import Counter
 #               + str(np.min(norm_list)) + ', max_norm: ' + str(np.max(norm_list)) + ', std: ' + str(np.std(norm_list)))
 
 
+def save_current_qhull(folder_name_, layer_index_, data_, data_type_, dimension_, cardinality_, data_size_):
+    file_name = folder_name_ + data_type_ + '_' + str(dimension_) + '_' + str(cardinality_) + '_qhull_layer_' + str(layer_index_)
+    save_data = []
+    save_data.append(np.asarray(int(dimension_)))
+    save_data.append(np.asarray(int(data_size_)))
+    save_data = np.asarray(save_data)
+    np.savetxt(file_name, save_data, delimiter=',', fmt='%i')
+
+    f_handle = open(file_name, 'ab')
+    np.savetxt(f_handle, data_, fmt='%10.6f')
+    f_handle.close()
+
 def dot(K, L):
    if len(K) != len(L):
       return 0
@@ -46,7 +58,7 @@ chunks = 25
 top_k = 25
 query_num = 100
 # data_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
-data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
+data_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 query_folder = '~/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
 data_type = 'random_'
@@ -56,7 +68,7 @@ layer_index = 0
 bins = 25
 
 
-file_name = data_folder + data_type + str(dimension) + '_' + str(cardinality) + '_qhull_layer_' + str(layer_index)
+file_name = data_folder + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
 f = open(file_name, 'r')
 lines = f.readlines()
 
@@ -74,7 +86,14 @@ for kk in range(cur_card):
 
 f.close()
 data_norm_list = np.asarray(data_norm_list)
+data_list = np.asarray(data_list)
+min_norm = min(data_norm_list)
+max_norm = max(data_norm_list)
 
+# _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
+# # plt.hist(data_norm_list, normed=True, bins=10)
+#
+# print("plot done")
 
 
 
@@ -129,6 +148,21 @@ print(sorted_counter.__len__())
 
 for ii in range(sorted_counter.__len__()):
     print(str(sorted_counter[ii][0]) + ' ' + str(sorted_counter[ii][1]) )
+
+# save those partitions to file
+save_base_folder = './'
+for i in reversed(range(sorted_counter.__len__())):
+    bin_index = i + 1
+    # find data index and data
+    item_index = np.where(bin_count_array == bin_index)
+    temp_data_list = data_list[item_index[0]]
+    temp_data_list = np.asarray(temp_data_list)
+    folder_name_index = top_k - (i + 1)
+    save_folder = save_base_folder + 'random_100_100000_qhull_layer_' + str(folder_name_index)
+    print(temp_data_list.__len__())
+    save_current_qhull(save_base_folder, folder_name_index, temp_data_list, 'random', 100, cardinality, sorted_counter[i][1])
+
+
 
 weight = []
 

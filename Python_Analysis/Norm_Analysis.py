@@ -3,7 +3,6 @@ import re
 import sys
 from openpyxl import load_workbook
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from collections import Counter
 
@@ -46,8 +45,8 @@ def dot(K, L):
 chunks = 10
 top_k = 25
 query_num = 100
-data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
+data_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+query_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
 data_type = 'random_'
 dimension = 100
@@ -65,7 +64,7 @@ for kk in range(cur_card):
     current_data_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
     current_data_record = np.asarray(current_data_record)
     data_list.append(current_data_record)
-    temp_norm = np.linalg.norm(current_data_record)
+    temp_norm = float(format(np.linalg.norm(current_data_record), '.7f'))
     data_norm_list.append(temp_norm)
 f.close()
 data_norm_list = np.asarray(data_norm_list)
@@ -87,17 +86,20 @@ query_list = np.asarray(query_list)
 # ==================== load data into bin ====================
 min_norm = min(data_norm_list)
 max_norm = max(data_norm_list)
-norm_range = max_norm - min_norm
-bin_size = norm_range / chunks
+norm_range = float(max_norm) - float(min_norm)
+bin_size = float(format(float(norm_range / chunks), '.7f'))
 
 bin_array = []
-cur_norm = min_norm
+cur_norm = float(min_norm)
 
-while format(cur_norm, '.5f') <= format(max_norm, '.5f'):
+while float(cur_norm) <= float(max_norm):
     bin_array.append(cur_norm)
     cur_norm = cur_norm + bin_size
 
+# bin_array[0] = min(min_norm - 0.000001, bin_array[0] - 0.000001)
+bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
 print(bin_array)
+
 bins = np.array(bin_array)
 # cur_bins = np.histogram(data_norm_list, bins)
 # bins_count = cur_bins[0]
@@ -109,6 +111,7 @@ bins = np.array(bin_array)
 # ==================== check top-25 how many elements in which bin ====================
 total_counter = Counter()
 for ii in range(query_num):
+    print("Query index: " + str(ii))
     cur_query = query_list[ii]
     inner_prod_list = []
     # temp_data_norm_list = data_norm_list
