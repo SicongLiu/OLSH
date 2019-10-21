@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
 from scipy.io import loadmat
+import os.path
 
 def dot(K, L):
    if len(K) != len(L):
@@ -15,13 +16,47 @@ def dot(K, L):
 
 
 # merge RMT data
+num_of_dimension = 128
 RMT_data_size = 184
-RMT_data_folder = "/Users/sicongliu/Download/Features_RMT/"
-for ii in range (RMT_data_size):
+RMT_data_folder = "/Users/sliu104/Downloads/Features_RMT/"
+total_feature = []
+for ii in range(RMT_data_size):
     folder_index = ii + 1
+    feature_file = RMT_data_folder + str(folder_index) + "/" + "feature_" + str(folder_index) + ".mat"
+    if os.path.exists(feature_file):
+        x = loadmat(feature_file)
+        feature_frame = x['frame1']
+        feature_frame = np.asarray(feature_frame)
+        cur_feature = feature_frame[10:138, :]
+        # total_feature.extend(list(cur_feature))
+        if total_feature.__len__() == 0:
+            total_feature = cur_feature
+            total_feature = np.asarray(total_feature)
+        else:
+            total_feature = np.concatenate((total_feature, cur_feature), axis=1)
 
 
-x = loadmat('test.mat')
+
+total_feature = np.asarray(total_feature)
+print(total_feature.__len__())
+print(total_feature.shape)
+total_count = total_feature.shape[1]
+save_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/"
+save_file = save_folder + "random_128_" + str(total_count)
+
+total_data = []
+total_data.append(np.asarray(int(num_of_dimension)))
+total_data.append(np.asarray(int(total_count)))
+total_data = np.asarray(total_data)
+np.savetxt(save_file, total_data, delimiter=',', fmt='%i')
+
+f_handle = open(save_file, 'ab')
+np.savetxt(f_handle, total_feature, fmt='%10.6f')
+f_handle.close()
+
+print("merging features done")
+
+
 
 
 
