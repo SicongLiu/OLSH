@@ -17,7 +17,7 @@ def dot(K, L):
 
 # merge RMT data
 num_of_dimension = 128
-RMT_data_size = 184
+RMT_data_size = 5
 RMT_data_folder = "/Users/sliu104/Downloads/Features_RMT/"
 total_feature = []
 for ii in range(RMT_data_size):
@@ -28,19 +28,21 @@ for ii in range(RMT_data_size):
         feature_frame = x['frame1']
         feature_frame = np.asarray(feature_frame)
         cur_feature = feature_frame[10:138, :]
-        # total_feature.extend(list(cur_feature))
+        cur_feature = np.asarray(cur_feature, dtype=float)
         if total_feature.__len__() == 0:
-            total_feature = cur_feature
+            total_feature = list(cur_feature)
             total_feature = np.asarray(total_feature)
+            total_feature = np.asmatrix(total_feature)
         else:
             total_feature = np.concatenate((total_feature, cur_feature), axis=1)
 
 
 
-total_feature = np.asarray(total_feature)
+total_feature = np.asarray(total_feature, dtype=np.float)
+total_feature = total_feature.transpose()
 print(total_feature.__len__())
 print(total_feature.shape)
-total_count = total_feature.shape[1]
+total_count = total_feature.__len__()
 save_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/"
 save_file = save_folder + "random_128_" + str(total_count)
 
@@ -51,7 +53,8 @@ total_data = np.asarray(total_data)
 np.savetxt(save_file, total_data, delimiter=',', fmt='%i')
 
 f_handle = open(save_file, 'ab')
-np.savetxt(f_handle, total_feature, fmt='%10.6f')
+# np.savetxt(f_handle, total_feature, fmt='%10.6f')
+np.savetxt(f_handle, total_feature)
 f_handle.close()
 
 print("merging features done")
