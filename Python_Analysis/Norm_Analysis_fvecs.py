@@ -1,4 +1,14 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from collections import Counter
+import math
+
+
+def dot(K, L):
+   if len(K) != len(L):
+      return 0
+
+   return sum(i[0] * i[1] for i in zip(K, L))
 
 
 def fvecs_read(filename, c_contiguous=True):
@@ -23,7 +33,7 @@ def save_file(input_file_name, save_file_folder):
     total_count = total_feature.shape[0]
     num_of_dimension = total_feature.shape[1]
 
-    save_file = save_file_folder + 'random_' + str(num_of_dimension) + '_' + str(total_count)
+    save_file = save_file_folder + 'random_' + str(num_of_dimension) + '_' + str(total_count) + '.txt'
     total_feature = np.asarray(total_feature, dtype=np.float)
     total_feature = total_feature.transpose()
 
@@ -41,20 +51,24 @@ def save_file(input_file_name, save_file_folder):
     return num_of_dimension, total_count
 
 
-data_file = '/Users/sliu104/Downloads/netflix_base.fvecs'
-query_file = '/Users/sliu104/Downloads/netflix_query.fvecs'
+data_file = '/Users/sicongliu/Downloads/audio_base.fvecs'
+query_file = '/Users/sicongliu/Downloads/audio_query.fvecs'
 
-save_data_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/"
-save_query_folder = "/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/"
+save_data_folder = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/"
+save_query_folder = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/"
 
 data_dim, data_card = save_file(data_file, save_data_folder)
 query_dim, query_card = save_file(query_file, save_query_folder)
 
 print("merging features done")
 
+
+query_card = 1000
+data_dim = 300
+data_card = 17770
 chunks = 20
 top_k = 25
-query_num = query_card
+query_num = min(query_card, 100)
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
@@ -95,8 +109,10 @@ f.close()
 query_list = np.asarray(query_list)
 
 # ==================== load data into bin ====================
-min_norm = min(data_norm_list)
-max_norm = max(data_norm_list)
+# min_norm = min(data_norm_list)
+# max_norm = max(data_norm_list)
+min_norm = 0
+max_norm = math.sqrt(dimension)
 norm_range = float(max_norm) - float(min_norm)
 bin_size = norm_range / chunks
 

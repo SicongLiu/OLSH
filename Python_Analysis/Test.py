@@ -52,7 +52,10 @@ dim_75.append(0.880133333333)
 # print(1.0 * sum(dim_25)/dim_25.__len__())
 # print(1.0 * sum(dim_50)/dim_50.__len__())
 # print(1.0 * sum(dim_75)/dim_75.__len__())
-print(math.pow(math.e, 0.5))
-print(math.pow(math.e, 0.00005))
-print(math.pow(math.e, 0.001))
-print(math.pow(math.e, 0))
+list1 = [1, 2, 3,4, 5]
+list2 = [6, 7, 8, 9]
+
+list3 = []
+list3.extend(list1)
+list3.extend(list2)
+print(list3)

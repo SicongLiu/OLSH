@@ -5,6 +5,7 @@ from openpyxl import load_workbook
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
+import math
 
 # chunks = 25
 # top_k = 25
@@ -42,11 +43,11 @@ def dot(K, L):
    return sum(i[0] * i[1] for i in zip(K, L))
 
 
-chunks = 10
+chunks = 40
 top_k = 25
 query_num = 100
-data_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-query_folder = '/Users/sliu104/Desktop/StreamingTopK/H2_ALSH/query/'
+data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
 data_type = 'random_'
 dimension = 100
@@ -64,7 +65,8 @@ for kk in range(cur_card):
     current_data_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
     current_data_record = np.asarray(current_data_record)
     data_list.append(current_data_record)
-    temp_norm = float(format(np.linalg.norm(current_data_record), '.7f'))
+    # temp_norm = float(format(np.linalg.norm(current_data_record), '.7f'))
+    temp_norm = np.linalg.norm(current_data_record)
     data_norm_list.append(temp_norm)
 f.close()
 data_norm_list = np.asarray(data_norm_list)
@@ -84,10 +86,13 @@ f.close()
 query_list = np.asarray(query_list)
 
 # ==================== load data into bin ====================
-min_norm = min(data_norm_list)
-max_norm = max(data_norm_list)
+# min_norm = min(data_norm_list)
+# max_norm = max(data_norm_list)
+min_norm = 0
+max_norm = math.sqrt(dimension)
+
 norm_range = float(max_norm) - float(min_norm)
-bin_size = float(format(float(norm_range / chunks), '.7f'))
+bin_size = norm_range / chunks
 
 bin_array = []
 cur_norm = float(min_norm)
@@ -97,7 +102,14 @@ while float(cur_norm) <= float(max_norm):
     cur_norm = cur_norm + bin_size
 
 # bin_array[0] = min(min_norm - 0.000001, bin_array[0] - 0.000001)
-bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
+print(bin_array.__len__())
+if bin_array.__len__()  == chunks and bin_array[bin_array.__len__() - 1] < max_norm:
+    bin_array.append(bin_array[bin_array.__len__() - 1] + bin_size)
+elif bin_array[bin_array.__len__() - 1] <= max_norm:
+    bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
+# bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
+
+print(bin_array.__len__())
 print(bin_array)
 
 bins = np.array(bin_array)
@@ -109,6 +121,7 @@ bins = np.array(bin_array)
 # plt.ylabel('Probability')
 
 # ==================== check top-25 how many elements in which bin ====================
+save_bin_array = []
 total_counter = Counter()
 for ii in range(query_num):
     print("Query index: " + str(ii))
@@ -127,9 +140,12 @@ for ii in range(query_num):
     selected_norms = data_norm_list[list(top_k_index)]
     selected_inner_prod = inner_prod_list[list(top_k_index)]
     bin_count_array = np.digitize(selected_norms, bins)
+    save_bin_array.extend(bin_count_array)
     temp_counter = Counter(bin_count_array)
     total_counter = total_counter + temp_counter
 
+print(total_counter.keys())
 plt.bar(total_counter.keys(), total_counter.values())
-
+save_file = './save_bin_array'
+np.save(save_file, save_bin_array)
 print('Done')
