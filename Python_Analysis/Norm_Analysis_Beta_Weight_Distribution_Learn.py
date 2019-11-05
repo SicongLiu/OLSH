@@ -61,25 +61,36 @@ def compute_norm(input_file_, dimension_, card_):
     return data_norm_list, data_list
 
 
+# return K_list
 def save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list):
+    K_List = []
     for bb in range(bin_count_):
         temp_batch = []
         temp_batch.append(np.asarray(int(dimension_)))
-        data_index_ = np.where(digitize_index_ == bb + 1)  # those data save as bb
+        data_index_ = np.where(digitize_index_ == bb + 1)[0]  # those data save as bb
         temp_batch.append(np.asarray(int(data_index_.__len__())))
 
-        current_file = "./" + data_type_ + "_" + str(dimension_) + "_" + str(card_) + "_" + str(bb) + ".txt"
+        # current_file = "./" + data_type_ + str(dimension_) + "_" + str(card_) + "_qhull_layer_" + str(bb)
+        current_file = QHULL_OUTPUT_FOLDER + data_type_ + str(dimension_) + "_" + str(card_) + "_qhull_layer_" + str(bb)
         temp_batch = np.asarray(temp_batch)
         np.savetxt(current_file, temp_batch, delimiter=',', fmt='%i')
 
         temp_batch = []
+        if len(data_index_) > 0:
+            for dd in range(data_index_.__len__()):
+                temp_batch.append(data_list[dd])
+            K_List.append(data_index_.__len__())
+        else:
+            K_List.append(0)
 
-        for dd in range(data_index_.__len__()):
-            temp_batch.append(data_list[dd])
         # separate metadata and data points, appending data points to metadata text saved on file
         f_handle = open(current_file, 'ab')
         np.savetxt(f_handle, temp_batch, fmt='%10.6f')
         f_handle.close()
+    assert(sum(K_List) == card_)
+    return K_List
+
+
 
 
 def dot(K, L):
@@ -109,16 +120,15 @@ def equal_width_bin_edges(dimension_, bin_count_):
         bin_edges_.append(cur_norm)
         cur_norm = cur_norm + bin_range_
 
-    print(bin_edges_.__len__())
+    print("bin len before process: " + str(bin_edges_.__len__()))
     if bin_edges_.__len__() == bin_count_ and bin_edges_[bin_edges_.__len__() - 1] < max_norm_:
         bin_edges_.append(bin_edges_[bin_edges_.__len__() - 1] + bin_range_)
     elif bin_edges_[bin_edges_.__len__() - 1] <= max_norm_:
         bin_edges_[bin_edges_.__len__() - 1] = max(max_norm_ + 0.0000001, bin_edges_[bin_edges_.__len__() - 1] + 0.0000001)
 
-    print(bin_edges_.__len__())
-    print(bin_edges_)
+    print("bin len after process: " + str(bin_edges_.__len__()))
 
-    return np.asarray(bin_edges_)
+    return bin_edges_
 
 
 def compute_bin_array(query_list_, query_num_, card_, data_list_, data_norm_list_, bins_, top_k_):
@@ -153,7 +163,7 @@ def compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
     weight_cdf_ = []
 
     while cur_index_ <= max_index_:
-        if cur_index_ > sample_bin_max:
+        if cur_index_ > sample_bin_max_:
             temp_val1_ = beta.cdf(sample_bin_max_, my_alpha_, my_beta_, loc=min_index_, scale=max_index_ - min_index_)
             temp_val2_ = beta.cdf(cur_index_, my_alpha_, my_beta_, loc=min_index_, scale=max_index_ - min_index_)
             temp_val_ = temp_val2_ - temp_val1_
@@ -165,6 +175,91 @@ def compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
     return np.asarray(weight_cdf_)
 
 
+def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, card_):
+    function_str = "ret = queryRet" + str(top_k_) + "[count1, count, KList, fileName, hashTables];"
+    save_data_file = SCRIPT_OUTPUT_FILE + "top_" + str(top_k_) + "_" + str(dimension_) + "D_" + str(card_) + ".txt"
+    f = open(save_data_file, 'w')
+    count = []
+    count1 = []
+    K_Log_List = []
+    K_Log_Minus_List = []
+    K_Log_Plus_List = []
+    K_Log_Plus_Plus_List = []
+    K_Log_Uni_List = []
+    declare_string = data_type_ + "_" + str(dimension_) + "_" + str(card_)
+
+    f.write("# ------------------------------------------------------------------------------ \n")
+    f.write("#     " + declare_string + " \n")
+    f.write("# ------------------------------------------------------------------------------ \n")
+    # card_List same length as number of bins
+    for kk in range(len(card_List)):
+        count.append(cdf_weight_[kk])
+        count1.append(card_List[kk])
+
+        k_log = 1
+        if card_List[kk] == 0:
+            k_log = 1
+        else:
+            k_log = max(math.ceil(math.log(card_List[kk], 2)), 1)
+        k_log_minus = max(k_log - 3, 1)
+        k_log_plus = k_log + 3
+        k_log_plus_plus = k_log + 6
+
+        K_Log_List.append(k_log)
+        K_Log_Minus_List.append(k_log_minus)
+        K_Log_Plus_List.append(k_log_plus)
+        K_Log_Plus_Plus_List.append(k_log_plus_plus)
+
+    hashTables = gen_hash_tables(top_k_)
+    f.write("hashTables = List" + hashTables + "\n")
+    f.write("count = List[" + str(', '.join(map(str, count))) + "]; \n")
+    f.write("count1 = List" + str(count1) + "; \n")
+
+    f.write("KList = List" + str(K_Log_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Minus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Plus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Plus_Plus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Uni_List) + "; \n")
+    f.write(function_str + "\n")
+
+    # opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
+    #           "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
+    #           "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
+    #           "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
+    #           "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
+    #           "{a,b,c,d,e,f,g,h,i,j}]"
+    # f.write(opt_str)
+    f.write("\n \n \n")
+    f.close()
+
+
+def gen_hash_tables(top_k_):
+    hashTables = []
+    start_char = 'a'
+    temp_prefix = ''
+    for ii in range(top_k_):
+        temp_index = ii
+        start_char_length = float(temp_index) / 26
+        start_char_diff = temp_index % 26
+        temp_char = chr(ord(start_char) + start_char_diff)
+
+        if math.floor(start_char_length) > temp_prefix.__len__():
+            temp_prefix = temp_prefix + 'a'
+        temp_char = temp_prefix + temp_char
+        hashTables.append(temp_char)
+
+    result_ = ', '.join(hashTables)
+    return result_
+
+
 # partition the data based on the norm, save on file
 def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
@@ -174,11 +269,11 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     # equal width
     bin_edge = equal_width_bin_edges(dimension_, bin_count_)
 
-    print(min_norm)
-    print(max_norm)
-    print(bin_edge)
+    print("min norm: " + str(min_norm))
+    print("max norm: " + str(max_norm))
+    print("bin edges: " + str(bin_edge))
 
-    digitize_index_ = np.digitize(data_list, bin_edge)
+    digitize_index_ = np.digitize(data_norm_list, bin_edge)
 
     # once having those bin_array, learn beta distribution through Counter() from each query
     bin_array_, total_counter_ = compute_bin_array(query_list_, query_num_, card_, data_list, data_norm_list, bin_edge, top_k_)
@@ -192,8 +287,10 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
 
     # following for hashing in the later phase
     data_type_ = data_type_ + 'equal_width_'
-    save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
+    card_List = save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
 
+    # save Mathematica format to file
+    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_)
 
 
@@ -230,15 +327,23 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
 
 
 # to be tested
-input_file_ = ''
-dimension_ = 300
-card_ = 17000
-bin_count_ = 40
-data_type_ = 'music' # load_query(query_folder_, dimension_)
-query_list_ = []
-query_num_ = 100
-top_k_ = 25
+SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_norm_bin_partition_Parameters_"
+QHULL_OUTPUT_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
+data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 
+data_type_ = 'random_'
+
+top_k_ = 25
+dimension_ = 4
+card_ = 100000
+bin_count_ = 40
+query_list_ = load_query(query_folder, dimension_)
+# query_num_ = query_list_.__len__()
+query_num_ = 10
+
+
+input_file_ = data_folder + data_type_ + str(dimension_) + '_' + str(card_) + '.txt'
 cdf_list = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_)
 
 print(cdf_list)
