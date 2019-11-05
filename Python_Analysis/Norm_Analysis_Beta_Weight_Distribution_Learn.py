@@ -91,8 +91,6 @@ def save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digiti
     return K_List
 
 
-
-
 def dot(K, L):
    if len(K) != len(L):
       return 0
@@ -103,6 +101,39 @@ def dot(K, L):
 # # to be finished
 # def equal_depth_bin_edges(dimension_, bin_count_):
 #     return dimension_, bin_count_
+
+
+
+# def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
+#     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
+#     max_norm = max(data_norm_list)
+#     min_norm = min(data_norm_list)
+#
+#     # equal width
+#     bin_edge = equal_depth_bin_edges(dimension_, bin_count_)
+#
+#     print(min_norm)
+#     print(max_norm)
+#     print(bin_edge)
+#
+#     digitize_index_ = np.digitize(data_list, bin_edge)
+#
+#     # once having those bin_array, learn beta distribution through Counter() from each query
+#     bin_array_, total_counter_ = compute_bin_array(query_list_, query_num_, card_, data_list, data_norm_list, bin_edge,
+#                                                    top_k_)
+#     min_index_ = 0
+#     max_index_ = bin_count_  # max bin number
+#
+#     # learn beta distribution parameter
+#     my_alpha_, my_beta_ = compute_alpha_beta(bin_array_, min_index_, max_index_)
+#     sample_bins_range_ = list(total_counter_.keys())
+#     weight_cdf_list_ = compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
+#
+#     # following for hashing in the later phase
+#     data_type_ = data_type_ + 'equal_depth_'
+#     save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
+#
+#     return np.asarray(weight_cdf_list_)
 
 
 # return bin_edge
@@ -293,37 +324,6 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_)
 
-
-# def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
-#     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
-#     max_norm = max(data_norm_list)
-#     min_norm = min(data_norm_list)
-#
-#     # equal width
-#     bin_edge = equal_depth_bin_edges(dimension_, bin_count_)
-#
-#     print(min_norm)
-#     print(max_norm)
-#     print(bin_edge)
-#
-#     digitize_index_ = np.digitize(data_list, bin_edge)
-#
-#     # once having those bin_array, learn beta distribution through Counter() from each query
-#     bin_array_, total_counter_ = compute_bin_array(query_list_, query_num_, card_, data_list, data_norm_list, bin_edge,
-#                                                    top_k_)
-#     min_index_ = 0
-#     max_index_ = bin_count_  # max bin number
-#
-#     # learn beta distribution parameter
-#     my_alpha_, my_beta_ = compute_alpha_beta(bin_array_, min_index_, max_index_)
-#     sample_bins_range_ = list(total_counter_.keys())
-#     weight_cdf_list_ = compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
-#
-#     # following for hashing in the later phase
-#     data_type_ = data_type_ + 'equal_depth_'
-#     save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
-#
-#     return np.asarray(weight_cdf_list_)
 
 
 # to be tested
