@@ -342,7 +342,7 @@ int main(int nargs, char **args)
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);
 			break;
-		case 12:
+		case 13:
 			TA_Topk(n, qn, d, layer_index, top_k, (const float **) data, (const float **) query, truth_set, output_folder);
 			break;
 		default:

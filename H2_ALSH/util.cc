@@ -101,6 +101,11 @@ int read_data(						// read data/query set from disk
 
 		++i;
 	}
+	printf("reading data: line -- %d, total number of input: %d \n", i, n);
+	if(!feof(fp))
+		printf("file is not at the end \n");
+	else
+		printf("this is the end of file\n");
 	assert(feof(fp) && i == n);
 	fclose(fp);
 

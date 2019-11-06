@@ -1626,7 +1626,8 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			gettimeofday(&start_time, NULL);
 			float file_processing_time = 0.0f;
 
-			top_k = kMIPs[num] - layer_index + 1;
+			// top_k = kMIPs[num] - layer_index + 1;
+			top_k = kMIPs[num];
 			// if(top_k < layer_index)
 			if(top_k <=0 )
 			{
@@ -1653,12 +1654,12 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 				// persist on file to compute overall performance
 				char output_set[200];
-				// sprintf(output_set, "%s_top_%d.txt", temp_result, top_k);
-				sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str());
+
+				sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k, is_threshold_file_name.c_str());
 
 				timeval file_start_time, file_end_time;
 				gettimeofday(&file_start_time, NULL);
-				persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set);
+				persist_intermediate_on_file(top_k, d, list, data, query[i], output_set);
 				gettimeofday(&file_end_time, NULL);
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
@@ -1670,21 +1671,21 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 					start_time.tv_usec) / 1000000.0f;
 			runtime = runtime - file_processing_time;
-			pair<int, float > dict_time(top_k + layer_index - 1, runtime);
+			pair<int, float > dict_time(top_k, runtime);
 			my_run_time.insert(dict_time);
 
 			candidate_size = candidate_size * 1.0f / qn;
 			total_hash_hits = total_hash_hits * 1.0f/ qn;
-			pair<int, float > dict_candidate(top_k + layer_index - 1, candidate_size);
-			pair<int, float > dict_hash_table_hit(top_k + layer_index - 1, total_hash_hits);
+			pair<int, float > dict_candidate(top_k, candidate_size);
+			pair<int, float > dict_hash_table_hit(top_k, total_hash_hits);
 			average_candidate_size.insert(dict_candidate);
 			total_hash_table_hit.insert(dict_hash_table_hit);
 
 			recall        = recall / qn;
 			runtime       = (runtime * 1000.0f) / qn;
 
-			printf("  %3d\t\t%.4f\t\t%.2f\n", top_k + layer_index - 1, runtime, recall);
-			fprintf(fp, "%d\t%f\t%f\n", top_k + layer_index - 1, runtime, recall);
+			printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
+			fprintf(fp, "%d\t%f\t%f\n", top_k, runtime, recall);
 		}
 
 		if(is_threshold)
@@ -1983,7 +1984,7 @@ int overall_performance(                        // output the overall performanc
 		for (int round = 0; round < max_round; ++round)
 		{
 			int top_k = kMIPs[round];
-			int temp_layer = min(top_k, layers);
+			// int temp_layer = min(top_k, layers);
 			/*if(top_k > layers)
 			{
 				break;
@@ -2007,7 +2008,8 @@ int overall_performance(                        // output the overall performanc
 			 * results together
 			 * */
 
-			int total_num = temp_layer * top_k - temp_layer * (temp_layer - 1)/2;
+			// int total_num = temp_layer * top_k - temp_layer * (temp_layer - 1)/2;
+			int total_num = layers * top_k;
 
 			float*** temp_result = new float**[qn];
 			for(int i = 0; i < qn; i++)
