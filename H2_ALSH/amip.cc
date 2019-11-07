@@ -1985,10 +1985,6 @@ int overall_performance(                        // output the overall performanc
 		{
 			int top_k = kMIPs[round];
 			// int temp_layer = min(top_k, layers);
-			/*if(top_k > layers)
-			{
-				break;
-			}*/
 			char output_set[200];
 			sprintf(output_set, "%s_top_%d_%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
 
@@ -2009,19 +2005,20 @@ int overall_performance(                        // output the overall performanc
 			 * */
 
 			// int total_num = temp_layer * top_k - temp_layer * (temp_layer - 1)/2;
-			int total_num = layers * top_k;
+			int total_num = layers * top_k; // layers = bin_nums
 
 			float*** temp_result = new float**[qn];
 			for(int i = 0; i < qn; i++)
 			{
-				// temp_result[i] = new float*[temp_layer * top_k];
-				// for(int j=0; j< temp_layer * top_k; j++)
 				temp_result[i] = new float*[total_num];
 				for(int j=0; j< total_num; j++)
 				{
 					temp_result[i][j] = new float[d+1];
 				}
 			}
+
+
+			///////////////////////////////////////////////////////////////////
 
 			int q_index = 0;
 			int layer_index = 0;	// range [0, layers - 1]
@@ -2033,22 +2030,23 @@ int overall_performance(                        // output the overall performanc
 			int per_query_accumu_index = 0;
 			while (!feof(fp1) && line_count < total_num * qn)
 			{
-				if(cur_q_line_count%temp_top_k == 0 && line_count > 0)
+				// printf("line_count %d \n", line_count);
+
+				if(cur_q_line_count%(temp_top_k) == 0 && line_count > 0)
 				{
 					q_index = (++q_index)%qn;
 					cur_q_line_count = 0;
 					if(line_count == cur_counter)
 					{
 						++layer_index;
-						per_query_accumu_index += temp_top_k;
-						temp_top_k = temp_top_k - 1;
-						cur_counter += temp_top_k * qn;
+						per_query_accumu_index += temp_top_k; // temp_top_k from next layer(bin)
+						// temp_top_k = temp_top_k - 1;
+						// in the bin-norm case, the number of retrieved items within each bin stays the same
+						cur_counter += temp_top_k * qn; // we have searched completely done with one bin, move on to next bin
 					}
 				}
 				for (int j = 0; j < d + 1; ++j)
 				{
-					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * temp_top_k][j]);
-					// fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + layer_index * (temp_top_k + 1)][j]);
 					fscanf(fp1, " %f", &temp_result[q_index][cur_q_line_count + per_query_accumu_index][j]);
 				}
 				fscanf(fp1, "\n");
@@ -2057,7 +2055,10 @@ int overall_performance(                        // output the overall performanc
 
 			}
 
-			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d, total num: %d.\n", top_k, layers, qn, line_count, total_num);
+			///////////////////////////////////////////////////////////////////
+
+
+			printf("top_k: %d, max amount of layers: %d, qn: %d, line_count: %d, total num: %d, q_index: %d\n", top_k, layers, qn, line_count, total_num, q_index);
 
 
 

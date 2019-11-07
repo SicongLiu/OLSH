@@ -113,7 +113,7 @@ int main(int nargs, char **args)
 		else if (strcmp(args[cnt], "-n") == 0) {
 			n = atoi(args[++cnt]);
 			printf("n             = %d\n", n);
-			if (n <= 0) {
+			if (n < 0) {
 				failed = true;
 				break;
 			}
