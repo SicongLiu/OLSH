@@ -36,6 +36,11 @@ l_ranges_max_random_25 = ['AN6', 'AN30', 'AN38', 'AN62', 'AN69', 'AN93', 'AN100'
 l_ranges_uni_random_25 = ['AO6', 'AO30', 'AO38', 'AO62', 'AO69', 'AO93', 'AO100', 'AO124', 'AO131', 'AO155']
 
 
+k_ranges_random_40 = ['AL6', 'AL45']
+l_ranges_opt_random_40 = ['AM6', 'AM45']
+l_ranges_max_random_40 = ['AN6', 'AN45']
+l_ranges_uni_random_40 = ['AO6', 'AO45']
+
 k_ranges_anti_50 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
 l_ranges_opt_anti_50 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
 l_ranges_max_anti_50 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
@@ -56,12 +61,11 @@ BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
 
-def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, types_, card_excel_, cardinality_, save_file_path_):
+def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, types_, card_excel_, cardinality_, save_file_path_, bin_num_):
     wb = load_workbook(filename=excel_file_, data_only=True)
-
     for i in range(top_ks_.__len__()):
         top_k = top_ks[i]
-        if top_k == 10:
+        if bin_num_ == 10:
             k_ranges_anti = k_ranges_anti_10
             l_ranges_opt_anti = l_ranges_opt_anti_10
             l_ranges_max_anti = l_ranges_max_anti_10
@@ -76,7 +80,7 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
             l_ranges_opt_random = l_ranges_opt_random_10
             l_ranges_max_random = l_ranges_max_random_10
             l_ranges_uni_random = l_ranges_uni_random_10
-        elif top_k == 25:
+        elif bin_num_ == 25:
             k_ranges_anti = k_ranges_anti_25
             l_ranges_opt_anti = l_ranges_opt_anti_25
             l_ranges_max_anti = l_ranges_max_anti_25
@@ -91,6 +95,11 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
             l_ranges_opt_random = l_ranges_opt_random_25
             l_ranges_max_random = l_ranges_max_random_25
             l_ranges_uni_random = l_ranges_uni_random_25
+        elif bin_num_ == 40:
+            k_ranges_random = k_ranges_random_40
+            l_ranges_opt_random = l_ranges_opt_random_40
+            l_ranges_max_random = l_ranges_max_random_40
+            l_ranges_uni_random = l_ranges_uni_random_40
         else:
             k_ranges_anti = k_ranges_anti_50
             l_ranges_opt_anti = l_ranges_opt_anti_50
@@ -121,46 +130,46 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             start = 2 * m
                             end = 2 * m + 1
                             # read data type anti_correlated
-                            k_anti = []
-                            for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
-                                for cell in row:
-                                    k_anti.append(cell.value)
-
-                            l_anti_opt = []
-                            for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
-                                for cell in row:
-                                    l_anti_opt.append(cell.value)
-
-                            l_anti_max = []
-                            for row in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
-                                for cell in row:
-                                    l_anti_max.append(cell.value)
-
-                            l_anti_uni = []
-                            for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
-                                for cell in row:
-                                    l_anti_uni.append(cell.value)
-
-                            # read data type correlated
-                            k_corr = []
-                            for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
-                                for cell in row:
-                                    k_corr.append(cell.value)
-
-                            l_corr_opt = []
-                            for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
-                                for cell in row:
-                                    l_corr_opt.append(cell.value)
-
-                            l_corr_max = []
-                            for row in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
-                                for cell in row:
-                                    l_corr_max.append(cell.value)
-
-                            l_corr_uni = []
-                            for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
-                                for cell in row:
-                                    l_corr_uni.append(cell.value)
+                            # k_anti = []
+                            # for row in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
+                            #     for cell in row:
+                            #         k_anti.append(cell.value)
+                            #
+                            # l_anti_opt = []
+                            # for row in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
+                            #     for cell in row:
+                            #         l_anti_opt.append(cell.value)
+                            #
+                            # l_anti_max = []
+                            # for row in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
+                            #     for cell in row:
+                            #         l_anti_max.append(cell.value)
+                            #
+                            # l_anti_uni = []
+                            # for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
+                            #     for cell in row:
+                            #         l_anti_uni.append(cell.value)
+                            #
+                            # # read data type correlated
+                            # k_corr = []
+                            # for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
+                            #     for cell in row:
+                            #         k_corr.append(cell.value)
+                            #
+                            # l_corr_opt = []
+                            # for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
+                            #     for cell in row:
+                            #         l_corr_opt.append(cell.value)
+                            #
+                            # l_corr_max = []
+                            # for row in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
+                            #     for cell in row:
+                            #         l_corr_max.append(cell.value)
+                            #
+                            # l_corr_uni = []
+                            # for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
+                            #     for cell in row:
+                            #         l_corr_uni.append(cell.value)
 
                             # read data type random
                             k_random = []
@@ -190,47 +199,47 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
 
                             if not os.path.exists(save_file_dir):
                                 os.makedirs(save_file_dir)
-                            anti_k_name = save_file_dir + "k_anti_correlated"
-                            f = open(anti_k_name, 'w')
-                            f.write(','.join(map(str, k_anti)))
-                            f.close()
-
-                            anti_opt_name = save_file_dir + "l_anti_correlated_opt"
-                            f = open(anti_opt_name, 'w')
-                            f.write(','.join(map(str, l_anti_opt)))
-                            f.close()
-
-                            anti_max_name = save_file_dir + "l_anti_correlated_max"
-                            f = open(anti_max_name, 'w')
-                            f.write(','.join(map(str, l_anti_max)))
-                            f.close()
-
-                            anti_uni_name = save_file_dir + "l_anti_correlated_uni"
-                            f = open(anti_uni_name, 'w')
-                            f.write(','.join(map(str, l_anti_uni)))
-                            f.close()
-
-                            # corr_opt
-                            # corr_uni
-                            corr_k_name = save_file_dir + "k_correlated"
-                            f = open(corr_k_name, 'w')
-                            f.write(','.join(map(str, k_corr)))
-                            f.close()
-
-                            corr_opt_name = save_file_dir + "l_correlated_opt"
-                            f = open(corr_opt_name, 'w')
-                            f.write(','.join(map(str, l_corr_opt)))
-                            f.close()
-
-                            corr_max_name = save_file_dir + "l_correlated_max"
-                            f = open(corr_max_name, 'w')
-                            f.write(','.join(map(str, l_corr_max)))
-                            f.close()
-
-                            corr_uni_name = save_file_dir + "l_correlated_uni"
-                            f = open(corr_uni_name, 'w')
-                            f.write(','.join(map(str, l_corr_uni)))
-                            f.close()
+                            # anti_k_name = save_file_dir + "k_anti_correlated"
+                            # f = open(anti_k_name, 'w')
+                            # f.write(','.join(map(str, k_anti)))
+                            # f.close()
+                            #
+                            # anti_opt_name = save_file_dir + "l_anti_correlated_opt"
+                            # f = open(anti_opt_name, 'w')
+                            # f.write(','.join(map(str, l_anti_opt)))
+                            # f.close()
+                            #
+                            # anti_max_name = save_file_dir + "l_anti_correlated_max"
+                            # f = open(anti_max_name, 'w')
+                            # f.write(','.join(map(str, l_anti_max)))
+                            # f.close()
+                            #
+                            # anti_uni_name = save_file_dir + "l_anti_correlated_uni"
+                            # f = open(anti_uni_name, 'w')
+                            # f.write(','.join(map(str, l_anti_uni)))
+                            # f.close()
+                            #
+                            # # corr_opt
+                            # # corr_uni
+                            # corr_k_name = save_file_dir + "k_correlated"
+                            # f = open(corr_k_name, 'w')
+                            # f.write(','.join(map(str, k_corr)))
+                            # f.close()
+                            #
+                            # corr_opt_name = save_file_dir + "l_correlated_opt"
+                            # f = open(corr_opt_name, 'w')
+                            # f.write(','.join(map(str, l_corr_opt)))
+                            # f.close()
+                            #
+                            # corr_max_name = save_file_dir + "l_correlated_max"
+                            # f = open(corr_max_name, 'w')
+                            # f.write(','.join(map(str, l_corr_max)))
+                            # f.close()
+                            #
+                            # corr_uni_name = save_file_dir + "l_correlated_uni"
+                            # f = open(corr_uni_name, 'w')
+                            # f.write(','.join(map(str, l_corr_uni)))
+                            # f.close()
 
                             # random_opt
                             # random_uni
@@ -257,7 +266,7 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
     print("Separate String and Save Parameter Files Done .\n")
 
 
-def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_, cardinality_, parameter_path_, with_without_opt_, pot_):
+def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_, cardinality_, parameter_path_, with_without_opt_, pot_, bin_num_):
     file_names = []
     for k in range(dimensions_.__len__()):
         dimension = dimensions_[k]
@@ -307,21 +316,21 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 paramK_path = parameter_dir + "k_" + data_type_[ii] #str(cardinality[k])
                                 f1 = open(paramK_path, 'r')
                                 K_lines = f1.readlines()
-                                for k_index in range(top_k):
+                                for k_index in range(bin_num_):
                                     K_List.append(int(K_lines[0].split(',')[k_index]))
                                 f1.close()
 
                                 paramL_opt_path = parameter_dir + "l_" + data_type_[ii] + "_opt" # str(cardinality[k])
                                 f2 = open(paramL_opt_path, 'r')
                                 L_lines = f2.readlines()
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, bin_num_):
                                     L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
                                 paramL_max_path = parameter_dir + "l_" + data_type_[ii] + "_max"  # str(cardinality[k])
                                 f2 = open(paramL_max_path, 'r')
                                 L_lines = f2.readlines()
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, bin_num_):
                                     L_Max_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
@@ -329,7 +338,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 f2 = open(paramL_uni_path, 'r')
                                 L_lines = f2.readlines()
 
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, bin_num_):
                                     L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
@@ -632,8 +641,11 @@ dimensions = [100]
 # excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
 # excel_file_before = "./2D_075_redundancy_2_all_before.xlsx"
 # excel_file_after = "./2D_075_redundancy_2_all_after.xlsx"
-excel_file_before = "./100D_075_band-redundancy_2_all_before.xlsx"
-excel_file_after = "./100D_075_band-redundancy_2_all_after.xlsx"
+# excel_file_before = "./100D_075_band-redundancy_2_all_before.xlsx"
+# excel_file_after = "./100D_075_band-redundancy_2_all_after.xlsx"
+
+excel_file_before = "./100D_075_norm_bin_redundancy_2_all_before.xlsx"
+excel_file_after = "./100D_075_norm_bin_redundancy_2_all_after.xlsx"
 
 top_ks = [25]
 # top_ks = [25, 50]
@@ -656,12 +668,12 @@ repeated_run = 1
 
 save_file_path_before = '../H2_ALSH/parameters_before/'
 save_file_path_after = '../H2_ALSH/parameters_after/'
-
-separate_string(data_type, budgets, dimensions, excel_file_before, top_ks, types, card_excel, cardinality, save_file_path_before)
-separate_string(data_type, budgets, dimensions, excel_file_after, top_ks, types, card_excel, cardinality, save_file_path_after)
+bin_num = 40
+separate_string(data_type, budgets, dimensions, excel_file_before, top_ks, types, card_excel, cardinality, save_file_path_before, bin_num)
+separate_string(data_type, budgets, dimensions, excel_file_after, top_ks, types, card_excel, cardinality, save_file_path_after, bin_num)
 
 # write and complete ground truth shell
-query_count = 1000
+query_count = 100
 ratio = 2
 parameter_path_before = '../H2_ALSH/parameters_before/'
 parameter_path_after = '../H2_ALSH/parameters_after/'
@@ -669,12 +681,12 @@ parameter_type = ["opt", "max", "uni"]
 
 with_without_opt = 'without_opt'
 pot = 0
-file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot)
+file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot, bin_num)
 
 
 with_without_opt = 'with_opt'
 pot = 1
-file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot)
+file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot, bin_num)
 
 
 

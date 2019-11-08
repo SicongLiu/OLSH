@@ -114,13 +114,13 @@ for j in range(len(dimensions)):
             f.write(function_str + "\n")
 
 
-            # opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
-            #           "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
-            #           "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
-            #           "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
-            #           "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
-            #           "{a,b,c,d,e,f,g,h,i,j}]"
-            # f.write(opt_str)
+            opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
+                      "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
+                      "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
+                      "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
+                      "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
+                      "{a,b,c,d,e,f,g,h,i,j}]"
+            f.write(opt_str)
             f.write("\n \n \n")
         f.close()
 

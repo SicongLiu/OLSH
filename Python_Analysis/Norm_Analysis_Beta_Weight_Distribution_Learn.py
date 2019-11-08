@@ -212,6 +212,7 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
     f = open(save_data_file, 'w')
     count = []
     count1 = []
+    binWeight = []
     K_Log_List = []
     K_Log_Minus_List = []
     K_Log_Plus_List = []
@@ -224,8 +225,9 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
     f.write("# ------------------------------------------------------------------------------ \n")
     # card_List same length as number of bins
     for kk in range(len(card_List)):
-        count.append(cdf_weight_[kk])
-        count1.append(card_List[kk])
+        binWeight.append(format(cdf_weight_[kk], '.10f'))
+        count1.append(max(card_List[kk], 1))
+        count.append(format(float(max(card_List[kk], 1))/float(sum(card_List)), '.10f'))
 
         k_log = 1
         if card_List[kk] == 0:
@@ -241,10 +243,14 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
         K_Log_Plus_List.append(k_log_plus)
         K_Log_Plus_Plus_List.append(k_log_plus_plus)
 
+    k_log_max = max(K_Log_List)
+    for m in range(len(card_List)):
+        K_Log_Uni_List.append(k_log_max)
     hashTables = gen_hash_tables(top_k_)
-    f.write("hashTables = List" + hashTables + "\n")
+    f.write("hashTables = List[" + hashTables + "] \n")
+    f.write("binWeight = List[" + str(', '.join(map(str, binWeight))) + "] \n")
     f.write("count = List[" + str(', '.join(map(str, count))) + "]; \n")
-    f.write("count1 = List" + str(count1) + "; \n")
+    f.write("count1 = List[" + str(', '.join(map(str, count1))) + "]; \n")
 
     f.write("KList = List" + str(K_Log_List) + "; \n")
     f.write(function_str + "\n")
@@ -314,6 +320,7 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     # learn beta distribution parameter
     my_alpha_, my_beta_ = compute_alpha_beta(bin_array_, min_index_, max_index_)
     sample_bins_range_ = list(total_counter_.keys())
+    print(total_counter_)
     weight_cdf_list_ = compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
     # following for hashing in the later phase
@@ -335,12 +342,12 @@ query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 data_type_ = 'random_'
 
 top_k_ = 25
-dimension_ = 4
+dimension_ = 100
 card_ = 100000
 bin_count_ = 40
 query_list_ = load_query(query_folder, dimension_)
 # query_num_ = query_list_.__len__()
-query_num_ = 10
+query_num_ = 100
 
 
 input_file_ = data_folder + data_type_ + str(dimension_) + '_' + str(card_) + '.txt'
