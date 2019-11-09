@@ -73,16 +73,51 @@ def gen_hash_tables(top_k_):
     return result_
 
 
-# top_k = 52
-# rr = gen_hash_tables(top_k)
-# text = "this is it: " + rr
-# print(text)
+import random
+import numpy as np
+total_num = 50
+bin_count = 5
+bin_edges = []
+bin_edges.append(0)
+bin_edges.append(20)
+bin_edges.append(40)
+bin_edges.append(60)
+bin_edges.append(80)
+bin_edges.append(100)
 
-tt = 7.73524942e-83
-print(tt)
-ttt = '{:.20f}'.format(tt)
+
+ii = 0
 list1 = []
-list1.append(ttt)
-list1.append(ttt)
-result_ = ', '.join(list1)
-print(result_)
+for ii in range(total_num):
+    number = random.randrange(1, 100, 1)
+    list1.append(number)
+
+card_per_bin = total_num / bin_count
+temp_index = np.argsort(list1)
+
+list2 = [list1[i] for i in temp_index]
+
+temp = np.array_split(list2, bin_count)
+
+bin_percentage = []
+for ii in range(bin_count):
+    temp_norm = temp[ii]
+    print(temp[ii], "min: ", min(temp[ii]), ", max: ", max(temp[ii]))
+    max_temp = max(temp[ii])
+    max_temp_index = -1
+    left_pivot = -1
+    right_pivot = -1
+    for jj in range(bin_edges.__len__()):
+        if max_temp < bin_edges[jj]:
+            max_temp_index = jj - 1
+            left_pivot = jj - 1
+            right_pivot = jj
+            break
+
+    temp_range = bin_edges[right_pivot] - bin_edges[left_pivot]
+    temp_add_on = max_temp - bin_edges[left_pivot]
+    temp_percentage = float(temp_add_on) / float(temp_range)
+    temp_bin_percentage = jj - 1 + temp_percentage
+    bin_percentage.append(temp_bin_percentage)
+
+print(bin_percentage)

@@ -9,6 +9,13 @@ import math
 from scipy.stats import beta
 
 
+def dot(K, L):
+   if len(K) != len(L):
+      return 0
+
+   return sum(i[0] * i[1] for i in zip(K, L))
+
+
 def load_query(query_folder_, dimension_):
     query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D.txt'
     f = open(query_file_name, 'r')
@@ -62,7 +69,7 @@ def compute_norm(input_file_, dimension_, card_):
 
 
 # return K_list
-def save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list):
+def save_bin_partition_on_file_equal_width(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list):
     K_List = []
     for bb in range(bin_count_):
         temp_batch = []
@@ -91,49 +98,33 @@ def save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digiti
     return K_List
 
 
-def dot(K, L):
-   if len(K) != len(L):
-      return 0
+def save_bin_partition_on_file_equal_depth(bin_count_, data_type_, dimension_, card_, split_array_):
+    K_List = []
+    for bb in range(bin_count_):
+        current_data_list = split_array_[ii]
+        temp_batch = []
+        temp_batch.append(np.asarray(int(dimension_)))
+        temp_batch.append(np.asarray(int(current_data_list.__len__())))
+        current_file = QHULL_OUTPUT_FOLDER + data_type_ + str(dimension_) + "_" + str(
+            card_) + "_qhull_layer_" + str(bb)
 
-   return sum(i[0] * i[1] for i in zip(K, L))
+        temp_batch = np.asarray(temp_batch)
+        np.savetxt(current_file, temp_batch, delimiter=',', fmt='%i')
 
+        temp_batch = []
+        if len(current_data_list) > 0:
+            for dd in range(current_data_list.__len__()):
+                temp_batch.append(current_data_list[dd])
+            K_List.append(current_data_list.__len__())
+        else:
+            K_List.append(0)
 
-# # to be finished
-# def equal_depth_bin_edges(dimension_, bin_count_):
-#     return dimension_, bin_count_
-
-
-
-# def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
-#     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
-#     max_norm = max(data_norm_list)
-#     min_norm = min(data_norm_list)
-#
-#     # equal width
-#     bin_edge = equal_depth_bin_edges(dimension_, bin_count_)
-#
-#     print(min_norm)
-#     print(max_norm)
-#     print(bin_edge)
-#
-#     digitize_index_ = np.digitize(data_list, bin_edge)
-#
-#     # once having those bin_array, learn beta distribution through Counter() from each query
-#     bin_array_, total_counter_ = compute_bin_array(query_list_, query_num_, card_, data_list, data_norm_list, bin_edge,
-#                                                    top_k_)
-#     min_index_ = 0
-#     max_index_ = bin_count_  # max bin number
-#
-#     # learn beta distribution parameter
-#     my_alpha_, my_beta_ = compute_alpha_beta(bin_array_, min_index_, max_index_)
-#     sample_bins_range_ = list(total_counter_.keys())
-#     weight_cdf_list_ = compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
-#
-#     # following for hashing in the later phase
-#     data_type_ = data_type_ + 'equal_depth_'
-#     save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
-#
-#     return np.asarray(weight_cdf_list_)
+        # separate metadata and data points, appending data points to metadata text saved on file
+        f_handle = open(current_file, 'ab')
+        np.savetxt(f_handle, temp_batch, fmt='%10.6f')
+        f_handle.close()
+    assert (sum(K_List) == card_)
+    return K_List
 
 
 # return bin_edge
@@ -188,7 +179,7 @@ def compute_bin_array(query_list_, query_num_, card_, data_list_, data_norm_list
     return np.asarray(save_bin_array), total_counter
 
 
-def compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_):
+def compute_cdf_equal_width(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_):
     sample_bin_max_ = max(sample_bins_range_)
     cur_index_ = min_index_ + 1
     weight_cdf_ = []
@@ -204,6 +195,15 @@ def compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
             weight_cdf_.append(temp_val_)
         cur_index_ = cur_index_ + 1
     return np.asarray(weight_cdf_)
+
+# #
+# def compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_):
+#     weight_cdf_ = []
+#     for ii in range(len(sample_bins_range_)):
+#         temp_bin_reading = sample_bins_range_[ii]
+#         temp_val_ = beta.cdf(temp_bin_reading, my_alpha_, my_beta_, loc=min_index_, scale=max_index_ - min_index_)
+#         weight_cdf_.append(temp_val_)
+#     return np.asarray(weight_cdf_)
 
 
 def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, card_):
@@ -297,6 +297,36 @@ def gen_hash_tables(top_k_):
     return result_
 
 
+def compute_bin_percentage(data_norm_list_, bin_count_, bin_edges_equal_width_):
+    sample_bins_range_ = []
+    partition_norm_list = np.array_split(data_norm_list_, bin_count_)
+    for ii in range(bin_count_):
+        max_temp_norm = max(partition_norm_list[ii])
+        sample_bins_range_.append(max_temp_norm)
+    return np.asarray(sample_bins_range_)
+
+
+def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
+    data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
+    max_norm = max(data_norm_list)
+    min_norm = min(data_norm_list)
+    sorted_norm_index = np.argsort(data_norm_list)
+    # re-order data_list based on sorted_norm_index
+    data_list = [data_list[i] for i in sorted_norm_index]
+    split_array = np.array_split(data_list, bin_count_)
+
+    # following for hashing in the later phase
+    data_type_ = data_type_ + 'equal_depth_'
+    save_bin_partition_on_file_equal_depth(bin_count_, data_type_, dimension_, card_, split_array)
+
+    sample_bins_range_ = compute_bin_percentage(data_norm_list, bin_count_, bin_edges_equal_width_)
+    min_index_ = 0
+    max_index_ = bin_count_  # max bin number
+    weight_cdf_list_ = compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
+
+    return np.asarray(weight_cdf_list_)
+
+
 # partition the data based on the norm, save on file
 def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
@@ -321,15 +351,16 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     my_alpha_, my_beta_ = compute_alpha_beta(bin_array_, min_index_, max_index_)
     sample_bins_range_ = list(total_counter_.keys())
     print(total_counter_)
-    weight_cdf_list_ = compute_cdf(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
+    weight_cdf_list_ = compute_cdf_equal_width(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
     # following for hashing in the later phase
     data_type_ = data_type_ + 'equal_width_'
-    card_List = save_bin_partition_on_file(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
+    card_List = save_bin_partition_on_file_equal_width(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
 
     # save Mathematica format to file
     save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_)
+
 
 
 
@@ -351,7 +382,8 @@ query_num_ = 100
 
 
 input_file_ = data_folder + data_type_ + str(dimension_) + '_' + str(card_) + '.txt'
-cdf_list = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_)
+cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_)
+cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
 print(cdf_list)
 print(cdf_list.__len__())
