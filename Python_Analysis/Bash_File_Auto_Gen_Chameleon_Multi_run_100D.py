@@ -644,8 +644,8 @@ dimensions = [100]
 # excel_file_before = "./100D_075_band-redundancy_2_all_before.xlsx"
 # excel_file_after = "./100D_075_band-redundancy_2_all_after.xlsx"
 
-excel_file_before = "./100D_075_norm_bin_redundancy_2_all_before_2.xlsx"
-excel_file_after = "./100D_075_norm_bin_redundancy_2_all_after_2.xlsx"
+excel_file_before = "./100D_075_norm_bin_redundancy_2_all_before_4.xlsx"
+excel_file_after = "./100D_075_norm_bin_redundancy_2_all_after_4.xlsx"
 
 top_ks = [25]
 # top_ks = [25, 50]

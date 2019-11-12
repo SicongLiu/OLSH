@@ -354,6 +354,86 @@ def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_
     return np.asarray(weight_cdf_list_)
 
 
+def compute_norm_range(bin_edges_equal_width_, bin_index_):
+    low_end = math.floor(bin_index_)
+    upper_end = math.ceil(bin_index_)
+    low_norm = bin_edges_equal_width_[low_end]
+    upper_norm = bin_edges_equal_width_[upper_end]
+    target_norm = low_norm + (bin_index_ - low_end) * (upper_norm - low_norm)
+    return target_norm
+
+
+def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
+    data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
+    max_norm = max(data_norm_list)
+    min_norm = min(data_norm_list)
+    sorted_norm_index = np.argsort(data_norm_list)
+    # re-order data_list based on sorted_norm_index
+    data_norm_list = [data_norm_list[i] for i in sorted_norm_index]
+    data_list = [data_list[i] for i in sorted_norm_index]
+
+    data_list = np.asarray(data_list)
+    data_norm_list = np.asarray(data_norm_list)
+    prob_step = float(1)/float(bin_count_)
+    min_index_ = 0
+    max_index_ = bin_count_  # max bin number
+
+    K_List = []
+    norm_partition_bin_list = []
+    temp_norm_list = []
+    current_prob = prob_step
+    prob_list = []
+    previous_norm = 0
+
+    for ii in range(bin_count_):
+        if ii == 39:
+            print('current bin: ', ii)
+        temp_bin_mark = beta.ppf(min(current_prob, 1), my_alpha_, my_beta_, loc=min_index_, scale=max_index_ - min_index_)
+        norm_threshold = compute_norm_range(bin_edges_equal_width_, temp_bin_mark)
+        target_index = np.where(np.logical_and(data_norm_list > previous_norm, data_norm_list <= norm_threshold))[0]
+        previous_norm = norm_threshold
+
+        # save those data on file
+        temp_data_bash = data_list[target_index]
+        temp_data_bash_size = temp_data_bash.__len__()
+
+        if temp_data_bash_size > 0:
+            K_List.append(temp_data_bash_size)
+        else:
+            K_List.append(0)
+
+        current_file = QHULL_OUTPUT_FOLDER + data_type_ + str(dimension_) + "_" + str(
+            card_) + "_qhull_layer_" + str(ii)
+
+        temp_batch = []
+        temp_batch.append(np.asarray(int(dimension_)))
+        temp_batch.append(np.asarray(int(temp_data_bash_size)))
+        temp_batch = np.asarray(temp_batch)
+        np.savetxt(current_file, temp_batch, delimiter=',', fmt='%i')
+
+        temp_data_bash = np.asarray(temp_data_bash)
+        f_handle = open(current_file, 'ab')
+        np.savetxt(f_handle, temp_data_bash, fmt='%10.6f')
+        f_handle.close()
+
+        norm_partition_bin_list.append(current_prob)
+        temp_norm_list.append(temp_bin_mark)
+        prob_list.append(current_prob)
+        current_prob = current_prob + prob_step
+
+    assert (sum(K_List) == card_)
+
+    print('prob list', prob_list)
+
+    # save Mathematica format to file
+    save_mathematica(K_List, prob_list, top_k_, data_type_, dimension_, card_)
+    return K_List
+
+    # min_index_ = 0
+    # max_index_ = bin_count_  # max bin number
+    # weight_cdf_list_ = compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
+
+
 # partition the data based on the norm, save on file
 def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
@@ -415,12 +495,15 @@ my_alpha_ = 364.48070953698357
 my_beta_ = 183.7919664415109
 bin_edges_equal_width_ = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0,
                           4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0000001]
-cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+
+# cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+
 
 # print('cdf, equal_width: ', cdf_list_equal_width)
 # print('cdf, equal_width length: ', cdf_list_equal_width.__len__())
 
-print('cdf, equal_depth: ', cdf_list_equal_depth)
-print('cdf, equal_depth length: ', cdf_list_equal_depth.__len__())
+# print('cdf, equal_depth: ', cdf_list_equal_depth)
+# print('cdf, equal_depth length: ', cdf_list_equal_depth.__len__())
 
 print('Done')
