@@ -481,7 +481,7 @@ data_type_ = 'random_'
 
 top_k_ = 25
 dimension_ = 100
-card_ = 100000
+card_ = 1000000
 bin_count_ = 40
 query_list_ = load_query(query_folder, dimension_)
 # query_num_ = query_list_.__len__()
@@ -491,13 +491,15 @@ query_num_ = 100
 input_file_ = data_folder + data_type_ + str(dimension_) + '_' + str(card_) + '.txt'
 # cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_)
 
-my_alpha_ = 364.48070953698357
-my_beta_ = 183.7919664415109
+# my_alpha_ = 364.48070953698357
+# my_beta_ = 183.7919664415109
+my_alpha_ = 327.9179194103917
+my_beta_ = 156.33679057010286
 bin_edges_equal_width_ = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0,
                           4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0000001]
 
-# cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
-K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+# K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
 
 # print('cdf, equal_width: ', cdf_list_equal_width)

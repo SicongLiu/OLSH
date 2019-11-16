@@ -622,7 +622,7 @@ data_type = ["random"]
 # card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
 # cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 card_excel = ['100k']
-cardinality = [100000]
+cardinality = [1000000]
 
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
@@ -644,8 +644,8 @@ dimensions = [100]
 # excel_file_before = "./100D_075_band-redundancy_2_all_before.xlsx"
 # excel_file_after = "./100D_075_band-redundancy_2_all_after.xlsx"
 
-excel_file_before = "./100D_075_norm_bin_redundancy_2_all_before_4.xlsx"
-excel_file_after = "./100D_075_norm_bin_redundancy_2_all_after_4.xlsx"
+excel_file_before = "./100D_075_norm_bin_redundancy_2_all_before_6_equal_depth_card_1000000.xlsx"
+excel_file_after = "./100D_075_norm_bin_redundancy_2_all_after_6_equal_depth_card_1000000.xlsx"
 
 top_ks = [25]
 # top_ks = [25, 50]
