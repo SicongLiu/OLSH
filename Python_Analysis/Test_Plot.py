@@ -2,26 +2,28 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-y = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
-min_norm = min(y)
-max_norm = max(y)
 
-_ = plt.hist(y)  # arguments are passed to np.histogram
-plt.title('Normal Distribution')
-plt.xlabel('Bins')
-plt.ylabel('Values')
-plt.annotate("min = ")
-plt.show()
+data_folder = '/Users/sicongliu/Desktop/StreamingTopK/'
+data_type = 'anti_correlated'
+cardinality = 1000
+dimension = 2
+file_name = data_folder + data_type + '_' + str(dimension) + '_' + str(cardinality) + '.txt'
+f = open(file_name, 'r')
+lines = f.readlines()
 
-print("plot done")
+cur_dim = int(lines[0])
+cur_card = int(lines[1])
+data_list = []
+for kk in range(cur_card):
+    current_data_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
+    current_data_record = np.asarray(current_data_record)
+    data_list.append(current_data_record)
 
-#
-# x = np.arange(10)
-# fig = plt.figure()
-# ax = plt.subplot(111)
-# ax.plot(x, y, label='$y = numbers')
-# plt.title('Legend inside')
-# ax.legend()
-# # plt.show()
-#
-# fig.savefig('plot.png')
+f.close()
+data_list = np.asarray(data_list)
+x_data = data_list[:, 0]
+y_data = data_list[:, 1]
+
+# _ = plt.scatter(data_list)
+_ = plt.scatter(x_data, y_data, c='r', label='data')
+print('done')
