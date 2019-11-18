@@ -181,8 +181,10 @@ void GenerateDataAnticorrelated(FILE* f,int Count,int Dimensions)
         for (int d=0; d<Dimensions; d++)
             x[d] = v;
         double l = v<=0.5 ? v:1.0-v;
+        // double h = RandomEqual(-l,l);
         for (int d=0; d<Dimensions; d++) {
-            double h = RandomEqual(-l,l);
+            double h = 0.5 * RandomEqual(-l,l);
+            // double temp =  std::numeric_limits<double>::epsilon();
             x[d] += h;
             x[(d+1)%Dimensions] -= h;
         }
@@ -239,9 +241,9 @@ int main(int argc, char** args)
 {
     // int dimensions [] = {5, 10, 15, 20};
     // int dimensions [] = {2, 3, 4, 5, 6, 7};
-    int dimensions [] = {100};
+    int dimensions [] = {2};
     // int cardinalities [] = {1500000, 2000000};
-    int cardinalities [] = {100000};
+    int cardinalities [] = {1000};
     int nDimension = sizeof(dimensions)/sizeof(dimensions[0]);
     int nCardinality = sizeof(cardinalities)/sizeof(cardinalities[0]);
     
