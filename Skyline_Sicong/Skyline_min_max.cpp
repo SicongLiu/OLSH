@@ -90,6 +90,15 @@ bool IsADominateB(float* pointA, float* pointB, int dim)
     return false;
 }
 
+/*void count_diffs(float* pointA, float* pointB, int &n_better, int &n_worse, int dim)
+{
+    for(int i = 0; i < dim; i++)
+    {
+        n_better += pointA[i] > pointB[i];
+        n_worse += pointA[i] < pointB[i];
+    }
+}*/
+
 void count_diffs(float* pointA, float* pointB, int* n_better, int* n_worse, int dim)
 {
     for(int i = 0; i < dim; i++)
@@ -98,6 +107,7 @@ void count_diffs(float* pointA, float* pointB, int* n_better, int* n_worse, int 
         *n_worse += pointA[i] < pointB[i];
     }
 }
+
 
 int persist_on_disk(char* output_path, int dim, set<int> index_set, float** data)
 {
@@ -131,6 +141,7 @@ int persist_on_disk(char* output_path, int dim, set<int> index_set, float** data
 // int find_skyline_bnl(float** input_data, int dim, int cardinality, set<int>* total_index_set, char* output_path, int* skyline_cardinality, int* remain_cardinality, int kth_skyline)
 int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& total_index_set, set<int>& skyline_index_set)
 {
+    int projected_dim = 2;
     cout<<"in function find_skyline_bnl"<<endl;
     // set<int> skyline_index_set;
     set<int>::iterator it = total_index_set.begin();
@@ -150,19 +161,23 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
         {
             int n_better = 0;
             int n_worse = 0;
-            count_diffs(input_data[*it], input_data[*itt], &n_better, &n_worse, dim);
+            // check if input data domniates skyline data
+            count_diffs(input_data[*it], input_data[*itt], &n_better, &n_worse, projected_dim);
+            //count_diffs(input_data[*it], input_data[*itt], n_better, n_worse, projected_dim);
             
             // Case 1: pointA is dominated by pointB, discard pointA
             if (n_worse > 0  && n_better == 0)
             {
+                // cout<<"better: " << n_better<<", worse: "<<n_worse<<", skyline_index: "<<*itt<<", data_index: "<<*it<<endl;
                 is_dominated = true;
                 break;
             }
             
-            // Case 3: if this point dominates any poin in the list,, insert this point and the dominated point in the list is discarded
+            // Case 3: if this point dominates any point in the list,, insert this point and the dominated point in the list is discarded
             if (n_better > 0 && n_worse == 0)
             {
                 to_drop.insert(*itt);
+                //cout<<"Point index to be dropped..."<<*itt<<", better: "<<n_better<<", worse: "<<n_worse<<", skyline_index: "<<*it<<", data_index: "<<*itt<<endl;
             }
             itt++;
         }
@@ -174,9 +189,12 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
             continue;
         }
         set<int> temp;
+        // update skyline list
         set_difference(skyline_index_set.begin(), skyline_index_set.end(), to_drop.begin(), to_drop.end(), inserter(temp, temp.end()));
         skyline_index_set = temp;
         temp.clear();
+        // if a point can survive to this step, it means it is a skyline point
+        // cout<<"adding skyline point index: "<<*it<<endl;
         skyline_index_set.insert(*it);
         it++;
     }
@@ -197,6 +215,11 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
 // ./Skyline /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/ anti_correlated_4_100 4 100 2 /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test
 
 // ./Skyline /home/cc/Chameleon/StreamingTopK/H2_ALSH/raw_data/Synthetic/ random_6_100000 2 100000 3 /home/cc/Chameleon/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test/
+
+
+// ./Skyline /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/ random_17_100000 17 100000 2 /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test
+
+
 int main(int nargs, char **args)
 {
     int data_folder_index       = 1;

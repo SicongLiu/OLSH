@@ -29,6 +29,13 @@ int compare ( const void *pa, const void *pb ) {
 
 int main()
 {
+    int nCount[5] = {0, 1, 2, 3, 4};
+    int size = 5;
+    for(int i = 0; i < size; i++)
+    {
+        cout<<nCount[i]<<endl;
+    }
+    /*
     printf("About to begin. \n");
     int count = 2;
     int d = 6;
@@ -84,6 +91,8 @@ int main()
     {
         qsort(input[i], 3, sizeof(*input[i]), sortcol);
     }*/
+    
+    /*
     qsort(input[0], 3, sizeof(*input[0]), compare);
     for(int i=0; i<count; i++)
     {
@@ -96,8 +105,7 @@ int main()
             printf("\n");
         }
     }
-    
-    
+     */
     /*
     float input1[3][4] = {{3, 1, 5, 100}, {4, 8, 6, 10}, {7, 2, 9, 1000}};
     float input2[3][4] = {{3, 1, 5, 100}, {4, 8, 6, 10}, {7, 2, 9, 1000}};

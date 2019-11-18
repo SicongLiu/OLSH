@@ -135,7 +135,7 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
     skyline_index_set.insert(*it);
     
     int outer_loop = 0;
-    
+    it++;
     while (it != total_index_set.end())
     {
         set<int> to_drop;
@@ -190,7 +190,11 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
     return 0;
 }
 
-// ./Skyline /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/ anti_correlated_4_100.txt 4 100 2 /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test
+// ./Skyline /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/ anti_correlated_4_100 4 100 2 /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test
+
+// ./Skyline /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/ anti_correlated_4_100 4 100 2 /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic_test
+
+// ./Skyline /home/cc/Chameleon/StreamingTopK/H2_ALSH/raw_data/Synthetic/ anti_correlated_4_100 4 100 3 /home/cc/Chameleon/StreamingTopK/H2_ALSH/qhull_data/Synthetic/
 int main(int nargs, char **args)
 {
     int data_folder_index       = 1;
@@ -255,6 +259,17 @@ int main(int nargs, char **args)
         sprintf(output_set, "%s%s_qhull_layer_%d", output_folder_name, input_file_name, i);
         set<int> skyline_index_set;
         int ret_skyline = find_skyline_bnl(input_data, dim, cardinality, index_set, skyline_index_set);
+        
+        cout<<"oop s... done w find_skyline_bnl : " << index_set.size()<<endl;
+        set<int>::iterator it = index_set.begin();
+        
+        while(it != index_set.end())
+        {
+            cout<<*it<<endl;
+            it++;
+        }
+        
+        
         
         int ret_persiste = persist_on_disk(output_set, dim, skyline_index_set, input_data);
         if(ret_skyline == 1 || ret_persiste == 1)
