@@ -150,7 +150,7 @@ void GenerateDataCorrelated(FILE* f,int Count,int Dimensions)
         double l = v<=0.5 ? v:1.0-v;
         for (int d=0; d<Dimensions; d++)
         {
-            double h = RandomNormal(0,l);
+            double h = 0.5 * RandomNormal(0,l);
             x[d] += h;
             x[(d+1)%Dimensions] -= h;
         }
@@ -161,11 +161,11 @@ void GenerateDataCorrelated(FILE* f,int Count,int Dimensions)
         for (int d=0; d<Dimensions; d++)
             fprintf(f,"%8.6f ",x[d]);
         
-        EnterStatistics(Dimensions,x);
+        // EnterStatistics(Dimensions,x);
         
         fprintf(f,"\n");
     }
-    OutputStatistics(Dimensions);
+    // OutputStatistics(Dimensions);
 }
 
 
