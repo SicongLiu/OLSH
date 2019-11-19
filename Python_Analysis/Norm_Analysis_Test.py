@@ -47,6 +47,7 @@ def save_current_qhull(folder_name_, layer_index_, data_, data_type_, dimension_
     np.savetxt(f_handle, data_, fmt='%10.6f')
     f_handle.close()
 
+
 def dot(K, L):
    if len(K) != len(L):
       return 0

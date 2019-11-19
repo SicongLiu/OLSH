@@ -9,13 +9,6 @@ import math
 from scipy.stats import beta
 
 
-def dot(K, L):
-   if len(K) != len(L):
-      return 0
-
-   return sum(i[0] * i[1] for i in zip(K, L))
-
-
 def load_query(query_folder_, dimension_):
     query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D.txt'
     f = open(query_file_name, 'r')
@@ -162,12 +155,6 @@ def compute_bin_array(query_list_, query_num_, card_, data_list_, data_norm_list
         cur_query = query_list_[ii]
         cur_query = np.asarray(cur_query)
         inner_prod_list = data_list_.dot(cur_query)
-        # inner_prod_list = []
-        # for jj in range(card_):
-        #     cur_data = data_list_[jj]
-        #     temp_dot_product = dot(cur_data, cur_query)
-        #     inner_prod_list.append(temp_dot_product)
-
 
         inner_prod_list = np.asarray(inner_prod_list)
         reverse_sort_index = np.argsort((-inner_prod_list))
@@ -270,13 +257,6 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
     f.write("KList = List" + str(K_Log_Uni_List) + "; \n")
     f.write(function_str + "\n")
 
-    # opt_str = "NMinimize[{TotalError, totalHashUsed <= totalBudget && TotalError < 1 && a \[Element] " \
-    #           "Integers && b \[Element] Integers && c \[Element] Integers && d \[Element] Integers && e " \
-    #           "\[Element] Integers && f \[Element] Integers && g \[Element] Integers && h \[Element] Integers " \
-    #           "&& i \[Element] Integers && j \[Element] Integers && a >= 1 " \
-    #           "&& b >= 1 && c >= 1 && d >= 1 && e >= 1 && f >= 1 && g >= 1 && h >=1 && i >=1 && j >=1}, " \
-    #           "{a,b,c,d,e,f,g,h,i,j}]"
-    # f.write(opt_str)
     f.write("\n \n \n")
     f.close()
 
@@ -324,12 +304,6 @@ def compute_bin_percentage(data_norm_list_, bin_count_, bin_edges_equal_width_):
 
     print(bin_percentage)
     return np.asarray(bin_percentage)
-    # sample_bins_range_ = []
-    # partition_norm_list = np.array_split(data_norm_list_, bin_count_)
-    # for ii in range(bin_count_):
-    #     max_temp_norm = max(partition_norm_list[ii])
-    #     sample_bins_range_.append(max_temp_norm)
-    # return np.asarray(sample_bins_range_)
 
 
 def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
@@ -431,10 +405,6 @@ def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_
     # save Mathematica format to file
     save_mathematica(K_List, prob_list, top_k_, data_type_, dimension_, card_)
     return K_List
-
-    # min_index_ = 0
-    # max_index_ = bin_count_  # max bin number
-    # weight_cdf_list_ = compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
 
 # partition the data based on the norm, save on file
