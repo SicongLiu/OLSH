@@ -31,6 +31,12 @@ def delete_file(file_name_):
     os.system("rm " + file_name_)
 
 
+def save_weight_to_file(weight_file_name, cdf_list_equal_width):
+    f = open(weight_file_name, 'w')
+    f.write(cdf_list_equal_width)
+    f.close()
+
+
 def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
     temp_file_name = SCRIPT_FOLDER + 'temp_ground_truth.sh'
     f = open(temp_file_name, 'w')
@@ -504,9 +510,15 @@ ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_
 
 input_file_ = DATA_FOLDER + data_type + str(dimension_) + '_' + str(card_) + '.txt'
 cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_)
+# save weight to file
+weight_file_name = './' + str(dimension_) + '_' + str(card_) + '_' + str(bin_count_) + '_' + 'top_' + str(top_k_) + '_EW.txt'
+save_weight_to_file(weight_file_name, cdf_list_equal_width)
 
 data_gen_type = 'ED_card_'
 cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+# save weight to file
+weight_file_name = './' + str(dimension_) + '_' + str(card_) + '_' + str(bin_count_) + '_' + 'top_' + str(top_k_) + '_ED_card.txt'
+save_weight_to_file(weight_file_name, cdf_list_equal_width)
 
 data_gen_type = 'ED_prob_'
 K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
