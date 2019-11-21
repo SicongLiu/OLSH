@@ -343,7 +343,7 @@ def compute_bin_percentage(data_norm_list_, bin_count_, bin_edges_equal_width_):
     return np.asarray(bin_percentage)
 
 
-def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
+def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, data_gen_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
     max_norm = max(data_norm_list)
     min_norm = min(data_norm_list)
@@ -355,7 +355,8 @@ def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_
     split_array = np.array_split(data_list, bin_count_)
 
     # following for hashing in the later phase
-    data_type_ = data_type_ + 'equal_depth_'
+    # data_type_ = data_type_ + 'equal_depth_'
+    data_type_ = data_type_ + data_gen_type_
     card_List = save_bin_partition_on_file_equal_depth(bin_count_, data_type_, dimension_, card_, split_array)
 
     sample_bins_range_ = compute_bin_percentage(data_norm_list, bin_count_, bin_edges_equal_width_)
@@ -377,11 +378,12 @@ def compute_norm_range(bin_edges_equal_width_, bin_index_):
     return target_norm
 
 
-def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
+def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, data_gen_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
     max_norm = max(data_norm_list)
     min_norm = min(data_norm_list)
     sorted_norm_index = np.argsort(data_norm_list)
+    data_type_ = data_type_ + data_gen_type_
     # re-order data_list based on sorted_norm_index
     data_norm_list = [data_norm_list[i] for i in sorted_norm_index]
     data_list = [data_list[i] for i in sorted_norm_index]
@@ -497,20 +499,15 @@ query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
 # compute ground truth
 data_type = 'random_'
 data_gen_type = 'EW_'
-
 ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
 
 input_file_ = DATA_FOLDER + data_type + str(dimension_) + '_' + str(card_) + '.txt'
 cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_)
 
-
-# my_alpha_ = 327.9179194103917
-# my_beta_ = 156.33679057010286
-# bin_edges_equal_width_ = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0,
-#                           4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0000001]
-
-cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
-K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+data_gen_type = 'ED_card_'
+cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+data_gen_type = 'ED_prob_'
+K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
 # delete ground truth with query_stats_learn from regular queries for testing
 ground_trouth_file = GROUNDTRUEH_FOLDER + 'result_' + data_type + data_gen_type + str(dimension_) + '_D_' + str(card_) + '.mip'
