@@ -9,8 +9,8 @@ import math
 from scipy.stats import beta
 
 
-def load_query(query_folder_, dimension_, is_stats_learn):
-    if is_stats_learn:
+def load_query(query_folder_, dimension_, is_stats_learn_):
+    if is_stats_learn_:
         query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_stats_learn.txt'
     else:
         query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D.txt'
@@ -31,7 +31,7 @@ def delete_file(file_name_):
     os.system("rm " + file_name_)
 
 
-def ground_truth(data_type_, card_, dimension_, query_num_, is_stat_learn):
+def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
     temp_file_name = SCRIPT_FOLDER + 'temp_ground_truth.sh'
     f = open(temp_file_name, 'w')
     f.write("#!/bin/bash \n")
@@ -45,7 +45,7 @@ def ground_truth(data_type_, card_, dimension_, query_num_, is_stat_learn):
     f.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
     f.write(
         "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
-    if is_stats_learn:
+    if is_stats_learn_:
         f.write("qPath=./query/query_${d}D_stat_learn.txt \n")
     else:
         f.write("qPath=./query/query_${d}D.txt \n")
@@ -365,7 +365,7 @@ def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_
     weight_cdf_list_ = compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
     # save Mathematica format to file
-    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
+    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_ + data_gen_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_)
 
 
@@ -440,7 +440,7 @@ def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_
     print('prob list', prob_list)
 
     # save Mathematica format to file
-    save_mathematica(K_List, prob_list, top_k_, data_type_, dimension_, card_)
+    save_mathematica(K_List, prob_list, top_k_, data_type_ + data_gen_type_, dimension_, card_)
     return K_List
 
 
@@ -476,7 +476,7 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     card_List = save_bin_partition_on_file_equal_width(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
 
     # save Mathematica format to file
-    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
+    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_ + data_gen_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_),  my_alpha_, my_beta_, bin_edge
 
 
@@ -496,6 +496,7 @@ query_num_ = 100
 # use the query stats learn, for the following
 is_stats_learn = 1
 query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
+
 # compute ground truth
 data_type = 'random_'
 data_gen_type = 'EW_'
@@ -506,6 +507,7 @@ cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_
 
 data_gen_type = 'ED_card_'
 cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+
 data_gen_type = 'ED_prob_'
 K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
@@ -516,11 +518,5 @@ delete_file(ground_trouth_file)
 is_stats_learn = 0
 query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
 ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
-
-# print('cdf, equal_width: ', cdf_list_equal_width)
-# print('cdf, equal_width length: ', cdf_list_equal_width.__len__())
-
-# print('cdf, equal_depth: ', cdf_list_equal_depth)
-# print('cdf, equal_depth length: ', cdf_list_equal_depth.__len__())
 
 print('Done')
