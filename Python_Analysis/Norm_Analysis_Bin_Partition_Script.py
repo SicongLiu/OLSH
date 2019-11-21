@@ -9,8 +9,11 @@ import math
 from scipy.stats import beta
 
 
-def load_query(query_folder_, dimension_):
-    query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D.txt'
+def load_query(query_folder_, dimension_, is_stats_learn):
+    if is_stats_learn:
+        query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_stats_learn.txt'
+    else:
+        query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D.txt'
     f = open(query_file_name, 'r')
     lines = f.readlines()
     cur_dim = int(lines[0])
@@ -22,6 +25,40 @@ def load_query(query_folder_, dimension_):
         query_list.append(current_query_record)
     f.close()
     return np.asarray(query_list)
+
+
+def delete_file(file_name_):
+    os.system("rm " + file_name_)
+
+
+def ground_truth(data_type_, card_, dimension_, query_num_, is_stat_learn):
+    temp_file_name = SCRIPT_FOLDER + 'temp_ground_truth.sh'
+    f = open(temp_file_name, 'w')
+    f.write("#!/bin/bash \n")
+    f.write("datatype=" + data_type_ + "\n")
+    f.write("cardinality=" + str(card_) + "\n")
+    f.write("d=" + str(dimension_) + "\n")
+    f.write("qn=" + str(query_num_) + "\n")
+    f.write("# ------------------------------------------------------------------------------ \n")
+    f.write("#     Ground-Truth \n")
+    f.write("# ------------------------------------------------------------------------------ \n")
+    f.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+    f.write(
+        "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+    if is_stats_learn:
+        f.write("qPath=./query/query_${d}D_stat_learn.txt \n")
+    else:
+        f.write("qPath=./query/query_${d}D.txt \n")
+    f.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+
+    f.write(" # ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+              "${oFolder}.mip \n")
+    f.write(" # sleep 20 \n")
+    f.close()
+    os.system("sh " + temp_file_name)
+
+    # after computing ground truth, delete this file
+    os.system("rm " + temp_file_name)
 
 
 def compute_alpha_beta(input_ndarray_, min_index_, max_index_):
@@ -363,8 +400,6 @@ def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_
     previous_norm = 0
 
     for ii in range(bin_count_):
-        if ii == 39:
-            print('current bin: ', ii)
         temp_bin_mark = beta.ppf(min(current_prob, 1), my_alpha_, my_beta_, loc=min_index_, scale=max_index_ - min_index_)
         norm_threshold = compute_norm_range(bin_edges_equal_width_, temp_bin_mark)
         target_index = np.where(np.logical_and(data_norm_list > previous_norm, data_norm_list <= norm_threshold))[0]
@@ -408,7 +443,7 @@ def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_
 
 
 # partition the data based on the norm, save on file
-def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_):
+def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, data_gen_type_, query_list_, query_num_, top_k_):
     data_norm_list, data_list = compute_norm(input_file_, dimension_, card_)
     max_norm = max(data_norm_list)
     min_norm = min(data_norm_list)
@@ -434,7 +469,8 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     weight_cdf_list_ = compute_cdf_equal_width(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
     # following for hashing in the later phase
-    data_type_ = data_type_ + 'equal_width_'
+    # data_type_ = data_type_ + 'equal_width_'
+    data_type_ = data_type_ + data_gen_type_
     card_List = save_bin_partition_on_file_equal_width(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
 
     # save Mathematica format to file
@@ -442,38 +478,47 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     return np.asarray(weight_cdf_list_),  my_alpha_, my_beta_, bin_edge
 
 
-
-
-# to be tested
+SCRIPT_FOLDER = "../H2_ALSH/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_norm_bin_partition_Parameters_"
 QHULL_OUTPUT_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
-data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
-query_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
-
-data_type_ = 'random_'
+DATA_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+QUERY_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
+GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 
 top_k_ = 25
 dimension_ = 300
 card_ = 17770
 bin_count_ = 40
-query_list_ = load_query(query_folder, dimension_)
-# query_num_ = query_list_.__len__()
 query_num_ = 100
 
+# use the query stats learn, for the following
+is_stats_learn = 1
+query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
+# compute ground truth
+data_type = 'random_'
+data_gen_type = 'EW_'
 
-input_file_ = data_folder + data_type_ + str(dimension_) + '_' + str(card_) + '.txt'
-cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_)
+ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
 
-# my_alpha_ = 364.48070953698357
-# my_beta_ = 183.7919664415109
-my_alpha_ = 327.9179194103917
-my_beta_ = 156.33679057010286
-bin_edges_equal_width_ = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0,
-                          4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0000001]
+input_file_ = DATA_FOLDER + data_type + str(dimension_) + '_' + str(card_) + '.txt'
+cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_)
 
-cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
-# K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type_, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
+# my_alpha_ = 327.9179194103917
+# my_beta_ = 156.33679057010286
+# bin_edges_equal_width_ = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0,
+#                           4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0, 7.25, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0000001]
+
+cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
+
+# delete ground truth with query_stats_learn from regular queries for testing
+ground_trouth_file = GROUNDTRUEH_FOLDER + 'result_' + data_type + data_gen_type + str(dimension_) + '_D_' + str(card_) + '.mip'
+delete_file(ground_trouth_file)
+
+is_stats_learn = 0
+query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
+ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
 
 # print('cdf, equal_width: ', cdf_list_equal_width)
 # print('cdf, equal_width length: ', cdf_list_equal_width.__len__())
