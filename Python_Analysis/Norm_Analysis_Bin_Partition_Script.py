@@ -365,7 +365,7 @@ def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_
     weight_cdf_list_ = compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_, max_index_)
 
     # save Mathematica format to file
-    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_ + data_gen_type_, dimension_, card_)
+    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_)
 
 
@@ -440,7 +440,7 @@ def equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_
     print('prob list', prob_list)
 
     # save Mathematica format to file
-    save_mathematica(K_List, prob_list, top_k_, data_type_ + data_gen_type_, dimension_, card_)
+    save_mathematica(K_List, prob_list, top_k_, data_type_, dimension_, card_)
     return K_List
 
 
@@ -476,7 +476,7 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
     card_List = save_bin_partition_on_file_equal_width(bin_count_, data_type_, dimension_, card_, digitize_index_, data_list)
 
     # save Mathematica format to file
-    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_ + data_gen_type_, dimension_, card_)
+    save_mathematica(card_List, weight_cdf_list_, top_k_, data_type_, dimension_, card_)
     return np.asarray(weight_cdf_list_),  my_alpha_, my_beta_, bin_edge
 
 
