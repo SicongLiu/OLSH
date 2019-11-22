@@ -3,6 +3,7 @@ import numpy as np
 from openpyxl import load_workbook
 import random
 import re
+import string
 
 
 def separate_string(input_string):
@@ -36,19 +37,10 @@ def compute_collision_prob(dimension_, data_list_):
     return prob_list_
 
 
-def post_optimization_opt_revised(collision_probilities_, weight_list_, total_error_, data_list_, K_List_, L_List_, hash_used_, hash_budget_):
+def post_optimization_opt_revised(collision_probilities_, weight_list_, data_list_, K_List_, L_List_, hash_used_, hash_budget_):
     smallest = min(data_list_)
-    smallest_index = data_list_.index(min(data_list_))
 
-    # total_error = 0.412502654
-    total_error_gain = 0
-    flag = False
     while hash_used_ + smallest <= hash_budget_:
-        # the condition of improvement is to check if the total error rate drops
-
-        # loop through, keep track of hash-relocation and error rate drop
-        # find the biggest error gain, while keep hash-resources constraints
-        # update hash_used, LList
         delta_error_list = []
         for i in range(len(data_list_)):
             cur_k = K_List_[i]
@@ -110,23 +102,79 @@ def post_optimization_uni(data_list_, L_List_, hash_used_, hash_budget_):
     return L_List_
 
 
+
+
+def colnum_string(n):
+    string = ""
+    while n > 0:
+        n, remainder = divmod(n - 1, 26)
+        string = chr(65 + remainder) + string
+    return string
+
+
+def col2num(col):
+    num = 0
+    for c in col:
+        if c in string.ascii_letters:
+            num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+    return num
+
+# J, AA AQ
+def compute_data_list_start_end(data_type_index_, data_list, column_dist_):
+    start_items_ = separate_string(data_list[0])
+    start_letter_ = start_items_[0]
+    start_num_ = start_items_[1]
+
+    end_items_ = separate_string(data_list[1])
+    end_letter_ = end_items_[0]
+    end_num_ = end_items_[1]
+
+    start_letter_integer_ = int(col2num(start_letter_))
+    start_letter_integer_ = start_letter_integer_ + column_dist_ * data_type_index_
+    start_letter_ = colnum_string(start_letter_integer_)
+    data_list_start = start_letter_ + start_num_
+    data_list_end = start_letter_ + end_num_
+
+    return data_list_start, data_list_end
+
+
+# both letter and integer row index change
+def compute_ranges_start_end(column_shift, row_shift, ranges, row_dist_, column_dist_):
+    range_start, range_end = compute_data_list_start_end(column_shift, ranges, column_dist_)
+    range_column = separate_string(range_start)[0]
+    range_row_start = separate_string(range_start)[1] # 6
+    range_row_end = separate_string(range_end)[1] # 45
+    row_span_ = int(range_row_end) - int(range_row_start)
+
+    target_row_start = int(range_row_end) * row_shift + row_dist_ # 51
+    target_row_end = target_row_start + row_span_
+    k_ranges_temp_start = range_column + str(target_row_start)
+    k_ranges_temp_end = range_column + str(target_row_end)
+
+    return k_ranges_temp_start, k_ranges_temp_end
+
+
+def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
+    temp_column = separate_string(l_ranges_opt_temp_end)[0]
+    temp_row = int(separate_string(l_ranges_opt_temp_end)[1])
+    final_column = colnum_string(col2num(temp_column) + temp_column_dist)
+    final_row = temp_row + temp_row_dist
+    hash_used_cell = final_column + str(final_row)
+    return hash_used_cell
 ####################################################################################
+
+##########################code below working on post-opt resource allocation########
 Data_Types = ['anti_correlated', 'correlated', 'random']
 Data_Gen_Types = ['EW', 'ED_card', 'ED_prob']
+# bin_count = [40, 60, 80]
+# top_ks = 25
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 bin_num = 'E1'
-
-# need to update budget cell per data type
-budget_cell_anti = 'B4'
-budget_cell_corr = 'S4'
-budget_cell_rand = 'AI4'
-
-
+top_k_cell = 'E2'
+budget_cell = 'B4'
 cardinality_cell = 'B2'
-top_m_cardinality_anti = 0
-top_m_cardinality_corr = 0
-top_m_cardinality_random = 0
-
+column_dist = 17
+row_dist = 6
 
 data_list_40 = ['J6',  'J45', 'J51', 'J90']
 k_ranges_40 = ['E6',  'E45', 'E51', 'E90']
@@ -136,349 +184,164 @@ l_ranges_uni_40 = ['H6', 'H45']
 hash_used_opt_cells_40 = ['I46', 'I45']
 hash_used_uni_cells_40 = ['O46', 'O45']
 
+data_list_60 = ['J6', 'J30', 'J38', 'J62', 'J69', 'J93', 'J100', 'J124', 'J131', 'J155']
+k_ranges_60 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
+l_ranges_opt_60 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
+l_ranges_max_60 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
+l_ranges_uni_60 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
+hash_used_opt_cells_60 = ['I31', 'I63', 'I94', 'I125', 'I156']
+hash_used_uni_cells_60 = ['O31', 'O63', 'O94', 'O125', 'O156']
 
-# data_anti_list_40 = ['J6',  'J45', 'J51', 'J90']
-# k_ranges_anti_40 = ['E6',  'E45', 'E51', 'E90']
-# l_ranges_opt_anti_40 = ['F6', 'F45']
-# l_ranges_max_anti_40 = ['G6', 'G45']
-# l_ranges_uni_anti_40 = ['H6', 'H45']
-# hash_used_anti_opt_cells_40 = ['I46', 'I45']
-# hash_used_anti_uni_cells_40 = ['O46', 'O45']
 
-# data_corr_list_40 = ['AA6',  'AA45']
-# k_ranges_corr_40 = ['V6', 'V45']
-# l_ranges_opt_corr_40 = ['W6', 'W45']
-# l_ranges_max_corr_40 = ['X6', 'X45']
-# l_ranges_uni_corr_40 = ['Y6', 'Y45']
-# hash_used_corr_opt_cells_40 = ['Z16', 'Z45']
-# hash_used_corr_uni_cells_40 = ['AF16', 'AF46']
-#
-#
-# data_random_list_40 = ['AQ6',  'AQ15', 'AQ21', 'AQ30', 'AQ37', 'AQ46', 'AQ51', 'AQ60', 'AQ68', 'AQ77']
-# k_ranges_random_40 = ['AL6', 'AL15', 'AL21', 'AL30', 'AL37', 'AL46', 'AL51', 'AL60', 'AL68', 'AL77']
-# l_ranges_opt_random_40 = ['AM6', 'AM15', 'AM21', 'AM30', 'AM37', 'AM46', 'AM51', 'AM60', 'AM68', 'AM77']
-# l_ranges_max_random_40 = ['AN6', 'AN15', 'AN21', 'AN30', 'AN37', 'AN46', 'AN51', 'AN60', 'AN68', 'AN77']
-# l_ranges_uni_random_40 = ['AO6', 'AO15', 'AO21', 'AO30', 'AO37', 'AO46', 'AO51', 'AO60', 'AO68', 'AO77']
-# hash_used_rand_opt_cells_40 = ['AP6', 'AP31', 'AP47', 'AP61', 'AP78']
-# hash_used_rand_uni_cells_40 = ['AV16', 'AV31', 'AV47', 'AV61', 'AV78']
-#
-# data_anti_list_60 = ['J6', 'J30', 'J38', 'J62', 'J69', 'J93', 'J100', 'J124', 'J131', 'J155']
-# k_ranges_anti_60 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
-# l_ranges_opt_anti_60 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
-# l_ranges_max_anti_60 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
-# l_ranges_uni_anti_60 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
-# hash_used_anti_opt_cells_60 = ['I31', 'I63', 'I94', 'I125', 'I156']
-# hash_used_anti_uni_cells_60 = ['O31', 'O63', 'O94', 'O125', 'O156']
-#
-# data_corr_list_60 = ['AA6', 'AA30', 'AA38', 'AA62', 'AA69', 'AA93', 'AA100', 'AA124', 'AA131', 'AA155']
-# k_ranges_corr_60 = ['V6', 'V30', 'V38', 'V62', 'V69', 'V93', 'V100', 'V124', 'V131', 'V155']
-# l_ranges_opt_corr_60 = ['W6', 'W30', 'W38', 'W62', 'W69', 'W93', 'W100', 'W124', 'W131', 'W155']
-# l_ranges_max_corr_60 = ['X6', 'X30', 'X38', 'X62', 'X69', 'X93', 'X100', 'X124', 'X131', 'X155']
-# l_ranges_uni_corr_60 = ['Y6', 'Y30', 'Y38', 'Y62', 'Y69', 'Y93', 'Y100', 'Y124', 'Y131', 'Y155']
-# hash_used_corr_opt_cells_60 = ['Z31', 'Z63', 'Z94', 'Z125', 'Z156']
-# hash_used_corr_uni_cells_60 = ['AF31', 'AF63', 'AF94', 'AF125', 'AF156']
-#
-#
-# data_random_list_60 = ['AQ6', 'AQ30', 'AQ38', 'AQ62', 'AQ69', 'AQ93', 'AQ100', 'AQ124', 'AQ131', 'AQ155']
-# k_ranges_random_60 = ['AL6', 'AL30', 'AL38', 'AL62', 'AL69', 'AL93', 'AL100', 'AL124', 'AL131', 'AL155']
-# l_ranges_opt_random_60 = ['AM6', 'AM30', 'AM38', 'AM62', 'AM69', 'AM93', 'AM100', 'AM124', 'AM131', 'AM155']
-# l_ranges_max_random_60 = ['AN6', 'AN30', 'AN38', 'AN62', 'AN69', 'AN93', 'AN100', 'AN124', 'AN131', 'AN155']
-# l_ranges_uni_random_60 = ['AO6', 'AO30', 'AO38', 'AO62', 'AO69', 'AO93', 'AO100', 'AO124', 'AO131', 'AO155']
-# hash_used_rand_opt_cells_60 = ['AP31', 'AP63', 'AP94', 'AP125', 'AP156']
-# hash_used_rand_uni_cells_60 = ['AV31', 'AV63', 'AV94', 'AV125', 'AV156']
-#
-#
-# data_anti_list_80 = ['J6', 'J55', 'J63', 'J112', 'J120', 'J169', 'J177', 'J226', 'J234', 'J283']
-# k_ranges_anti_80 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
-# l_ranges_opt_anti_80 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
-# l_ranges_max_anti_80 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
-# l_ranges_uni_anti_80 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
-# hash_used_anti_opt_cells_80 = ['I56', 'I113', 'I170', 'I227', 'I284']
-# hash_used_anti_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
-#
-#
-# data_corr_list_80 = ['AA6', 'AA55', 'AA63', 'AA112', 'AA120', 'AA169', 'AA177', 'AA226', 'AA234', 'AA283']
-# k_ranges_corr_80 = ['V6', 'V55', 'V63', 'V112', 'V120', 'V169', 'V177', 'V226', 'V234', 'V283']
-# l_ranges_opt_corr_80 = ['W6', 'W55', 'W63', 'W112', 'W120', 'W169', 'W177', 'W226', 'W234', 'W283']
-# l_ranges_max_corr_80 = ['X6', 'X55', 'X63', 'X112', 'X120', 'X169', 'X177', 'X226', 'X234', 'X283']
-# l_ranges_uni_corr_80 = ['Y6', 'Y55', 'Y63', 'Y112', 'Y120', 'Y169', 'Y177', 'Y226', 'Y234', 'Y283']
-# hash_used_corr_opt_cells_80 = ['Z56', 'Z113', 'Z170', 'Z227', 'Z284']
-# hash_used_corr_uni_cells_80 = ['AF56', 'AF113', 'AF170', 'AF227', 'AF284']
-#
-#
-# data_random_list_80 = ['AQ6', 'AQ55', 'AQ63', 'AQ112', 'AQ120', 'AQ169', 'AQ177', 'AQ226', 'AQ234', 'AQ283']
-# k_ranges_random_80 = ['AL6', 'AL55', 'AL63', 'AL112', 'AL120', 'AL169', 'AL177', 'AL226', 'AL234', 'AL283']
-# l_ranges_opt_random_80 = ['AM6', 'AM55', 'AM63', 'AM112', 'AM120', 'AM169', 'AM177', 'AM226', 'AM234', 'AM283']
-# l_ranges_max_random_80 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN177', 'AN226', 'AN234', 'AN283']
-# l_ranges_uni_random_80 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
-# hash_used_rand_opt_cells_80 = ['AP56', 'AP113', 'AP170', 'AP227', 'AP284']
-# hash_used_rand_uni_cells_80 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
+data_list_80 = ['J6', 'J55', 'J63', 'J112', 'J120', 'J169', 'J177', 'J226', 'J234', 'J283']
+k_ranges_80 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
+l_ranges_opt_80 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
+l_ranges_max_80 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
+l_ranges_uni_80 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
+hash_used_opt_cells_80 = ['I56', 'I113', 'I170', 'I227', 'I284']
+hash_used_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
 
 
 ####################################################################################
-collision_probility = 0.75
-total_error = 0
 dimensions = [4]
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_Skyline-redundancy_2_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_high_D_2_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
 
+    # no need to loop data_gen_type for now, iterate through all excel sheets for now
     for wwss in wss:
         print(wwss)
         ws = wb.get_sheet_by_name(wwss)
         ws1 = wb1.get_sheet_by_name(wwss)
         bin_count = ws[bin_num].value
-        hash_budget_anti = ws[budget_cell_anti].value
-        hash_budget_corr = ws[budget_cell_corr].value
-        hash_budget_rand = ws[budget_cell_rand].value
+        top_ks = ws[top_k_cell].value
+        hash_budget = ws[budget_cell].value
         total_cardinality = ws[cardinality_cell].value
-        if bin_count == 10:
-            top_m_cardinality_anti_cell = 'J16'
-            top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
-            hash_used_anti_opt_cells = hash_used_anti_opt_cells_10
-            hash_used_anti_uni_cells = hash_used_anti_uni_cells_10
-            data_anti_list = data_anti_list_10
-            k_ranges_anti = k_ranges_anti_10
-            l_ranges_opt_anti = l_ranges_opt_anti_10
-            l_ranges_max_anti = l_ranges_max_anti_10
-            l_ranges_uni_anti = l_ranges_uni_anti_10
 
-            top_m_cardinality_corr_cell = 'AA16'
-            top_m_cardinality_corr = ws[top_m_cardinality_corr_cell].value
-            hash_used_corr_opt_cells = hash_used_corr_opt_cells_10
-            hash_used_corr_uni_cells = hash_used_corr_uni_cells_10
-            data_corr_list = data_corr_list_10
-            k_ranges_corr = k_ranges_corr_10
-            l_ranges_opt_corr = l_ranges_opt_corr_10
-            l_ranges_max_corr = l_ranges_max_corr_10
-            l_ranges_uni_corr = l_ranges_uni_corr_10
+        if bin_count == 40:
+            hash_used_opt_cells = hash_used_opt_cells_40
+            hash_used_uni_cells = hash_used_uni_cells_40
+            data_list = data_list_40
+            k_ranges = k_ranges_40
+            l_ranges_opt = l_ranges_opt_40
+            l_ranges_max = l_ranges_max_40
+            l_ranges_uni = l_ranges_uni_40
+        elif bin_count == 60:
+            hash_used_opt_cells = hash_used_opt_cells_60
+            hash_used_uni_cells = hash_used_uni_cells_60
+            data_list = data_list_60
+            k_ranges = k_ranges_60
+            l_ranges_opt = l_ranges_opt_60
+            l_ranges_max = l_ranges_max_60
+            l_ranges_uni = l_ranges_uni_60
+        else:# 80-bins
+            hash_used_opt_cells = hash_used_opt_cells_80
+            hash_used_uni_cells = hash_used_uni_cells_80
+            data_list = data_list_80
+            k_ranges = k_ranges_80
+            l_ranges_opt = l_ranges_opt_80
+            l_ranges_max = l_ranges_max_80
+            l_ranges_uni = l_ranges_uni_80
 
-            top_m_cardinality_random_cell = 'AQ16'
-            top_m_cardinality_random = ws[top_m_cardinality_random_cell].value
-            hash_used_rand_opt_cells = hash_used_rand_opt_cells_10
-            hash_used_rand_uni_cells = hash_used_rand_uni_cells_10
-            data_random_list = data_random_list_10
-            k_ranges_random = k_ranges_random_10
-            l_ranges_opt_random = l_ranges_opt_random_10
-            l_ranges_max_random = l_ranges_max_random_10
-            l_ranges_uni_random = l_ranges_uni_random_10
-        elif bin_count == 25:
-            top_m_cardinality_anti_cell = 'J31'
-            top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
-            hash_used_anti_opt_cells = hash_used_anti_opt_cells_25
-            hash_used_anti_uni_cells = hash_used_anti_uni_cells_25
-            data_anti_list = data_anti_list_25
-            k_ranges_anti = k_ranges_anti_25
-            l_ranges_opt_anti = l_ranges_opt_anti_25
-            l_ranges_max_anti = l_ranges_max_anti_25
-            l_ranges_uni_anti = l_ranges_uni_anti_25
+        # Data_Types = ['anti_correlated', 'correlated', 'random']
+        for kk in range(Data_Types.__len__()):
 
-            top_m_cardinality_corr_cell = 'AA31'
-            top_m_cardinality_corr = ws[top_m_cardinality_corr_cell].value
-            hash_used_corr_opt_cells = hash_used_corr_opt_cells_25
-            hash_used_corr_uni_cells = hash_used_corr_uni_cells_25
-            data_corr_list = data_corr_list_25
-            k_ranges_corr = k_ranges_corr_25
-            l_ranges_opt_corr = l_ranges_opt_corr_25
-            l_ranges_max_corr = l_ranges_max_corr_25
-            l_ranges_uni_corr = l_ranges_uni_corr_25
+            data_ = []
 
-            top_m_cardinality_random_cell = 'AQ31'
-            top_m_cardinality_random = ws[top_m_cardinality_random_cell].value
-            hash_used_rand_opt_cells = hash_used_rand_opt_cells_25
-            hash_used_rand_uni_cells = hash_used_rand_uni_cells_25
-            data_random_list = data_random_list_25
-            k_ranges_random = k_ranges_random_25
-            l_ranges_opt_random = l_ranges_opt_random_25
-            l_ranges_max_random = l_ranges_max_random_25
-            l_ranges_uni_random = l_ranges_uni_random_25
-        else:
-            top_m_cardinality_anti_cell = 'J56'
-            top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
-            hash_used_anti_opt_cells = hash_used_anti_opt_cells_50
-            hash_used_anti_uni_cells = hash_used_anti_uni_cells_50
-            data_anti_list = data_anti_list_50
-            k_ranges_anti = k_ranges_anti_50
-            l_ranges_opt_anti = l_ranges_opt_anti_50
-            l_ranges_max_anti = l_ranges_max_anti_50
-            l_ranges_uni_anti = l_ranges_uni_anti_50
+            # each round udpate data_list_start
+            # hash_used_opt_cells
+            # hash_used_uni_cells
+            data_list_start = data_list[0]
+            data_list_end = data_list[1]
 
-            top_m_cardinality_corr_cell = 'AA56'
-            top_m_cardinality_corr = ws[top_m_cardinality_corr_cell].value
-            hash_used_corr_opt_cells = hash_used_corr_opt_cells_50
-            hash_used_corr_uni_cells = hash_used_corr_uni_cells_50
-            data_corr_list = data_corr_list_50
-            k_ranges_corr = k_ranges_corr_50
-            l_ranges_opt_corr = l_ranges_opt_corr_50
-            l_ranges_max_corr = l_ranges_max_corr_50
-            l_ranges_uni_corr = l_ranges_uni_corr_50
-
-            top_m_cardinality_random_cell = 'AQ56'
-            top_m_cardinality_random = ws[top_m_cardinality_random_cell].value
-            hash_used_rand_opt_cells = hash_used_rand_opt_cells_50
-            hash_used_rand_uni_cells = hash_used_rand_uni_cells_50
-            data_random_list = data_random_list_50
-            k_ranges_random = k_ranges_random_50
-            l_ranges_opt_random = l_ranges_opt_random_50
-            l_ranges_max_random = l_ranges_max_random_50
-            l_ranges_uni_random = l_ranges_uni_random_50
-
-        data_anti = []
-        data_corr = []
-        data_random = []
-
-        data_anti_list_start = data_anti_list[0]
-        data_anti_list_end = data_anti_list[1]
-
-        data_corr_list_start = data_corr_list[0]
-        data_corr_list_end = data_corr_list[1]
-
-        data_random_list_start = data_random_list[0]
-        data_random_list_end = data_random_list[1]
-
-        for columns in ws[data_anti_list_start: data_anti_list_end]:
-            for cell in columns:
-                data_anti.append(cell.value)
-
-        for columns in ws[data_corr_list_start: data_corr_list_end]:
-            for cell in columns:
-                data_corr.append(cell.value)
-
-        for columns in ws[data_random_list_start: data_random_list_end]:
-            for cell in columns:
-                data_random.append(cell.value)
-
-        weight_anti = load_weight(data_anti, bin_count)
-        weight_corr = load_weight(data_corr, bin_count)
-        weight_random = load_weight(data_random, bin_count)
-
-        # for each type, log, log_minus, log_plus, etc
-        for jj in range(types.__len__()):
-            # read k and l
-            type_name = types[jj]
-            print("type_name: "  + str(type_name))
-            start = 2 * jj
-            end = 2 * jj + 1
-            k_anti = []
-            for columns in ws[k_ranges_anti[start]: k_ranges_anti[end]]:
+            data_list_start, data_list_end = compute_data_list_start_end(kk, data_list, column_dist)
+            for columns in ws[data_list_start: data_list_end]:
                 for cell in columns:
-                    k_anti.append(cell.value)
+                    data_.append(cell.value)
 
-            l_anti_opt = []
-            for columns in ws[l_ranges_opt_anti[start]: l_ranges_opt_anti[end]]:
-                for cell in columns:
-                    l_anti_opt.append(cell.value)
+            # modify parameter for load_weight, check current sheet name
+            if str(wwss).__contains__('EW'):
+                data_type_file_name_ = './' + Data_Types[kk] + '_EW_' + str(cur_d) + '_' + str(total_cardinality) + '_' + str(
+                    bin_count) + '_' + 'top_' + str(top_ks) + '_ED_card.txt'
+            elif str(wwss).__contains__('ED_card'):
+                data_type_file_name_ = weight_file_name = './' + Data_Types[kk] + '_ED_card_' + str(cur_d) + '_' + str(total_cardinality) + '_' + str(
+                    bin_count) + '_' + 'top_' + str(top_ks) + '_ED_card.txt'
 
-            l_anti_max = []
-            for columns in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
-                for cell in columns:
-                    l_anti_max.append(cell.value)
+            else:
+                temp_weight_ = np.ones(bin_count)# set default
+            temp_weight_ = load_weight(data_type_file_name_, bin_count)
 
-            l_anti_uni = []
-            for columns in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
-                for cell in columns:
-                    l_anti_uni.append(cell.value)
+            # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+            for jj in range(types.__len__()):
+                # read k and l
+                type_name = types[jj]
+                print("type_name: " + str(type_name))
+                k_ = []
 
-            # read data type correlated
-            k_corr = []
-            for columns in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
-                for cell in columns:
-                    k_corr.append(cell.value)
+                # k_ranges_40 = ['E6', 'E45', 'E51', 'E90']
 
-            l_corr_opt = []
-            for columns in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
-                for cell in columns:
-                    l_corr_opt.append(cell.value)
+                k_ranges_temp_start, k_ranges_temp_end = compute_ranges_start_end(kk, jj, k_ranges, row_dist, column_dist)
+                for columns in ws[k_ranges_temp_start: k_ranges_temp_end]:
+                    for cell in columns:
+                        k_.append(cell.value)
 
-            l_corr_max = []
-            for columns in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
-                for cell in columns:
-                    l_corr_max.append(cell.value)
+                l_opt = []
+                l_ranges_opt_temp_start, l_ranges_opt_temp_end = compute_ranges_start_end(kk, jj, l_ranges_opt, row_dist, column_dist)
+                for columns in ws[l_ranges_opt_temp_start: l_ranges_opt_temp_end]:
+                    for cell in columns:
+                        l_opt.append(cell.value)
 
-            l_corr_uni = []
-            for columns in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
-                for cell in columns:
-                    l_corr_uni.append(cell.value)
+                l_max = []
 
-            # read data type random
-            k_random = []
-            for columns in ws[k_ranges_random[start]: k_ranges_random[end]]:
-                for cell in columns:
-                    k_random.append(cell.value)
+                l_ranges_max_temp_start, l_ranges_max_temp_end = compute_ranges_start_end(kk, jj, l_ranges_max, row_dist, column_dist)
+                for columns in ws[l_ranges_max_temp_start: l_ranges_max_temp_end]:
+                    for cell in columns:
+                        l_max.append(cell.value)
 
-            l_random_opt = []
-            for columns in ws[l_ranges_opt_random[start]: l_ranges_opt_random[end]]:
-                for cell in columns:
-                    l_random_opt.append(cell.value)
+                l_uni = []
+                l_ranges_uni_temp_start, l_ranges_uni_temp_end = compute_ranges_start_end(kk, jj, l_ranges_uni, row_dist, column_dist)
+                for columns in ws[l_ranges_uni_temp_start: l_ranges_uni_temp_end]:
+                    for cell in columns:
+                        l_uni.append(cell.value)
 
-            l_random_max = []
-            for columns in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
-                for cell in columns:
-                    l_random_max.append(cell.value)
+                # update hash_used_opt_cell
+                # row same as l_ranges_opt_temp_end row + 1
+                # column as l_ranges_opt_temp_end column + 3
+                temp_row_dist = 1
+                temo_column_dist = 3
+                hash_used_opt_cell = compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist)
+                hash_used_opt_cell = hash_used_opt_cells[jj]
+                hash_used_opt = ws[hash_used_opt_cell].value
 
-            l_random_uni = []
-            for columns in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
-                for cell in columns:
-                    l_random_uni.append(cell.value)
+                # right now it's 0.75
+                collision_probilities = compute_collision_prob(cur_d, data_)
+                l_opt = post_optimization_opt_revised(collision_probilities, temp_weight_, data_, k_,
+                                                   l_opt, hash_used_opt, hash_budget)
 
-            hash_used_anti_opt_cell = hash_used_anti_opt_cells[jj]
-            hash_used_corr_opt_cell = hash_used_corr_opt_cells[jj]
-            hash_used_random_opt_cell = hash_used_rand_opt_cells[jj]
+                # row same as l_ranges_opt_temp_end row + 1
+                # column as l_ranges_opt_temp_end column + 9
+                temp_row_dist = 1
+                temo_column_dist = 9
+                hash_used_uni_cell = compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist)
+                hash_used_uni_cell = hash_used_uni_cells[jj]
+                hash_used_uni = ws[hash_used_uni_cell].value
+                l_uni = post_optimization_uni(data_, l_uni, hash_used_uni, hash_budget)
 
-            hash_used_anti_opt = ws[hash_used_anti_opt_cell].value
-            hash_used_corr_opt = ws[hash_used_corr_opt_cell].value
-            hash_used_random_opt = ws[hash_used_random_opt_cell].value
-
-            # collision_probilities_anti = compute_collision_prob(cur_d, data_anti)
-            # collision_probilities_corr = compute_collision_prob(cur_d, data_corr)
-            # collision_probilities_random = compute_collision_prob(cur_d, data_random)
-
-            collision_probilities_anti = 0.75
-            collision_probilities_corr = 0.75
-            collision_probilities_random = 0.75
-
-            l_anti_opt = post_optimization_opt_revised(collision_probilities_anti, weight_anti, total_error, data_anti, k_anti,
-                                               l_anti_opt, hash_used_anti_opt, hash_budget_anti)
-            l_corr_opt = post_optimization_opt_revised(collision_probilities_corr, weight_corr, total_error, data_corr, k_corr,
-                                               l_corr_opt, hash_used_corr_opt, hash_budget_corr)
-            l_random_opt = post_optimization_opt_revised(collision_probilities_random, weight_random, total_error, data_random, k_random,
-                                                 l_random_opt, hash_used_random_opt, hash_budget_rand)
-
-            hash_used_anti_uni_cell = hash_used_anti_uni_cells[jj]
-            hash_used_corr_uni_cell = hash_used_corr_uni_cells[jj]
-            hash_used_random_uni_cell = hash_used_rand_uni_cells[jj]
-
-            hash_used_anti_uni = ws[hash_used_anti_uni_cell].value
-            hash_used_corr_uni = ws[hash_used_corr_uni_cell].value
-            hash_used_random_uni = ws[hash_used_random_uni_cell].value
-
-            l_anti_uni = post_optimization_uni(data_anti, l_anti_uni, hash_used_anti_uni, hash_budget_anti)
-            l_corr_uni = post_optimization_uni(data_corr, l_corr_uni, hash_used_corr_uni, hash_budget_corr)
-            l_random_uni = post_optimization_uni(data_random, l_random_uni, hash_used_random_uni, hash_budget_rand)
-
-            # write udpate LList back to excel file
-            for kk in range(len(l_anti_opt)):
-                cur_cell_anti_opt = column_row_index(l_ranges_opt_anti[start], kk)
-                cur_cell_corr_opt = column_row_index(l_ranges_opt_corr[start], kk)
-                cur_cell_random_opt = column_row_index(l_ranges_opt_random[start], kk)
-
-                cur_cell_anti_uni = column_row_index(l_ranges_uni_anti[start], kk)
-                cur_cell_corr_uni = column_row_index(l_ranges_uni_corr[start], kk)
-                cur_cell_random_uni = column_row_index(l_ranges_uni_random[start], kk)
-
-                ws1[cur_cell_anti_opt] = l_anti_opt[kk]
-                ws1[cur_cell_corr_opt] = l_corr_opt[kk]
-                ws1[cur_cell_random_opt] = l_random_opt[kk]
-
-                ws1[cur_cell_anti_uni] = l_anti_uni[kk]
-                ws1[cur_cell_corr_uni] = l_corr_uni[kk]
-                ws1[cur_cell_random_uni] = l_random_uni[kk]
+                # write udpate LList back to excel file
+                for ll in range(len(l_opt)):
+                    cur_cell_opt = column_row_index(l_ranges_opt_temp_start, ll)
+                    cur_cell_uni = column_row_index(l_ranges_uni_temp_start, ll)
+                    ws1[cur_cell_opt] = l_opt[ll]
+                    ws1[cur_cell_uni] = l_uni[ll]
     wb1.save(excel_file_name)
+
+
+# next generate bash_file based on excel sheet
 
 print("All done")
