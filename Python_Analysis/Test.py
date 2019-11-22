@@ -45,19 +45,29 @@ dim_75.append(0.9144)
 dim_75.append(0.8788)
 dim_75.append(0.880133333333)
 
-test_file = './query_test.txt'
-f = open(test_file, 'r')
-lines = f.readlines()
-cur_dim = int(lines[0])
-cur_card = int(lines[1])
-query_list = []
-for kk in range(cur_card):
-    current_query_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
-    current_query_record = np.asarray(current_query_record)
-    query_list.append(current_query_record)
-f.close()
+# test_file = './query_test.txt'
+# f = open(test_file, 'r')
+# lines = f.readlines()
+# cur_dim = int(lines[0])
+# cur_card = int(lines[1])
+# query_list = []
+# for kk in range(cur_card):
+#     current_query_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
+#     current_query_record = np.asarray(current_query_record)
+#     query_list.append(current_query_record)
+# f.close()
 
 
+print(dim_75)
+# f = open('dummy_test.txt', 'w')
+# f.write(str(dim_75))
+# f.close()
+np.savetxt('dummy_test.txt', np.asarray(dim_75))
+
+lines = np.loadtxt('dummy_test.txt')
+print(lines)
+print(type(lines))
+print(lines.__len__())
 
 
 

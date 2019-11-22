@@ -32,9 +32,10 @@ def delete_file(file_name_):
 
 
 def save_weight_to_file(weight_file_name, cdf_list_equal_width):
-    f = open(weight_file_name, 'w')
-    f.write(cdf_list_equal_width)
-    f.close()
+    np.savetxt(weight_file_name, np.asarray(cdf_list_equal_width))
+    # f = open(weight_file_name, 'w')
+    # f.write(cdf_list_equal_width)
+    # f.close()
 
 
 def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
@@ -518,7 +519,7 @@ data_gen_type = 'ED_card_'
 cdf_list_equal_depth = equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 # save weight to file
 weight_file_name = './' + str(dimension_) + '_' + str(card_) + '_' + str(bin_count_) + '_' + 'top_' + str(top_k_) + '_ED_card.txt'
-save_weight_to_file(weight_file_name, cdf_list_equal_width)
+save_weight_to_file(weight_file_name, cdf_list_equal_depth)
 
 data_gen_type = 'ED_prob_'
 K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
