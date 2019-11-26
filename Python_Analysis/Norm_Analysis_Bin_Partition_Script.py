@@ -49,18 +49,18 @@ def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
     f.write("# ------------------------------------------------------------------------------ \n")
     f.write("#     Ground-Truth \n")
     f.write("# ------------------------------------------------------------------------------ \n")
-    f.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+    f.write("dPath=./raw_data/Synthetic/${datatype}${d}_${cardinality}.txt \n")
     f.write(
         "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
     if is_stats_learn_:
-        f.write("qPath=./query/query_${d}D_stat_learn.txt \n")
+        f.write("qPath=./query/query_${d}D_stats_learn.txt \n")
     else:
         f.write("qPath=./query/query_${d}D.txt \n")
     f.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
-
-    f.write(" # ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+    f.write("cd " + SCRIPT_FOLDER + " \n")
+    f.write(" ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
               "${oFolder}.mip \n")
-    f.write(" # sleep 20 \n")
+    f.write(" sleep 15 \n")
     f.close()
     os.system("sh " + temp_file_name)
 
@@ -498,7 +498,7 @@ top_k_ = 25
 dimension_ = 300
 card_ = 17770
 bin_count_ = 40
-query_num_ = 100
+query_num_ = 1000
 
 # use the query stats learn, for the following
 is_stats_learn = 1
@@ -507,7 +507,8 @@ query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
 # compute ground truth
 data_type = 'random_'
 data_gen_type = 'EW_'
-ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
+# ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
+ground_truth(data_type, card_, dimension_, query_num_, is_stats_learn)
 
 input_file_ = DATA_FOLDER + data_type + str(dimension_) + '_' + str(card_) + '.txt'
 cdf_list_equal_width, my_alpha_, my_beta_, bin_edges_equal_width_ = equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_)
@@ -530,6 +531,6 @@ delete_file(ground_trouth_file)
 
 is_stats_learn = 0
 query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
-ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
+ground_truth(data_type, card_, dimension_, query_num_, is_stats_learn)
 
 print('Done')
