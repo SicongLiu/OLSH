@@ -1,6 +1,7 @@
 import os
 import re
 from openpyxl import load_workbook
+import string
 
 
 def separate_string(input_string):
@@ -11,6 +12,7 @@ def separate_string(input_string):
     return items
 
 
+# input_string 'F6'
 def column_row_index(input_string, column_dist):
     items = separate_string(input_string)
     column_index = items[0]
@@ -23,13 +25,15 @@ def get_file_info(full_file_name_):
     file_name_ = full_file_name_.split('.txt')[0]
     temp_file_info_ = file_name_.split('_')
     dims_ = temp_file_info_[0]
-    topks_ = temp_file_info_[2]
-    # cards_= temp_file_info_[1]
     cards_ = re.sub('[.]', '', temp_file_info_[1])
-    types_= temp_file_info_[3]
+    bin_count_ = temp_file_info_[3]
+    resource_type = temp_file_info_[4]
+    data_distributed_type = temp_file_info_[5]
+    types_= temp_file_info_[4] + '_' + temp_file_info_[5]
 
-    print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' topks: ' + str(topks_) + ' types: ' + str(types_))
-    file_info_.append(str(dims_) + '_' + str(topks_) + '_' + str(cards_))
+    # class 'list'>: ['300D', '17770', 'Bin', '40', 'EW', 'random']
+    print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' bin_count: ' + str(bin_count_) + ' types: ' + str(types_))
+    file_info_.append(str(resource_type) + '_' + str(dims_) + '_' + str(cards_))
     file_info_.append(str(types_))
     return file_info_
 
@@ -44,25 +48,27 @@ def find_sheet(sheet_names_, ending_):
 def process_line(line_concate_):
     processed_line_ = []
     temp_arr = line_concate_[line_concate_.find("{") + 1:line_concate_.find("}")].split(',')
-    for ii in range(len(temp_arr)):
-        processed_line_.append(int(temp_arr[ii].strip()))
+    for iii in range(len(temp_arr)):
+        temp_str = temp_arr[iii].strip()
+        if temp_str[len(temp_str) - 2] == '-':
+            temp_num = 0
+        else:
+            temp_num = round(float(temp_str))
+        processed_line_.append(temp_num)
     return processed_line_
 
 
 def read_file_lines(full_file_path_, read_lines_):
     f1 = open(full_file_path_, 'r')
-    line_count = 0
     bash_count = 0
     file_dict_ = {}
     line_concate_ = ''
     for line in f1.readlines():
-        line_count = line_count + 1
         line_concate_ = line_concate_ + line.split('\n')[0].strip()
-        if line_count % read_lines_ == 0:
-            line_count = 0
+        line_end = line.split('\n')[0].strip()
+        if line_end.endswith('}') and not line_end.startswith('{'):
             file_dict_[bash_count] = process_line(line_concate_)
             bash_count = bash_count + 1
-            # print(line_concate[line_concate.find("{")+1:line_concate.find("}")])
             line_concate_ = ''
     f1.close()
     return file_dict_
@@ -119,43 +125,41 @@ def compute_ranges_start_end(column_shift, row_shift, ranges, row_dist_, column_
     return k_ranges_temp_start, k_ranges_temp_end
 
 
-data_list_40 = ['J6',  'J15', 'J21', 'J30', 'J37', 'J46', 'J51', 'J60', 'J68', 'J77']
-k_ranges_40 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
-l_ranges_opt_40 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
-l_ranges_max_40 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
-l_ranges_uni_40 = ['H6', 'H15', 'H21', 'H30', 'H37', 'H46', 'H51', 'H60', 'H68', 'H77']
-hash_used_opt_cells_40 = ['I16', 'I31', 'I47', 'I61', 'I78']
-hash_used_uni_cells_40 = ['O16', 'O31', 'O47', 'O61', 'O78']
+data_list_40 = ['J6',  'J45', 'J51', 'J90']
+k_ranges_40 = ['E6',  'E45', 'E51', 'E90']
+l_ranges_opt_40 = ['F6', 'F45']
+l_ranges_max_40 = ['G6', 'G45']
+l_ranges_uni_40 = ['H6', 'H45']
+hash_used_opt_cells_40 = ['I46', 'I45']
+hash_used_uni_cells_40 = ['O46', 'O45']
+
+data_list_60 = ['J6', 'J30', 'J38', 'J62', 'J69', 'J93', 'J100', 'J124', 'J131', 'J155']
+k_ranges_60 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
+l_ranges_opt_60 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
+l_ranges_max_60 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
+l_ranges_uni_60 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
+hash_used_opt_cells_60 = ['I31', 'I63', 'I94', 'I125', 'I156']
+hash_used_uni_cells_60 = ['O31', 'O63', 'O94', 'O125', 'O156']
 
 
-data_list_60 = ['J6',  'J15', 'J21', 'J30', 'J37', 'J46', 'J51', 'J60', 'J68', 'J77']
-k_ranges_60 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
-l_ranges_opt_60 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
-l_ranges_max_60 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
-l_ranges_uni_60 = ['H6', 'H15', 'H21', 'H30', 'H37', 'H46', 'H51', 'H60', 'H68', 'H77']
-hash_used_opt_cells_60 = ['I16', 'I31', 'I47', 'I61', 'I78']
-hash_used_uni_cells_60 = ['O16', 'O31', 'O47', 'O61', 'O78']
+data_list_80 = ['J6', 'J55', 'J63', 'J112', 'J120', 'J169', 'J177', 'J226', 'J234', 'J283']
+k_ranges_80 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
+l_ranges_opt_80 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
+l_ranges_max_80 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
+l_ranges_uni_80 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
+hash_used_opt_cells_80 = ['I56', 'I113', 'I170', 'I227', 'I284']
+hash_used_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
 
-
-data_list_80 = ['J6',  'J15', 'J21', 'J30', 'J37', 'J46', 'J51', 'J60', 'J68', 'J77']
-k_ranges_80 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
-l_ranges_opt_80 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
-l_ranges_max_80 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
-l_ranges_uni_80 = ['H6', 'H15', 'H21', 'H30', 'H37', 'H46', 'H51', 'H60', 'H68', 'H77']
-hash_used_opt_cells_80 = ['I16', 'I31', 'I47', 'I61', 'I78']
-hash_used_uni_cells_80 = ['O16', 'O31', 'O47', 'O61', 'O78']
 
 ####################################################################################
 column_dist = 17
 row_dist = 6
 text_file_path = '/Users/sicongliu/'
-# text_file_path = './'
-dimension = 5
+dimension = 300
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
-# excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_3_all_before.xlsx'
-excel_file_name = excel_file_dir + str(dimension) + 'D_all_new.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_all_new_before.xlsx'
 
 bin_count_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -164,8 +168,9 @@ Data_Types = ['anti_correlated', 'correlated', 'random']
 wb1 = load_workbook(filename=excel_file_name)
 wss = wb1.get_sheet_names()
 
+file_dimension_str = str(dimension) + 'D'
 for file in os.listdir(text_file_path):
-    if file.endswith(".txt"):
+    if file.startswith(file_dimension_str) and file.endswith(".txt"):
         full_file_path = os.path.join(text_file_path, file)
         file_info = get_file_info(file)
         file_endings = file_info[0]
@@ -173,9 +178,8 @@ for file in os.listdir(text_file_path):
         sheet_name = find_sheet(wss, file_endings)
         if sheet_name is not None:
             print('sheet name: ' + str(sheet_name) + ' , data type: ' + data_distributed_type)
-            # read file data into structure
-
             opt_l_info = []
+
             ws1 = wb1.get_sheet_by_name(sheet_name)
             bin_count = ws1[bin_count_cell].value
 
@@ -209,34 +213,27 @@ for file in os.listdir(text_file_path):
 
                 opt_l_info = read_file_lines(full_file_path, read_lines)
 
-            l_ranges_opt = []
-            # for loop starts here
+            # Data_Types = ['anti_correlated', 'correlated', 'random']
             for ii in range(Data_Types.__len__()):
                 data_distributed_type = Data_Types[ii]
+                # k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
                 for kk in range(k_types.__len__()):
                     l_ranges_opt_temp_start, l_ranges_opt_temp_end = compute_ranges_start_end(kk, ii,
-                                                                                              l_ranges_opt,
+                                                                                              l_ranges_opt_,
                                                                                               row_dist,
                                                                                               column_dist)
+                    l_index_ = 0
+                    start_items = separate_string(l_ranges_opt_temp_start)
+                    end_items = separate_string(l_ranges_opt_temp_end)
+                    start_num_ = int(start_items[1])
+                    end_num_ = int(end_items[1])
+                    temp_letter_ = start_items[0]
 
-                    for columns in ws1[l_ranges_opt_temp_start: l_ranges_opt_temp_end]:
-                        for cell in columns:
-                            ws1[cell] = opt_l_info[kk][cell]
-                            # l_uni.append(cell.value)
-            #
-            # # find data type cells
-            # if data_distributed_type == 'anti':
-            #     l_ranges_opt = l_ranges_opt_anti
-            # elif data_distributed_type == 'corr':
-            #     l_ranges_opt = l_ranges_opt_corr
-            # else:
-            #     l_ranges_opt = l_ranges_opt_random
-            # for ii in range(opt_l_info.__len__()):
-            #     start = ii
-            #     print(opt_l_info[ii])
-            #     for jj in range(bin_count):
-            #         cur_cell_opt = column_row_index(l_ranges_opt[start], jj)
-            #         ws1[cur_cell_opt] = opt_l_info[ii][jj]
+                    for row_index_ in range(start_num_, end_num_ + 1):
+                        cell_index_ = temp_letter_ + str(row_index_)
+                        ws1[cell_index_] = opt_l_info[kk][l_index_]
+                        l_index_ = l_index_ + 1
+                    wb1.save(excel_file_name)
 
 wb1.save(excel_file_name)
 

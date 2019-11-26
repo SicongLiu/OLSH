@@ -132,16 +132,22 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
     hash_used_cell = final_column + str(final_row)
     return hash_used_cell
 
+#
+# row_dist = 1
+# column_dist = 3
+# cell_ = compute_hash_cell(l_ranges_opt[1], row_dist, column_dist)
+# print(cell_)
+#
+# ttt = np.ones(10)
+# print(ttt)
 
-row_dist = 1
-column_dist = 3
-cell_ = compute_hash_cell(l_ranges_opt[1], row_dist, column_dist)
-print(cell_)
+ttt = 'justatest!a'
+print(ttt[ttt.__len__() - 2])
+a = 1
+b = 10
 
-ttt = np.ones(10)
-print(ttt)
-
-
+for ii in range(a, b):
+    print(ii)
 
 
 

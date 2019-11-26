@@ -241,7 +241,7 @@ def compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_,
 
 
 def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, card_):
-    function_str = "ret = queryRet" + str(top_k_) + "[count1, count, KList, fileName, hashTables];"
+    function_str = "ret = queryRet" + str(top_k_) + "[count1, count, KList, fileName, hashTables, binWeight];"
     save_data_file = SCRIPT_OUTPUT_FILE + "top_" + str(top_k_) + "_" + str(dimension_) + "D_" + str(card_) + ".txt"
     f = open(save_data_file, 'a+')
     count = []
@@ -304,6 +304,70 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
     f.write("\n \n \n")
     f.close()
 
+
+def save_mathematica_with_zero(card_List, cdf_weight_, top_k_, data_type_, dimension_, card_):
+    function_str = "ret = queryRet" + str(top_k_) + "[count1, count, KList, fileName, hashTables, binWeight];"
+    save_data_file = SCRIPT_OUTPUT_FILE + "top_" + str(top_k_) + "_" + str(dimension_) + "D_" + str(card_) + ".txt"
+    f = open(save_data_file, 'a+')
+    count = []
+    count1 = []
+    binWeight = []
+    K_Log_List = []
+    K_Log_Minus_List = []
+    K_Log_Plus_List = []
+    K_Log_Plus_Plus_List = []
+    K_Log_Uni_List = []
+    declare_string = data_type_ + "_" + str(dimension_) + "_" + str(card_)
+
+    f.write("# ------------------------------------------------------------------------------ \n")
+    f.write("#     " + declare_string + " \n")
+    f.write("# ------------------------------------------------------------------------------ \n")
+    # card_List same length as number of bins
+    for kk in range(len(card_List)):
+        binWeight.append(format(cdf_weight_[kk], '.10f'))
+        count1.append(max(card_List[kk], 1))
+        count.append(format(float(max(card_List[kk], 1))/float(sum(card_List)), '.10f'))
+
+        k_log = 1
+        if card_List[kk] == 0:
+            k_log = 0
+        else:
+            k_log = max(math.ceil(math.log(card_List[kk], 2)), 1)
+        k_log_minus = max(k_log - 3, 0)
+        k_log_plus = k_log + 3
+        k_log_plus_plus = k_log + 6
+
+        K_Log_List.append(k_log)
+        K_Log_Minus_List.append(k_log_minus)
+        K_Log_Plus_List.append(k_log_plus)
+        K_Log_Plus_Plus_List.append(k_log_plus_plus)
+
+    k_log_max = max(K_Log_List)
+    for m in range(len(card_List)):
+        K_Log_Uni_List.append(k_log_max)
+    hashTables = gen_hash_tables(top_k_)
+    f.write("hashTables = List[" + hashTables + "] \n")
+    f.write("binWeight = List[" + str(', '.join(map(str, binWeight))) + "] \n")
+    f.write("count = List[" + str(', '.join(map(str, count))) + "]; \n")
+    f.write("count1 = List[" + str(', '.join(map(str, count1))) + "]; \n")
+
+    f.write("KList = List" + str(K_Log_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Minus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Plus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Plus_Plus_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("KList = List" + str(K_Log_Uni_List) + "; \n")
+    f.write(function_str + "\n")
+
+    f.write("\n \n \n")
+    f.close()
 
 def gen_hash_tables(top_k_):
     hashTables = []
