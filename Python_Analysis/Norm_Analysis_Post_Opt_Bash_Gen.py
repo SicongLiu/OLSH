@@ -4,6 +4,7 @@ from openpyxl import load_workbook
 import random
 import re
 import string
+import os
 
 
 def separate_string(input_string):
@@ -102,8 +103,6 @@ def post_optimization_uni(data_list_, L_List_, hash_used_, hash_budget_):
     return L_List_
 
 
-
-
 def colnum_string(n):
     string = ""
     while n > 0:
@@ -118,6 +117,7 @@ def col2num(col):
         if c in string.ascii_letters:
             num = num * 26 + (ord(c.upper()) - ord('A')) + 1
     return num
+
 
 # J, AA AQ
 def compute_data_list_start_end(data_type_index_, data_list, column_dist_):
@@ -161,8 +161,276 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
     final_row = temp_row + temp_row_dist
     hash_used_cell = final_column + str(final_row)
     return hash_used_cell
-####################################################################################
 
+
+# types_: anti, corr, random
+def write_script(data_type_, dimension_, top_k_, types_, budget_, card_excel_, cardinality_, parameter_path_, query_count, ratio, with_without_opt_, pot_):
+    file_names = []
+    total_bash_file = SCRIPT_FOLDER + "run_bash_set_cur_" + str(dimension_) + 'D_' + card_excel_ + \
+                      '_' + str(with_without_opt_) + '.sh'
+    file_names.append(total_bash_file)
+    f10 = open(total_bash_file, 'a+')
+    f10.write("#!/bin/bash \n")
+    for m in range(types_.__len__()):
+        type_name = types_[m]
+        parameter_dir = parameter_path_ + str(dimension_) + "D_top" + str(
+            top_k_) + "_budget_" + str(budget_) \
+                        + "_" + type_name + "_" + card_excel_ + "/"
+        print(parameter_dir + ' ' + type_name)
+        if not os.path.exists(parameter_dir):
+            continue
+        else:
+            BASH_FILE_FOLDER = SCRIPT_FOLDER + "bash_set_" + str(dimension_) + "D_top" + str(
+                top_k_) + "_budget_" + str(budget_) + "_" + type_name + "_" + str(
+                cardinality_) + "/"
+            TEMPORAL_RESULT = "../H2_ALSH/temp_result_" + str(dimension_) + "D_top" + str(
+                top_k_) + "_budget_" + str(budget_) + "_" + type_name + "_" + str(cardinality_) + "/"
+            TEMPORAL_RESULT_FOR_BASH = "./temp_result_" + str(dimension_) + "D_top" + str(
+                top_k_) + "_budget_" + str(budget_) + "_" + type_name + "_" + str(cardinality_) + "/"
+
+            if not os.path.exists(BASH_FILE_FOLDER):
+                os.makedirs(BASH_FILE_FOLDER)
+
+            if not os.path.exists(TEMPORAL_RESULT):
+                os.makedirs(TEMPORAL_RESULT)
+
+            K_List = []
+            L_Opt_List = []
+            L_Max_List = []
+            L_Uni_List = []
+            qhull_data_count = []
+
+            for mm in range(len(K_List)):
+                qhull_file = BASE_FOLDER + data_type_ + "_" + str(dimension_) + "_" + str(
+                    cardinality_) \
+                             + "_" + "qhull_layer_" + str(mm)
+                f = open(qhull_file, 'r')
+                lines = f.readlines()
+                second_line = lines[1]
+                cur_data_count = int(second_line.split('\n')[0])
+                qhull_data_count.append(cur_data_count)
+                f.close()
+
+            # opt cumsum_hashsize
+            obj_cumsum = []
+            hashsize_cumsum = []
+            obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type_ + "_" + str(
+                dimension_) + "_" + str(cardinality_) + '_' + str(
+                with_without_opt_) + ".txt"
+            f4 = open(obj_hashsize_file, 'w')
+            for mm in range(len(L_Opt_List)):
+                if obj_cumsum.__len__() == 0:
+                    obj_cumsum.append(qhull_data_count[mm])
+                    hashsize_cumsum.append(qhull_data_count[mm] * L_Opt_List[mm])
+                else:
+                    obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
+                    hashsize_cumsum.append(
+                        hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] *
+                        L_Opt_List[mm])
+            f4.write(','.join(map(repr, obj_cumsum)))
+            f4.write("\n")
+            f4.write(','.join(map(repr, hashsize_cumsum)))
+            f4.close()
+
+            cur_data_type = data_type_
+            cur_cardinality = cardinality_
+            cur_dimension = dimension_
+            f10.write("datatype=" + cur_data_type + "\n")
+            f10.write("cardinality=" + str(cur_cardinality) + "\n")
+            f10.write("d=" + str(cur_dimension) + "\n")
+            f10.write("qn=" + str(query_count) + "\n")
+            f10.write("c0=" + str(ratio) + "\n")
+            f10.write("pot=" + str(pot_) + "\n")
+
+            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_opt"
+            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_opt"
+            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_opt"
+            f10.write("temporalResult=" + temporalResult + "\n")
+            f10.write("overallResult=" + overallResult + "\n")
+            f10.write("sim_angle=" + sim_angle + "\n")
+            sim_threshold = 0.75 # deprecated
+            f10.write("S=" + str(sim_threshold) + "\n")
+            f10.write("num_layer=" + str(len(K_List)) + "\n")
+            f10.write("top_k=" + str(top_k_) + "\n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Ground-Truth \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+            f10.write(
+                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+            f10.write("qPath=./query/query_${d}D.txt \n")
+            f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+
+            f10.write(" # ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                      "${oFolder}.mip \n")
+            f10.write(" # sleep 1 \n")
+
+            f10.write("\n \n \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Layer-Performance \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            for kk in range(len(K_List)):
+                f10.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                f10.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                f10.write("L" + str(kk) + "=" + str(L_Opt_List[kk]) + "\n")
+
+                f10.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "\n")
+
+                f10.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                "${cardinality}_opt/result_${d}D" + str(kk) + "_${K" + str(kk)
+                          + "}_${L" + str(kk) + "}" + "\n")
+                f10.write("temp_hash" + str(
+                    kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_opt_" + str(kk) + "\n")
+
+                f10.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                          "} -L ${L" + str(kk) + "} -LI " + str(
+                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                f10.write("\n")
+
+            # append overall accuracy computation here
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Overall-Performance \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                      "${tsPath}.mip -of ${overallResult} \n \n \n")
+            f10.write("sleep 2 \n")
+
+            cur_data_type = data_type_
+            cur_cardinality = cardinality_
+            cur_dimension = dimension_
+            f10.write("datatype=" + cur_data_type + "\n")
+            f10.write("cardinality=" + str(cur_cardinality) + "\n")
+            f10.write("d=" + str(cur_dimension) + "\n")
+            f10.write("qn=" + str(query_count) + "\n")
+            f10.write("c0=" + str(ratio) + "\n")
+            f10.write("pot=" + str(pot_) + "\n")
+
+            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
+            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
+            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_max"
+            f10.write("temporalResult=" + temporalResult + "\n")
+            f10.write("overallResult=" + overallResult + "\n")
+            f10.write("sim_angle=" + sim_angle + "\n")
+            f10.write("S=" + str(sim_threshold) + "\n")
+            f10.write("num_layer=" + str(len(K_List)) + "\n")
+            f10.write("top_k=" + str(top_k_) + "\n")
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Ground-Truth \n")
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+            f10.write(
+                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+            f10.write("qPath=./query/query_${d}D.txt \n")
+            f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+            f10.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                      "${oFolder}.mip \n")
+            f10.write("\n \n \n")
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Layer-Performance \n")
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            for kk in range(len(K_List)):
+                f10.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                f10.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                f10.write("L" + str(kk) + "=" + str(L_Max_List[kk]) + "\n")
+
+                f10.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "\n")
+
+                f10.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                "${cardinality}_max/result_${d}D" + str(
+                    kk) + "_${K" + str(kk)
+                          + "}_${L" + str(kk) + "}" + "\n")
+                f10.write("temp_hash" + str(
+                    kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_max_" + str(kk) + "\n")
+
+                f10.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                          "} -L ${L" + str(kk) + "} -LI " + str(
+                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                f10.write("\n")
+
+            # append overall accuracy computation here
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Overall-Performance \n")
+            f10.write(
+                "# ------------------------------------------------------------------------------ \n")
+            f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                      "${tsPath}.mip -of ${overallResult} \n \n \n")
+            f10.write("sleep 2 \n")
+
+            cur_data_type = data_type_
+            cur_cardinality = cardinality_
+            cur_dimension = dimension_
+            f10.write("datatype=" + cur_data_type + "\n")
+            f10.write("cardinality=" + str(cur_cardinality) + "\n")
+            f10.write("d=" + str(cur_dimension) + "\n")
+            f10.write("qn=" + str(query_count) + "\n")
+            f10.write("c0=" + str(ratio) + "\n")
+            f10.write("pot=" + str(pot_) + "\n")
+
+            temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_uni"
+            overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_uni"
+            sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_uni"
+            f10.write("temporalResult=" + temporalResult + "\n")
+            f10.write("overallResult=" + overallResult + "\n")
+            f10.write("sim_angle=" + sim_angle + "\n")
+            f10.write("S=" + str(sim_threshold) + "\n")
+            f10.write("num_layer=" + str(len(K_List)) + "\n")
+            f10.write("top_k=" + str(top_k_) + "\n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Ground-Truth \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
+            f10.write(
+                "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+            f10.write("qPath=./query/query_${d}D.txt \n")
+            f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+            f10.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
+                      "${oFolder}.mip \n")
+            f10.write("\n \n \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Layer-Performance \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            for kk in range(len(K_List)):
+                f10.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
+                f10.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
+                f10.write("L" + str(kk) + "=" + str(L_Uni_List[kk]) + "\n")
+
+                f10.write("dPath" + str(kk) + "=./qhull_data/Synthetic/${datatype}_${d}_"
+                                              "${cardinality}_qhull_layer_" + str(kk) + "\n")
+
+                f10.write("oFolder" + str(kk) + "=./result/${datatype}/Dimension_${d}_Cardinality_"
+                                                "${cardinality}_uni/result_${d}D" + str(kk) + "_${K" + str(kk)
+                          + "}_${L" + str(kk) + "}" + "\n")
+                f10.write("temp_hash" + str(kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_uni_" + str(
+                    kk) + "\n")
+
+                f10.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                          "} -L ${L" + str(kk) + "} -LI " + str(
+                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                    kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                f10.write("\n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("#     Overall-Performance \n")
+            f10.write("# ------------------------------------------------------------------------------ \n")
+            f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                      "${tsPath}.mip -of ${overallResult} \n \n \n")
+            f10.write("sleep 2 \n")
+    f10.close()
+    return file_names
+
+
+####################################################################################
 ##########################code below working on post-opt resource allocation########
 Data_Types = ['anti_correlated', 'correlated', 'random']
 Data_Gen_Types = ['EW', 'ED_card', 'ED_prob']
@@ -201,7 +469,15 @@ l_ranges_uni_80 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', '
 hash_used_opt_cells_80 = ['I56', 'I113', 'I170', 'I227', 'I284']
 hash_used_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
 
+SCRIPT_FOLDER = "../H2_ALSH/"
+SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_norm_bin_partition_Parameters_"
+QHULL_OUTPUT_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/qhull_data/Synthetic/'
+DATA_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
+QUERY_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
+GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
+BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 
+repeated_run = 5
 ####################################################################################
 dimensions = [4]
 excel_file_dir = './'
@@ -251,9 +527,7 @@ for i in range(len(dimensions)):
 
         # Data_Types = ['anti_correlated', 'correlated', 'random']
         for kk in range(Data_Types.__len__()):
-
             data_ = []
-
             # each round udpate data_list_start
             # hash_used_opt_cells
             # hash_used_uni_cells
@@ -283,9 +557,6 @@ for i in range(len(dimensions)):
                 type_name = types[jj]
                 print("type_name: " + str(type_name))
                 k_ = []
-
-                # k_ranges_40 = ['E6', 'E45', 'E51', 'E90']
-
                 k_ranges_temp_start, k_ranges_temp_end = compute_ranges_start_end(kk, jj, k_ranges, row_dist, column_dist)
                 for columns in ws[k_ranges_temp_start: k_ranges_temp_end]:
                     for cell in columns:
@@ -339,9 +610,52 @@ for i in range(len(dimensions)):
                     cur_cell_uni = column_row_index(l_ranges_uni_temp_start, ll)
                     ws1[cur_cell_opt] = l_opt[ll]
                     ws1[cur_cell_uni] = l_uni[ll]
+
+                # write to script here
+                with_without_opt = 'without_opt'
+                pot = 0
+                file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel,
+                                                      cardinality, parameter_path_before, with_without_opt, pot)
+
+                with_without_opt = 'with_opt'
+                pot = 1
+                file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel,
+                                                   cardinality, parameter_path_after, with_without_opt, pot)
+
+                aggregated_file_name = SCRIPT_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
+                f1 = open(aggregated_file_name, 'ab')
+                f1.write("#!/bin/bash \n")
+                for rr in range(0, repeated_run):
+                    for files in file_names_without_opt:
+                        f1.write('sh ' + files + '\n')
+
+                    temp_str = "aggregating for non-opt round " + str(rr)
+                    f1.write('echo \"' + temp_str + '\" \n')
+
+                    f1.write(
+                        'python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py without_opt ' + str(rr) + ' \n')
+                    f1.write('sleep 3' + '\n')
+
+                    # before starting pot = 1, clean everything except hash_table
+                    f1.write('python ../Python_Analysis/Clean_Sim_Overall_run_test_' + str(cur_d) + 'D.py' + '\n')
+                    f1.write('sleep 5' + '\n')
+
+                    for files in file_names_with_opt:
+                        f1.write('sh ' + files + '\n')
+
+                    temp_str = "aggregating for opt round " + str(rr)
+                    f1.write('echo \"' + temp_str + '\" \n')
+
+                    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py with_opt ' + str(
+                            rr) + ' \n')
+                    f1.write('sleep 3' + '\n')
+
+                    # before starting pot = 1, clean everything except hash_table
+                    f1.write('python ../Python_Analysis/Clean_All_' + str(cur_d) + 'D.py' + '\n')
+                    f1.write('sleep 5' + '\n')
+
+                f1.close()
     wb1.save(excel_file_name)
-
-
+# now the output would be the excel sheet
 # next generate bash_file based on excel sheet
-
 print("All done")
