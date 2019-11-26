@@ -51,12 +51,12 @@ def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
     f.write("# ------------------------------------------------------------------------------ \n")
     f.write("dPath=./raw_data/Synthetic/${datatype}${d}_${cardinality}.txt \n")
     f.write(
-        "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+        "tsPath=./result/result_${datatype}${d}D_${cardinality} # path for the ground truth \n")
     if is_stats_learn_:
         f.write("qPath=./query/query_${d}D_stats_learn.txt \n")
     else:
         f.write("qPath=./query/query_${d}D.txt \n")
-    f.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
+    f.write("oFolder=./result/result_${datatype}${d}D_${cardinality} \n")
     f.write("cd " + SCRIPT_FOLDER + " \n")
     f.write(" ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
               "${oFolder}.mip \n")
@@ -243,7 +243,7 @@ def compute_cdf_equal_depth(sample_bins_range_, my_alpha_, my_beta_, min_index_,
 def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, card_):
     function_str = "ret = queryRet" + str(top_k_) + "[count1, count, KList, fileName, hashTables];"
     save_data_file = SCRIPT_OUTPUT_FILE + "top_" + str(top_k_) + "_" + str(dimension_) + "D_" + str(card_) + ".txt"
-    f = open(save_data_file, 'w')
+    f = open(save_data_file, 'a+')
     count = []
     count1 = []
     binWeight = []
@@ -526,7 +526,7 @@ data_gen_type = 'ED_prob_'
 K_List = equal_depth_partition_data_equal_weight(input_file_, dimension_, card_, bin_count_, data_type, data_gen_type, query_list_, query_num_, top_k_, my_alpha_, my_beta_, bin_edges_equal_width_)
 
 # delete ground truth with query_stats_learn from regular queries for testing
-ground_trouth_file = GROUNDTRUEH_FOLDER + 'result_' + data_type + data_gen_type + str(dimension_) + '_D_' + str(card_) + '.mip'
+ground_trouth_file = GROUNDTRUEH_FOLDER + 'result_' + data_type + str(dimension_) + 'D_' + str(card_) + '.mip'
 delete_file(ground_trouth_file)
 
 is_stats_learn = 0
