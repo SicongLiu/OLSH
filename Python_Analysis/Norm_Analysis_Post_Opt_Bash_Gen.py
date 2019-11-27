@@ -635,12 +635,23 @@ for i in range(len(dimensions)):
                     temp_str = "aggregating for non-opt round " + str(rr)
                     f1.write('echo \"' + temp_str + '\" \n')
 
+                    # python ../Python_Analysis/LSH_Post_Process_300D.py without_opt 1
+                    # python ../Python_Analysis/Clean_All_300D.py
+
+                    # with_without_opt = str(sys.argv[1])
+                    # run_index = str(sys.argv[2])
+                    # cur_dimension = int(str(sys.argv[2]))
+                    # cur_budget = int(str(sys.argv[3]))
+                    # cur_bin_count = int(str(sys.argv[4]))
+                    # cur_top_o = int(str(sys.argv[5]))
+                    # equal_type = str(sys.argv[6])
+
                     f1.write(
-                        'python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py without_opt ' + str(rr) + ' \n')
+                        'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()-1]) + ' \n')
                     f1.write('sleep 3' + '\n')
 
                     # before starting pot = 1, clean everything except hash_table
-                    f1.write('python ../Python_Analysis/Clean_Sim_Overall_run_test_' + str(cur_d) + 'D.py' + '\n')
+                    f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_test.py ' + str(cur_d) + ' \n')
                     f1.write('sleep 5' + '\n')
 
                     for files in file_names_with_opt:
@@ -649,12 +660,18 @@ for i in range(len(dimensions)):
                     temp_str = "aggregating for opt round " + str(rr)
                     f1.write('echo \"' + temp_str + '\" \n')
 
-                    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py with_opt ' + str(
-                            rr) + ' \n')
+                    f1.write(
+                        'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
+                            rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
+                            top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__() - 1]) + ' \n')
                     f1.write('sleep 3' + '\n')
 
+                    # f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py with_opt ' + str(
+                    #         rr) + ' \n')
+                    # f1.write('sleep 3' + '\n')
+
                     # before starting pot = 1, clean everything except hash_table
-                    f1.write('python ../Python_Analysis/Clean_All_' + str(cur_d) + 'D.py' + '\n')
+                    f1.write('python ../Python_Analysis/Norm_Analysis_Clean_All.py ' + str(cur_d) + ' \n')
                     f1.write('sleep 5' + '\n')
 
                 f1.close()
