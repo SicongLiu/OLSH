@@ -141,13 +141,8 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
 # ttt = np.ones(10)
 # print(ttt)
 
-ttt = 'justatest!a'
-print(ttt[ttt.__len__() - 2])
-a = 1
-b = 10
-
-for ii in range(a, b):
-    print(ii)
+ttt = '_EW'
+print(ttt[1:ttt.__len__()])
 
 
 

@@ -594,8 +594,7 @@ for i in range(len(dimensions)):
 
                 # right now it's 0.75
                 collision_probilities = compute_collision_prob(cur_d, data_)
-                l_opt = post_optimization_opt_revised(collision_probilities, temp_weight_, data_, k_,
-                                                   l_opt, hash_used_opt, hash_budget)
+                l_opt = post_optimization_opt_revised(collision_probilities, temp_weight_, data_, k_, l_opt, hash_used_opt, hash_budget)
 
                 # row same as l_ranges_opt_temp_end row + 1
                 # column as l_ranges_opt_temp_end column + 9
@@ -647,7 +646,7 @@ for i in range(len(dimensions)):
                     # equal_type = str(sys.argv[6])
 
                     f1.write(
-                        'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()-1]) + ' \n')
+                        'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' \n')
                     f1.write('sleep 3' + '\n')
 
                     # before starting pot = 1, clean everything except hash_table
@@ -663,7 +662,7 @@ for i in range(len(dimensions)):
                     f1.write(
                         'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
                             rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
-                            top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__() - 1]) + ' \n')
+                            top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' \n')
                     f1.write('sleep 3' + '\n')
 
                     # f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py with_opt ' + str(
@@ -675,5 +674,8 @@ for i in range(len(dimensions)):
                     f1.write('sleep 5' + '\n')
 
                 f1.close()
+    # wb.save(excel_file_name)
     wb1.save(excel_file_name)
+    # wb.save(excel_file_name)
+
 print("All done")
