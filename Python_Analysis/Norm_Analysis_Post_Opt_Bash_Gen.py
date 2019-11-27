@@ -164,7 +164,7 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
 
 
 # types_: anti, corr, random
-def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, card_excel_, cardinality_, query_count, ratio, with_without_opt_, pot_):
+def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, card_excel_, cardinality_, query_count, ratio, with_without_opt_, pot_,  K_List, L_Opt_List, L_Max_List, L_Uni_List):
     file_names = []
     total_bash_file = SCRIPT_FOLDER + "run_bash_set_cur_" + str(dimension_) + 'D_' + str(card_excel_) + \
                       '_' + str(with_without_opt_) + '.sh'
@@ -186,11 +186,6 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
 
         if not os.path.exists(TEMPORAL_RESULT):
             os.makedirs(TEMPORAL_RESULT)
-
-        K_List = []
-        L_Opt_List = []
-        L_Max_List = []
-        L_Uni_List = []
         qhull_data_count = []
 
         for mm in range(len(K_List)):
@@ -429,7 +424,7 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
 # Data_Gen_Types = ['EW', 'ED_card', 'ED_prob']
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
-Data_Types = ['anti_correlated']
+Data_Types = ['random']
 Data_Gen_Types = ['EW']
 types = ["log"]
 
@@ -546,12 +541,15 @@ for i in range(len(dimensions)):
             if str(wwss).__contains__('EW'):
                 data_type_file_name_ = './' + Data_Types[kk] + '_EW_' + str(cur_d) + '_' + str(total_cardinality) + '_' + str(
                     bin_count) + '_' + 'top_' + str(top_ks) + '_EW.txt'
+                data_gen_type = '_EW'
             elif str(wwss).__contains__('ED_card'):
                 data_type_file_name_ = weight_file_name = './' + Data_Types[kk] + '_ED_card_' + str(cur_d) + '_' + str(total_cardinality) + '_' + str(
                     bin_count) + '_' + 'top_' + str(top_ks) + '_ED_card.txt'
-
+                data_gen_type = '_ED_card'
             else:
                 temp_weight_ = np.ones(bin_count)# set default
+                data_gen_type = '_ED_prob'
+
             print(data_type_file_name_)
             temp_weight_ = load_weight(data_type_file_name_, bin_count)
 
@@ -618,16 +616,14 @@ for i in range(len(dimensions)):
                 # write to script here
                 with_without_opt = 'without_opt'
                 pot = 0
-
-
                 # types_: anti, corr, random
-                file_names_without_opt = write_script(Data_Types[kk], cur_d, bin_count, top_ks, types, hash_budget, total_card_excel, total_cardinality, query_count, ratio, with_without_opt, pot)
+                file_names_without_opt = write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, types, hash_budget, total_card_excel, total_cardinality, query_count, ratio, with_without_opt, pot, k_, l_opt, l_max, l_uni)
 
                 with_without_opt = 'with_opt'
                 pot = 1
-                file_names_with_opt = write_script(Data_Types[kk], cur_d, bin_count, top_ks, types, hash_budget,
+                file_names_with_opt = write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, types, hash_budget,
                                                       total_card_excel, total_cardinality, query_count, ratio,
-                                                      with_without_opt, pot)
+                                                      with_without_opt, pot, k_, l_opt, l_max, l_uni)
 
                 aggregated_file_name = SCRIPT_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
                 f1 = open(aggregated_file_name, 'a+')
