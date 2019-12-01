@@ -141,8 +141,16 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
 # ttt = np.ones(10)
 # print(ttt)
 
-ttt = '_EW'
-print(ttt[1:ttt.__len__()])
+ttt = 'random_ED_Prob'
+ttt2 = 'random_EW'
+
+sss = ttt.split('_')[0]
+sss2 = ttt2.split('_')[0]
+
+print(sss)
+
+print(sss2)
+
 
 
 

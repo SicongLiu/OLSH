@@ -223,6 +223,8 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
         cur_data_type = data_type_
         cur_cardinality = cardinality_
         cur_dimension = dimension_
+        ts_data_type_ = data_type_.split('_')[0]
+        f10.write("ts_datatype=" + ts_data_type_ + "\n")
         f10.write("datatype=" + cur_data_type + "\n")
         f10.write("cardinality=" + str(cur_cardinality) + "\n")
         f10.write("d=" + str(cur_dimension) + "\n")
@@ -245,7 +247,7 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
         f10.write("# ------------------------------------------------------------------------------ \n")
         f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
         f10.write(
-            "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+            "tsPath=./result/result_${ts_datatype}_${d}D_${cardinality} # path for the ground truth \n")
         f10.write("qPath=./query/query_${d}D.txt \n")
         f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
 
@@ -289,6 +291,8 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
         cur_data_type = data_type_
         cur_cardinality = cardinality_
         cur_dimension = dimension_
+        ts_data_type_ = data_type_.split('_')[0]
+        f10.write("ts_datatype=" + ts_data_type_ + "\n")
         f10.write("datatype=" + cur_data_type + "\n")
         f10.write("cardinality=" + str(cur_cardinality) + "\n")
         f10.write("d=" + str(cur_dimension) + "\n")
@@ -358,6 +362,8 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, types_, budget_, ca
         cur_data_type = data_type_
         cur_cardinality = cardinality_
         cur_dimension = dimension_
+        ts_data_type_ = data_type_.split('_')[0]
+        f10.write("ts_datatype=" + ts_data_type_ + "\n")
         f10.write("datatype=" + cur_data_type + "\n")
         f10.write("cardinality=" + str(cur_cardinality) + "\n")
         f10.write("d=" + str(cur_dimension) + "\n")
