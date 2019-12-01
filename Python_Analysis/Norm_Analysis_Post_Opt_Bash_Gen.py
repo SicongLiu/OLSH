@@ -650,7 +650,7 @@ for i in range(len(dimensions)):
                     f1.write('sleep 3' + '\n')
 
                     # before starting pot = 1, clean everything except hash_table
-                    f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_test.py ' + str(cur_d) + ' \n')
+                    f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_clean.py ' + str(cur_d) + ' \n')
                     f1.write('sleep 5' + '\n')
 
                     for files in file_names_with_opt:
