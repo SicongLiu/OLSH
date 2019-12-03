@@ -441,8 +441,8 @@ def equal_depth_partition_data(input_file_, dimension_, card_, bin_count_, data_
 
 
 def compute_norm_range(bin_edges_equal_width_, bin_index_):
-    low_end = math.floor(bin_index_)
-    upper_end = math.ceil(bin_index_)
+    low_end = int(math.floor(bin_index_))
+    upper_end = int(math.ceil(bin_index_))
     low_norm = bin_edges_equal_width_[low_end]
     upper_norm = bin_edges_equal_width_[upper_end]
     target_norm = low_norm + (bin_index_ - low_end) * (upper_norm - low_norm)
@@ -559,10 +559,10 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
 # GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 #
 # top_k_ = 25
-# dimension_ = 300
-# card_ = 17770
+# dimension_ = 100
+# card_ = 100000
 # bin_count_ = 40
-# query_num_ = 1000
+# query_num_ = 100
 
 
 # alternative to execute in command line environment

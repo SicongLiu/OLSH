@@ -144,10 +144,11 @@ def millify(n):
 
     return '{:.00f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
 
-val = 10000000
-ttt = millify(val)
+ttt = [100, 200, 3, 400]
 
-print(ttt)
+for tt in ttt:
+
+    print(tt)
 
 
 
