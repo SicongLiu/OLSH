@@ -132,23 +132,24 @@ def compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist):
     hash_used_cell = final_column + str(final_row)
     return hash_used_cell
 
+#
+# row_dist = 1
+# column_dist = 3
+# cell_ = compute_hash_cell(l_ranges_opt[1], row_dist, column_dist)
+# print(cell_)
+#
+# ttt = np.ones(10)
+# print(ttt)
 
-import math
+ttt = 'random_ED_Prob'
+ttt2 = 'random_EW'
 
+sss = ttt.split('_')[0]
+sss2 = ttt2.split('_')[0]
 
+print(sss)
 
-def millify(n):
-    millnames = ['', 'K', 'M']
-    n = float(n)
-    millidx = max(0, min(len(millnames)-1, int(math.floor(0 if n == 0 else math.log10(abs(n))/3))))
-
-    return '{:.00f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
-
-val = 10000000
-ttt = millify(val)
-
-print(ttt)
-
+print(sss2)
 
 
 

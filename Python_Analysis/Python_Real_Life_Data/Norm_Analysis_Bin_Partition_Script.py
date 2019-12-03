@@ -3,7 +3,6 @@ import re
 import sys
 from openpyxl import load_workbook
 import numpy as np
-import matplotlib.pyplot as plt
 from collections import Counter
 import math
 from scipy.stats import beta
