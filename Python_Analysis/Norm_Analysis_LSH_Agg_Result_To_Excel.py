@@ -46,7 +46,7 @@ def comp_card_file_name(cur_card_, is_real_life_):
         n = float(cur_card_)
         millidx = max(0, min(len(millnames) - 1, int(math.floor(0 if n == 0 else math.log10(abs(n)) / 3))))
 
-        card_file_name_ = '{:.00f}{}'.format(n / 10 ** (3 * millidx), millnames[millidx])
+        card_file_name_ = '{:.0f}{}'.format(n / 10 ** (3 * millidx), millnames[millidx])
     return card_file_name_
 
 

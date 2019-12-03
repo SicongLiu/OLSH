@@ -443,6 +443,7 @@ top_k_cell = 'E2'
 budget_cell = 'B4'
 cardinality_cell = 'B2'
 card_excel_cell = 'I2'
+is_real_life_cell = 'E3'
 column_dist = 17
 row_dist = 6
 dimensions = [300]
@@ -503,7 +504,7 @@ for i in range(len(dimensions)):
         hash_budget = ws[budget_cell].value
         total_cardinality = ws[cardinality_cell].value
         total_card_excel = ws[card_excel_cell].value
-
+        is_real_life = ws[is_real_life_cell].value
         if bin_count == 40:
             hash_used_opt_cells = hash_used_opt_cells_40
             hash_used_uni_cells = hash_used_uni_cells_40
@@ -652,7 +653,7 @@ for i in range(len(dimensions)):
                     # equal_type = str(sys.argv[6])
 
                     f1.write(
-                        'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' \n')
+                        'python ../Python_Analysis/Norm_Analysis_LSH_Agg_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
                     f1.write('sleep 3' + '\n')
 
                     # before starting pot = 1, clean everything except hash_table
@@ -668,7 +669,7 @@ for i in range(len(dimensions)):
                     f1.write(
                         'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
                             rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
-                            top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' \n')
+                            top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
                     f1.write('sleep 3' + '\n')
 
                     # f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(cur_d) + 'D.py with_opt ' + str(
