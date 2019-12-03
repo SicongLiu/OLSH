@@ -58,8 +58,7 @@ def ground_truth(data_type_, card_, dimension_, query_num_, is_stats_learn_):
         f.write("qPath=./query/query_${d}D.txt \n")
     f.write("oFolder=./result/result_${datatype}${d}D_${cardinality} \n")
     f.write("cd " + SCRIPT_FOLDER + " \n")
-    f.write(" ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
-              "${oFolder}.mip \n")
+    f.write(" ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts ${oFolder}.mip \n")
     f.write(" sleep 15 \n")
     f.close()
     os.system("sh " + temp_file_name)

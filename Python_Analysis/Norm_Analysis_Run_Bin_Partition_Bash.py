@@ -23,12 +23,12 @@ f1 = open(file_name, 'w')
 f1.write("#!/bin/bash \n")
 
 # use apt-get to update python package: python3, numpy, scipy, openpyxl
-f1.write('pip install numpy')
-f1.write('sleep 2')
-f1.write('pip install scipy')
-f1.write('sleep 2')
-f1.write('pip install openpyxl')
-f1.write('sleep 2')
+f1.write('pip install numpy \n')
+f1.write('sleep 2 \n')
+f1.write('pip install scipy \n')
+f1.write('sleep 2 \n')
+f1.write('pip install openpyxl \n')
+f1.write('sleep 2 \n')
 
 
 for top_k_ in top_ks:
