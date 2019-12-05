@@ -13,10 +13,16 @@ f.write("remote_machine_ip=" + str(remote_machine_ip) + "\n")
 f.write("scp -r /Users/sicongliu/Desktop/Chameleon/ cc@${remote_machine_ip}:/home/cc/ \n")
 
 f.write("scp /Users/sicongliu/Desktop/Chameleon/StreamingTopK/Python_Analysis/*.py cc@${remote_machine_ip}:/home/cc/Chameleon/StreamingTopK/Python_Analysis/ \n")
+f.write("scp /Users/sicongliu/Desktop/Chameleon/StreamingTopK/Python_Analysis/*.sh cc@${remote_machine_ip}:/home/cc/Chameleon/StreamingTopK/Python_Analysis/ \n")
+f.write("cp /Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/*.py /Users/sicongliu/Desktop/Chameleon/StreamingTopK/Python_Analysis/ \n")
+f.write("cp /Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/*.sh /Users/sicongliu/Desktop/Chameleon/StreamingTopK/Python_Analysis/ \n")
+
 f.close()
 
 copy_mathematica = "copy_math_file.sh"
 f = open(copy_mathematica, 'w')
 f.write("#!/bin/bash \n")
-f.write("scp cc@${remote_machine_ip}:/home/cc/Chameleon/StreamingTopK/H2_ALSH/parameters/*.txt /Users/sicongliu/Desktop/Chameleon/StreamingTopK/H2_ALSH/parameters/ ")
+f.write("remote_machine_ip=" + str(remote_machine_ip) + "\n")
+f.write("scp cc@${remote_machine_ip}:/home/cc/Chameleon/StreamingTopK/H2_ALSH/parameters/*.txt /Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/parameters/  \n")
+f.write("scp cc@${remote_machine_ip}:/home/cc/Chameleon/StreamingTopK/Python_Analysis/*.txt /Users/sicongliu/Desktop/StreamingTopK/Python_Analysis/ ")
 f.close()

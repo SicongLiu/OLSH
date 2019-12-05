@@ -446,7 +446,7 @@ card_excel_cell = 'I2'
 is_real_life_cell = 'E3'
 column_dist = 17
 row_dist = 6
-dimensions = [300]
+dimensions = [100]
 query_count = 1000
 excel_file_dir = './'
 
@@ -489,7 +489,7 @@ repeated_run = 5
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_all_new_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -566,6 +566,7 @@ for i in range(len(dimensions)):
                 type_name = types[jj]
                 print("type_name: " + str(type_name))
                 k_ = []
+                kk = 2
                 k_ranges_temp_start, k_ranges_temp_end = compute_ranges_start_end(kk, jj, k_ranges, row_dist, column_dist)
                 for columns in ws[k_ranges_temp_start: k_ranges_temp_end]:
                     for cell in columns:

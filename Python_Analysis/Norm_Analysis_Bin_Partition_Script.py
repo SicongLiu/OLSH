@@ -280,11 +280,11 @@ def save_mathematica(card_List, cdf_weight_, top_k_, data_type_, dimension_, car
     for m in range(len(card_List)):
         K_Log_Uni_List.append(k_log_max)
     hashTables = gen_hash_tables(top_k_)
-    f.write("hashTables = List[" + hashTables + "] \n")
-    f.write("binWeight = List[" + str(', '.join(map(str, binWeight))) + "] \n")
+    f.write("hashTables = List[" + hashTables + "]; \n")
+    f.write("binWeight = List[" + str(', '.join(map(str, binWeight))) + "]; \n")
     f.write("count = List[" + str(', '.join(map(str, count))) + "]; \n")
     f.write("count1 = List[" + str(', '.join(map(str, count1))) + "]; \n")
-
+    f.write("Save[fileName, count1];")
     f.write("KList = List" + str(K_Log_List) + "; \n")
     f.write(function_str + "\n")
 
@@ -577,7 +577,7 @@ dimension_ = int(str(sys.argv[2]))
 card_ = int(str(sys.argv[3]))
 bin_count_ = int(str(sys.argv[4]))
 query_num_ = int(str(sys.argv[5]))
-
+input_data_type = str(sys.argv[6])
 
 
 # use the query stats learn, for the following
@@ -585,7 +585,8 @@ is_stats_learn = 1
 query_list_ = load_query(QUERY_FOLDER, dimension_, is_stats_learn)
 
 # compute ground truth
-data_type = 'random_'
+# data_type = 'random_'
+data_type = input_data_type + '_'
 data_gen_type = 'EW_'
 # ground_truth(data_type + data_gen_type, card_, dimension_, query_num_, is_stats_learn)
 ground_truth(data_type, card_, dimension_, query_num_, is_stats_learn)

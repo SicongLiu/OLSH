@@ -26,14 +26,15 @@ def get_file_info(full_file_name_):
     temp_file_info_ = file_name_.split('_')
     dims_ = temp_file_info_[0]
     cards_ = re.sub('[.]', '', temp_file_info_[1])
-    bin_count_ = temp_file_info_[3]
-    resource_type = temp_file_info_[4]
-    data_distributed_type = temp_file_info_[5]
-    types_= temp_file_info_[4] + '_' + temp_file_info_[5]
+    if len(temp_file_info_) > 5:
+        resource_type = temp_file_info_[4] + '_' + temp_file_info_[5]
+    else:
+        resource_type = temp_file_info_[4]
+    data_distributed_type = temp_file_info_[3]
+    types_= str(resource_type) + '_' + str(dims_) + '_' + str(cards_)
 
-    # class 'list'>: ['300D', '17770', 'Bin', '40', 'EW', 'random']
-    print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' bin_count: ' + str(bin_count_) + ' types: ' + str(types_))
-    file_info_.append(str(resource_type) + '_' + str(dims_) + '_' + str(cards_))
+    print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' types: ' + str(types_))
+    file_info_.append(data_distributed_type)
     file_info_.append(str(types_))
     return file_info_
 
@@ -50,7 +51,8 @@ def process_line(line_concate_):
     temp_arr = line_concate_[line_concate_.find("{") + 1:line_concate_.find("}")].split(',')
     for iii in range(len(temp_arr)):
         temp_str = temp_arr[iii].strip()
-        if temp_str[len(temp_str) - 2] == '-':
+        # if temp_str[len(temp_str) - 2] == '-':
+        if '^' in temp_str:
             temp_num = 0
         else:
             temp_num = round(float(temp_str))
@@ -155,11 +157,14 @@ hash_used_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
 column_dist = 17
 row_dist = 6
 text_file_path = '/Users/sicongliu/'
-dimension = 300
+parameter_file_path = '../H2_ALSH/parameters/'
+
+
+dimension = 50
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
-excel_file_name = excel_file_dir + str(dimension) + 'D_all_new_before.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_before.xlsx'
 
 bin_count_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -173,8 +178,8 @@ for file in os.listdir(text_file_path):
     if file.startswith(file_dimension_str) and file.endswith(".txt"):
         full_file_path = os.path.join(text_file_path, file)
         file_info = get_file_info(file)
-        file_endings = file_info[0]
-        data_distributed_type = file_info[1]
+        data_distributed_type = file_info[0]
+        file_endings = file_info[1]
         sheet_name = find_sheet(wss, file_endings)
         if sheet_name is not None:
             print('sheet name: ' + str(sheet_name) + ' , data type: ' + data_distributed_type)
@@ -214,26 +219,46 @@ for file in os.listdir(text_file_path):
                 opt_l_info = read_file_lines(full_file_path, read_lines)
 
             # Data_Types = ['anti_correlated', 'correlated', 'random']
-            for ii in range(Data_Types.__len__()):
-                data_distributed_type = Data_Types[ii]
-                # k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-                for kk in range(k_types.__len__()):
-                    l_ranges_opt_temp_start, l_ranges_opt_temp_end = compute_ranges_start_end(kk, ii,
-                                                                                              l_ranges_opt_,
-                                                                                              row_dist,
-                                                                                              column_dist)
-                    l_index_ = 0
-                    start_items = separate_string(l_ranges_opt_temp_start)
-                    end_items = separate_string(l_ranges_opt_temp_end)
-                    start_num_ = int(start_items[1])
-                    end_num_ = int(end_items[1])
-                    temp_letter_ = start_items[0]
+            ii = Data_Types.index(data_distributed_type)
 
-                    for row_index_ in range(start_num_, end_num_ + 1):
-                        cell_index_ = temp_letter_ + str(row_index_)
-                        ws1[cell_index_] = opt_l_info[kk][l_index_]
-                        l_index_ = l_index_ + 1
-                    wb1.save(excel_file_name)
+            # k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+            for kk in range(k_types.__len__()):
+                # populate count of data elements
+                d_list_start, d_list_end = compute_ranges_start_end(ii, kk, data_list, row_dist, column_dist)
+
+                l_ranges_opt_temp_start, l_ranges_opt_temp_end = compute_ranges_start_end(ii, kk,
+                                                                                          l_ranges_opt_,
+                                                                                          row_dist,
+                                                                                          column_dist)
+
+                # populate data list
+                # d_index_ = 0
+                # d_start_items = separate_string(d_list_start)
+                # d_end_items = separate_string(d_list_end)
+                # d_start_num_ = int(d_start_items[1])
+                # d_end_num_ = int(d_end_items[1])
+                # d_temp_letter_ = d_start_items[0]
+                #
+                # for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
+                #     d_cell_index_ = d_temp_letter_ + str(d_row_index_)
+                #     ws1[d_cell_index_] = opt_l_info[0][d_index_]
+                #     d_index_ = d_index_ + 1
+
+
+                # populate l_values
+                l_index_ = 0
+                start_items = separate_string(l_ranges_opt_temp_start)
+                end_items = separate_string(l_ranges_opt_temp_end)
+                start_num_ = int(start_items[1])
+                end_num_ = int(end_items[1])
+                temp_letter_ = start_items[0]
+
+                for row_index_ in range(start_num_, end_num_ + 1):
+                    cell_index_ = temp_letter_ + str(row_index_)
+                    # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
+                    ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
+                    l_index_ = l_index_ + 1
+                wb1.save(excel_file_name)
 
 wb1.save(excel_file_name)
 
