@@ -144,17 +144,12 @@ def millify(n):
 
     return '{:.00f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
 
-ttt = [100, 200, 3, 400]
-ttt2 = 500
+tt = 1
 
+for i in range(3):
+    tt = tt + i
 
-sss = '19387873^-asdf'
-ssss = '^'
-
-if ssss in sss:
-    print("fuck")
-# print(ttt.index(ttt2))
-
+print(tt)
 
 
 

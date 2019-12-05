@@ -26,11 +26,19 @@ def get_file_info(full_file_name_):
     temp_file_info_ = file_name_.split('_')
     dims_ = temp_file_info_[0]
     cards_ = re.sub('[.]', '', temp_file_info_[1])
-    if len(temp_file_info_) > 5:
-        resource_type = temp_file_info_[4] + '_' + temp_file_info_[5]
+    if full_file_name_.__contains__('anti'):
+        data_distributed_type = 'anti_correlated'
+    elif full_file_name_.__contains__('correlated'):
+        data_distributed_type = 'correlated'
     else:
-        resource_type = temp_file_info_[4]
-    data_distributed_type = temp_file_info_[3]
+        data_distributed_type = 'random'
+
+    if full_file_name_.__contains__('EW'):
+        resource_type = 'EW'
+    elif full_file_name_.__contains__('card'):
+        resource_type = 'ED_card'
+    else:
+        resource_type = 'ED_prob'
     types_= str(resource_type) + '_' + str(dims_) + '_' + str(cards_)
 
     print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' types: ' + str(types_))
@@ -232,17 +240,17 @@ for file in os.listdir(text_file_path):
                                                                                           column_dist)
 
                 # populate data list
-                # d_index_ = 0
-                # d_start_items = separate_string(d_list_start)
-                # d_end_items = separate_string(d_list_end)
-                # d_start_num_ = int(d_start_items[1])
-                # d_end_num_ = int(d_end_items[1])
-                # d_temp_letter_ = d_start_items[0]
-                #
-                # for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
-                #     d_cell_index_ = d_temp_letter_ + str(d_row_index_)
-                #     ws1[d_cell_index_] = opt_l_info[0][d_index_]
-                #     d_index_ = d_index_ + 1
+                d_index_ = 0
+                d_start_items = separate_string(d_list_start)
+                d_end_items = separate_string(d_list_end)
+                d_start_num_ = int(d_start_items[1])
+                d_end_num_ = int(d_end_items[1])
+                d_temp_letter_ = d_start_items[0]
+
+                for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
+                    d_cell_index_ = d_temp_letter_ + str(d_row_index_)
+                    ws1[d_cell_index_] = opt_l_info[0][d_index_]
+                    d_index_ = d_index_ + 1
 
 
                 # populate l_values
@@ -255,8 +263,8 @@ for file in os.listdir(text_file_path):
 
                 for row_index_ in range(start_num_, end_num_ + 1):
                     cell_index_ = temp_letter_ + str(row_index_)
-                    # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
-                    ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
+                    ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
+                    ws1[cell_index_] = max(opt_l_info[kk + 1][l_index_], 1)
                     l_index_ = l_index_ + 1
                 wb1.save(excel_file_name)
 
