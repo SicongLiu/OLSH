@@ -1460,7 +1460,7 @@ int sign_alsh_precision_recall(        // precision recall curve of sign_alsh
 
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(    // precision recall curve of simple_lsh
-		int   n,                            // number of data points
+		int&   n,                            // number of data points
 		int   qn,                            // number of query points
 		int   d,                            // dimension of space
 		int   K,                            // number of hash functions
@@ -1657,7 +1657,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				}
 				else
 				{
-					candidate_size += lsh->kmip_special(n, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+					candidate_size += lsh->kmip_special(n, d, data, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				}
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;

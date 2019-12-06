@@ -220,7 +220,9 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 
 // -----------------------------------------------------------------------------
 int Simple_LSH::kmip_special(				// c-k-AMIP search
-		int n,
+		int& n,
+		int d,
+		const float** data,
 		int   top_k,						// top-k value
 		const float *query,				// input query
 		MaxK_List *list,					// top-k MIP results (return)
@@ -239,7 +241,8 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 	//  calc inner product for candidates returned by SRP-LSH
 	// -------------------------------------------------------------------------
 
-
+	dim_ = d;
+	data_ = data;
 	unordered_set<int> candidates;
 	int candidate_size = 0;
 
@@ -247,6 +250,7 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 	{
 		candidates.insert(ii);
 	}
+
 	for(auto it : candidates)
 	{
 		int id = (int)it;

@@ -68,7 +68,7 @@ void create_dir(					// create dir if the path exists
 
 // -----------------------------------------------------------------------------
 int read_data(						// read data/query set from disk
-	int   n,							// number of data/query objects
+	int&   n,							// number of data/query objects
 	int   d,			 				// dimensionality
 	const char *fname,					// address of data/query set
 	float **data)						// data/query objects (return)
@@ -87,7 +87,7 @@ int read_data(						// read data/query set from disk
 
 	assert(num_dim == d);
 
-	if(num_element == 0 && n == 1)
+	if(num_element == 0)
 	{
 		// proceed to the program
 		n = 0;

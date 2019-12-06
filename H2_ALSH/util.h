@@ -34,7 +34,7 @@ void create_dir(					// create dir if the path exists
 
 // -----------------------------------------------------------------------------
 int read_data(						// read data set from disk
-	int   n,							// number of data points
+	int&   n,							// number of data points
 	int   d,							// dimensionality
 	const char *fname,					// address of data
 	float **data);						// data (return)

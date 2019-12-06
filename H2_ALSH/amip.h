@@ -162,7 +162,7 @@ int simple_lsh_recall(	// precision recall curve of simple_lsh
 
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(	// precision recall curve of simple_lsh
-	int   n,							// number of data points
+	int&   n,							// number of data points
 	int   qn,						// number of query points
 	int   d,							// dimension of space
 	int   K,							// number of hash tables
