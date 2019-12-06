@@ -233,7 +233,7 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 	// -------------------------------------------------------------------------
 	//  conduct c-k-AMC search by SRP-LSH
 	// -------------------------------------------------------------------------
-	// MaxK_List *mcs_list = new MaxK_List(top_k);
+	MaxK_List *mcs_list = new MaxK_List(top_k);
 	// unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
 
 
@@ -263,7 +263,9 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 		// if( ip_unit > S_)
 		// {
 		++candidate_size;
-		list->insert(ip_raw, id + 1);
+		// list->insert(ip_raw, id + 1);
+		mcs_list->insert(ip_raw, id + 1);
+
 		// }
 	}
 
@@ -283,6 +285,24 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 		}
 	}
 
+	// cut list size to top_k
+
+	int temp_size = min(mcs_list->size(), top_k);
+	for(int ii  = 0; ii < temp_size; ii++)
+	{
+		float ith_key = mcs_list->ith_key(ii);
+		int ith_id = mcs_list->ith_id(ii);
+		list->insert(ith_key, ith_id);
+	}
+
+	/*if(mcs_list->size() > top_k)
+	{
+
+	}
+	else // deep copy
+	{
+
+	}*/
 	// there should not be the case where list->size() < top_k
 	if(list->size() < top_k)
 	{
@@ -302,6 +322,8 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 	//  release space
 	// -------------------------------------------------------------------------
 
+	delete mcs_list;
+	mcs_list = NULL;
 	return candidates.size();
 }
 

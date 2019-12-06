@@ -1651,7 +1651,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				list->reset();
 
 				// top-k computation with threshold from previous layers
-				if(n > top_k)
+				if(n > kMIPs[max_round - 1])
 				{
 					candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				}
