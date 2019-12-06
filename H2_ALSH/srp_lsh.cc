@@ -94,6 +94,7 @@ void SRP_LSH::gen_random_vectors()	// generate random projection vectors
 // -----------------------------------------------------------------------------
 void SRP_LSH::persist_random_vectors(const char *fname)	// persist random vectors on file
 {
+	// printf("we are currently here: %s \n", fname);
 	FILE *fp = fopen(fname, "w");
 	if (!fp)
 	{
