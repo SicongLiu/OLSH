@@ -1503,12 +1503,17 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
 
-	gettimeofday(&end_time, NULL);
-	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
-	printf("Indexing Time: %f Seconds\n\n", indexing_time);
+
+	if(n > top_k)
+	{
+		lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
+
+		gettimeofday(&end_time, NULL);
+		float indexing_time = end_time.tv_sec - start_time.tv_sec +
+				(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+		printf("Indexing Time: %f Seconds\n\n", indexing_time);
+	}
 
 	// -------------------------------------------------------------------------
 	//  Precision Recall Curve of Simple_LSH
@@ -1646,7 +1651,14 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				list->reset();
 
 				// top-k computation with threshold from previous layers
-				candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+				if(n > top_k)
+				{
+					candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+				}
+				else
+				{
+					candidate_size += lsh->kmip_special(n, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+				}
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;
 				// printf("query index: %d, round: %d, using threshold? -- %d, candidate size: %f .\n", i, num, is_threshold, candidate_size);

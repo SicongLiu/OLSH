@@ -217,6 +217,91 @@ int Simple_LSH::kmip(				// c-k-AMIP search
 	return candidates.size();
 }
 
+
+// -----------------------------------------------------------------------------
+int Simple_LSH::kmip_special(				// c-k-AMIP search
+		int n,
+		int   top_k,						// top-k value
+		const float *query,				// input query
+		MaxK_List *list,					// top-k MIP results (return)
+		float& angle_threshold,
+		bool is_threshold,
+		int& hash_hits)
+{
+	// -------------------------------------------------------------------------
+	//  conduct c-k-AMC search by SRP-LSH
+	// -------------------------------------------------------------------------
+	// MaxK_List *mcs_list = new MaxK_List(top_k);
+	// unordered_set<int> candidates = lsh_->mykmc_test(top_k, (const float *) simple_lsh_query, mcs_list, query, angle_threshold, is_threshold, hash_hits);
+
+
+	// -------------------------------------------------------------------------
+	//  calc inner product for candidates returned by SRP-LSH
+	// -------------------------------------------------------------------------
+
+
+	unordered_set<int> candidates;
+	int candidate_size = 0;
+
+	for(int ii = 0; ii < n; ii++)
+	{
+		candidates.insert(ii);
+	}
+	for(auto it : candidates)
+	{
+		int id = (int)it;
+		float ip_raw = calc_inner_product(dim_, data_[id], query);
+
+		// use processed layer for dot product value
+		// float ip_scaled = calc_inner_product_scaled(dim_, data_[id], query, M_);
+		// float ip_unit = calc_inner_product(simple_lsh_dim_, simple_lsh_data_[id], simple_lsh_query);
+
+		// if( ip_unit > S_)
+		// {
+		++candidate_size;
+		list->insert(ip_raw, id + 1);
+		// }
+	}
+
+	// update threshold condition
+	if(is_threshold)
+	{
+		int temp_index_size = min(top_k, list->size());
+		if(temp_index_size > 0)
+		{
+			int current_data_idx = list->ith_id(temp_index_size - 1) - 1;
+			// update angle_threshold
+			angle_threshold = min(calc_angle(dim_, data_[current_data_idx], query), angle_threshold);
+		}
+		else
+		{
+			angle_threshold = 90.0f;
+		}
+	}
+
+	// there should not be the case where list->size() < top_k
+	if(list->size() < top_k)
+	{
+		for(int i = top_k - list->size(); i >=0;  i--)
+		{
+			int id = -1;
+			float ip = FLT_MIN;
+			list->insert(ip, id);
+		}
+	}
+
+	if(list->size() != top_k)
+	{
+		printf("Something is wrong, at simple_lsh..., using threshold? :%d, candidate size: ?:%d \n", is_threshold, candidate_size);
+	}
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+
+	return candidates.size();
+}
+
+
 // -----------------------------------------------------------------------------
 void Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file
 {

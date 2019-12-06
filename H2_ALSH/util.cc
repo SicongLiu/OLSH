@@ -92,7 +92,6 @@ int read_data(						// read data/query set from disk
 		// proceed to the program
 		n = 0;
 	}
-
 	assert(num_element == n);
 
 	int i   = 0;
