@@ -41,7 +41,7 @@ def get_file_info(full_file_name_):
         resource_type = 'ED_prob'
     types_= str(resource_type) + '_' + str(dims_) + '_' + str(cards_)
 
-    print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' types: ' + str(types_))
+    # print('dim: ' + str(dims_) + ' cards: ' + str(cards_) + ' types: ' + str(types_))
     file_info_.append(data_distributed_type)
     file_info_.append(str(types_))
     return file_info_
@@ -168,11 +168,11 @@ text_file_path = '/Users/sicongliu/'
 parameter_file_path = '../H2_ALSH/parameters/'
 
 
-dimension = 50
+dimension = 100
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
-excel_file_name = excel_file_dir + str(dimension) + 'D_before.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_before_all.xlsx'
 
 bin_count_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -240,17 +240,17 @@ for file in os.listdir(text_file_path):
                                                                                           column_dist)
 
                 # populate data list
-                d_index_ = 0
-                d_start_items = separate_string(d_list_start)
-                d_end_items = separate_string(d_list_end)
-                d_start_num_ = int(d_start_items[1])
-                d_end_num_ = int(d_end_items[1])
-                d_temp_letter_ = d_start_items[0]
-
-                for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
-                    d_cell_index_ = d_temp_letter_ + str(d_row_index_)
-                    ws1[d_cell_index_] = opt_l_info[0][d_index_]
-                    d_index_ = d_index_ + 1
+                # d_index_ = 0
+                # d_start_items = separate_string(d_list_start)
+                # d_end_items = separate_string(d_list_end)
+                # d_start_num_ = int(d_start_items[1])
+                # d_end_num_ = int(d_end_items[1])
+                # d_temp_letter_ = d_start_items[0]
+                #
+                # for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
+                #     d_cell_index_ = d_temp_letter_ + str(d_row_index_)
+                #     ws1[d_cell_index_] = opt_l_info[0][d_index_]
+                #     d_index_ = d_index_ + 1
 
 
                 # populate l_values
@@ -263,8 +263,10 @@ for file in os.listdir(text_file_path):
 
                 for row_index_ in range(start_num_, end_num_ + 1):
                     cell_index_ = temp_letter_ + str(row_index_)
-                    ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
-                    ws1[cell_index_] = max(opt_l_info[kk + 1][l_index_], 1)
+                    # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
+                    # ws1[cell_index_] = max(opt_l_info[kk + 1][l_index_], 1)
+                    ws1[cell_index_] = opt_l_info[kk][l_index_]
+                    ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
                     l_index_ = l_index_ + 1
                 wb1.save(excel_file_name)
 

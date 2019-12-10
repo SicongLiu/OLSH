@@ -40,7 +40,6 @@ def compute_collision_prob(dimension_, data_list_):
 
 def post_optimization_opt_revised(collision_probilities_, weight_list_, data_list_, K_List_, L_List_, hash_used_, hash_budget_):
     smallest = min(data_list_)
-
     while hash_used_ + smallest <= hash_budget_:
         delta_error_list = []
         for i in range(len(data_list_)):
@@ -254,7 +253,7 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, type_name, budget_,
         "# ------------------------------------------------------------------------------ \n")
     f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
     f10.write(
-        "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+        "tsPath=./result/result_${ts_datatype}_${d}D_${cardinality} # path for the ground truth \n")
     f10.write("qPath=./query/query_${d}D.txt \n")
     f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
     f10.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
@@ -396,7 +395,7 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, type_name, budget_,
     f10.write("# ------------------------------------------------------------------------------ \n")
     f10.write("dPath=./raw_data/Synthetic/${datatype}_${d}_${cardinality}.txt \n")
     f10.write(
-        "tsPath=./result/result_${datatype}_${d}D_${cardinality} # path for the ground truth \n")
+        "tsPath=./result/result_${ts_datatype}_${d}D_${cardinality} # path for the ground truth \n")
     f10.write("qPath=./query/query_${d}D.txt \n")
     f10.write("oFolder=./result/result_${datatype}_${d}D_${cardinality} \n")
     f10.write("# ./alsh -alg 0 -n ${cardinality} -qn ${qn} -d ${d} -ds ${dPath} -qs ${qPath} -ts "
@@ -450,6 +449,7 @@ types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 # top_ks = 25
 
 ratio = 2
+red_cell = 'I3'
 bin_num = 'E1'
 top_k_cell = 'E2'
 budget_cell = 'B4'
@@ -458,7 +458,7 @@ card_excel_cell = 'I2'
 is_real_life_cell = 'E3'
 column_dist = 17
 row_dist = 6
-dimensions = [50]
+dimensions = [100]
 query_count = 1000
 excel_file_dir = './'
 
@@ -501,7 +501,7 @@ repeated_run = 5
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_after_local.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -517,6 +517,7 @@ for i in range(len(dimensions)):
         total_cardinality = ws[cardinality_cell].value
         total_card_excel = ws[card_excel_cell].value
         is_real_life = ws[is_real_life_cell].value
+        budget_factor = ws[red_cell].value
         if bin_count == 40:
             hash_used_opt_cells = hash_used_opt_cells_40
             hash_used_uni_cells = hash_used_uni_cells_40
@@ -616,7 +617,8 @@ for i in range(len(dimensions)):
 
                 # right now it's 0.75
                 collision_probilities = compute_collision_prob(cur_d, data_)
-                l_opt = post_optimization_opt_revised(collision_probilities, temp_weight_, data_, k_, l_opt, hash_used_opt, hash_budget)
+                l_opt_revised = l_opt
+                l_opt_revised = post_optimization_opt_revised(collision_probilities, temp_weight_, data_, k_, l_opt_revised, hash_used_opt, hash_budget)
 
                 # row same as l_ranges_opt_temp_end row + 1
                 # column as l_ranges_opt_temp_end column + 9
@@ -625,25 +627,26 @@ for i in range(len(dimensions)):
                 hash_used_uni_cell = compute_hash_cell(l_ranges_opt_temp_end, temp_row_dist, temp_column_dist)
                 # hash_used_uni_cell = hash_used_uni_cells[jj]
                 hash_used_uni = ws[hash_used_uni_cell].value
-                l_uni = post_optimization_uni(data_, l_uni, hash_used_uni, hash_budget)
+                l_uni_revised = l_uni
+                l_uni_revised = post_optimization_uni(data_, l_uni_revised, hash_used_uni, hash_budget)
 
                 # write udpate LList back to excel file
-                for ll in range(len(l_opt)):
+                for ll in range(len(l_opt_revised)):
                     cur_cell_opt = column_row_index(l_ranges_opt_temp_start, ll)
                     cur_cell_uni = column_row_index(l_ranges_uni_temp_start, ll)
-                    ws1[cur_cell_opt] = l_opt[ll]
-                    ws1[cur_cell_uni] = l_uni[ll]
+                    ws1[cur_cell_opt] = l_opt_revised[ll]
+                    ws1[cur_cell_uni] = l_uni_revised[ll]
 
                 # write to script here
                 with_without_opt = 'without_opt'
                 pot = 0
                 write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, type_name, hash_budget, total_card_excel, total_cardinality, query_count, ratio, with_without_opt, pot, k_, l_opt, l_max, l_uni, data_)
 
-                with_without_opt = 'with_opt'
-                pot = 1
-                write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, type_name, hash_budget,
-                                                      total_card_excel, total_cardinality, query_count, ratio,
-                                                      with_without_opt, pot, k_, l_opt, l_max, l_uni, data_)
+                # with_without_opt = 'with_opt'
+                # pot = 1
+                # write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, type_name, hash_budget,
+                #                                       total_card_excel, total_cardinality, query_count, ratio,
+                #                                       with_without_opt, pot, k_, l_opt, l_max, l_uni, data_)
 
                 # aggregated_file_name = SCRIPT_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
                 # f1 = open(aggregated_file_name, 'a+')
@@ -734,17 +737,6 @@ for i in range(len(dimensions)):
             temp_str = "aggregating for non-opt round " + str(rr)
             f1.write('echo \"' + temp_str + '\" \n')
 
-            # python ../Python_Analysis/LSH_Post_Process_300D.py without_opt 1
-            # python ../Python_Analysis/Clean_All_300D.py
-
-            # with_without_opt = str(sys.argv[1])
-            # run_index = str(sys.argv[2])
-            # cur_dimension = int(str(sys.argv[2]))
-            # cur_budget = int(str(sys.argv[3]))
-            # cur_bin_count = int(str(sys.argv[4]))
-            # cur_top_o = int(str(sys.argv[5]))
-            # equal_type = str(sys.argv[6])
-
             f1.write(
                 'python ../Python_Analysis/Norm_Analysis_LSH_Agg_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(
                     cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(
@@ -752,25 +744,27 @@ for i in range(len(dimensions)):
             f1.write('sleep 3' + '\n')
 
             # before starting pot = 1, clean everything except hash_table
-            f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_clean.py ' + str(cur_d) + ' \n')
+            f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_clean.py ' + str(cur_d) + ' ' +
+                     str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
             f1.write('sleep 5' + '\n')
 
-            file_name = SCRIPT_FOLDER + "run_bash_set_cur_" + str(cur_d) + 'D_' + str(total_card_excel) + \
-                        '_' + str('with_opt') + '.sh'
-
-            f1.write('sh ' + file_name + '\n')
-
-            temp_str = "aggregating for opt round " + str(rr)
-            f1.write('echo \"' + temp_str + '\" \n')
-
-            f1.write(
-                'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
-                    rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
-                    top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
-            f1.write('sleep 3' + '\n')
+            # file_name = SCRIPT_FOLDER + "run_bash_set_cur_" + str(cur_d) + 'D_' + str(total_card_excel) + \
+            #             '_' + str('with_opt') + '.sh'
+            #
+            # f1.write('sh ' + file_name + '\n')
+            #
+            # temp_str = "aggregating for opt round " + str(rr)
+            # f1.write('echo \"' + temp_str + '\" \n')
+            #
+            # f1.write(
+            #     'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
+            #         rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
+            #         top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
+            # f1.write('sleep 3' + '\n')
 
             # before starting pot = 1, clean everything except hash_table
-            f1.write('python ../Python_Analysis/Norm_Analysis_Clean_All.py ' + str(cur_d) + ' \n')
+            f1.write('python ../Python_Analysis/Norm_Analysis_Clean_All.py ' + str(cur_d) + ' ' +
+                     str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
             f1.write('sleep 5' + '\n')
 
         f1.close()

@@ -557,12 +557,12 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
 # QUERY_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 # GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 #
-# top_k_ = 25
-# dimension_ = 100
-# card_ = 100000
-# bin_count_ = 40
-# query_num_ = 100
-
+top_k_ = 25
+dimension_ = 100
+card_ = 1000000
+bin_count_ = 40
+query_num_ = 1000
+input_data_type = 'random'
 
 # alternative to execute in command line environment
 SCRIPT_FOLDER = "../H2_ALSH/"
@@ -572,12 +572,12 @@ DATA_FOLDER = '../H2_ALSH/raw_data/Synthetic/'
 QUERY_FOLDER = '../H2_ALSH/query/'
 GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 
-top_k_ = int(str(sys.argv[1]))
-dimension_ = int(str(sys.argv[2]))
-card_ = int(str(sys.argv[3]))
-bin_count_ = int(str(sys.argv[4]))
-query_num_ = int(str(sys.argv[5]))
-input_data_type = str(sys.argv[6])
+# top_k_ = int(str(sys.argv[1]))
+# dimension_ = int(str(sys.argv[2]))
+# card_ = int(str(sys.argv[3]))
+# bin_count_ = int(str(sys.argv[4]))
+# query_num_ = int(str(sys.argv[5]))
+# input_data_type = str(sys.argv[6])
 
 
 # use the query stats learn, for the following
