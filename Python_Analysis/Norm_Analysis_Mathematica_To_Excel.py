@@ -266,7 +266,7 @@ for file in os.listdir(text_file_path):
                     # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
                     # ws1[cell_index_] = max(opt_l_info[kk + 1][l_index_], 1)
                     ws1[cell_index_] = opt_l_info[kk][l_index_]
-                    ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
+                    ws1[cell_index_] = opt_l_info[kk][l_index_] # ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
                     l_index_ = l_index_ + 1
                 wb1.save(excel_file_name)
 
