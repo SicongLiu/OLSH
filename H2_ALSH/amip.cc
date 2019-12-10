@@ -1505,7 +1505,7 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	Simple_LSH *lsh = new Simple_LSH();
 
 
-	if(n > top_k)
+	if(n > top_k && L != 0)
 	{
 		lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
 
@@ -1650,14 +1650,22 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 				int current_hash_hits = 0;
 				list->reset();
 
-				// top-k computation with threshold from previous layers
-				if(n > kMIPs[max_round - 1])
+				if(L != 0)
 				{
-					candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+					// top-k computation with threshold from previous layers
+					if(n > kMIPs[max_round - 1])
+					{
+						candidate_size += lsh->kmip(top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+					}
+					else
+					{
+						candidate_size += lsh->kmip_special(n, d, data, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+					}
+
 				}
 				else
 				{
-					candidate_size += lsh->kmip_special(n, d, data, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
+					candidate_size += lsh->kmip_L0(n, d, data, top_k, query[i], list, temp_sim_angle_vec[i][num], is_threshold, current_hash_hits);
 				}
 				recall += calc_recall(top_k, (const Result *) R[i], list);
 				total_hash_hits += current_hash_hits;

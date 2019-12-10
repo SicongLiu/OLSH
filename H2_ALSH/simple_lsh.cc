@@ -329,6 +329,44 @@ int Simple_LSH::kmip_special(				// c-k-AMIP search
 
 
 // -----------------------------------------------------------------------------
+int Simple_LSH::kmip_L0(				// c-k-AMIP search
+		int& n,
+		int d,
+		const float** data,
+		int   top_k,						// top-k value
+		const float *query,				// input query
+		MaxK_List *list,					// top-k MIP results (return)
+		float& angle_threshold,
+		bool is_threshold,
+		int& hash_hits)
+{
+	// -------------------------------------------------------------------------
+	//  conduct c-k-AMC search by SRP-LSH
+	// -------------------------------------------------------------------------
+
+	dim_ = d;
+	data_ = data;
+
+	// there should not be the case where list->size() < top_k
+	if(list->size() < top_k)
+	{
+		for(int i = top_k - list->size(); i >=0;  i--)
+		{
+			int id = -1;
+			float ip = FLT_MIN;
+			list->insert(ip, id);
+		}
+	}
+
+	if(list->size() != top_k)
+	{
+		printf("Something is wrong, at simple_lsh..., using threshold?  \n", is_threshold);
+	}
+
+	return 0;
+}
+
+// -----------------------------------------------------------------------------
 void Simple_LSH::persistHashTable(const char *fname)			// persist HashTables on file
 {
 	lsh_->persistHashTable(fname);

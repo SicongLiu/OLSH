@@ -39,17 +39,29 @@ public:
 			int& hash_hits);
 
 	// ------------ when n < top_k, all data available will be candidates ------
-		int kmip_special(						// c-k-AMIP search
-				int& n, 						// # of data
-				int d, 						// dimension of data
-				const float** data,
-				int   top_k,					// top-k value
-				const float* query,			// input query
-				MaxK_List* list,				// top-k mip results
-				float& sim_threshold,
-				bool is_threshold,
-				int& hash_hits);
+	int kmip_special(						// c-k-AMIP search
+			int& n, 						// # of data
+			int d, 						// dimension of data
+			const float** data,
+			int   top_k,					// top-k value
+			const float* query,			// input query
+			MaxK_List* list,				// top-k mip results
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_hits);
 
+
+	// ------------ when hash layer L = 0 ------
+	int kmip_L0(						// c-k-AMIP search
+			int& n, 						// # of data
+			int d, 						// dimension of data
+			const float** data,
+			int   top_k,					// top-k value
+			const float* query,			// input query
+			MaxK_List* list,				// top-k mip results
+			float& sim_threshold,
+			bool is_threshold,
+			int& hash_hits);
 
 	// -------------------------------------------------------------------------
 	int kmip_test(						// c-k-AMIP search

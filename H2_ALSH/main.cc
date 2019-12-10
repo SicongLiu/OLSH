@@ -154,7 +154,7 @@ int main(int nargs, char **args)
 		else if (strcmp(args[cnt], "-L") == 0) {
 			L = atoi(args[++cnt]);
 			printf("L             = %d\n", L);
-			if (L <= 0) {
+			if (L < 0) {
 				failed = true;
 				break;
 			}
