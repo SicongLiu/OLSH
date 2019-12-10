@@ -30,7 +30,7 @@ SRP_LSH::SRP_LSH(					// constructor
 	{
 		gen_random_vectors();
 		// sprintf(output_set, "%slayer_%d_vector.txt", temp_result, layer_index);
-		persist_random_vectors(temp_hash);
+		// persist_random_vectors(temp_hash);
 	}
 	else
 	{
