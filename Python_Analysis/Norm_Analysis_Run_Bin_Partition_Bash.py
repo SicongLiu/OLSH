@@ -9,25 +9,25 @@
 # for bin num info, we need to manually input one by one
 
 
-# top_ks = [25, 50]
-# dimensions = [50, 100, 200, 300]
-# card = [100000, 500000, 1000000, 2000000]
-# # bins = [40, 60, 80]
-# bin_count_ = 40
-# query_num_ = 1000
-# data_types = ['anti_correlated', 'correlated', 'random']
-# # data_types = ['anti_correlated', 'correlated']
-
-
-top_ks = [25]
-dimensions = [100]
-card = [1000000]
+top_ks = [25, 50]
+dimensions = [50, 200, 300]
+card = [100000, 500000, 1000000, 2000000]
 # bins = [40, 60, 80]
 bin_count_ = 40
 query_num_ = 1000
-data_types = ['random']
-# data_types = ['anti_correlated', 'correlated', 'random']
+data_types = ['anti_correlated', 'correlated', 'random']
 # data_types = ['anti_correlated', 'correlated']
+
+
+# top_ks = [25]
+# dimensions = [100]
+# card = [1000000]
+# # bins = [40, 60, 80]
+# bin_count_ = 40
+# query_num_ = 1000
+# data_types = ['random']
+# # data_types = ['anti_correlated', 'correlated', 'random']
+# # data_types = ['anti_correlated', 'correlated']
 
 
 

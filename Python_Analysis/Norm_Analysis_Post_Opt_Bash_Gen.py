@@ -501,7 +501,7 @@ repeated_run = 5
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_after_local.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_after_all.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -640,7 +640,7 @@ for i in range(len(dimensions)):
                 # write to script here
                 with_without_opt = 'without_opt'
                 pot = 0
-                write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, type_name, hash_budget, total_card_excel, total_cardinality, query_count, ratio, with_without_opt, pot, k_, l_opt, l_max, l_uni, data_)
+                write_script(Data_Types[kk] + data_gen_type, cur_d, bin_count, top_ks, type_name, hash_budget, total_card_excel, total_cardinality, query_count, ratio, with_without_opt, pot, k_, l_opt_revised, l_max, l_uni_revised, data_)
 
                 # with_without_opt = 'with_opt'
                 # pot = 1

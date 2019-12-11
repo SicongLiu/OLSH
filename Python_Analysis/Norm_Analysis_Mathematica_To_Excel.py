@@ -240,17 +240,17 @@ for file in os.listdir(text_file_path):
                                                                                           column_dist)
 
                 # populate data list
-                # d_index_ = 0
-                # d_start_items = separate_string(d_list_start)
-                # d_end_items = separate_string(d_list_end)
-                # d_start_num_ = int(d_start_items[1])
-                # d_end_num_ = int(d_end_items[1])
-                # d_temp_letter_ = d_start_items[0]
-                #
-                # for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
-                #     d_cell_index_ = d_temp_letter_ + str(d_row_index_)
-                #     ws1[d_cell_index_] = opt_l_info[0][d_index_]
-                #     d_index_ = d_index_ + 1
+                d_index_ = 0
+                d_start_items = separate_string(d_list_start)
+                d_end_items = separate_string(d_list_end)
+                d_start_num_ = int(d_start_items[1])
+                d_end_num_ = int(d_end_items[1])
+                d_temp_letter_ = d_start_items[0]
+
+                for d_row_index_ in range(d_start_num_, d_end_num_ + 1):
+                    d_cell_index_ = d_temp_letter_ + str(d_row_index_)
+                    ws1[d_cell_index_] = opt_l_info[0][d_index_]
+                    d_index_ = d_index_ + 1
 
 
                 # populate l_values
@@ -263,10 +263,11 @@ for file in os.listdir(text_file_path):
 
                 for row_index_ in range(start_num_, end_num_ + 1):
                     cell_index_ = temp_letter_ + str(row_index_)
-                    # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
-                    # ws1[cell_index_] = max(opt_l_info[kk + 1][l_index_], 1)
-                    ws1[cell_index_] = opt_l_info[kk][l_index_]
-                    ws1[cell_index_] = opt_l_info[kk][l_index_] # ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
+                    ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
+
+
+                    # ws1[cell_index_] = opt_l_info[kk][l_index_]
+                    # ws1[cell_index_] = opt_l_info[kk][l_index_] # ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
                     l_index_ = l_index_ + 1
                 wb1.save(excel_file_name)
 
