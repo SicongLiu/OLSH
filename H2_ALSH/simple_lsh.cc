@@ -360,7 +360,7 @@ int Simple_LSH::kmip_L0(				// c-k-AMIP search
 
 	if(list->size() != top_k)
 	{
-		printf("Something is wrong, at simple_lsh..., using threshold?  \n", is_threshold);
+		printf("Something is wrong, at simple_lsh..., using threshold?  \n");
 	}
 
 	return 0;
