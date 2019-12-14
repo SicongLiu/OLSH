@@ -501,16 +501,19 @@ repeated_run = 5
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_after_all.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_2M_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
-    wss = wb.get_sheet_names()
+    # wss = wb.get_sheet_names()
+    wss = wb.sheetnames
 
     # no need to loop data_gen_type for now, iterate through all excel sheets for now
     for wwss in wss:
         print(wwss)
-        ws = wb.get_sheet_by_name(wwss)
-        ws1 = wb1.get_sheet_by_name(wwss)
+        # ws = wb.get_sheet_by_name(wwss)
+        # ws1 = wb1.get_sheet_by_name(wwss)
+        ws = wb[wwss]
+        ws1 = wb1[wwss]
         bin_count = ws[bin_num].value
         top_ks = ws[top_k_cell].value
         hash_budget = ws[budget_cell].value
@@ -704,8 +707,12 @@ for i in range(len(dimensions)):
 
     for wwss in wss:
         print(wwss)
-        ws = wb.get_sheet_by_name(wwss)
-        ws1 = wb1.get_sheet_by_name(wwss)
+        # ws = wb.get_sheet_by_name(wwss)
+        # ws1 = wb1.get_sheet_by_name(wwss)
+
+        ws = wb[wwss]
+        ws1 = wb1[wwss]
+
         bin_count = ws[bin_num].value
         top_ks = ws[top_k_cell].value
         hash_budget = ws[budget_cell].value

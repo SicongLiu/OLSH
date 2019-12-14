@@ -558,8 +558,8 @@ def equal_width_partition_data(input_file_, dimension_, card_, bin_count_, data_
 # GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 #
 top_k_ = 25
-dimension_ = 300
-card_ = 17770
+dimension_ = 100
+card_ = 1000000
 bin_count_ = 40
 query_num_ = 1000
 input_data_type = 'random'

@@ -144,12 +144,31 @@ def millify(n):
 
     return '{:.00f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
 
-tt = 1
 
-for i in range(3):
-    tt = tt + i
+# list1 = [1, 4, 34, 34, 6, 8, 7, 32, 54, 346, 6, 10]
+# list1 = np.asarray(list1)
+# print(list1)
+#
+# length = len(list1)
+# cut_length = int(length * 0.5)
+# list2 = list1[0:cut_length]
+# print(list2)
+#
+# list3 = list1[cut_length: length]
+# print(length, cut_length)
+#
+# print(list3)
 
-print(tt)
+test_matrix_ = np.random.rand(5, 5)
+test_matrix_ = np.asarray(test_matrix_)
+print(test_matrix_)
+
+numrows = len(test_matrix_)
+numcols = len(test_matrix_[0])
+
+print(test_matrix_[:, 1])
+print(test_matrix_[1, :])
+
 
 
 

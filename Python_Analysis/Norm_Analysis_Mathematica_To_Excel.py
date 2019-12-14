@@ -179,7 +179,8 @@ k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 Data_Types = ['anti_correlated', 'correlated', 'random']
 
 wb1 = load_workbook(filename=excel_file_name)
-wss = wb1.get_sheet_names()
+# wss = wb1.get_sheet_names()
+wss = wb1.sheetnames
 
 file_dimension_str = str(dimension) + 'D'
 for file in os.listdir(text_file_path):
@@ -188,12 +189,15 @@ for file in os.listdir(text_file_path):
         file_info = get_file_info(file)
         data_distributed_type = file_info[0]
         file_endings = file_info[1]
+
         sheet_name = find_sheet(wss, file_endings)
+        print(file_endings, sheet_name)
         if sheet_name is not None:
             print('sheet name: ' + str(sheet_name) + ' , data type: ' + data_distributed_type)
             opt_l_info = []
 
-            ws1 = wb1.get_sheet_by_name(sheet_name)
+            # ws1 = wb1.get_sheet_by_name(sheet_name)
+            ws1 = wb1[sheet_name]
             bin_count = ws1[bin_count_cell].value
 
             if bin_count == 40:
