@@ -498,6 +498,15 @@ BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 repeated_run = 5
 ####################################################################################
 
+
+bin_count = -1
+top_ks = -1
+hash_budget = -1
+total_cardinality = -1
+total_card_excel = -1
+is_real_life = -1
+
+
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
@@ -704,77 +713,59 @@ for i in range(len(dimensions)):
     # wb.save(excel_file_name)
     wb1.save(excel_file_name)
 
+    aggregated_file_name = SCRIPT_FOLDER + "run_bash_" + str(cur_d) + "D_all.sh"
+    f1 = open(aggregated_file_name, 'a+')
+    f1.write("#!/bin/bash \n")
 
-    for wwss in wss:
-        print(wwss)
-        # ws = wb.get_sheet_by_name(wwss)
-        # ws1 = wb1.get_sheet_by_name(wwss)
+    for rr in range(0, repeated_run):
+        file_name = SCRIPT_FOLDER + "run_bash_set_cur_" + str(cur_d) + 'D_' + str(total_card_excel) + \
+                    '_' + str('without_opt') + '.sh'
 
-        ws = wb[wwss]
-        ws1 = wb1[wwss]
+        f1.write('sh ' + file_name + '\n')
+        temp_str = "aggregating for non-opt round " + str(rr)
+        f1.write('echo \"' + temp_str + '\" \n')
 
-        bin_count = ws[bin_num].value
-        top_ks = ws[top_k_cell].value
-        hash_budget = ws[budget_cell].value
-        total_cardinality = ws[cardinality_cell].value
-        total_card_excel = ws[card_excel_cell].value
-        is_real_life = ws[is_real_life_cell].value
+        f1.write('source ../Python_Analysis/venv/bin/activate \n')
+        f1.write(
+            'python3 ../Python_Analysis/Norm_Analysis_LSH_Agg_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(
+                cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(
+                total_cardinality) + ' ' + str(is_real_life) + ' \n')
+        f1.write('sleep 3' + '\n')
 
-        if str(wwss).__contains__('EW'):
-            data_type_file_name_ = './' + Data_Types[kk] + '_EW_' + str(cur_d) + '_' + str(
-                total_cardinality) + '_' + str(
-                bin_count) + '_' + 'top_' + str(top_ks) + '_EW.txt'
-            data_gen_type = '_EW'
-        elif str(wwss).__contains__('ED_card'):
-            data_type_file_name_ = './' + Data_Types[kk] + '_ED_card_' + str(cur_d) + '_' + str(
-                total_cardinality) + '_' + str(
-                bin_count) + '_' + 'top_' + str(top_ks) + '_ED_card.txt'
-            data_gen_type = '_ED_card'
-        else:
-            data_gen_type = '_ED_prob'
+        # before starting pot = 1, clean everything except hash_table
+        f1.write('python3 ../Python_Analysis/Norm_Analysis_Sim_Overall_run_clean.py ' + str(cur_d) + ' ' +
+                 str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
+        f1.write('sleep 5' + '\n')
 
-        aggregated_file_name = SCRIPT_FOLDER + "run_bash_" + str(cur_d) + "D_all.sh"
-        f1 = open(aggregated_file_name, 'a+')
-        f1.write("#!/bin/bash \n")
-        for rr in range(0, repeated_run):
-            file_name = SCRIPT_FOLDER + "run_bash_set_cur_" + str(cur_d) + 'D_' + str(total_card_excel) + \
-                              '_' + str('without_opt') + '.sh'
 
-            f1.write('sh ' + file_name + '\n')
-            temp_str = "aggregating for non-opt round " + str(rr)
-            f1.write('echo \"' + temp_str + '\" \n')
+        # before starting next round, clean all
+        f1.write('python3 ../Python_Analysis/Norm_Analysis_Clean_All.py ' + str(cur_d) + ' ' +
+                 str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
+        f1.write('sleep 5' + '\n')
 
-            f1.write(
-                'python ../Python_Analysis/Norm_Analysis_LSH_Agg_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(
-                    cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(
-                    data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
-            f1.write('sleep 3' + '\n')
 
-            # before starting pot = 1, clean everything except hash_table
-            f1.write('python ../Python_Analysis/Norm_Analysis_Sim_Overall_run_clean.py ' + str(cur_d) + ' ' +
-                     str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
-            f1.write('sleep 5' + '\n')
 
-            # file_name = SCRIPT_FOLDER + "run_bash_set_cur_" + str(cur_d) + 'D_' + str(total_card_excel) + \
-            #             '_' + str('with_opt') + '.sh'
-            #
-            # f1.write('sh ' + file_name + '\n')
-            #
-            # temp_str = "aggregating for opt round " + str(rr)
-            # f1.write('echo \"' + temp_str + '\" \n')
-            #
-            # f1.write(
-            #     'python ../Python_Analysis/Norm_Analysis_LSH_Result_To_Excel.py with_opt ' + str(
-            #         rr) + ' ' + str(cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(
-            #         top_ks) + ' ' + str(data_gen_type[1:data_gen_type.__len__()]) + ' ' + str(is_real_life) + ' \n')
-            # f1.write('sleep 3' + '\n')
+        # for data_gen_type in Data_Gen_Types:
+        # f1.write('source ../Python_Analysis/venv/bin/activate')
+        # f1.write(
+        #     'python ../Python_Analysis/Norm_Analysis_LSH_Agg_Result_To_Excel.py without_opt ' + str(rr) + ' ' + str(
+        #         cur_d) + ' ' + str(hash_budget) + ' ' + str(bin_count) + ' ' + str(top_ks) + ' ' + str(
+        #         data_gen_type) + ' ' + str(is_real_life) + ' \n')
+        # f1.write('sleep 3' + '\n')
 
-            # before starting pot = 1, clean everything except hash_table
-            f1.write('python ../Python_Analysis/Norm_Analysis_Clean_All.py ' + str(cur_d) + ' ' +
-                     str(total_cardinality) + ' ' + str(budget_factor) + ' ' + str(top_ks) + ' \n')
-            f1.write('sleep 5' + '\n')
 
-        f1.close()
+
+        # with_without_opt = str(sys.argv[1])
+        # run_index = str(sys.argv[2])
+        # cur_dimension = int(str(sys.argv[3]))
+        # cur_budget = int(str(sys.argv[4]))
+        # cur_bin_count = int(str(sys.argv[5]))
+        # cur_top_o = int(str(sys.argv[6]))
+        # # equal_type = str(sys.argv[7])
+        # cur_card = str(sys.argv[7])
+        # is_real_life = str(sys.argv[8])
+
+    f1.close()
     # wb.save(excel_file_name)
 
 print("All done")

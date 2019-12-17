@@ -17,8 +17,9 @@ cand_recall_prefix = 'temp_result_'
 # card_file_name = ['100k', '200k', '500k', '1M', '1.5M', '2M']
 # card = [100000, 200000, 500000, 1000000, 1500000, 2000000]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-# data_type = ["anti_correlated", "correlated", "random"]
+data_type = ["anti_correlated", "correlated", "random"]
 comp_types = ['opt', 'max', 'uni']
+equal_types = ['EW', 'ED_card', 'ED_prob']
 
 top_ks = [1, 2, 5, 10, 25, 50]
 
@@ -42,7 +43,7 @@ def comp_card_file_name(cur_card_, is_real_life_):
     if is_real_life_ == 1:
         card_file_name_ = cur_card_
     else:
-        millnames = ['', 'K', 'M']
+        millnames = ['', 'k', 'M']
         n = float(cur_card_)
         millidx = max(0, min(len(millnames) - 1, int(math.floor(0 if n == 0 else math.log10(abs(n)) / 3))))
 
@@ -111,211 +112,218 @@ rand_log_optimized_uni_hashsize = ['AT5',  'AT6', 'AT7', 'AT8', 'AT9', 'AT10']
 
 with_without_opt = str(sys.argv[1])
 run_index = str(sys.argv[2])
-cur_dimension = int(str(sys.argv[2]))
-cur_budget = int(str(sys.argv[3]))
-cur_bin_count = int(str(sys.argv[4]))
-cur_top_o = int(str(sys.argv[5]))
-equal_type = str(sys.argv[6])
-cur_card = int(str(sys.argv[7]))
-cur_dt = str(sys.argv[8])
-is_real_life = str(sys.argv[9])
+cur_dimension = int(str(sys.argv[3]))
+cur_budget = int(str(sys.argv[4]))
+cur_bin_count = int(str(sys.argv[5]))
+cur_top_o = int(str(sys.argv[6]))
+# equal_type = str(sys.argv[7])
+cur_card = str(sys.argv[7])
+is_real_life = str(sys.argv[8])
 
 card_file_name = comp_card_file_name(cur_card, is_real_life)
 # new excel file here
-excel_file = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + run_index + ".xlsx"
-
-excel_file_hash_hits = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + \
-                       run_index + "_hash_hits.xlsx"
-
-print("Excel file name: " + str(excel_file))
-print("Excel hash hit file name: " + str(excel_file_hash_hits))
-# wb = load_workbook(filename=excel_file, data_only=True)
-wb = load_workbook(filename=excel_file)
-wb_hash_hits = load_workbook(filename=excel_file_hash_hits)
+# excel_file = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + run_index + ".xlsx"
+#
+# excel_file_hash_hits = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + \
+#                        run_index + "_hash_hits.xlsx"
 
 for cr in range(result_type.__len__()):
-    cur_cr = result_type[cr]
+    for cur_dt in data_type:
+        cur_cr = result_type[cr]
+        for equal_type in equal_types:
 
-    # sheet name goes here
-    sheet_name = str(cur_dimension) + "D_" + str(card_file_name) + "_" + \
-                 result_type_excel[cr] + "_top_" + str(cur_top_o) + '_' + str(cur_bin_count) + '_' + equal_type
-    # data_type = ["anti_correlated", "correlated", "random"]
-    # comp_types = ['opt', 'max', 'uni']
-    for ct in range(comp_types.__len__()):
-        cur_ct = comp_types[ct]
-        # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-        for tt in range(types.__len__()):
-            cur_type = types[tt]
-            column_dist = 0
-            if cur_type == 'log':
-                column_dist = 0
-            elif cur_type == 'log_minus':
-                column_dist = 10
-            elif cur_type == 'log_plus':
-                column_dist = 20
-            elif cur_type == 'log_plus_plus':
-                column_dist = 30
-            else:
-                column_dist = 40
-            # anti_correlated, correlated, random
-            # log, log minus, log plus, log plus plus, uni
-            # threshold, or threshold
-            start_recall = ''
-            start_NDCG = ''
-            start_cand = ''
-            start_obj = ''
-            start_hashsize = ''
-            if cur_dt == 'anti_correlated':
-                if cur_ct == 'opt':
-                    start_recall = anti_log_optimized_recall[0]
-                    start_NDCG = anti_log_optimized_NDCG[0]
-                    start_cand = anti_log_optimized_cand[0]
-                    start_obj = anti_log_optimized_obj[0]
-                    start_hashsize = anti_log_optimized_hashsize[0]
-                elif cur_ct == 'max':
-                    start_recall = anti_log_optimized_max_recall[0]
-                    start_NDCG = anti_log_optimized_max_NDCG[0]
-                    start_cand = anti_log_optimized_max_cand[0]
-                    start_obj = anti_log_optimized_max_obj[0]
-                    start_hashsize = anti_log_optimized_max_hashsize[0]
-                else:
-                    start_recall = anti_log_optimized_uni_recall[0]
-                    start_NDCG = anti_log_optimized_uni_NDCG[0]
-                    start_cand = anti_log_optimized_uni_cand[0]
-                    start_obj = anti_log_optimized_uni_obj[0]
-                    start_hashsize = anti_log_optimized_uni_hashsize[0]
-            elif cur_dt == 'correlated':
-                if cur_ct == 'opt':
-                    start_recall = corr_log_optimized_recall[0]
-                    start_NDCG = corr_log_optimized_NDCG[0]
-                    start_cand = corr_log_optimized_cand[0]
-                    start_obj = corr_log_optimized_obj[0]
-                    start_hashsize = corr_log_optimized_hashsize[0]
-                elif cur_ct == 'max':
-                    start_recall = corr_log_optimized_max_recall[0]
-                    start_NDCG = corr_log_optimized_max_NDCG[0]
-                    start_cand = corr_log_optimized_max_cand[0]
-                    start_obj = corr_log_optimized_max_obj[0]
-                    start_hashsize = corr_log_optimized_max_hashsize[0]
-                else:
-                    start_recall = corr_log_optimized_uni_recall[0]
-                    start_NDCG = corr_log_optimized_uni_NDCG[0]
-                    start_cand = corr_log_optimized_uni_cand[0]
-                    start_obj = corr_log_optimized_uni_obj[0]
-                    start_hashsize = corr_log_optimized_uni_hashsize[0]
-            else:
-                if cur_ct == 'opt':
-                    start_recall = rand_log_optimized_recall[0]
-                    start_NDCG = rand_log_optimized_NDCG[0]
-                    start_cand = rand_log_optimized_cand[0]
-                    start_obj = rand_log_optimized_obj[0]
-                    start_hashsize = rand_log_optimized_hashsize[0]
-                elif cur_ct == 'max':
-                    start_recall = rand_log_optimized_max_recall[0]
-                    start_NDCG = rand_log_optimized_max_NDCG[0]
-                    start_cand = rand_log_optimized_max_cand[0]
-                    start_obj = rand_log_optimized_max_obj[0]
-                    start_hashsize = rand_log_optimized_max_hashsize[0]
-                else:
-                    start_recall = rand_log_optimized_uni_recall[0]
-                    start_NDCG = rand_log_optimized_uni_NDCG[0]
-                    start_cand = rand_log_optimized_uni_cand[0]
-                    start_obj = rand_log_optimized_uni_obj[0]
-                    start_hashsize = rand_log_optimized_uni_hashsize[0]
-            obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
-                        str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
-            if not os.path.exists(obj_file_dir):
-                continue
-            # ws = wb[sheet_name]
-            print("sheet name: " + str(sheet_name))
-            ws = wb.get_sheet_by_name(sheet_name)
+            excel_file = "Aggregation_" + str(
+                cur_dimension) + "D_" + with_without_opt + "_" + run_index + '_' + equal_type + ".xlsx"
 
-            ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
+            excel_file_hash_hits = "Aggregation_" + str(cur_dimension) + "D_" + with_without_opt + "_" + \
+                                   run_index + "_hash_hits" + '_' + equal_type + ".xlsx"
 
-            obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
-                       str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
+            print("Excel file name: " + str(excel_file))
+            print("Excel hash hit file name: " + str(excel_file_hash_hits))
+            # wb = load_workbook(filename=excel_file, data_only=True)
+            wb = load_workbook(filename=excel_file)
+            wb_hash_hits = load_workbook(filename=excel_file_hash_hits)
 
-            f1 = open(obj_file, 'r')
-            lines = f1.readlines()
-            obj_s = lines[0].split(',')
-            # print(obj_s)
-            hash_s = lines[1].split(',')
-            # print(hash_s)
-
-            obj = []
-            hash = []
-            top_ks_length = -1
-            if cur_top_o == 10:
-                top_ks_length = 4
-            elif cur_top_o == 25:
-                top_ks_length = 5
-            else:
-                top_ks_length = 6
-            for oh_index in range(top_ks_length):
-                obj.append(int(obj_s[top_ks[oh_index] - 1]))
-                hash.append(int(hash_s[top_ks[oh_index] - 1]))
-            f1.close()
-            temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
-                        str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
-
-            print("result path: " + str(temp_result_dir))
-            if not os.path.exists(temp_result_dir):
-                continue
-
-            hash_table_hits_list = []
-            cand_size_list = []
-            for ii in range(top_ks_length):
-                cand_result_file = temp_result_dir + 'run_test_' + cur_dt + '_' + str(cur_dimension) + '_' + \
-                               str(cur_card) + '_' + cur_ct + '_' + cur_cr + '_top_' + str(top_ks[ii]) + '_candidate_size.txt'
-                cand_size = 0
-                hash_table_hits = 0
-                f1 = open(cand_result_file, 'r')
-                lines = f1.readlines()
-                for jj in range(min(top_ks[ii], lines.__len__())):
-                    if lines[jj].split(',').__len__() < 1:
-                        cand_size += 0
-                        hash_table_hits += 0
+            # sheet name goes here
+            sheet_name = str(cur_dimension) + "D_" + str(card_file_name) + "_" + \
+                         result_type_excel[cr] + "_top_" + str(cur_top_o)
+            # data_type = ["anti_correlated", "correlated", "random"]
+            # comp_types = ['opt', 'max', 'uni']
+            for ct in range(comp_types.__len__()):
+                cur_ct = comp_types[ct]
+                # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+                for tt in range(types.__len__()):
+                    cur_type = types[tt]
+                    column_dist = 0
+                    if cur_type == 'log':
+                        column_dist = 0
+                    elif cur_type == 'log_minus':
+                        column_dist = 10
+                    elif cur_type == 'log_plus':
+                        column_dist = 20
+                    elif cur_type == 'log_plus_plus':
+                        column_dist = 30
                     else:
-                        cand_size += float(lines[jj].split(',')[0])
-                        hash_table_hits += float(lines[jj].split(',')[2])
-                # cand_size = float(cand_size)/float(top_ks[ii])
-                cand_size = float(cand_size)
-                hash_table_hits = float(hash_table_hits)
-                cand_size_list.append(cand_size)
-                hash_table_hits_list.append(hash_table_hits)
-                f1.close()
+                        column_dist = 40
+                    # anti_correlated, correlated, random
+                    # log, log minus, log plus, log plus plus, uni
+                    # threshold, or threshold
+                    start_recall = ''
+                    start_NDCG = ''
+                    start_cand = ''
+                    start_obj = ''
+                    start_hashsize = ''
+                    if cur_dt == 'anti_correlated':
+                        if cur_ct == 'opt':
+                            start_recall = anti_log_optimized_recall[0]
+                            start_NDCG = anti_log_optimized_NDCG[0]
+                            start_cand = anti_log_optimized_cand[0]
+                            start_obj = anti_log_optimized_obj[0]
+                            start_hashsize = anti_log_optimized_hashsize[0]
+                        elif cur_ct == 'max':
+                            start_recall = anti_log_optimized_max_recall[0]
+                            start_NDCG = anti_log_optimized_max_NDCG[0]
+                            start_cand = anti_log_optimized_max_cand[0]
+                            start_obj = anti_log_optimized_max_obj[0]
+                            start_hashsize = anti_log_optimized_max_hashsize[0]
+                        else:
+                            start_recall = anti_log_optimized_uni_recall[0]
+                            start_NDCG = anti_log_optimized_uni_NDCG[0]
+                            start_cand = anti_log_optimized_uni_cand[0]
+                            start_obj = anti_log_optimized_uni_obj[0]
+                            start_hashsize = anti_log_optimized_uni_hashsize[0]
+                    elif cur_dt == 'correlated':
+                        if cur_ct == 'opt':
+                            start_recall = corr_log_optimized_recall[0]
+                            start_NDCG = corr_log_optimized_NDCG[0]
+                            start_cand = corr_log_optimized_cand[0]
+                            start_obj = corr_log_optimized_obj[0]
+                            start_hashsize = corr_log_optimized_hashsize[0]
+                        elif cur_ct == 'max':
+                            start_recall = corr_log_optimized_max_recall[0]
+                            start_NDCG = corr_log_optimized_max_NDCG[0]
+                            start_cand = corr_log_optimized_max_cand[0]
+                            start_obj = corr_log_optimized_max_obj[0]
+                            start_hashsize = corr_log_optimized_max_hashsize[0]
+                        else:
+                            start_recall = corr_log_optimized_uni_recall[0]
+                            start_NDCG = corr_log_optimized_uni_NDCG[0]
+                            start_cand = corr_log_optimized_uni_cand[0]
+                            start_obj = corr_log_optimized_uni_obj[0]
+                            start_hashsize = corr_log_optimized_uni_hashsize[0]
+                    else:
+                        if cur_ct == 'opt':
+                            start_recall = rand_log_optimized_recall[0]
+                            start_NDCG = rand_log_optimized_NDCG[0]
+                            start_cand = rand_log_optimized_cand[0]
+                            start_obj = rand_log_optimized_obj[0]
+                            start_hashsize = rand_log_optimized_hashsize[0]
+                        elif cur_ct == 'max':
+                            start_recall = rand_log_optimized_max_recall[0]
+                            start_NDCG = rand_log_optimized_max_NDCG[0]
+                            start_cand = rand_log_optimized_max_cand[0]
+                            start_obj = rand_log_optimized_max_obj[0]
+                            start_hashsize = rand_log_optimized_max_hashsize[0]
+                        else:
+                            start_recall = rand_log_optimized_uni_recall[0]
+                            start_NDCG = rand_log_optimized_uni_NDCG[0]
+                            start_cand = rand_log_optimized_uni_cand[0]
+                            start_obj = rand_log_optimized_uni_obj[0]
+                            start_hashsize = rand_log_optimized_uni_hashsize[0]
+                    obj_file_dir = result_file_dir + obj_hashsize_prefix + str(cur_dimension) + 'D_top' + \
+                                str(cur_top_o) + '_budget_' + str(cur_budget) + '_' + cur_type + '_' + str(cur_card) + '/'
+                    if not os.path.exists(obj_file_dir):
+                        continue
+                    # ws = wb[sheet_name]
+                    print("sheet name: " + str(sheet_name))
+                    ws = wb.get_sheet_by_name(sheet_name)
 
-            overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
-                cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '_' + cur_cr + '.txt'
-            # print(overall_result_file)
-            f1 = open(overall_result_file, 'r')
-            lines = f1.readlines()
-            recall = []
-            NDCG = []
-            # for ll in range(top_ks.__len__()):
-            for ll in range(top_ks_length):
-                ttt = lines[2*ll+1].split('\t')[0]
-                recall.append(float(lines[2*ll+1].split('\t')[1]))
-                NDCG.append(float(lines[2*ll+1].split('\t')[2]))
+                    ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
 
-            # cardinality, dimension, budget, top-10, log, anti_correlated, opt
-            spec_string = 'cardinality: ' + str(cur_card) + ', dimension: ' + str(cur_dimension) +\
-                          ',  budget: ' + str(cur_budget) + ', top-k: ' + str(cur_top_o) + ', type: ' \
-                          + cur_type + ', data: ' + cur_dt + ', compute type: ' + cur_ct + \
-                          ', result type: ' + cur_cr
-            for ee in range(top_ks_length):
-                recall_cell = column_row_index(start_recall, column_dist + ee)
-                NDCG_cell = column_row_index(start_NDCG, column_dist + ee)
-                cand_cell = column_row_index(start_cand, column_dist + ee)
-                obj_cell = column_row_index(start_obj, column_dist + ee)
-                hashsize_cell = column_row_index(start_hashsize, column_dist + ee)
-                ws[recall_cell] = float(recall[ee])
-                ws[NDCG_cell] = float(NDCG[ee])
-                ws[cand_cell] = float(cand_size_list[ee])
-                ws[obj_cell] = float(obj[ee])
-                ws[hashsize_cell] = float(hash[ee])
-            for ee in range(top_ks_length):
-                ws_hash_hits[hashsize_cell] = float(hash_table_hits_list[ee])
+                    obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
+                               str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
+
+                    f1 = open(obj_file, 'r')
+                    lines = f1.readlines()
+                    obj_s = lines[0].split(',')
+                    # print(obj_s)
+                    hash_s = lines[1].split(',')
+                    # print(hash_s)
+
+                    obj = []
+                    hash = []
+                    top_ks_length = -1
+                    if cur_top_o == 10:
+                        top_ks_length = 4
+                    elif cur_top_o == 25:
+                        top_ks_length = 5
+                    else:
+                        top_ks_length = 6
+                    for oh_index in range(top_ks_length):
+                        obj.append(int(obj_s[top_ks[oh_index] - 1]))
+                        hash.append(int(hash_s[top_ks[oh_index] - 1]))
+                    f1.close()
+                    temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
+                                str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
+
+                    print("result path: " + str(temp_result_dir))
+                    if not os.path.exists(temp_result_dir):
+                        continue
+
+                    hash_table_hits_list = []
+                    cand_size_list = []
+                    for ii in range(top_ks_length):
+                        cand_result_file = temp_result_dir + 'run_test_' + cur_dt + '_' + str(cur_dimension) + '_' + \
+                                       str(cur_card) + '_' + cur_ct + '_' + cur_cr + '_top_' + str(top_ks[ii]) + '_candidate_size.txt'
+                        cand_size = 0
+                        hash_table_hits = 0
+                        f1 = open(cand_result_file, 'r')
+                        lines = f1.readlines()
+                        for jj in range(min(top_ks[ii], lines.__len__())):
+                            if lines[jj].split(',').__len__() < 1:
+                                cand_size += 0
+                                hash_table_hits += 0
+                            else:
+                                cand_size += float(lines[jj].split(',')[0])
+                                hash_table_hits += float(lines[jj].split(',')[2])
+                        # cand_size = float(cand_size)/float(top_ks[ii])
+                        cand_size = float(cand_size)
+                        hash_table_hits = float(hash_table_hits)
+                        cand_size_list.append(cand_size)
+                        hash_table_hits_list.append(hash_table_hits)
+                        f1.close()
+
+                    overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
+                        cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '_' + cur_cr + '.txt'
+                    # print(overall_result_file)
+                    f1 = open(overall_result_file, 'r')
+                    lines = f1.readlines()
+                    recall = []
+                    NDCG = []
+                    # for ll in range(top_ks.__len__()):
+                    for ll in range(top_ks_length):
+                        ttt = lines[2*ll+1].split('\t')[0]
+                        recall.append(float(lines[2*ll+1].split('\t')[1]))
+                        NDCG.append(float(lines[2*ll+1].split('\t')[2]))
+
+                    # cardinality, dimension, budget, top-10, log, anti_correlated, opt
+                    spec_string = 'cardinality: ' + str(cur_card) + ', dimension: ' + str(cur_dimension) +\
+                                  ',  budget: ' + str(cur_budget) + ', top-k: ' + str(cur_top_o) + ', type: ' \
+                                  + cur_type + ', data: ' + cur_dt + ', compute type: ' + cur_ct + \
+                                  ', result type: ' + cur_cr
+                    for ee in range(top_ks_length):
+                        recall_cell = column_row_index(start_recall, column_dist + ee)
+                        NDCG_cell = column_row_index(start_NDCG, column_dist + ee)
+                        cand_cell = column_row_index(start_cand, column_dist + ee)
+                        obj_cell = column_row_index(start_obj, column_dist + ee)
+                        hashsize_cell = column_row_index(start_hashsize, column_dist + ee)
+                        ws[recall_cell] = float(recall[ee])
+                        ws[NDCG_cell] = float(NDCG[ee])
+                        ws[cand_cell] = float(cand_size_list[ee])
+                        ws[obj_cell] = float(obj[ee])
+                        ws[hashsize_cell] = float(hash[ee])
+                    for ee in range(top_ks_length):
+                        ws_hash_hits[hashsize_cell] = float(hash_table_hits_list[ee])
 wb.save(excel_file)
 wb_hash_hits.save(excel_file_hash_hits)
 print('Done')
