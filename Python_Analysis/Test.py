@@ -158,16 +158,45 @@ def millify(n):
 # print(length, cut_length)
 #
 # print(list3)
+#
+# test_matrix_ = np.random.rand(5, 5)
+# test_matrix_ = np.asarray(test_matrix_)
+# print(test_matrix_)
+#
+# numrows = len(test_matrix_)
+# numcols = len(test_matrix_[0])
+#
+# print(test_matrix_[:, 1])
+# print(test_matrix_[1, :])
 
-test_matrix_ = np.random.rand(5, 5)
-test_matrix_ = np.asarray(test_matrix_)
-print(test_matrix_)
 
-numrows = len(test_matrix_)
-numcols = len(test_matrix_[0])
 
-print(test_matrix_[:, 1])
-print(test_matrix_[1, :])
+# data_list = np.random.rand(2,3)
+#
+# print(data_list)
+#
+# map(min, data_list)
+# list(map(min, data_list))
+# min_val = min(map(min, data_list))
+#
+# map(max, data_list)
+# list(map(max, data_list))
+# max_val = max(map(max, data_list))
+#
+# inter_val = max_val - min_val
+#
+# tt = (data_list - min_val)/max_val
+
+
+data_list = np.random.rand(2,3)
+
+print(data_list)
+
+tt = data_list - 1
+
+print(tt)
+
+
 
 
 

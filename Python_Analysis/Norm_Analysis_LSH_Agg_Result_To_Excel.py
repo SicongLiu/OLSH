@@ -149,6 +149,11 @@ for cr in range(result_type.__len__()):
                          result_type_excel[cr] + "_top_" + str(cur_top_o)
             # data_type = ["anti_correlated", "correlated", "random"]
             # comp_types = ['opt', 'max', 'uni']
+            if equal_type == 'ED_prob':
+                comp_types = ['max']
+            else:
+                comp_types = ['opt', 'max', 'uni']
+
             for ct in range(comp_types.__len__()):
                 cur_ct = comp_types[ct]
                 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -240,7 +245,7 @@ for cr in range(result_type.__len__()):
 
                     ws_hash_hits = wb_hash_hits.get_sheet_by_name(sheet_name)
 
-                    obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + \
+                    obj_file = obj_file_dir + 'cumsum_hashsize_obj_' + cur_ct + '_' + cur_dt + '_' + equal_type + '_' + \
                                str(cur_dimension) + '_' + str(cur_card) + '_' + with_without_opt + '.txt'
 
                     f1 = open(obj_file, 'r')
@@ -264,7 +269,7 @@ for cr in range(result_type.__len__()):
                         hash.append(int(hash_s[top_ks[oh_index] - 1]))
                     f1.close()
                     temp_result_dir = result_file_dir + cand_recall_prefix + str(cur_dimension) + 'D_top' + \
-                                str(cur_top_o) + '_budget_' + cur_budget + '_' + cur_type + '_' + str(cur_card) + '/'
+                                str(cur_top_o) + '_budget_' + str(cur_budget) + '_' + cur_type + '_' + str(cur_card) + '/'
 
                     print("result path: " + str(temp_result_dir))
                     if not os.path.exists(temp_result_dir):
@@ -272,8 +277,9 @@ for cr in range(result_type.__len__()):
 
                     hash_table_hits_list = []
                     cand_size_list = []
+
                     for ii in range(top_ks_length):
-                        cand_result_file = temp_result_dir + 'run_test_' + cur_dt + '_' + str(cur_dimension) + '_' + \
+                        cand_result_file = temp_result_dir + 'run_test_' + cur_dt + '_' + equal_type + '_' + str(cur_dimension) + '_' + \
                                        str(cur_card) + '_' + cur_ct + '_' + cur_cr + '_top_' + str(top_ks[ii]) + '_candidate_size.txt'
                         cand_size = 0
                         hash_table_hits = 0
@@ -293,9 +299,9 @@ for cr in range(result_type.__len__()):
                         hash_table_hits_list.append(hash_table_hits)
                         f1.close()
 
-                    overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + str(
+                    overall_result_file = temp_result_dir + 'overall_run_test_' + cur_dt + '_' + equal_type + '_' + str(
                         cur_dimension) + '_' + str(cur_card) + '_' + cur_ct + '_' + cur_cr + '.txt'
-                    # print(overall_result_file)
+
                     f1 = open(overall_result_file, 'r')
                     lines = f1.readlines()
                     recall = []
@@ -324,6 +330,6 @@ for cr in range(result_type.__len__()):
                         ws[hashsize_cell] = float(hash[ee])
                     for ee in range(top_ks_length):
                         ws_hash_hits[hashsize_cell] = float(hash_table_hits_list[ee])
-wb.save(excel_file)
-wb_hash_hits.save(excel_file_hash_hits)
+            wb.save(excel_file)
+            wb_hash_hits.save(excel_file_hash_hits)
 print('Done')

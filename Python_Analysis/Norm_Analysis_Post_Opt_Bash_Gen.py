@@ -216,6 +216,47 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, type_name, budget_,
     f4.write(','.join(map(repr, hashsize_cumsum)))
     f4.close()
 
+    # max cumsum_hashsize
+    obj_cumsum = []
+    hashsize_cumsum = []
+    obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_max_" + data_type_ + "_" + str(
+        dimension_) + "_" + str(cardinality_) + '_' + str(
+        with_without_opt_) + ".txt"
+    f4 = open(obj_hashsize_file, 'w')
+    for mm in range(len(L_Max_List)):
+        if obj_cumsum.__len__() == 0:
+            obj_cumsum.append(qhull_data_count[mm])
+            hashsize_cumsum.append(qhull_data_count[mm] * L_Max_List[mm])
+        else:
+            obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
+            hashsize_cumsum.append(
+                hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] *
+                L_Max_List[mm])
+    f4.write(','.join(map(repr, obj_cumsum)))
+    f4.write("\n")
+    f4.write(','.join(map(repr, hashsize_cumsum)))
+    f4.close()
+
+    # uni cumsum hashsize
+    obj_cumsum = []
+    hashsize_cumsum = []
+    obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type_ + "_" + str(
+        dimension_) + "_" + str(cardinality_) + '_' + str(
+        with_without_opt_) + ".txt"
+    f4 = open(obj_hashsize_file, 'w')
+    for mm in range(len(L_Uni_List)):
+        if obj_cumsum.__len__() == 0:
+            obj_cumsum.append(qhull_data_count[mm])
+            hashsize_cumsum.append(qhull_data_count[mm] * L_Uni_List[mm])
+        else:
+            obj_cumsum.append(obj_cumsum[obj_cumsum.__len__() - 1] + qhull_data_count[mm])
+            hashsize_cumsum.append(
+                hashsize_cumsum[hashsize_cumsum.__len__() - 1] + qhull_data_count[mm] * L_Uni_List[mm])
+    f4.write(','.join(map(repr, obj_cumsum)))
+    f4.write("\n")
+    f4.write(','.join(map(repr, hashsize_cumsum)))
+    f4.close()
+
     if data_type_.__contains__('anti_'):
         ts_data_type_ = 'anti_correlated'
     elif data_type_.__contains__('correlated'):
@@ -510,7 +551,7 @@ is_real_life = -1
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_2M_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_100K_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     # wss = wb.get_sheet_names()

@@ -2164,7 +2164,8 @@ int overall_performance(                        // output the overall performanc
 	}
 
 	char command_str_char[200];
-	sprintf(command_str_char, "rm %s_*", temp_output_folder);
+	// sprintf(command_str_char, "rm %s_*", temp_output_folder);
+	sprintf(command_str_char, "rm opt_top_*");
 	// sprintf(output_set, "%s_top_%d_%s.txt", temp_output_folder, top_k, is_threshold_file_name.c_str());
 	cout << "command line to be executed... " << command_str_char << endl;
 	system(command_str_char);
