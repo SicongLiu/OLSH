@@ -8,6 +8,49 @@ from collections import Counter
 import math
 
 
+def split_original_query(query_folder_):
+    query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_original.txt'
+    f = open(query_file_name, 'r')
+    lines = f.readlines()
+    cur_dim = int(lines[0])
+    cur_card = int(lines[1])
+    query_list = []
+    for kk in range(cur_card):
+        current_query_record = np.fromstring(lines[kk + 2], dtype=float, sep=' ')
+        current_query_record = np.asarray(current_query_record)
+        query_list.append(current_query_record)
+    f.close()
+
+    updated_card = cur_card / 2
+    stats_learn_query_file = 'query_' + str(cur_dim) + 'D_stats_learn.txt'
+    stats_learn_query = query_list[0: updated_card]
+    temp_batch = []
+    temp_batch.append(np.asarray(int(cur_dim)))
+    temp_batch.append(np.asarray(int(updated_card)))
+    temp_batch = np.asarray(temp_batch)
+    np.savetxt(stats_learn_query_file, temp_batch, delimiter=',', fmt='%i')
+
+    temp_data_bash = np.asarray(stats_learn_query)
+    f_handle = open(stats_learn_query_file, 'ab')
+    np.savetxt(f_handle, temp_data_bash, fmt='%10.6f')
+    f_handle.close()
+
+    test_query_file = 'query_' + str(cur_dim) + 'D.txt'
+    test_query = query_list[updated_card: cur_card]
+    temp_batch = []
+    temp_batch.append(np.asarray(int(cur_dim)))
+    temp_batch.append(np.asarray(int(updated_card)))
+    temp_batch = np.asarray(temp_batch)
+    np.savetxt(test_query_file, temp_batch, delimiter=',', fmt='%i')
+
+    temp_data_bash = np.asarray(test_query)
+    f_handle = open(test_query_file, 'ab')
+    np.savetxt(f_handle, temp_data_bash, fmt='%10.6f')
+    f_handle.close()
+
+    return np.asarray(query_list)
+
+
 def scale_data(data_list_):
     map(max, data_list_)
     list(map(max, data_list_))
@@ -122,7 +165,6 @@ elif bin_array[bin_array.__len__() - 1] <= max_norm:
 
 # bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
 print(bin_array.__len__())
-
 
 # plot without bin
 _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram

@@ -188,13 +188,11 @@ def millify(n):
 # tt = (data_list - min_val)/max_val
 
 
-data_list = np.random.rand(2,3)
+data_list = [1, 2, 3, 4, 5, 6, 7]
 
-print(data_list)
+print(data_list[0:6])
 
-tt = data_list - 1
-
-print(tt)
+print(data_list[6:7])
 
 
 

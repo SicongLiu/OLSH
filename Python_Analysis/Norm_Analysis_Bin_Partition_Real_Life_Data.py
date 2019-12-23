@@ -9,6 +9,25 @@ import math
 from scipy.stats import beta
 
 
+
+def scale_data(data_list_):
+    map(max, data_list_)
+    list(map(max, data_list_))
+    max_val = max(map(max, data_list_))
+
+    map(min, data_list_)
+    list(map(min, data_list_))
+    min_val = min(map(min, data_list_))
+
+    n_data_norm_list = []
+    n_data_list = np.asarray((data_list_ - min_val) / (max_val - min_val))
+    for kk in range(cur_card):
+        temp_norm = np.linalg.norm(n_data_list[kk])
+        n_data_norm_list.append(float("{0:.5f}".format(temp_norm)))
+
+    return n_data_list, n_data_norm_list
+
+
 def load_query(query_folder_, dimension_, is_stats_learn_):
     if is_stats_learn_:
         query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_stats_learn.txt'
@@ -214,8 +233,6 @@ def save_bin_partition_on_file_equal_depth(bin_count_, data_type_, dimension_, c
 def equal_width_bin_edges_real_life(data_list_, dimension_, bin_count_):
     numrows = len(data_list_)
     numcols = len(data_list_[0])
-
-
 
     min_norm_ = 0
     max_norm_ = math.sqrt(dimension_)
