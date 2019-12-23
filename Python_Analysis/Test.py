@@ -188,12 +188,14 @@ def millify(n):
 # tt = (data_list - min_val)/max_val
 
 
-data_list = [1, 2, 3, 4, 5, 6, 7]
+tt1 = [1, 2, 3, 4, 5, 6, 7]
+tt1 = np.asarray(tt1)
 
-print(data_list[0:6])
+tt = [8, 9, 10]
+tt = np.asarray(tt)
+tt.extend(tt1)
 
-print(data_list[6:7])
-
+print(tt)
 
 
 

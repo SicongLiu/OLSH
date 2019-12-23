@@ -138,7 +138,7 @@ data_list = np.asarray(data_list)
 #     temp_norm = np.linalg.norm(n_data_list[kk])
 #     n_data_norm_list.append(float("{0:.5f}".format(temp_norm)))
 
-n_data_list, n_data_norm_list = scale_data(data_list)
+data_list, data_norm_list = scale_data(data_list)
 
 chunks = 40
 # min_norm = 0
@@ -174,16 +174,22 @@ _ = plt.hist(data_norm_list, bins=bin_array)  # arguments are passed to np.histo
 print("plot data norm done")
 
 # plot maxium inner product of queries
-query_list = load_query(query_file, dimension, 0)
+query_list = load_query(query_folder, dimension, 0)
 # ==================== check top-25 how many elements in which bin ====================
 inner_prod_list = []
 for ii in range(query_num):
     print("Query index: " + str(ii))
     cur_query = query_list[ii]
-    for jj in range(cardinality):
-        cur_data = data_list[jj]
-        temp_dot_product = dot(cur_data, cur_query)
-        inner_prod_list.append(temp_dot_product)
+    inner_prod_list_temp = data_list.dot(cur_query)
+
+    if inner_prod_list.__len__() ==0:
+        inner_prod_list = list(inner_prod_list_temp)
+    else:
+        inner_prod_list.extend(list(inner_prod_list_temp))
+    # for jj in range(cardinality):
+    #     cur_data = data_list[jj]
+    #     temp_dot_product = dot(cur_data, cur_query)
+    #     inner_prod_list.append(temp_dot_product)
 inner_prod_list = np.asarray(inner_prod_list)
 
 # plot without bin
