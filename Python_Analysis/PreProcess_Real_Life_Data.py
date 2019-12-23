@@ -8,6 +8,29 @@ from collections import Counter
 import math
 
 
+def compute_bin_array(query_list_, query_num_, data_list_, data_norm_list_, bins_, top_k_):
+    save_bin_array = []
+    total_counter = Counter()
+    data_list_ = np.asarray(data_list_)
+    for ii in range(query_num_):
+        print("Query index: " + str(ii))
+        cur_query = query_list_[ii]
+        cur_query = np.asarray(cur_query)
+        inner_prod_list = data_list_.dot(cur_query)
+
+        inner_prod_list = np.asarray(inner_prod_list)
+        reverse_sort_index = np.argsort((-inner_prod_list))
+        top_k_index = reverse_sort_index[0: top_k_]
+
+        selected_norms = data_norm_list_[list(top_k_index)]
+        selected_inner_prod = inner_prod_list[list(top_k_index)]
+        bin_count_array = np.digitize(selected_norms, bins_)
+        save_bin_array.extend(bin_count_array)
+        temp_counter = Counter(bin_count_array)
+        total_counter = total_counter + temp_counter
+    return np.asarray(save_bin_array), total_counter
+
+
 def split_original_query(query_folder_):
     query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_original.txt'
     f = open(query_file_name, 'r')
@@ -66,7 +89,7 @@ def scale_data(data_list_):
         temp_norm = np.linalg.norm(n_data_list[kk])
         n_data_norm_list.append(float("{0:.5f}".format(temp_norm)))
 
-    return n_data_list, n_data_norm_list
+    return np.asarray(n_data_list), np.asarray(n_data_norm_list)
 
 
 def load_query(query_folder_, dimension_, is_stats_learn_):
@@ -141,6 +164,7 @@ data_list = np.asarray(data_list)
 data_list, data_norm_list = scale_data(data_list)
 
 chunks = 40
+top_k = 25
 # min_norm = 0
 # max_norm = math.sqrt(dimension)
 min_norm = min(data_norm_list)
@@ -166,37 +190,43 @@ elif bin_array[bin_array.__len__() - 1] <= max_norm:
 # bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
 print(bin_array.__len__())
 
-# plot without bin
-_ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
 
-# plot with bin
-_ = plt.hist(data_norm_list, bins=bin_array)  # arguments are passed to np.histogram
+# plot without bin
+# _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
+#
+# # plot with bin
+# _ = plt.hist(data_norm_list, bins=bin_array)  # arguments are passed to np.histogram
 print("plot data norm done")
 
 # plot maxium inner product of queries
 query_list = load_query(query_folder, dimension, 0)
-# ==================== check top-25 how many elements in which bin ====================
-inner_prod_list = []
-for ii in range(query_num):
-    print("Query index: " + str(ii))
-    cur_query = query_list[ii]
-    inner_prod_list_temp = data_list.dot(cur_query)
+bin_array, total_counter = compute_bin_array(query_list, query_num, data_list, data_norm_list, bin_array, top_k)
 
-    if inner_prod_list.__len__() ==0:
-        inner_prod_list = list(inner_prod_list_temp)
-    else:
-        inner_prod_list.extend(list(inner_prod_list_temp))
-    # for jj in range(cardinality):
-    #     cur_data = data_list[jj]
-    #     temp_dot_product = dot(cur_data, cur_query)
-    #     inner_prod_list.append(temp_dot_product)
-inner_prod_list = np.asarray(inner_prod_list)
+plt.bar(total_counter.keys(), total_counter.values())
 
-# plot without bin
-_ = plt.hist(inner_prod_list, bins='auto')  # arguments are passed to np.histogram
 
-# plot with bin
-_ = plt.hist(inner_prod_list, bins=bin_array)  # arguments are passed to np.histogram
+
+# # ==================== check top-25 how many elements in which bin ====================
+# inner_prod_list = []
+# for ii in range(query_num):
+#     print("Query index: " + str(ii))
+#     cur_query = query_list[ii]
+#     inner_prod_list_temp = data_list.dot(cur_query)
+#
+#     if inner_prod_list.__len__() ==0:
+#         inner_prod_list = list(inner_prod_list_temp)
+#     else:
+#         inner_prod_list.extend(list(inner_prod_list_temp))
+#     # for jj in range(cardinality):
+#     #     cur_data = data_list[jj]
+#     #     temp_dot_product = dot(cur_data, cur_query)
+#     #     inner_prod_list.append(temp_dot_product)
+# inner_prod_list = np.asarray(inner_prod_list)
+#
+# # plot without bin
+# _ = plt.hist(inner_prod_list, bins='auto')  # arguments are passed to np.histogram
+#
+
 
 print('Query top-k ground truth plot Done')
 
