@@ -4,10 +4,11 @@ import numpy as np
 #
 # yy = np.std(x)
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import math
 from  collections import Counter
 import random
+from scipy.stats import beta
 
 recall_list = []
 dim_1 = []
@@ -187,16 +188,18 @@ def millify(n):
 #
 # tt = (data_list - min_val)/max_val
 
+a = 5
+b = 2.8
 
-tt1 = [1, 2, 3, 4, 5, 6, 7]
-tt1 = np.asarray(tt1)
+x = np.arange(0.01, 1, 0.01)
+y = beta.pdf(x, a, b)
+# plt.plot(x,y)
 
-tt = [8, 9, 10]
-tt = np.asarray(tt)
-tt.extend(tt1)
-
-print(tt)
-
+plt.plot(x, y)
+plt.xticks([])
+plt.yticks([])
+# plt.plot(x, y1, "-", x, y2, "r--", x, y3, "g--")
+print('all done')
 
 
 

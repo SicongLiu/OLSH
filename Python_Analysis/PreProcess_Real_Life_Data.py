@@ -6,9 +6,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
 import math
+from scipy.stats import beta
+from matplotlib.patches import Rectangle
+
+
+def compute_alpha_beta(input_ndarray_, min_index_, max_index_):
+    sample_mean = np.mean(input_ndarray_)
+    sample_var = np.var(input_ndarray_, ddof=1)
+    x_bar = float(sample_mean - min_index_) / float(max_index_ - min_index_)
+    var_bar = float(sample_var) / math.pow(float(max_index_ - min_index_), 2)
+    alpha_ = x_bar * (x_bar * (1 - x_bar)/var_bar - 1)
+    beta_ = (1 - x_bar) * (x_bar * (1 - x_bar)/var_bar - 1)
+
+    return alpha_, beta_
 
 
 def compute_bin_array(query_list_, query_num_, data_list_, data_norm_list_, bins_, top_k_):
+    ret_norm_list = []
     save_bin_array = []
     total_counter = Counter()
     data_list_ = np.asarray(data_list_)
@@ -24,14 +38,15 @@ def compute_bin_array(query_list_, query_num_, data_list_, data_norm_list_, bins
 
         selected_norms = data_norm_list_[list(top_k_index)]
         selected_inner_prod = inner_prod_list[list(top_k_index)]
+        ret_norm_list.extend(selected_inner_prod)
         bin_count_array = np.digitize(selected_norms, bins_)
         save_bin_array.extend(bin_count_array)
         temp_counter = Counter(bin_count_array)
         total_counter = total_counter + temp_counter
-    return np.asarray(save_bin_array), total_counter
+    return np.asarray(save_bin_array), total_counter, np.asarray(ret_norm_list)
 
 
-def split_original_query(query_folder_):
+def split_original_query(query_folder_, dimension_):
     query_file_name = query_folder_ + 'query_' + str(dimension_) + 'D_original.txt'
     f = open(query_file_name, 'r')
     lines = f.readlines()
@@ -126,7 +141,6 @@ query_num = 1000
 query_folder = '../H2_ALSH/query/'
 query_file = query_folder + 'query_' + str(dimension) + 'D.txt'
 
-
 file_name = data_folder + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
 f = open(file_name, 'r')
 lines = f.readlines()
@@ -146,20 +160,6 @@ for kk in range(cur_card):
 f.close()
 data_norm_list = np.asarray(data_norm_list)
 data_list = np.asarray(data_list)
-
-# map(max, data_list)
-# list(map(max, data_list))
-# max_val = max(map(max, data_list))
-#
-# map(min, data_list)
-# list(map(min, data_list))
-# min_val = min(map(min, data_list))
-#
-# n_data_norm_list = []
-# n_data_list = np.asarray((data_list - min_val)/(max_val - min_val))
-# for kk in range(cur_card):
-#     temp_norm = np.linalg.norm(n_data_list[kk])
-#     n_data_norm_list.append(float("{0:.5f}".format(temp_norm)))
 
 data_list, data_norm_list = scale_data(data_list)
 
@@ -190,43 +190,43 @@ elif bin_array[bin_array.__len__() - 1] <= max_norm:
 # bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
 print(bin_array.__len__())
 
-
-# plot without bin
 # _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
-#
-# # plot with bin
-# _ = plt.hist(data_norm_list, bins=bin_array)  # arguments are passed to np.histogram
+# plt.xlabel("norm values", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
+# plt.xticks(fontsize=14)
+# plt.yticks(fontsize=14)
+
+#create legend
+# handles = [Rectangle((0, 0), 1, 1, ec="k")]
+# labels = ["test"]
+# plt.legend(handles, labels)
 print("plot data norm done")
 
 # plot maxium inner product of queries
 query_list = load_query(query_folder, dimension, 0)
-bin_array, total_counter = compute_bin_array(query_list, query_num, data_list, data_norm_list, bin_array, top_k)
-
-plt.bar(total_counter.keys(), total_counter.values())
+bin_array, total_counter, top_k_prod = compute_bin_array(query_list, query_num, data_list, data_norm_list, bin_array, top_k)
 
 
+# _ = plt.hist(top_k_prod, bins='auto')  # arguments are passed to np.histogram
+# plt.xlabel("top-k inner product", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
+# plt.xticks(fontsize=14)
+# plt.yticks(fontsize=14)
 
-# # ==================== check top-25 how many elements in which bin ====================
-# inner_prod_list = []
-# for ii in range(query_num):
-#     print("Query index: " + str(ii))
-#     cur_query = query_list[ii]
-#     inner_prod_list_temp = data_list.dot(cur_query)
-#
-#     if inner_prod_list.__len__() ==0:
-#         inner_prod_list = list(inner_prod_list_temp)
-#     else:
-#         inner_prod_list.extend(list(inner_prod_list_temp))
-#     # for jj in range(cardinality):
-#     #     cur_data = data_list[jj]
-#     #     temp_dot_product = dot(cur_data, cur_query)
-#     #     inner_prod_list.append(temp_dot_product)
-# inner_prod_list = np.asarray(inner_prod_list)
-#
-# # plot without bin
-# _ = plt.hist(inner_prod_list, bins='auto')  # arguments are passed to np.histogram
-#
+# plt.bar(total_counter.keys(), total_counter.values())
+# plt.xlabel("top-k inner product partition index", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
 
 
+min_index = 0
+max_index = chunks
+my_alpha_, my_beta_ = compute_alpha_beta(bin_array, min_index, max_index)
+
+x = np.arange(0.01, max_index, 0.01)
+y = beta.pdf(x, my_alpha_, my_beta_, loc=min_index, scale=max_index - min_index)
+
+plt.plot(x, y)
+# plt.xlabel("distribution of partition index and frequency", fontsize=14)
+# plt.ylabel("probability", fontsize=14)
 print('Query top-k ground truth plot Done')
 
