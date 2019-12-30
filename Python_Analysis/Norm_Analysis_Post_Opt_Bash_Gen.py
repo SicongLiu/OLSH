@@ -499,7 +499,7 @@ card_excel_cell = 'I2'
 is_real_life_cell = 'E3'
 column_dist = 17
 row_dist = 6
-dimensions = [100]
+dimensions = [50]
 query_count = 1000
 excel_file_dir = './'
 
@@ -551,7 +551,7 @@ is_real_life = -1
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_100K_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_1M_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     # wss = wb.get_sheet_names()

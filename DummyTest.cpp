@@ -4,6 +4,7 @@
 #include<vector>
 #include<algorithm>
 #include<iostream>
+#include <unordered_set>
 
 using namespace std;
 
@@ -32,9 +33,29 @@ int main()
 {
 
     // cout<<DBL_EPSILON<<endl;
-    double temp =  std::numeric_limits<double>::epsilon();
-    cout << temp <<endl;
+    // double temp =  std::numeric_limits<double>::epsilon();
+    // cout << temp <<endl;
    
+//    unordered_set<int> candidates;
+//    int range = 3;
+//    for(int i = 0; i < range; i++)
+//    {
+//        candidates.insert(i);
+//    }
+//
+//    for(auto it : candidates)
+//    {
+//        int id = (int)it;
+//        cout<<id<<endl;
+//    }
+    string temp_folder = "./query_test/random_";
+    const char* temp_folder_char = temp_folder.c_str();
+    
+    char command_str_char[200];
+    sprintf(command_str_char, "rm %s*", temp_folder_char);
+
+    cout << "command line to be executed... " << command_str_char << endl;
+    system(command_str_char);
     
     return 0;
 

@@ -306,7 +306,6 @@ for cr in range(result_type.__len__()):
                     lines = f1.readlines()
                     recall = []
                     NDCG = []
-                    # for ll in range(top_ks.__len__()):
                     for ll in range(top_ks_length):
                         ttt = lines[2*ll+1].split('\t')[0]
                         recall.append(float(lines[2*ll+1].split('\t')[1]))

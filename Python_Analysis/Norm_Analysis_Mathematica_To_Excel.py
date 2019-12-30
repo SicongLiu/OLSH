@@ -168,11 +168,11 @@ text_file_path = '/Users/sicongliu/'
 parameter_file_path = '../H2_ALSH/parameters/'
 
 
-dimension = 100
+dimension = 50
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
-excel_file_name = excel_file_dir + str(dimension) + 'D_before_all.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_1M_before.xlsx'
 
 bin_count_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
@@ -267,10 +267,11 @@ for file in os.listdir(text_file_path):
 
                 for row_index_ in range(start_num_, end_num_ + 1):
                     cell_index_ = temp_letter_ + str(row_index_)
-                    ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
+                    # print('cell_index: ', cell_index_, kk, l_index_)
+                    # ws1[cell_index_] = opt_l_info[kk + 1][l_index_]
 
 
-                    # ws1[cell_index_] = opt_l_info[kk][l_index_]
+                    ws1[cell_index_] = opt_l_info[kk][l_index_]
                     # ws1[cell_index_] = opt_l_info[kk][l_index_] # ws1[cell_index_] = max(opt_l_info[kk][l_index_], 1)
                     l_index_ = l_index_ + 1
                 wb1.save(excel_file_name)
