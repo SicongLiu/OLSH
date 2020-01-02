@@ -915,6 +915,113 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 }
 
 
+
+
+// -----------------------------------------------------------------------------
+int TA_TopK_all(					// find top-k mip using linear_scan
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *output_folder) 		// output folder
+{
+	timeval start_time, end_time;
+
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R) == 1) {
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	gettimeofday(&end_time, NULL);
+	float read_file_time = end_time.tv_sec - start_time.tv_sec +
+		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
+
+	// -------------------------------------------------------------------------
+	//  c-AMIP search via linear scan
+	// -------------------------------------------------------------------------
+	char output_set[200];
+	sprintf(output_set, "%slinear.out", output_folder);
+
+	FILE *fp = fopen(output_set, "a+");
+	if (!fp) {
+		printf("Could not create %s\n", output_set);
+		return 1;
+	}
+
+	int kMIPs[] = { 1, 2, 5, 10, 25, 50};
+	int max_round = 6;
+	int top_k = -1;
+
+	float runtime = -1.0f;
+	float overall_ratio = -1.0f;
+	float recall = -1.0f;
+
+	printf("Top-k MIP of Linear Scan:\n");
+	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
+	for (int num = 0; num < max_round; num++) {
+		gettimeofday(&start_time, NULL);
+		top_k = kMIPs[num];
+		MaxK_List* list = new MaxK_List(top_k);
+
+		overall_ratio = 0.0f;
+		recall = 0.0f;
+		for (int i = 0; i < qn; ++i) {
+			list->reset();
+
+			// compute TA_TopK here, return as list
+			compute_TA(d, n, top_k, list, data, query[i]);
+
+
+//			for (int j = 0; j < n; ++j) {
+//				float ip = calc_inner_product(d, data[j], query[i]);
+//				list->insert(ip, j + 1);
+//			}
+
+
+			recall += calc_recall(top_k, (const Result *) R[i], list);
+
+			float ratio = 0.0f;
+			for (int j = 0; j < top_k; ++j) {
+				ratio += R[i][j].key_ / list->ith_key(j);
+			}
+			overall_ratio += ratio / top_k;
+		}
+		delete list; list = NULL;
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+			start_time.tv_usec) / 1000000.0f;
+
+		overall_ratio = overall_ratio / qn;
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
+			runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+	}
+	printf("\n");
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] R; R = NULL;
+
+	return 0;
+}
+
+
 // -----------------------------------------------------------------------------
 int TA_Topk(                    		  		// find top-k mip using linear_scan
 		int   n,                            	// number of data points
@@ -1057,10 +1164,202 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 }
 
 
+// -----------------------------------------------------------------------------
+int linear_scan_all(					// find top-k mip using linear_scan
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *output_folder) 		// output folder
+{
+	timeval start_time, end_time;
+
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R) == 1) {
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	gettimeofday(&end_time, NULL);
+	float read_file_time = end_time.tv_sec - start_time.tv_sec +
+		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
+
+	// -------------------------------------------------------------------------
+	//  c-AMIP search via linear scan
+	// -------------------------------------------------------------------------
+	char output_set[200];
+	sprintf(output_set, "%slinear.out", output_folder);
+
+	FILE *fp = fopen(output_set, "a+");
+	if (!fp) {
+		printf("Could not create %s\n", output_set);
+		return 1;
+	}
+
+	int kMIPs[] = { 1, 2, 5, 10, 25 };
+	int max_round = 5;
+	int top_k = -1;
+
+	float runtime = -1.0f;
+	float overall_ratio = -1.0f;
+	float recall = -1.0f;
+
+	printf("Top-k MIP of Linear Scan:\n");
+	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
+	for (int num = 0; num < max_round; num++) {
+		gettimeofday(&start_time, NULL);
+		top_k = kMIPs[num];
+		MaxK_List* list = new MaxK_List(top_k);
+
+		overall_ratio = 0.0f;
+		recall = 0.0f;
+		for (int i = 0; i < qn; ++i) {
+			list->reset();
+			for (int j = 0; j < n; ++j) {
+				float ip = calc_inner_product(d, data[j], query[i]);
+				list->insert(ip, j + 1);
+			}
+			recall += calc_recall(top_k, (const Result *) R[i], list);
+
+			float ratio = 0.0f;
+			for (int j = 0; j < top_k; ++j) {
+				ratio += R[i][j].key_ / list->ith_key(j);
+			}
+			overall_ratio += ratio / top_k;
+		}
+		delete list; list = NULL;
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+			start_time.tv_usec) / 1000000.0f;
+
+		overall_ratio = overall_ratio / qn;
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
+			runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+	}
+	printf("\n");
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] R; R = NULL;
+
+	return 0;
+}
 
 // -----------------------------------------------------------------------------
-int linear_scan(                    		  	// find top-k mip using linear_scan
-		int   n,                            	// number of data points
+int linear_scan(					// find top-k mip using linear_scan
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *output_folder) 		// output folder
+{
+	timeval start_time, end_time;
+
+	// -------------------------------------------------------------------------
+	//  read the ground truth file
+	// -------------------------------------------------------------------------
+	gettimeofday(&start_time, NULL);
+
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R) == 1) {
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	gettimeofday(&end_time, NULL);
+	float read_file_time = end_time.tv_sec - start_time.tv_sec +
+		(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+	printf("Read Ground Truth: %f Seconds\n\n", read_file_time);
+
+	// -------------------------------------------------------------------------
+	//  c-AMIP search via linear scan
+	// -------------------------------------------------------------------------
+	char output_set[200];
+	sprintf(output_set, "%slinear.out", output_folder);
+
+	FILE *fp = fopen(output_set, "a+");
+	if (!fp) {
+		printf("Could not create %s\n", output_set);
+		return 1;
+	}
+
+	int kMIPs[] = { 1, 2, 5, 10 };
+	int max_round = 4;
+	int top_k = -1;
+
+	float runtime = -1.0f;
+	float overall_ratio = -1.0f;
+	float recall = -1.0f;
+
+	printf("Top-k MIP of Linear Scan:\n");
+	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
+	for (int num = 0; num < max_round; num++) {
+		gettimeofday(&start_time, NULL);
+		top_k = kMIPs[num];
+		MaxK_List* list = new MaxK_List(top_k);
+
+		overall_ratio = 0.0f;
+		recall = 0.0f;
+		for (int i = 0; i < qn; ++i) {
+			list->reset();
+			for (int j = 0; j < n; ++j) {
+				float ip = calc_inner_product(d, data[j], query[i]);
+				list->insert(ip, j + 1);
+			}
+			recall += calc_recall(top_k, (const Result *) R[i], list);
+
+			float ratio = 0.0f;
+			for (int j = 0; j < top_k; ++j) {
+				ratio += R[i][j].key_ / list->ith_key(j);
+			}
+			overall_ratio += ratio / top_k;
+		}
+		delete list; list = NULL;
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+			start_time.tv_usec) / 1000000.0f;
+
+		overall_ratio = overall_ratio / qn;
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
+			runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+	}
+	printf("\n");
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	// -------------------------------------------------------------------------
+	//  release space
+	// -------------------------------------------------------------------------
+	delete[] R; R = NULL;
+
+	return 0;
+}
+
+
+/*int   n,                            	// number of data points
 		int   qn,                           	// number of query points
 		int   d,                            	// dimension of space
 		int   layer_index,
@@ -1069,6 +1368,19 @@ int linear_scan(                    		  	// find top-k mip using linear_scan
 		const float **query,                	// query set
 		const char  *truth_set,             	// address of truth set
 		const char  *output_folder)         	// output folder
+*/
+// -----------------------------------------------------------------------------
+int linear_scan_layer(    // precision recall curve of linear scan across different onion layer
+		int   n,                            // number of data points
+		int   qn,                            // number of query points
+		int   d,                            // dimension of space
+		int       layer_index,                 // the index of current onion layer
+		int   top_k, 						// top 25 or top 50?
+		const float **data,                    // data set
+		const float **query,                // query set
+		const char  *truth_set,                // address of truth set
+		const char  *temp_result,            // address to store temporary output from different onion layers
+		const char  *output_folder)         // output folder
 {
 	timeval start_time, end_time;
 
@@ -1137,13 +1449,18 @@ int linear_scan(                    		  	// find top-k mip using linear_scan
 		max_round = 6;
 	}
 
+
 	float runtime = -1.0f;
 	float overall_ratio = -1.0f;
 	float recall = -1.0f;
+	string is_threshold_file_name = "without_threshold";
+	unordered_map<int, float> my_run_time;
+
 
 	printf("Top-k MIP of Linear Scan:\n");
 	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
 	for (int num = 0; num < max_round; num++) {
+		float file_processing_time = 0.0f;
 		gettimeofday(&start_time, NULL);
 		// top_k = kMIPs[num];
 
@@ -1169,19 +1486,46 @@ int linear_scan(                    		  	// find top-k mip using linear_scan
 				ratio += R[i][j].key_ / list->ith_key(j);
 			}
 			overall_ratio += ratio / top_k;
+
+			// added by Sicong
+			char output_set[200];
+			sprintf(output_set, "%s_top_%d_%s.txt", temp_result, top_k + layer_index - 1, is_threshold_file_name.c_str());
+
+			timeval file_start_time, file_end_time;
+			gettimeofday(&file_start_time, NULL);
+			persist_intermediate_on_file(top_k + layer_index - 1, d, list, data, query[i], output_set);
+			gettimeofday(&file_end_time, NULL);
+
+			file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
+					file_start_time.tv_usec) / 1000000.0f;
+
 		}
 		delete list; list = NULL;
-		gettimeofday(&end_time, NULL);
-		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
+//		gettimeofday(&end_time, NULL);
+//		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+//				start_time.tv_usec) / 1000000.0f;
 
 		overall_ratio = overall_ratio / qn;
 		recall        = recall / qn;
 		runtime       = (runtime * 1000.0f) / qn;
 
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-				runtime, recall);
-		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+		gettimeofday(&end_time, NULL);
+		runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+				start_time.tv_usec) / 1000000.0f;
+		runtime = runtime - file_processing_time;
+		pair<int, float > dict_time(top_k + layer_index - 1, runtime);
+		my_run_time.insert(dict_time);
+		recall        = recall / qn;
+		runtime       = (runtime * 1000.0f) / qn;
+
+		printf("  %3d\t\t%.4f\t\t%.2f\n", top_k + layer_index - 1, runtime, recall);
+		fprintf(fp, "%d\t%f\t%f\n", top_k + layer_index - 1, runtime, recall);
+
+
+
+//		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
+//				runtime, recall);
+//		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
 	}
 	printf("\n");
 	fprintf(fp, "\n");
@@ -1503,11 +1847,11 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
-	lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
+	float indexing_time = lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
 
-	gettimeofday(&end_time, NULL);
+	/* gettimeofday(&end_time, NULL);
 	float indexing_time = end_time.tv_sec - start_time.tv_sec +
-			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f; */
 	printf("Indexing Time: %f Seconds\n\n", indexing_time);
 
 	// -------------------------------------------------------------------------

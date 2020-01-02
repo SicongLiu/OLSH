@@ -22,14 +22,21 @@ SRP_LSH::SRP_LSH(					// constructor
 	data_  = data;
 	maps_ = new unordered_map<string, vector<int> >[L_];
 	maps_interval_ = new unordered_map<string, vector<float>>[L_];
+	indexing_time_ = 0.0f;
 	// -------------------------------------------------------------------------
 	//  build hash tables (bulkloading)
 	// -------------------------------------------------------------------------
 	char output_set[200];
+
+	timeval start_time, end_time;
+	gettimeofday(&start_time, NULL);
 	if(!post_opt)
 	{
 		gen_random_vectors();
+		gettimeofday(&end_time, NULL);
 		// sprintf(output_set, "%slayer_%d_vector.txt", temp_result, layer_index);
+		indexing_time_ += end_time.tv_sec - start_time.tv_sec +
+					(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
 		persist_random_vectors(temp_hash);
 	}
 	else
@@ -37,7 +44,13 @@ SRP_LSH::SRP_LSH(					// constructor
 		// sprintf(output_set, "%slayer_%d_vector.txt", temp_result, layer_index);
 		load_random_vectors(temp_hash, L);
 	}
+
+	gettimeofday(&start_time, NULL);
 	bulkload();
+	gettimeofday(&end_time, NULL);
+	indexing_time_ += end_time.tv_sec - start_time.tv_sec +
+						(end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+
 	post_process_map();
 }
 
@@ -702,4 +715,8 @@ void SRP_LSH::loadHashTable(const char *fname)			// load HashTables on file
 	}
 }
 
-
+// -----------------------------------------------------------------------------
+float SRP_LSH::get_indexing_time()
+{
+	return indexing_time_;
+}

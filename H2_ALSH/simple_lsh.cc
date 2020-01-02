@@ -32,7 +32,7 @@ Simple_LSH::~Simple_LSH()			// destructor
 }
 
 // -----------------------------------------------------------------------------
-void Simple_LSH::build(				// build index
+float Simple_LSH::build(				// build index
 		int   n,							// number of data
 		int   d,							// dimension of data
 		int   K,							// number of hash tables
@@ -58,12 +58,14 @@ void Simple_LSH::build(				// build index
 	// -------------------------------------------------------------------------
 	//  build index
 	// -------------------------------------------------------------------------
-	bulkload(post_opt, temp_hash);
+	float indexing_time = 0.0f;
+	bulkload(post_opt, temp_hash, indexing_time);
 	display();
+	return indexing_time;
 }
 
 // -----------------------------------------------------------------------------
-int Simple_LSH::bulkload(bool post_opt, const char  *temp_hash)			// bulkloading
+int Simple_LSH::bulkload(bool post_opt, const char  *temp_hash, float& indexing_time)			// bulkloading
 {
 	// -------------------------------------------------------------------------
 	//  calculate the Euclidean norm of data and find the maximum norm of data
@@ -108,7 +110,7 @@ int Simple_LSH::bulkload(bool post_opt, const char  *temp_hash)			// bulkloading
 	// -------------------------------------------------------------------------
 	lsh_ = new SRP_LSH(n_pts_, simple_lsh_dim_, K_, L_, S_,
 			(const float **) simple_lsh_data_, post_opt, temp_hash);
-
+	indexing_time = lsh_->get_indexing_time();
 	return 0;
 }
 

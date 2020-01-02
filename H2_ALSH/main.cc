@@ -325,8 +325,10 @@ int main(int nargs, char **args)
 			//		(const float **) query, truth_set, output_folder);
 			break;
 		case 7:
-			linear_scan(n, qn, d, layer_index, top_k, (const float **) data, (const float **) query,
-					truth_set, output_folder);
+			// linear_scan(n, qn, d, layer_index, top_k, (const float **) data, (const float **) query,
+					// truth_set, output_folder);
+			linear_scan_all(n, qn, d, (const float **) data, (const float **) query,
+						truth_set, output_folder);
 			break;
 		case 8:
 			h2_alsh_precision_recall(n, qn, d, nn_ratio, mip_ratio, (const float **) data,

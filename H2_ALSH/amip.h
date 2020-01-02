@@ -260,8 +260,38 @@ int TA_Topk(                    		  		// find top-k mip using linear_scan
 		const char  *truth_set,             	// address of truth set
 		const char  *output_folder);         	// output folder
 
+// -----------------------------------------------------------------------------
+int TA_TopK_all(					// find top-k mip using linear_scan
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *output_folder); 		// output folder
 
+// -----------------------------------------------------------------------------
+int linear_scan_layer(    // precision recall curve of linear scan across different onion layer
+		int   n,                            // number of data points
+		int   qn,                            // number of query points
+		int   d,                            // dimension of space
+		int       layer_index,                 // the index of current onion layer
+		int   top_k, 						// top 25 or top 50?
+		const float **data,                    // data set
+		const float **query,                // query set
+		const char  *truth_set,                // address of truth set
+		const char  *temp_result,            // address to store temporary output from different onion layers
+		const char  *output_folder);
 
+// -----------------------------------------------------------------------------
+int linear_scan_all(					// find top-k mip using linear_scan
+	int   n,							// number of data points
+	int   qn,							// number of query points
+	int   d,							// dimension of space
+	const float **data,					// data set
+	const float **query,				// query set
+	const char  *truth_set,				// address of truth set
+	const char  *output_folder); 		// output folder
 
 int my_sort_col(const void *a, const void *b);
 

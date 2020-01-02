@@ -18,7 +18,7 @@ public:
 	~Simple_LSH();					// destructor
 
 	// -------------------------------------------------------------------------
-	void build(						// build index
+	float build(						// build index
 			int   n,						// number of data
 			int   d,						// dimension of data
 			int   K,						// number of hash tables
@@ -62,7 +62,7 @@ protected:
 	SRP_LSH *lsh_;					// SRP_LSH
 
 	// -------------------------------------------------------------------------
-	int bulkload(bool post_opt, const char  *temp_hash);					// bulkloading
+	int bulkload(bool post_opt, const char  *temp_hash, float& indexing_time);					// bulkloading
 
 	// -------------------------------------------------------------------------
 	void display();					// display parameters
