@@ -499,7 +499,7 @@ card_excel_cell = 'I2'
 is_real_life_cell = 'E3'
 column_dist = 17
 row_dist = 6
-dimensions = [50]
+dimensions = [100]
 query_count = 1000
 excel_file_dir = './'
 
@@ -511,22 +511,22 @@ l_ranges_uni_40 = ['H6', 'H45']
 hash_used_opt_cells_40 = ['I46', 'I45']
 hash_used_uni_cells_40 = ['O46', 'O45']
 
-data_list_60 = ['J6', 'J30', 'J38', 'J62', 'J69', 'J93', 'J100', 'J124', 'J131', 'J155']
-k_ranges_60 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
-l_ranges_opt_60 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
-l_ranges_max_60 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
-l_ranges_uni_60 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
-hash_used_opt_cells_60 = ['I31', 'I63', 'I94', 'I125', 'I156']
-hash_used_uni_cells_60 = ['O31', 'O63', 'O94', 'O125', 'O156']
+data_list_60 = ['J6', 'J65']
+k_ranges_60 = ['E6', 'E65']
+l_ranges_opt_60 = ['F6', 'F65']
+l_ranges_max_60 = ['G6', 'G65']
+l_ranges_uni_60 = ['H6', 'H65']
+hash_used_opt_cells_60 = ['I31', 'I65']
+hash_used_uni_cells_60 = ['O31', 'O65']
 
 
-data_list_80 = ['J6', 'J55', 'J63', 'J112', 'J120', 'J169', 'J177', 'J226', 'J234', 'J283']
-k_ranges_80 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
-l_ranges_opt_80 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
-l_ranges_max_80 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
-l_ranges_uni_80 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
-hash_used_opt_cells_80 = ['I56', 'I113', 'I170', 'I227', 'I284']
-hash_used_uni_cells_80 = ['O56', 'O113', 'O170', 'O227', 'O284']
+data_list_80 = ['J6', 'J85']
+k_ranges_80 = ['E6', 'E85']
+l_ranges_opt_80 = ['F6', 'F85']
+l_ranges_max_80 = ['G6', 'G85']
+l_ranges_uni_80 = ['H6', 'H85']
+hash_used_opt_cells_80 = ['I56', 'I85']
+hash_used_uni_cells_80 = ['O56', 'O185']
 
 SCRIPT_FOLDER = "../H2_ALSH/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/Mathematica_norm_bin_partition_Parameters_"
@@ -551,7 +551,7 @@ is_real_life = -1
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_1M_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_1M_60_bins_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     # wss = wb.get_sheet_names()
