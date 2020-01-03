@@ -105,7 +105,7 @@ int main(int nargs, char **args)
 		if (strcmp(args[cnt], "-alg") == 0) {
 			alg = atoi(args[++cnt]);
 			printf("alg           = %d\n", alg);
-			if (alg < 0 || alg > 12) {
+			if (alg < 0 || alg > 14) {
 				failed = true;
 				break;
 			}
@@ -344,8 +344,8 @@ int main(int nargs, char **args)
 		case 11:
 			norm_distribution(n, d, (const float **) data, output_folder);
 			break;
-		case 12:
-			TA_Topk(n, qn, d, layer_index, top_k, (const float **) data, (const float **) query, truth_set, output_folder);
+		case 14:
+			TA_TopK_all(n, qn, d, (const float **) data, (const float **) query, truth_set, output_folder);
 			break;
 		default:
 			printf("Parameters error!\n");

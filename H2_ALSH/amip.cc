@@ -773,63 +773,33 @@ int sign_alsh(                        // mip search via sign_alsh
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
 // -----------------------------------------------------------------------------
-set<int> comp_current_seen(vector<vector<int>> sorted_sim_index, int dim, int round)
-{
-	set<int> current_seen;
-	for(int i = 0; i < dim; i++)
-	{
-		current_seen.insert(sorted_sim_index.at(i).at(round));
-	}
-
-	return current_seen;
-}
-
-
 
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
-// -----------------------------------------------------------------------------
-float vector_sum(
-		vector<vector<float>> sim_matrix,
-		int dim,
-		int round)
+// ----------------------------------------------------------------------------
+set<int> comp_current_seen(vector<multimap<float, int, greater<float>>> map_vector, int dim, int round, float& current_best)
 {
-	float sum = 0;
-	for(int i = 0; i < dim; i++)
-	{
-		sum += sim_matrix.at(i).at(round);
-	}
-	return sum;
+    set<int> current_seen;
+    current_best = 0.0f;
+    for(int i = 0; i < dim; i++)
+    {
+        multimap<float, int, greater<float>> cur_map = map_vector.at(i);
+
+        auto it = cur_map.begin();
+        int temp = 0;
+        while(temp < round)
+        {
+            it++;
+            temp++;
+        }
+        int temp_index = it->second;
+
+        current_best += it->first;
+        current_seen.insert(temp_index);
+    }
+
+    return current_seen;
 }
-
-// -----------------------------------------------------------------------------
-// NOTE: TA_algorithm, the way we organize the column and row structure index
-// -----------------------------------------------------------------------------
-int sorted_indexes(
-		int   dim_index,                          	// dimension index of sim_matrix
-		vector<vector<float>> &sim_matrix,			// reference pass sim_matrix in for update purpose
-		vector<vector<int>> &sorted_sim_index)  		// sorted index vector structure
-{
-	vector<float> vec_interest = sim_matrix.at(dim_index);
-	vector<int> idx(vec_interest.size());
-	iota(idx.begin(), idx.end(), 0);
-
-	sort(idx.begin(), idx.end(), [&vec_interest](int i1, int i2) {return vec_interest[i1] > vec_interest[i2]; });
-
-	vector<float> v1;
-
-	// update sim_matrix[dim_index]
-	for(int i = 0; i < idx.size(); i++)
-	{
-		v1.push_back(vec_interest[idx[i]]);
-	}
-	sorted_sim_index.push_back(idx);
-	sim_matrix[dim_index] = vec_interest;
-
-	vector<float>().swap(vec_interest);
-	return 0;
-}
-
 
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
@@ -843,37 +813,43 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 		const float *query)         			// output folder
 {
 	bool flag = false;
-	float current_best = 0;
+	float current_best = 0.0f;
 	int round = 0;
 
 	set<int> TA_seen;
 
-	// compute similarity matrix
-	vector<vector<float>> sim_matrix;
-	vector<vector<int>> sorted_sim_index;
+	vector<multimap<float, int, greater<float> >> map_vector;
+	vector<unordered_map<int, float>> invert_map_vector;
+
+
+
+
 	for(int i = 0; i < d; i++)
 	{
-		vector<float> column_sim;
+		multimap<float, int, greater<float> > temp_map;
+		unordered_map<int, float> cur_unordered_map;
+
 		float query_pt = query[i];
 		for(int j = 0; j < n; j++)
 		{
 			float data_pt = data[j][i];
 			float sim_comb = query_pt * data_pt;
-			column_sim.push_back(sim_comb);
+\
+			temp_map.insert({sim_comb, j});
+			cur_unordered_map.insert({j, sim_comb});
 		}
-		sim_matrix.push_back(column_sim);
+		map_vector.push_back(temp_map);
+		invert_map_vector.push_back(cur_unordered_map);
 	}
 
-	// sort sim_matrix, along each dimension
-	for(int i = 0; i < d; i++)
-	{
-		sorted_indexes(i, sim_matrix, sorted_sim_index);
-	}
+
+
+
+
 
 	while(flag == false)
 	{
-		current_best = vector_sum(sim_matrix, d, round);
-		set<int> current_seen = comp_current_seen(sorted_sim_index, d, round);
+		set<int> current_seen = comp_current_seen(map_vector, d, round, current_best);
 		set<int> newly_added;
 
 		set_difference(current_seen.begin(), current_seen.end(), TA_seen.begin(), TA_seen.end(), inserter(newly_added, newly_added.end()));
@@ -882,33 +858,45 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 		for(vector<int>::iterator it = newly_added_vector.begin(); it != newly_added_vector.end(); ++it)
 		{
 			int obj_index = *it;
-			int current_sim = 0;
+			float current_sim = 0.0f;
 
+			// random acess using current id obj_index
 			for(int j = 0; j < d; j++)
 			{
-				vector<int> temp_index = sorted_sim_index.at(j);
-				vector<float> temp_sim = sim_matrix.at(j);
-				int pos = find(temp_index.begin(), temp_index.end(), obj_index) - temp_index.begin();
-				current_sim += temp_sim.at(pos);
-
-				// for each window, update seen object_id
+				unordered_map<int, float> cur_unordered_map = invert_map_vector.at(j);
+				current_sim += cur_unordered_map[obj_index];
 			}
 
-			seen_sim->insert(current_sim, obj_index);
-			TA_seen.insert(newly_added.begin(), newly_added.end());
+			seen_sim->insert(current_sim, obj_index + 1);
 
-			int cur_k = min(top_k, seen_sim->size());
-			float current_worst = seen_sim->ith_key(seen_sim->size() - 1);
+			/*int cur_k = min(top_k, (int)seen_sim->size());
+			float current_worst = seen_sim->ith_key(cur_k - 1);
 
-			if(current_worst < current_best && cur_k == top_k)
+			// if(current_worst < current_best && cur_k == top_k)
+			if(current_worst >= current_best)
 			{
-				flag = true;
-				cout<< "Total run: " << round << endl;
-			}
-			round++;
-		}
-	}
 
+				flag = true;
+				// cout<< "Total run: " << round << endl;
+			}*/
+		}
+
+		int cur_k = min(top_k, (int)seen_sim->size());
+		float current_worst = seen_sim->ith_key(cur_k - 1);
+
+		// if(current_worst < current_best && cur_k == top_k)
+		if(current_worst >= current_best)
+		{
+
+			flag = true;
+			// cout<< "Total run: " << round << endl;
+		}
+		// cout<< "total run: "<< round<<", current worst: " << current_worst1 << ", current best: "<<current_best<< ", current sim: "<<current_sim<<", current index: "<<obj_index<< endl;
+		// cout<< "total run: "<< round<<", current worst: " << current_worst1 << ", current best: "<<current_best<< endl;
+		TA_seen.insert(newly_added.begin(), newly_added.end());
+		round++;
+	}
+	cout<< "total run: "<< round<<endl;
 
 	// delete sim_matrix
 	return 0;
@@ -975,7 +963,12 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 
 		overall_ratio = 0.0f;
 		recall = 0.0f;
+
+		qn = 1; // testing case
+		// n = 10;
+
 		for (int i = 0; i < qn; ++i) {
+			printf("current query: %d. \n", i);
 			list->reset();
 
 			// compute TA_TopK here, return as list
@@ -987,7 +980,7 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 //				list->insert(ip, j + 1);
 //			}
 
-
+			printf("true value: %f, list value :%f, id: %d .\n", R[i][0].key_, list->ith_key(0), list->ith_id(0));
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;
@@ -1205,8 +1198,8 @@ int linear_scan_all(					// find top-k mip using linear_scan
 		return 1;
 	}
 
-	int kMIPs[] = { 1, 2, 5, 10, 25 };
-	int max_round = 5;
+	int kMIPs[] = { 1, 2, 5, 10, 25, 50 };
+	int max_round = 6;
 	int top_k = -1;
 
 	float runtime = -1.0f;
@@ -1222,12 +1215,19 @@ int linear_scan_all(					// find top-k mip using linear_scan
 
 		overall_ratio = 0.0f;
 		recall = 0.0f;
+
+		qn = 1;
+
+
 		for (int i = 0; i < qn; ++i) {
 			list->reset();
 			for (int j = 0; j < n; ++j) {
 				float ip = calc_inner_product(d, data[j], query[i]);
 				list->insert(ip, j + 1);
 			}
+
+			printf("true value: %f, list value :%f, id: %d .\n", R[i][0].key_, list->ith_key(0), list->ith_id(0));
+
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;
