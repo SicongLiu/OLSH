@@ -822,3 +822,33 @@ void RTree::delete_entry(Entry *_olde)
 		}
 	}
 }
+
+/*
+Algorithm get_maxscore (M=(l1,h1, l2,h2,…, ld,hd), f)
+// M is a MBR with extent [li, hi] along the i-th dimension (1≤i≤d), and f the preference function 
+1. initiate a point p whose coordinates are not decided yet
+2. for i=1 to d // examine each dimension in turn 
+3. if f is increasingly monotone on this dimension
+4. the i-th coordinate of p is set to hi
+5. else the i-th coordinate of p is set to li
+6. return f(p)
+end get_maxscore
+*/
+
+/*
+Algorithm BRS (RTree, f, k}
+// RTree is the R-tree on the data set, f is the preference function, and k denotes how many points to return 
+1. initiate the candidate heap H  // H takes entries in the form (REntry, key) and manages them in descending order of key (REntry is an entry in RTree)
+2. initiate a result set S with size k
+3. load the root of RTree, and for each entry e in the root
+4. e.maxscore=get_maxscore(e.MBR, f) // invoke the algorithm in Figure 4
+5. insert (e, e.maxscore) into H
+6. while (S contains less than k objects)
+7. he=de-heap(H)
+8. if he is a leaf entry, then add he to S, and return S if it contains k tuples
+9. else for every entry e in he.childnode
+10. e.maxscore=get_maxscore(e.MBR, f)
+11. insert (e, e.maxscore) into H
+12. return S
+end BRS
+*/
