@@ -34,10 +34,10 @@
 #	rm *o rtree core
 
 SRCS=./blockfile/blk_file.cpp ./blockfile/cache.cpp ./func/functions.cpp ./heap/heap.cpp ./linlist/linlist.cpp ./metrics/metrics.cpp ./metrics/rand.cpp ./rtree/entry.cpp \
-        ./rtree/rtnode.cpp ./rtree/rtree.cpp main.cpp
+        ./blockfile/max_list.cpp ./rtree/myentry.cpp ./rtree/rtnode.cpp ./rtree/rtree.cpp main.cpp
 OBJS=${SRCS:.cc=.o}
 
-CXX=g++ -std=c++11
+CXX=g++ #-std=c++11
 # CPPFLAGS=-w -O3
 CPPFLAGS=-g -O0
 
@@ -56,7 +56,7 @@ linlist.o: ./linlist/linlist.h
 
 metrics.o: ./metrics/metrics.h ./metrics/rand.h
 
-rtree.o: ./rtree/entry.h ./rtree/rtnode.h ./rtree/rtree.h
+rtree.o: ./rtree/entry.h ./rtree/rtnode.h ./rtree/rtree.h ./rtree/myentry.h ./blockfile/max_list.h
 
 main.o: 
 

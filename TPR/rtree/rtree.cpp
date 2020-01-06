@@ -3,13 +3,18 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+// #include <bits/stdc++.h>
+#include <queue>
+#include <vector>
 #include "rtree.h"
 #include "entry.h"
+#include "myentry.h"
 #include "rtnode.h"
 #include "../blockfile/cache.h"
 #include "../blockfile/blk_file.h"
 #include "../linlist/linlist.h"
 #include "../metrics/metrics.h"
+#include "../func/gendef.h"
 //------------------------------------------------------------
 RTree::RTree(char *fname, Cache *c)
 //use this constructor to restore a tree from a file
@@ -822,3 +827,94 @@ void RTree::delete_entry(Entry *_olde)
 		}
 	}
 }
+
+
+// Added by Sicong
+float RTree::get_maxscore(float* p_mbr, float* query)
+{
+	float score = 0.0f;
+	for(int i = 0; i < dimension; i++)
+	{
+		if(query[i] >= 0)
+		{
+			score += query[i] * p_mbr[2 * i + 1];
+		}
+		else
+		{
+			score += query[i] * p_mbr[2 * i];
+		}
+	}
+	return score;
+}
+
+
+// Added by Sicong
+struct Compare
+{
+    bool operator() (MyEntry const& e1, MyEntry const& e2)
+    {
+    		if(e1.key <= e2.key)
+    			return true;
+    		else
+    			return false;
+    }
+};
+
+
+int RTree::BRS(int top_k, MaxK_List* list, float ** data, float* query)
+{
+	// initiate the candidate heap H,
+	std::priority_queue <MyEntry, std::vector<MyEntry>, Compare> pq;
+	int list_size_count = 0;
+
+	// initiate a result set S with size k
+	// list size already = size of k
+
+	// load the root of RTree
+	load_root();
+
+	for(int i = 0; i < root_ptr->capacity; i++)
+	{
+		Entry cur_entry = root_ptr->entries[i];
+		float temp_max_score = get_maxscore(cur_entry.bounces, query);
+		MyEntry* temp_entry = new MyEntry(temp_max_score, cur_entry);
+		pq.push(*temp_entry);
+	}
+
+	while(list_size_count < top_k)
+	{
+		// temp_H = de-heap(H)
+		MyEntry temp_H = pq.top();
+		pq.pop();
+		// if temp_H is a leaf, then add it to S (return S if it contains k tuples)
+		if(temp_H.e.isLeaf())
+		{
+			// id is an arbitrary number, here i use node level
+			list->insert(temp_H.key, temp_H.e.level);
+			list_size_count++;
+			if(list_size_count == list->size())
+				return 0;
+		}
+		else // else for every entry e in temp_H.childnode
+		{
+			Entry temp_entry = temp_H.e;
+			RTNode* temp_RT_node = temp_entry.son_ptr;
+
+			for (int j = 0; j < temp_RT_node->capacity; j++)
+			{
+				// e.maxscore=getmax_score(e.mbr, f)
+				float temp_max_score = get_maxscore(temp_RT_node->entries[j].bounces, query);
+				MyEntry* temp_entry = new MyEntry(temp_max_score, temp_RT_node->entries[j]);
+				// insert(e, e.maxscore) into H
+				pq.push(*temp_entry);
+			}
+		}
+	}
+
+	return 0;
+}
+
+
+
+
+

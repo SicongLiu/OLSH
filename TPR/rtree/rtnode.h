@@ -43,6 +43,9 @@ public:
 	void model_split(RTNode *_new_nd);
 	void pick_worst_entries();
 	void update_parent_entry(int _pos);
+
+
+
 };
 
 void future_mbr(float *_mbr, float *_vbr, float _time, int dimension);

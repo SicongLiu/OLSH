@@ -23,6 +23,9 @@ public:
 	~HeapEntry();
 	void init_HeapEntry(int _dim);
 	void copy(HeapEntry *_he);
+
+	// Added by Sicong
+	void init_HeapEntry(int _dim, float key);
 };
 
 class Heap
@@ -42,6 +45,7 @@ public:
 	void init(int _dim, int _hsize=MAX_HEAP_SIZE);
 	void insert(HeapEntry *_he);
 	bool remove(HeapEntry *_he);
+
 };
 
 #endif

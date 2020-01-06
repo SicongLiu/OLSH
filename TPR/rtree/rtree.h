@@ -6,12 +6,18 @@
 //------------------------------------------------------------
 #include "../func/gendef.h"
 #include "../heap/heap.h"
+#include "../blockfile/max_list.h"
+#include "myentry.h"
 //------------------------------------------------------------
 class LinList;
 class SortedLinList;
 class Cache;
 class RTNode;
 class Entry;
+class MyEntry;
+class MaxK_List;
+
+
 //------------------------------------------------------------
 struct TPRSortMbr
 {
@@ -70,5 +76,14 @@ public:
 	void check_path(Entry *_newe, float _minpen);
 	float choose_path(Entry *_newe);
 	void delete_entry(Entry *_olde);
+
+	// Added by Sicong
+	float get_maxscore(float* p_mbr, float* query);
+
+	// Added by Sicong
+	int BRS(int top_k, MaxK_List* list, float ** data, float* query);
+
 };
+
+
 #endif // __RTREE

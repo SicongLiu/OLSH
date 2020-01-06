@@ -34,6 +34,20 @@ void HeapEntry::init_HeapEntry(int _dim)
 //		bounces=new float[2*_dim];
 	//------------------------------------------------------------
 }
+
+// Added by Sicong
+void HeapEntry::init_HeapEntry(int _dim, float _key)
+{
+	if (_dim<0)
+		error("The dimensionality of the entry is negative.\n", true);
+
+	dim = _dim;
+	key = _key;
+	//we init the bounces only if necessary-----------------------
+//	if (EACH_PP_COMPARE)
+//		bounces=new float[2*_dim];
+	//------------------------------------------------------------
+}
 //------------------------------------------
 void HeapEntry::copy(HeapEntry *_he)
 {

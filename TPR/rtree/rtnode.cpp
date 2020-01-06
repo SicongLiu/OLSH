@@ -145,7 +145,7 @@ bool RTNode::FindLeaf(Entry *_q)
 		{
 			if (_q->son==entries[i].son)
 			{
-				printf("\nfind the record in node %d, ", block);
+				printf("\n find the record in node %d, ", block);
 				return true;
 			}
 		}
@@ -1172,3 +1172,6 @@ R_DELETE RTNode::delete_entry(Entry *_olde)
 	}
 	return ret;
 }
+
+
+

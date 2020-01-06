@@ -201,3 +201,8 @@ Entry& Entry::operator = (Entry &_d)
     return *this;
 }
 //------------------------------------------------------------
+
+bool Entry::isLeaf()
+{
+	return level == 0;
+}

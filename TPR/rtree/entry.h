@@ -42,6 +42,10 @@ public:
 	bool operator == (Entry &_d);
 //--===added for tpr===--
 	void enlarge(Entry *_e1, Entry *_e2);
+
+
+	// Added by Sicong
+	bool isLeaf();
 };
 
 #endif

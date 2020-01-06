@@ -15,8 +15,19 @@
 
 typedef char Block[];
 //-------------------All-------------------------------------
-#define MAXREAL         1e20
+// define MAXREAL         1e20
 #define FLOATZERO       1e-2
+
+const float MAXREAL       = 3.402823466e+38F;
+const float MINREAL       = -MAXREAL;
+const int   MAXINT        = 2147483647;
+const int   MININT        = -MAXINT;
+
+//// const float MAXREAL       = 3.402823466e+38F;
+//#define MINREAL       = -MAXREAL;
+//#define MAXINT        = 2147483647;
+//#define MININT        = -MAXINT;
+
 //1e-3
 #define MAX_DIMENSION   256
 
@@ -81,6 +92,12 @@ struct BranchList
     float minmaxdist;
     bool section;
 };
+
+
+
+
+
+
 
 //-----Global Functions--------------------------------------
 void error(char *_errmsg, bool _terminate);
