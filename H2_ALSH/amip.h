@@ -246,6 +246,17 @@ int compute_TA(                    		  	// find top-k mip using linear_scan
 		const float **data,                	// data set
 		const float *query);         			// output folder
 
+set<int> comp_current_seen_list(vector<vector<int>> sorted_prod_idx, vector<vector<float>> sorted_prod, int dim, int round, float& current_best);
+
+int compute_TA_list(                    		  	// find top-k mip using linear_scan
+		int   d,                            	// number of space
+		int   n,                            	// dimension of data points
+		int 	  top_k,
+		MaxK_List* ret,
+		const float **data,                	// data set
+		const float *query);
+
+
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
 // -----------------------------------------------------------------------------
