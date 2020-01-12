@@ -123,7 +123,8 @@ void RTNode::enter(Entry *de)
 //note that de will be deleted after being entered.
 {
 	if (num_entries > (capacity-1))
-		error("RTNode::enter: called, but node is full", TRUE);
+		printf("Reached maximum capacity - 3, but keeps going... \n");
+		// error("RTNode::enter: called, but node is full", TRUE);
 
 	past_mbr(de->bounces, de->velocity, my_tree->time, dimension);
 	entries[num_entries] = *de;
@@ -263,8 +264,12 @@ R_OVERFLOW RTNode::insert(Entry *d, RTNode **_sn)
 		//----------------------------------------------------
 		if (ret == SPLIT)  //child node has split into itself and *new_succ
 		{
+			printf("maximum capacity setting: %d \n", capacity);
 			if (num_entries == capacity)
-				error("RTNode::insert--maximum capacity violation", true);
+			{
+				printf("Reached maximum capacity - 1, but keeps going...\n");
+				// error("RTNode::insert--maximum capacity violation", true);
+			}
 			//init a new entry for the new node---------------
 			entries[num_entries].son=new_succ->block;
 			entries[num_entries].son_ptr=new_succ;
@@ -294,7 +299,8 @@ R_OVERFLOW RTNode::insert(Entry *d, RTNode **_sn)
 		if (block!=my_tree->path[d->level])
 			error("this leaf node is not the one we picked!\n", true);
 		if (num_entries == capacity)
-			error("RTDataNode::insert--maximum capacity violation", TRUE);
+			printf("Reached maximum capacity - 2, but keeps going...\n");
+			// error("RTDataNode::insert--maximum capacity violation", TRUE);
 
 		enter(d);
 

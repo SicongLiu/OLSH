@@ -9,10 +9,10 @@
 #include "../func/gendef.h"
 //----------------------------------------------------------
 
-struct Result {                        // structure for furthest neighbor / hash value
-    float key_;                            // distance / random projection value
-    int   id_;                            // object id
-};
+//struct Result {                        // structure for furthest neighbor / hash value
+//    float key_;                            // distance / random projection value
+//    int   id_;                            // object id
+//};
 
 
 class MaxK_List {

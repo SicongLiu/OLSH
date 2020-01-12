@@ -1,5 +1,7 @@
 #include <string.h>
+//#include "../func/gendef.h"
 #include "max_list.h"
+
 
 // -----------------------------------------------------------------------------
 MaxK_List::MaxK_List(                // constructor (given max size)

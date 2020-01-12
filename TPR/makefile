@@ -48,7 +48,7 @@ all: ${OBJS}
 
 blockfile.o: ./blockfile/blk_file.h ./blockfile/cache.h
 
-function.o: ./func/gendef.h
+functions.o: ./func/gendef.h
 
 heap.o: ./heap/heap.h
 

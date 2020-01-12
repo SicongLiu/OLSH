@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <cassert>
+//#include <ctime>
+#include <chrono>
+//#include "../blockfile/max_list.h"
 //----BlockFile, CachedBlockFile, Cache---------------------
 #define BFHEAD_LENGTH (sizeof(int)*2)    //file header size
 
@@ -41,6 +45,7 @@ const int   MININT        = -MAXINT;
 //-------------------Class and other data types--------------
 class BlockFile;  //for BlockFile definition
 class Cache;
+class MaxK_List;
 class Cacheable   //inherit this class if you wish to design an external
                   //memory structure that can be cached
 {
@@ -109,4 +114,14 @@ bool inside(float &p, float &lb, float &ub);
 bool is_inside(int dimension, float *p, float *mbr);
 bool section(int dimension, float *mbr1, float *mbr2);
 //-----------------------------------------------------------
+struct Result {						// structure for furthest neighbor / hash value
+	float key_;							// distance / random projection value
+	int   id_;							// object id
+};
+
+float calc_recall(					// calc recall (percentage)
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	MaxK_List *list)	;
+
 #endif

@@ -101,7 +101,7 @@ RTree::RTree(char *_dsfname, char *_tfname, int _blen, Cache *_c, int _dimension
 	root_lvl=0;
 	//------------------------------------------------------------
 
-	int maxN=150000;
+	int maxN=100000;
 	MovingObject *data=new MovingObject[maxN];
 	for (int i=0; i<maxN; i++)
 		data[i].active=false;
@@ -111,57 +111,72 @@ RTree::RTree(char *_dsfname, char *_tfname, int _blen, Cache *_c, int _dimension
 	if((fp = fopen(_dsfname,"r")) == NULL)
 	{
 		delete this;
-		error("Cannot open R-Tree text file", TRUE);
+		error("Cannot open R-Tree text file .\n", TRUE);
 	}
 	else
 	{
+		// load data
+		int num_dim = -1;
+		int num_element = -1;
+		fscanf(fp, "%d\n", &num_dim);
+		fscanf(fp, "%d\n", &num_element);
+
 		Entry *tmpe=new Entry(dimension, this);
 		while (!feof(fp))
 		{
+			float* temp_data = new float[num_dim];
+			for (int ii = 0; ii < num_dim; ++ii)
+			{
+				fscanf(fp, " %f", &temp_data[ii]);
+			}
+			fscanf(fp, "\n");
+
 			record_count ++;
 
 			//init the entry--------------------------------------
-			float this_time;
+			float this_time = 0.0f;
+//			float this_time;
 			Entry *d = new Entry(dimension, NULL);
-			fscanf(fp, "%d", &(d -> son));
+//			fscanf(fp, "%d", &(d -> son));
 			for (int i = 0; i < 2 * dimension; i ++)
-				fscanf(fp, " %f", &(d -> bounces[i]));
+				d -> bounces[i] = temp_data[i/2];
+//				fscanf(fp, " %f", &(d -> bounces[i]));
 			for (int i = 0; i < 2*dimension; i ++)
-				fscanf(fp, " %f", &(d->velocity[i]));
-			fscanf(fp, " %f\n", &this_time);
-			if (this_time<time)
-				error("\ncannot insert backward in time!\n", true);
+				d->velocity[i] = 0.0f;
+//				fscanf(fp, " %f", &(d->velocity[i]));
+//			fscanf(fp, " %f\n", &this_time);
+//			if (this_time<time)
+//				error("\ncannot insert backward in time!\n", true);
 			//			else if (time<this_time)
 			//				printf("\nprogressing to time %.3f\n", time);
 			time=this_time;
 
+
 			d->level=0;
 			//----------------------------------------------------
-			if (record_count % 100 == 0)
-			{
-				for (int i = 0; i < 79; i ++)  //clear a line
-					printf("\b");
-				printf("inserting record %d at time %.3f", record_count, time);
-			}
+//			if (record_count % 100 == 0)
+//			{
+//				for (int i = 0; i < 79; i ++)  //clear a line
+//					printf("\b");
+//				printf("inserting record %d at time %.3f", record_count, time);
+//			}
 			if (emergency)
 				printf("record_count=%d\n", record_count);
 			//----------------------------------------------------
-			//if (record_count==14365)
-			//printf("testing...\n");
-			if (d->son>=maxN)
-				error("please increase maxN\n", true);
-			if (data[d->son].active)
-			{
-				tmpe->son=d->son;
-				memcpy(tmpe->bounces, data[d->son].mbr, sizeof(float)*4);
-				memcpy(tmpe->velocity, data[d->son].vbr, sizeof(float)*4);
-				future_mbr(tmpe->bounces, tmpe->velocity, time-data[d->son].ref, dimension);
-				delete_entry(tmpe);
-			}
-			memcpy(data[d->son].mbr, d->bounces, sizeof(float)*4);
-			memcpy(data[d->son].vbr, d->velocity, sizeof(float)*4);
-			data[d->son].ref=time;
-			data[d->son].active=true;
+//			if (d->son>=maxN)
+//				error("please increase maxN\n", true);
+//			if (data[d->son].active)
+//			{
+//				tmpe->son=d->son;
+//				memcpy(tmpe->bounces, data[d->son].mbr, sizeof(float)*4);
+//				memcpy(tmpe->velocity, data[d->son].vbr, sizeof(float)*4);
+//				future_mbr(tmpe->bounces, tmpe->velocity, time-data[d->son].ref, dimension);
+//				delete_entry(tmpe);
+//			}
+//			memcpy(data[d->son].mbr, d->bounces, sizeof(float)*4);
+//			memcpy(data[d->son].vbr, d->velocity, sizeof(float)*4);
+//			data[d->son].ref=time;
+//			data[d->son].active=true;
 
 			insert(d);	//d will be deleted in insert()
 			//----------------------------------------------------
@@ -324,14 +339,14 @@ void RTree::insert(Entry* d)
 			//			adjust_mbr(nmbr, vbr, time, dimension);
 			memcpy(de->bounces, nmbr, 2*dimension*sizeof(float));
 			memcpy(de -> velocity, vbr, 2 * dimension * sizeof(float));
-			if (emergency)
-			{
-				future_mbr(nmbr, vbr, time, 2);
-			}
+//			if (emergency)
+//			{
+//				future_mbr(nmbr, vbr, time, 2);
+//			}
 			delete [] nmbr; delete [] vbr;
 
-			de->son = root_ptr->block;
-			de->son_ptr = NULL;
+//			de->son = root_ptr->block;
+//			de->son_ptr = NULL;
 			nroot_ptr -> enter(de);
 			delete root_ptr;
 			//then the second entry-------------------------------
@@ -357,14 +372,14 @@ void RTree::insert(Entry* d)
 			}
 			memcpy(de -> bounces, nmbr, 2*dimension*sizeof(float));
 			memcpy(de -> velocity, vbr, 2 * dimension * sizeof(float));
-			if (emergency)
-			{
-				future_mbr(nmbr, vbr, time, 2);
-			}
+//			if (emergency)
+//			{
+//				future_mbr(nmbr, vbr, time, 2);
+//			}
 			delete [] nmbr; delete []vbr;
 
-			de -> son = sn -> block;
-			de -> son_ptr = NULL;
+//			de -> son = sn -> block;
+//			de -> son_ptr = NULL;
 			nroot_ptr->enter(de);
 			delete sn;
 			//----------------------------------------------------
@@ -372,15 +387,15 @@ void RTree::insert(Entry* d)
 			root_ptr=nroot_ptr;
 			root_is_data = FALSE;
 		}
-		if (emergency)
-		{
-			for (int i=0;i<root_ptr->num_entries;i++)
-			{
-				float nmbr[4];
-				memcpy(nmbr, root_ptr->entries[i].bounces, 4*sizeof(float));
-				future_mbr(nmbr, root_ptr->entries[i].velocity, time, 2);
-			}
-		}
+//		if (emergency)
+//		{
+//			for (int i=0;i<root_ptr->num_entries;i++)
+//			{
+//				float nmbr[4];
+//				memcpy(nmbr, root_ptr->entries[i].bounces, 4*sizeof(float));
+//				future_mbr(nmbr, root_ptr->entries[i].velocity, time, 2);
+//			}
+//		}
 		delete root_ptr; root_ptr=NULL;
 	}
 
@@ -861,7 +876,7 @@ struct Compare
 };
 
 
-int RTree::BRS(int top_k, MaxK_List* list, float ** data, float* query)
+int RTree::BRS(int top_k, MaxK_List* list, float* query)
 {
 	// initiate the candidate heap H,
 	std::priority_queue <MyEntry, std::vector<MyEntry>, Compare> pq;
@@ -918,33 +933,3 @@ int RTree::BRS(int top_k, MaxK_List* list, float ** data, float* query)
 
 
 
-=======
-/*
-Algorithm get_maxscore (M=(l1,h1, l2,h2,…, ld,hd), f)
-// M is a MBR with extent [li, hi] along the i-th dimension (1≤i≤d), and f the preference function 
-1. initiate a point p whose coordinates are not decided yet
-2. for i=1 to d // examine each dimension in turn 
-3. if f is increasingly monotone on this dimension
-4. the i-th coordinate of p is set to hi
-5. else the i-th coordinate of p is set to li
-6. return f(p)
-end get_maxscore
-*/
-
-/*
-Algorithm BRS (RTree, f, k}
-// RTree is the R-tree on the data set, f is the preference function, and k denotes how many points to return 
-1. initiate the candidate heap H  // H takes entries in the form (REntry, key) and manages them in descending order of key (REntry is an entry in RTree)
-2. initiate a result set S with size k
-3. load the root of RTree, and for each entry e in the root
-4. e.maxscore=get_maxscore(e.MBR, f) // invoke the algorithm in Figure 4
-5. insert (e, e.maxscore) into H
-6. while (S contains less than k objects)
-7. he=de-heap(H)
-8. if he is a leaf entry, then add he to S, and return S if it contains k tuples
-9. else for every entry e in he.childnode
-10. e.maxscore=get_maxscore(e.MBR, f)
-11. insert (e, e.maxscore) into H
-12. return S
-end BRS
-*/

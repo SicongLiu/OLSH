@@ -16,6 +16,8 @@
 #include "./linlist/linlist.h"
 #include "./metrics/metrics.h"
 #include "./metrics/rand.h"
+#include "./func/gendef.h"
+#include <sys/time.h>
 
 void buildtree(char *_trfname, char *_dsfname, float *_qmbrlen, float *_qvbr,
 			   float _qst, float _qed, int _dsize)
@@ -142,7 +144,36 @@ float new_uniform(float _min, float _max)
 	return ran/ran_base*(_max-_min)+_min;
 }*/
 //================================================================
+// -----------------------------------------------------------------------------
+int read_ground_truth(				// read ground truth results from disk
+	int qn,								// number of query objects
+	const char *fname,					// address of truth set
+	Result **R,
+	int MAXK)							// ground truth results (return)
+{
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
+	{
+		printf("Could not open %s\n", fname);
+		return 1;
+	}
 
+	int tmp1 = -1;
+	int tmp2 = -1;
+	fscanf(fp, "%d %d\n", &tmp1, &tmp2);
+	assert(tmp1 == qn && tmp2 == MAXK);
+	for (int i = 0; i < qn; ++i)
+	{
+		for (int j = 0; j < MAXK; ++j)
+		{
+			fscanf(fp, "%d %f ", &R[i][j].id_, &R[i][j].key_);
+		}
+		fscanf(fp, "\n");
+	}
+	fclose(fp);
+
+	return 0;
+}
 int main(int argc, char* argv[])
 {
 	printf("*********************************************\n");
@@ -150,7 +181,23 @@ int main(int argc, char* argv[])
 	printf("*********************************************\n");
 	printf("\n\n");
 
-	int dsize=1024;
+	int qn = 1000;
+	const int MAXK = 50;
+	char truth_set[100] = "../StreamingTopK/H2_ALSH/result/result_anti_correlated_4D_100000.mip";
+	Result **R = new Result*[qn];
+	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
+	if (read_ground_truth(qn, truth_set, R, MAXK) == 1) {
+		printf("Reading Truth Set Error!\n");
+		return 1;
+	}
+
+	// int dsize=1024;
+	int dsize=100000;
+
+	int top_k = 25;
+	int dimension = 4;
+	int cardinality = 100000;
+	char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
 
 	char trfname[100]="./trees/up3-2-test";
 	//-test.tpr";
@@ -160,10 +207,12 @@ int main(int argc, char* argv[])
 	float qst=0, qed=50;
 
 ///*
-	buildtree(trfname, "../../ds/up3-time4.txt", qmbrlen, qvbr, qst, qed, dsize);
+	// buildtree(trfname, "../../ds/up3-time4.txt", qmbrlen, qvbr, qst, qed, dsize);
+	buildtree(trfname, filepath, qmbrlen, qvbr, qst, qed, dsize);
 //	buildtree(trfname, "../../ds/rs1.txt", qmbrlen, qvbr, qst, qed, dsize);
 //	traverse_tree(trfname); return;
 //*/
+	printf("building tree done, loading query and data done...\n");
 
 ///*
 //	char trfname[100]="./trees/up3-1.tpr";
@@ -172,9 +221,70 @@ int main(int argc, char* argv[])
 //	float qvbr[4]={-10, 10, -10, 10};
 //	float qst=0, qed=100;
 
+	MaxK_List* list = new MaxK_List(top_k);
+	float recall = 0.0f;
+	// commented out by Sicong
 	Cache *c=new Cache(0, dsize);
 	RTree *rt=new RTree(trfname, c);
 	printf("queries are performed as of time %.3f\n", rt->time);
+
+	// load query
+	char queryfile[100] = "../StreamingTopK/H2_ALSH/query/query_4D.txt";
+	FILE *fp;
+	if((fp = fopen(queryfile,"r")) == NULL)
+	{
+		error("Cannot open query text file", TRUE);
+	}
+	int num_dim = 0;
+	int num_element = 0;
+	fscanf(fp, "%d\n", &num_dim);
+	fscanf(fp, "%d\n", &num_element);
+
+	float** my_query = new float*[num_element];
+	int i   = 0;
+	while (!feof(fp) && i < num_element)
+	{
+		my_query[i] = new float[num_dim];
+		for (int j = 0; j < num_dim; ++j)
+		{
+			fscanf(fp, " %f", &my_query[i][j]);
+		}
+		fscanf(fp, "\n");
+
+		++i;
+	}
+	assert(feof(fp) && i == num_element);
+	fclose(fp);
+	// load query done
+
+
+
+	qn = num_element;
+
+	timeval start_time, end_time;
+	gettimeofday(&start_time, NULL);
+	for(int i = 0; i < qn; i++)
+	{
+		float* cur_query = my_query[i];
+		list->reset();
+
+		// should start from the root?
+		rt->BRS(top_k, list, cur_query);
+		recall += calc_recall(top_k, (const Result *) R[i], list);
+
+	}
+	recall        = recall / qn;
+	gettimeofday(&end_time, NULL);
+	float runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+						start_time.tv_usec) / 1000000.0f;
+	runtime       = (runtime * 1000.0f) / qn;
+
+	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
+
+
+
+
+
 	Entry *q=new Entry(2, NULL);
 
 	int ita_cnt=50; 

@@ -81,7 +81,7 @@ public:
 	float get_maxscore(float* p_mbr, float* query);
 
 	// Added by Sicong
-	int BRS(int top_k, MaxK_List* list, float ** data, float* query);
+	int BRS(int top_k, MaxK_List* list, float* query);
 
 };
 
