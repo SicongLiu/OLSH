@@ -137,6 +137,7 @@ RTree::RTree(char *_dsfname, char *_tfname, int _blen, Cache *_c, int _dimension
 			float this_time = 0.0f;
 //			float this_time;
 			Entry *d = new Entry(dimension, NULL);
+			d -> son = 1;
 //			fscanf(fp, "%d", &(d -> son));
 			for (int i = 0; i < 2 * dimension; i ++)
 				d -> bounces[i] = temp_data[i/2];
@@ -163,20 +164,20 @@ RTree::RTree(char *_dsfname, char *_tfname, int _blen, Cache *_c, int _dimension
 			if (emergency)
 				printf("record_count=%d\n", record_count);
 			//----------------------------------------------------
-//			if (d->son>=maxN)
-//				error("please increase maxN\n", true);
-//			if (data[d->son].active)
-//			{
-//				tmpe->son=d->son;
-//				memcpy(tmpe->bounces, data[d->son].mbr, sizeof(float)*4);
-//				memcpy(tmpe->velocity, data[d->son].vbr, sizeof(float)*4);
-//				future_mbr(tmpe->bounces, tmpe->velocity, time-data[d->son].ref, dimension);
-//				delete_entry(tmpe);
-//			}
-//			memcpy(data[d->son].mbr, d->bounces, sizeof(float)*4);
-//			memcpy(data[d->son].vbr, d->velocity, sizeof(float)*4);
-//			data[d->son].ref=time;
-//			data[d->son].active=true;
+			if (d->son>=maxN)
+				error("please increase maxN\n", true);
+			if (data[d->son].active)
+			{
+				tmpe->son=d->son;
+				memcpy(tmpe->bounces, data[d->son].mbr, sizeof(float)*4);
+				memcpy(tmpe->velocity, data[d->son].vbr, sizeof(float)*4);
+				future_mbr(tmpe->bounces, tmpe->velocity, time-data[d->son].ref, dimension);
+				delete_entry(tmpe);
+			}
+			memcpy(data[d->son].mbr, d->bounces, sizeof(float)*4);
+			memcpy(data[d->son].vbr, d->velocity, sizeof(float)*4);
+			data[d->son].ref=time;
+			data[d->son].active=true;
 
 			insert(d);	//d will be deleted in insert()
 			//----------------------------------------------------
@@ -848,8 +849,10 @@ void RTree::delete_entry(Entry *_olde)
 float RTree::get_maxscore(float* p_mbr, float* query)
 {
 	float score = 0.0f;
+	printf("getting max score, dimension: %d \n", dimension);
 	for(int i = 0; i < dimension; i++)
 	{
+		printf("i: %d, query[i]: %f, p_mbr[2 * i + 1]: %f, p_mbr[2 * i]: %f .\n", i, query[i], p_mbr[2 * i + 1], p_mbr[2 * i]);
 		if(query[i] >= 0)
 		{
 			score += query[i] * p_mbr[2 * i + 1];
@@ -886,18 +889,24 @@ int RTree::BRS(int top_k, MaxK_List* list, float* query)
 	// list size already = size of k
 
 	// load the root of RTree
+
 	load_root();
+	printf("root node loaded, root pointer capacity: %d \n",  root_ptr->capacity);
 
 	for(int i = 0; i < root_ptr->capacity; i++)
 	{
+		printf("root entry round: %d, capacity: %d \n", i, root_ptr->entries->get_size());
 		Entry cur_entry = root_ptr->entries[i];
 		float temp_max_score = get_maxscore(cur_entry.bounces, query);
+		printf("initliazing new entry .\n");
 		MyEntry* temp_entry = new MyEntry(temp_max_score, cur_entry);
 		pq.push(*temp_entry);
 	}
 
+	printf("initliazing prioity queue done. \n");
 	while(list_size_count < top_k)
 	{
+		printf("making sure we got k objects. \n");
 		// temp_H = de-heap(H)
 		MyEntry temp_H = pq.top();
 		pq.pop();

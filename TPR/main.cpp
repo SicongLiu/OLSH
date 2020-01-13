@@ -20,14 +20,14 @@
 #include <sys/time.h>
 
 void buildtree(char *_trfname, char *_dsfname, float *_qmbrlen, float *_qvbr,
-			   float _qst, float _qed, int _dsize)
+			   float _qst, float _qed, int _dsize, int _dimension)
 {
 	printf("really build tree?");
 	char c=getchar();
 	if (c!='y')
 		return;
 	remove(_trfname);
-	RTree *rt = new RTree(_dsfname, _trfname, _dsize, NULL, 2, _qmbrlen, _qvbr, _qst, _qed);
+	RTree *rt = new RTree(_dsfname, _trfname, _dsize, NULL, _dimension, _qmbrlen, _qvbr, _qst, _qed);
 //	rt->adjust_vmbr();
 	delete rt;
 };
@@ -208,11 +208,11 @@ int main(int argc, char* argv[])
 
 ///*
 	// buildtree(trfname, "../../ds/up3-time4.txt", qmbrlen, qvbr, qst, qed, dsize);
-	buildtree(trfname, filepath, qmbrlen, qvbr, qst, qed, dsize);
+	buildtree(trfname, filepath, qmbrlen, qvbr, qst, qed, dsize, dimension);
 //	buildtree(trfname, "../../ds/rs1.txt", qmbrlen, qvbr, qst, qed, dsize);
 //	traverse_tree(trfname); return;
 //*/
-	printf("building tree done, loading query and data done...\n");
+	printf("building tree done, loading data done...\n");
 
 ///*
 //	char trfname[100]="./trees/up3-1.tpr";
@@ -256,7 +256,7 @@ int main(int argc, char* argv[])
 	assert(feof(fp) && i == num_element);
 	fclose(fp);
 	// load query done
-
+	printf("building tree done, loading query done...\n");
 
 
 	qn = num_element;
@@ -265,6 +265,7 @@ int main(int argc, char* argv[])
 	gettimeofday(&start_time, NULL);
 	for(int i = 0; i < qn; i++)
 	{
+		printf("query index: %d...\n", i);
 		float* cur_query = my_query[i];
 		list->reset();
 
