@@ -5,8 +5,10 @@
 //
 
 #include <iostream>
+#include <algorithm>
+#include <vector>
 #include <sys/time.h>
-#include "myentry.h"
+//#include "myentry.h"
 #include "max_list.h"
 #include "RTree.h"
 #include "gendef.h"
@@ -60,6 +62,57 @@ struct Rect rects[] =
 		Rect(7, 1, 9, 2),
 };
 
+//float calc_recall(					// calc recall (percentage)
+//	int   k,							// top-k value
+//	const Result *R,					// ground truth results
+//	MaxK_List *list)					// results returned by algorithms
+//{
+//	int i = k - 1;
+//	int last = k - 1;
+//	while (i >= 0 && R[last].key_ - list->ith_key(i) > FLOATZERO) {
+//		i--;
+//	}
+//	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
+//	return (i + 1) * 100.0f / k;
+//}
+
+//
+//bool operator() (MyEntry const& e1, MyEntry const& e2)
+//   {
+//   		if(e1.key <= e2.key)
+//   			return true;
+//   		else
+//   			return false;
+//   }
+//
+//
+
+
+bool sortbysec(const pair<float,float> &a, const pair<float,float> &b)
+{
+    if (a.second <= b.second)
+    		return true;
+    else
+    		return false;
+}
+
+float calc_recall(					// calc recall (percentage)
+	int   k,							// top-k value
+	const Result *R,					// ground truth results
+	vector<float> myvector)					// results returned by algorithms
+{
+	int i = k - 1;
+	int last = k - 1;
+	while (i >= 0 && R[last].key_ - myvector.at(i) > FLOATZERO) {
+		i--;
+	}
+	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
+	return (i + 1) * 100.0f / k;
+}
+
+
+
+
 int nrects = sizeof(rects) / sizeof(rects[0]);
 
 //Rect search_rect(6, 4, 10, 6); // search will find above rects that this one overlaps
@@ -104,52 +157,56 @@ int read_ground_truth(				// read ground truth results from disk
 
 
 
-
-
-
-int read_data(char *filename, float** data, int dimension, int card)
+int read_data(	const char *fname, float **data, int d, int n)
 {
-	int record_count = 0;
-	FILE *fp;
-	if((fp = fopen(filename,"r")) == NULL)
+	FILE *fp = fopen(fname, "r");
+	if (!fp)
 	{
-		printf("Cannot open R-Tree text file .\n");
+		printf("Could not open %s\n", fname);
 		return 1;
 	}
-	else
+
+	int num_dim = -1;
+	int num_element = -1;
+	fscanf(fp, "%d\n", &num_dim);
+	fscanf(fp, "%d\n", &num_element);
+
+	assert(num_dim == d);
+	assert(num_element == n);
+
+	int i   = 0;
+	// int tmp = -1;
+	while (!feof(fp) && i < n)
 	{
-
-		// load data
-		int num_dim = -1;
-		int num_element = -1;
-		fscanf(fp, "%d\n", &num_dim);
-		fscanf(fp, "%d\n", &num_element);
-		assert(num_dim == dimension);
-		assert(num_element == card);
-
-		while (!feof(fp))
+		// fscanf(fp, "%d", &tmp);
+		for (int j = 0; j < d; ++j)
 		{
-
-			float* temp_data = new float[num_dim];
-			for (int ii = 0; ii < num_dim; ++ii)
-			{
-				fscanf(fp, " %f", &temp_data[ii]);
-			}
-			fscanf(fp, "\n");
-			record_count ++;
+			fscanf(fp, " %f", &data[i][j]);
 		}
-		assert(feof(fp));
-		fclose(fp);
+		fscanf(fp, "\n");
+
+		++i;
 	}
-	cout<<"total data count: "<<record_count<<endl;
+	assert(feof(fp) && i == n);
+	fclose(fp);
+
 	return 0;
 }
 
+
 TempRect pack_data(float* data, int dim)
 {
+	for(int i = 0; i < dim; i++)
+	{
+		printf("%f, ", data[i]);
+	}
+	printf("\n");
 	return TempRect(dim, data);
 	// return TempRect;
 }
+
+
+
 
 int main()
 {
@@ -165,7 +222,7 @@ int main()
 	}
 
 
-	int top_k = 5;
+	int top_k = 2;
 	int dimension = 2;
 	int cardinality = 10;
 	// char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
@@ -197,25 +254,39 @@ int main()
 	MyTree tree;
 	int i, nhits;
 	cout << "nrects = " << nrects << "\n";
+	for(i = 0; i < cardinality; i++)
+	{
+		// pack data into rtree node
+		TempRect myrect = pack_data(data[i], dimension);
+		tree.Insert(myrect.min, myrect.max, i); // Note, all values including zero are fine in this version
+
+	}
 
 
+	vector<float> myvector;
 
-
-
-	MaxK_List* list = new MaxK_List(top_k);
 	float recall = 0.0f;
 	timeval start_time, end_time;
 	gettimeofday(&start_time, NULL);
+
+	qn = 10;
+
 	for(int i = 0; i < qn; i++)
 	{
 		printf("query index: %d...\n", i);
 		float* cur_query = query[i];
-		list->reset();
+		// list->reset();
+		myvector.clear();
 
-		// should start from the root?
-		// tree.BRS(top_k, list, cur_query);
-		Node * tt = tree.m_root;
-		recall += calc_recall(top_k, (const Result *) R[i], list);
+		printf("about to call BRS...\n");
+		tree.BRS(top_k, myvector, cur_query);
+		printf("first BRS done...\n");
+		// sort vector
+		sort(myvector.begin(), myvector.end(), greater<float>());
+
+		printf("about to do recall, vector size: %d \n", myvector.size());
+		recall += calc_recall(top_k, (const Result *) R[i], myvector);
+		printf("first recall: %f .\n", recall);
 	}
 	recall        = recall / qn;
 	gettimeofday(&end_time, NULL);
@@ -226,39 +297,23 @@ int main()
 	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //	for(i=0; i<nrects; i++)
 //	{
 //		tree.Insert(rects[i].min, rects[i].max, i); // Note, all values including zero are fine in this version
 //	}
 
-	for(i = 0; i < cardinality; i++)
-	{
-		// pack data into rtree node
-		TempRect myrect = pack_data(data[i], dimension);
-		tree.Insert(myrect.min, myrect.max, i); // Note, all values including zero are fine in this version
 
-	}
+
 
 	float search_data[] = {6.0f, 4.0f, 10.0f, 6.0f};
 	TempRect search_rect(4, search_data); // search will find above rects that this one overlaps
 	nhits = tree.MySearch(search_rect.min, search_rect.max, MySearchCallback);
 
 	cout << "Search resulted in " << nhits << " hits\n";
+
+	float* boundsMin = new float[dimension];
+	float* boundsMax = new float[dimension];
+
 
 	// Iterator test
 	int itIndex = 0;
@@ -271,8 +326,8 @@ int main()
 
 //		int boundsMin[2] = {0,0};
 //		int boundsMax[2] = {0,0};
-		float boundsMin[2] = {0.0f,0.0f};
-		float boundsMax[2] = {0.0f,0.0f};
+		// float boundsMin[2] = {0.0f,0.0f};
+		// float boundsMax[2] = {0.0f,0.0f};
 		it.GetBounds(boundsMin, boundsMax);
 		cout << "it[" << itIndex++ << "] " << value << " = (" << boundsMin[0] << "," << boundsMin[1] << "," << boundsMax[0] << "," << boundsMax[1] << ")\n";
 	}

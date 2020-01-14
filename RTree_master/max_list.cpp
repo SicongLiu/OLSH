@@ -1,6 +1,7 @@
 #include <string.h>
-//#include "../func/gendef.h"
+#include <stdio.h>
 #include "max_list.h"
+#include "gendef.h"
 
 
 // -----------------------------------------------------------------------------
@@ -37,16 +38,35 @@ float MaxK_List::insert(            // insert item
     // for each candidate, check potential insert location
     for (i = num_; i > 0; i--)
     {
-        if (list_[i-1].key_ < key)
-            list_[i] = list_[i - 1];
-        else break;
+    	if (list_[i-1].key_ < key)
+    		list_[i] = list_[i - 1];
+    	else break;
     }
     list_[i].key_ = key;                // store new item here
     list_[i].id_ = id;
     if (num_ < k_)
-        num_++;            // increase the number of items
+    	num_++;            // increase the number of items
     return min_key();
 }
+
+void MaxK_List::reset()
+{
+	num_ = 0;
+}
+
+// -------------------------------------------------------------------------
+float MaxK_List::max_key(){
+	return num_ > 0 ? list_[0].key_ : MINREAL;
+}
+
+// -------------------------------------------------------------------------
+float MaxK_List::min_key() { return num_ == k_ ? list_[k_-1].key_ : MINREAL; }
+
+// -------------------------------------------------------------------------
+float MaxK_List::ith_key(int i) { return i < num_ ? list_[i].key_ : MINREAL; }
+
+// -------------------------------------------------------------------------
+int MaxK_List::ith_id(int i) { return i < num_ ? list_[i].id_ : MININT; }
 
 
 

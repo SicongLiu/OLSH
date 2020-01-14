@@ -1,48 +1,49 @@
-.PHONY: all build test clean
-
-CXXFLAGS=-Wall -Wextra -Wpedantic -std=c++11
-
-all: build
-
-build: out out/MyTest
-
-out:
-	mkdir -p out
-
-max_list.o: max_list.h max_list.cc
-
-gendef.o: gendef.h gendef.cc
+#.PHONY: all build test clean
 #
-#myentry.o: myentry.h myentry.cc
-
-out/MyTest: MyTest.cpp RTree.h 
-	$(CXX) -o $@ ${CXXFLAGS} $<
-
-
-test: build
-	./out/MyTest
-#	./out/TestBadData baddata.txt
-#	./out/MemoryTest
-
-clean:
-	rm -rf out
-	
-	
-	
+#CXXFLAGS=-Wall -Wextra -Wpedantic -std=c++11
 #
-#.cc.o:
-#	$(CC) $(CCOPTS) $<
+#all: build
 #
-#all: rtree
+#build: out out/MyTest
 #
-#rtree.o: rtree.cc rtree.h blk_file.h direntry.h direntry.cc gendef.h gendef.cc linlist.h linlist.cc rtdatanode.h rtdatanode.cc rtdirnode.h rtdirnode.cc rtnode.h rtnode.cc 
+#out:
+#	mkdir -p out
 #
-#blk_file.o: blk_file.cc blk_file.h
+#max_list.o: max_list.h max_list.cpp
 #
-#main.o: main.cc rtree.h
+## gendef.o: gendef.h gendef.cc
+##
+## myentry.o: myentry.h myentry.cc
 #
-#rtree: rtree.o blk_file.o main.o
-#	$(LINK) -o rtree main.o rtree.o blk_file.o $(LINKOPTS)
+#out/MyTest: MyTest.cpp RTree.h gendef.h 
+#	$(CXX) -o $@ ${CXXFLAGS} $<
+#
+#
+#test: build
+#	./out/MyTest
 #
 #clean:
-#	rm *o rtree core
+#	rm -rf out
+	
+	
+	
+SRCS=max_list.cpp MyTest.cpp
+OBJS=${SRCS:.cc=.o}
+
+CXX=g++ -std=c++11
+# CPPFLAGS=-w -O3
+CPPFLAGS=-g -O0
+
+.PHONY: clean
+
+all: ${OBJS}
+	${CXX} ${CPPFLAGS} -o rtree_main ${OBJS}
+
+max_list.o: max_list.h
+
+gendef.o: gendef.h
+
+main.o: MyTest.cpp RTree.h
+
+clean:
+	-rm ${OBJS} rtree_main

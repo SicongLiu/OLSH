@@ -1,19 +1,16 @@
-/*blk_file.h:
-  this file specifies the class BlockFile, a block file simulator
-*/
 #ifndef MAX_LIST
 #define MAX_LIST
 
 //----------------------------------------------------------
-#include <stdio.h>
-#include "gendef.h"
+//#include <stdio.h>
+//#include "gendef.h"
 //----------------------------------------------------------
 
 //struct Result {                        // structure for furthest neighbor / hash value
 //    float key_;                            // distance / random projection value
 //    int   id_;                            // object id
 //};
-
+struct Result;
 
 class MaxK_List {
 public:
@@ -21,22 +18,22 @@ public:
     ~MaxK_List();                    // destructor
 
     // -------------------------------------------------------------------------
-    void reset() { num_ = 0; }
+    void reset(); //{ num_ = 0; }
 
     // -------------------------------------------------------------------------
-    float max_key()    { return num_ > 0 ? list_[0].key_ : MINREAL; }
+    float max_key();//    { return num_ > 0 ? list_[0].key_ : MINREAL; }
 
     // -------------------------------------------------------------------------
-    float min_key() { return num_ == k_ ? list_[k_-1].key_ : MINREAL; }
+    float min_key();// { return num_ == k_ ? list_[k_-1].key_ : MINREAL; }
 
     // -------------------------------------------------------------------------
-    float ith_key(int i) { return i < num_ ? list_[i].key_ : MINREAL; }
+    float ith_key(int i);// { return i < num_ ? list_[i].key_ : MINREAL; }
 
     // -------------------------------------------------------------------------
-    int ith_id(int i) { return i < num_ ? list_[i].id_ : MININT; }
+    int ith_id(int i);// { return i < num_ ? list_[i].id_ : MININT; }
 
     // -------------------------------------------------------------------------
-    int size() { return num_; }
+    int size();// { return num_; }
 
     // -------------------------------------------------------------------------
     bool isFull();                    // is full?
@@ -52,4 +49,4 @@ private:
     Result *list_;                    // the list itself
 };
 
-#endif // __BLK_FILE
+#endif

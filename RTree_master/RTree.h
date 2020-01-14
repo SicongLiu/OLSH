@@ -8,9 +8,13 @@
 #include <math.h>
 #include <assert.h>
 #include <stdlib.h>
-
+#include <iostream>
 #include <algorithm>
 #include <functional>
+#include <set>
+#include <utility>
+#include <queue>
+#include <vector>
 
 #define ASSERT assert // RTree uses ASSERT( condition )
 #ifndef Min
@@ -33,7 +37,6 @@
 // Fwd decl
 class RTFileStream;  // File I/O helper class, look below for implementation and notes.
 
-
 /// \class RTree
 /// Implementation of RTree, a multidimensional bounding rectangle tree.
 /// Example usage: For a 3-dimensional tree use RTree<Object*, float, 3> myTree;
@@ -55,7 +58,7 @@ class ELEMTYPEREAL = ELEMTYPE, int TMAXNODES = 8, int TMINNODES = TMAXNODES / 2>
 
 class RTree
 {
-protected: 
+public:
 
 	struct Node;  // Fwd decl.  Used by other internal structs and iterator
 
@@ -69,13 +72,116 @@ public:
 		MINNODES = TMINNODES,                         ///< Min elements in node
 	};
 
+	/// Minimal bounding rectangle (n-dimensional)
+	struct Rect
+	{
+		ELEMTYPE m_min[NUMDIMS];                      ///< Min dimensions of bounding box
+		ELEMTYPE m_max[NUMDIMS];                      ///< Max dimensions of bounding box
+	};
+
+
+	/// May be data or may be another subtree
+	/// The parents level determines this.
+	/// If the parents level is 0, then this is data
+	struct Branch
+	{
+		Rect m_rect;                                  ///< Bounds
+		Node* m_child;                                ///< Child node
+		DATATYPE m_data;                              ///< Data Id
+	};
+
+	/// Node for each branch level
+	struct Node
+	{
+		bool IsInternalNode()                         { return (m_level > 0); } // Not a leaf, but a internal node
+		bool IsLeaf()                                 { return (m_level == 0); } // A leaf, contains data
+
+		int m_count;                                  ///< Count
+		int m_level;                                  ///< Leaf is zero, others positive
+		Branch m_branch[MAXNODES];                    ///< Branch
+	};
 public:
 
 	RTree();
 	RTree(const RTree& other);
 	virtual ~RTree();
+	// Added by Sicong
+	ELEMTYPE get_max_score(ELEMTYPE boundsMin[NUMDIMS], ELEMTYPE boundsMax[NUMDIMS], ELEMTYPE* query)
+	{
+		// ELEMTYPE score = 0.0f;
+		ELEMTYPE score = 0;
+		for(int i = 0; i < NUMDIMS; i++)
+		{
+			if(query[i] >= 0)
+			{
+				score += query[i] * boundsMax[i];
+			}
+			else
+			{
+				score += query[i] * boundsMin[i];
+			}
+		}
+		return score;
 
-	Node* getRootNode();
+	}
+	// Added by Sicong
+	struct Compare
+	{
+	    bool operator() (std::pair<Node, ELEMTYPE> const& e1, std::pair<Node, ELEMTYPE> const& e2)
+	    {
+	    		if(e1.second <= e2.second)
+	    			return true;
+	    		else
+	    			return false;
+	    }
+	};
+
+
+	void BRS(int top_k, std::vector<ELEMTYPE>& vector, ELEMTYPE* cur_query)
+	{
+		printf("inside functio BRS .. \n");
+		// define heap
+		std::priority_queue <std::pair<Node, ELEMTYPE>, std::vector<std::pair<Node, ELEMTYPE> >, Compare> pq;
+		Node* first = m_root;
+
+		printf("about to compute max score for root node child, root node m_count: %d. \n", first->m_count);
+		for(int i = 0; i < first->m_count; i++)
+		{
+			Node* temp_node = first->m_branch[i].m_child;
+			Rect temp_rect = first->m_branch[i].m_rect;
+			ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+			std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*temp_node, max_score);
+			pq.push(m_pair);
+		}
+		printf("done with root node child.. \n");
+		int count = 0;
+		while(vector.size() <= top_k)
+		{
+			printf("ciurrent round: %d, vector size: %d. \n", count, vector.size());
+			// pq.pop();
+			std::pair<Node, ELEMTYPE> m_pair = pq.top();
+			pq.pop();
+			Node* temp_node = & m_pair.first;
+			if(temp_node->IsLeaf())
+			{
+				vector.push_back(m_pair.second);
+				if(vector.size() >= top_k)
+					return;
+			}
+			else
+			{
+				for(int i = 0; i < temp_node->m_count; i++)
+				{
+					Node* next_temp_node = first->m_branch[i].m_child;
+					Rect temp_rect = first->m_branch[i].m_rect;
+					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
+					pq.push(m_pair);
+				}
+			}
+			count++;
+		}
+	}
 	/// Insert entry
 	/// \param a_min Min of bounding rect
 	/// \param a_max Max of bounding rect
@@ -238,6 +344,12 @@ public:
 			return m_stack[m_tos];
 		}
 
+		// Added by Sicong, for internal use only, check stack top
+		StackElement& Top()
+		{
+			ASSERT(m_tos > 0);
+			return m_stack[m_tos];
+		}
 		StackElement m_stack[MAX_STACK];              ///< Stack as we are doing iteration instead of recursion
 		int m_tos;                                    ///< Top Of Stack index
 
@@ -267,6 +379,70 @@ public:
 		}
 	}
 
+	// should use internal stack to retrieve elements
+//	void GetFirstBatch(Iterator& a_it, std::vector<std::pair<ELEMTYPE*, ELEMTYPE*> >& bounds_vector, ELEMTYPE a_min[NUMDIMS], ELEMTYPE a_max[NUMDIMS])
+//	{
+//		a_it.Init();
+//		Node* first = m_root;
+//		int current_level = first->m_level;
+//		while(first)
+//		{
+//			if(first->IsInternalNode() && first->m_count > 1)
+//			{
+//				a_it.Push(first, 1); // Descend sibling branch later
+//			}
+//			else if(first->IsLeaf())
+//			{
+//				if(first->m_count)
+//				{
+//					a_it.Push(first, 0);
+//				}
+//				break;
+//			}
+//			first = first->m_branch[0].m_child;
+//		}
+//		a_it.GetBounds(a_min[NUMDIMS],  a_max[NUMDIMS]);
+//		std::pair<ELEMTYPE*, ELEMTYPE*> mypair = std::make_pair(a_min, a_max);
+//		bounds_vector.insert(mypair);
+//		// keep loading entries
+//		// while still part of root node
+//		// get next iterator
+//		for(int ii = 0; ii < m_root->m_count; ii++)
+//		{
+//			a_it++;
+//			a_it.GetBounds(a_min[NUMDIMS], a_max[NUMDIMS]);
+//			std::pair<ELEMTYPE*, ELEMTYPE*> mypair = std::make_pair(a_min, a_max);
+//			bounds_vector.insert(mypair);
+//		}
+
+//
+//
+//		m_count
+//		GetNext(a_it);
+//		StackElement curTos = Top(); // Copy stack top cause it may change as we use it
+//
+//						if(curTos.m_node->IsLeaf())
+//						{
+//							// Keep walking through data while we can
+//							if(curTos.m_branchIndex+1 < curTos.m_node->m_count)
+//							{
+//								// There is more data, just point to the next one
+//								Push(curTos.m_node, curTos.m_branchIndex + 1);
+//								return true;
+//							}
+//						}
+//
+//
+//	}
+
+	// compute child node entry based on current iterator
+	void getNextBatch(Iterator parent_it, Iterator& cur_it)
+	{
+		// need to get to the nodes using iterator
+
+	}
+
+
 	/// Get Next for iteration
 	void GetNext(Iterator& a_it)                    { ++a_it; }
 
@@ -278,33 +454,34 @@ public:
 
 protected:
 
-	/// Minimal bounding rectangle (n-dimensional)
-	struct Rect
-	{
-		ELEMTYPE m_min[NUMDIMS];                      ///< Min dimensions of bounding box
-		ELEMTYPE m_max[NUMDIMS];                      ///< Max dimensions of bounding box
-	};
-
-	/// May be data or may be another subtree
-	/// The parents level determines this.
-	/// If the parents level is 0, then this is data
-	struct Branch
-	{
-		Rect m_rect;                                  ///< Bounds
-		Node* m_child;                                ///< Child node
-		DATATYPE m_data;                              ///< Data Id
-	};
-
-	/// Node for each branch level
-	struct Node
-	{
-		bool IsInternalNode()                         { return (m_level > 0); } // Not a leaf, but a internal node
-		bool IsLeaf()                                 { return (m_level == 0); } // A leaf, contains data
-
-		int m_count;                                  ///< Count
-		int m_level;                                  ///< Leaf is zero, others positive
-		Branch m_branch[MAXNODES];                    ///< Branch
-	};
+//	/// Minimal bounding rectangle (n-dimensional)
+//	struct Rect
+//	{
+//		ELEMTYPE m_min[NUMDIMS];                      ///< Min dimensions of bounding box
+//		ELEMTYPE m_max[NUMDIMS];                      ///< Max dimensions of bounding box
+//	};
+//
+//
+//	/// May be data or may be another subtree
+//	/// The parents level determines this.
+//	/// If the parents level is 0, then this is data
+//	struct Branch
+//	{
+//		Rect m_rect;                                  ///< Bounds
+//		Node* m_child;                                ///< Child node
+//		DATATYPE m_data;                              ///< Data Id
+//	};
+//
+//	/// Node for each branch level
+//	struct Node
+//	{
+//		bool IsInternalNode()                         { return (m_level > 0); } // Not a leaf, but a internal node
+//		bool IsLeaf()                                 { return (m_level == 0); } // A leaf, contains data
+//
+//		int m_count;                                  ///< Count
+//		int m_level;                                  ///< Leaf is zero, others positive
+//		Branch m_branch[MAXNODES];                    ///< Branch
+//	};
 
 	/// A link list of nodes for reinsertion after a delete operation
 	struct ListNode
@@ -370,7 +547,6 @@ protected:
 	Node* m_root;                                    ///< Root of tree
 	ELEMTYPEREAL m_unitSphereVolume;                 ///< Unit sphere constant for required number of dimensions
 };
-
 
 // Because there is not stream support, this is a quick and dirty file I/O helper.
 // Users will likely replace its usage with a Stream implementation from their favorite API.
@@ -485,13 +661,6 @@ RTREE_QUAL::~RTree()
 {
 	Reset(); // Free, or reset node memory
 }
-
-RTREE_TEMPLATE
-Node* RTREE_QUAL::~RTree()
-{
-	return m_root;
-}
-
 
 
 RTREE_TEMPLATE
