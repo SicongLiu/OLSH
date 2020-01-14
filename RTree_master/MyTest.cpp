@@ -24,13 +24,24 @@ struct TempRect
 	TempRect(int dim_, float* data)
 	{
 		dim = dim_;
-		min = (float*) malloc (dim);
-		max = (float*) malloc (dim);
+		// min = (float*) malloc (dim);
+		// max = (float*) malloc (dim);
+		min = new float[dim];
+		max = new float[dim];
 		for(int i= 0; i < dim; i++)
 		{
 			min[i] = data[i];
 			max[i] = data[i];
 		}
+	}
+	~TempRect()
+	{
+//		free (min);
+//		free (max);
+		delete[] min;
+		delete[] max;
+		min = NULL;
+		max = NULL;
 	}
 };
 
@@ -174,14 +185,14 @@ int main()
 {
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "../H2_ALSH/result/result_correlated_4D_200000.mip";
+	char truth_set[100] = "../H2_ALSH/result/result_correlated_7D_200000.mip";
 	int top_k = 25;
-	int dimension = 4;
+	int dimension = 7;
 	int cardinality = 200000;
-	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/correlated_4_200000.txt";
-	char querypath[100] = "../H2_ALSH/query/query_4D.txt";
-	typedef RTree<ValueType, float, 4, float> MyTree;
-	timeval start_time, end_time;
+	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/correlated_7_200000.txt";
+	char querypath[100] = "../H2_ALSH/query/query_7D.txt";
+	typedef RTree<ValueType, float, 7, float> MyTree;
+
 
 
 	Result **R = new Result*[qn];
@@ -193,10 +204,7 @@ int main()
 	}
 
 	float** data = new float*[cardinality];
-	for (int i = 0; i < cardinality; ++i)
-	{
-		data[i] = new float[dimension];
-	}
+	for (int i = 0; i < cardinality; ++i) data[i] = new float[dimension];
 	if (read_data(filepath, data, dimension, cardinality) != 0)
 	{
 		printf("Reading dataset error!\n");
@@ -204,10 +212,7 @@ int main()
 	}
 
 	float** query = new float*[qn];
-	for (int i = 0; i < qn; ++i)
-	{
-		query[i] = new float[dimension];
-	}
+	for (int i = 0; i < qn; ++i) query[i] = new float[dimension];
 	if (read_data(querypath, query, dimension, qn) != 0)
 	{
 		printf("Reading dataset error!\n");
@@ -218,14 +223,15 @@ int main()
 	MyTree tree;
 	int i, nhits;
 
+	timeval start_time, end_time;
 	gettimeofday(&start_time, NULL);
 	for(i = 0; i < cardinality; i++)
 	{
 		// pack data into rtree node
 		TempRect myrect = pack_data(data[i], dimension);
 		tree.Insert(myrect.min, myrect.max, i); // Note, all values including zero are fine in this version
-
 	}
+
 	gettimeofday(&end_time, NULL);
 
 	float building_tree = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
@@ -236,13 +242,13 @@ int main()
 	vector<float> myvector;
 	float recall = 0.0f;
 
-
 	gettimeofday(&start_time, NULL);
 	for(int i = 0; i < qn; i++)
 	{
 		// printf("query index: %d...\n", i);
 		float* cur_query = query[i];
-		myvector.clear();
+		if(myvector.size() != 0)
+			myvector.clear();
 
 		tree.BRS(top_k, myvector, cur_query);
 
@@ -251,12 +257,14 @@ int main()
 		// checkpoint(top_k, (const Result *) R[i], myvector);
 		recall += calc_recall(top_k, (const Result *) R[i], myvector);
 	}
+
 	recall        = recall / qn;
 	gettimeofday(&end_time, NULL);
 	float runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 			start_time.tv_usec) / 1000000.0f;
 	runtime       = (runtime * 1000.0f) / qn;
 
+	cout<<"TopK: "<<top_k << ", runtime: "<<runtime<<", recall: "<<recall<<endl;
 	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 
 

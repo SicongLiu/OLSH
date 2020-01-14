@@ -210,6 +210,7 @@ public:
 			}
 			count++;
 		}
+		pq = std::priority_queue <std::pair<Node, ELEMTYPE>, std::vector<std::pair<Node, ELEMTYPE> >, Compare>(); // reset it
 	}
 	/// Insert entry
 	/// \param a_min Min of bounding rect
