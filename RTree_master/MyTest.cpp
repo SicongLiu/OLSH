@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <vector>
 #include <sys/time.h>
-//#include "myentry.h"
 #include "max_list.h"
 #include "RTree.h"
 #include "gendef.h"
@@ -90,7 +89,6 @@ float calc_recall(					// calc recall (percentage)
 
 int nrects = sizeof(rects) / sizeof(rects[0]);
 
-//Rect search_rect(6, 4, 10, 6); // search will find above rects that this one overlaps
 
 
 bool MySearchCallback(ValueType id)
@@ -150,10 +148,8 @@ int read_data(	const char *fname, float **data, int d, int n)
 	assert(num_element == n);
 
 	int i   = 0;
-	// int tmp = -1;
 	while (!feof(fp) && i < n)
 	{
-		// fscanf(fp, "%d", &tmp);
 		for (int j = 0; j < d; ++j)
 		{
 			fscanf(fp, " %f", &data[i][j]);
@@ -174,14 +170,20 @@ TempRect pack_data(float* data, int dim)
 	return TempRect(dim, data);
 }
 
-
-
-
 int main()
 {
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/result_correlated_4D_200000.mip";
+	char truth_set[100] = "../H2_ALSH/result/result_correlated_4D_200000.mip";
+	int top_k = 25;
+	int dimension = 4;
+	int cardinality = 200000;
+	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/correlated_4_200000.txt";
+	char querypath[100] = "../H2_ALSH/query/query_4D.txt";
+	typedef RTree<ValueType, float, 4, float> MyTree;
+	timeval start_time, end_time;
+
+
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
 	if (read_ground_truth(qn, truth_set, R, MAXK) != 0)
@@ -190,13 +192,6 @@ int main()
 		return 1;
 	}
 
-
-	int top_k = 25;
-	int dimension = 4;
-	int cardinality = 200000;
-	// char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
-	char filepath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/correlated_4_200000.txt";
-	char querypath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/query_4D.txt";
 	float** data = new float*[cardinality];
 	for (int i = 0; i < cardinality; ++i)
 	{
@@ -219,9 +214,11 @@ int main()
 		return 1;
 	}
 
-	typedef RTree<ValueType, float, 4, float> MyTree;
+
 	MyTree tree;
 	int i, nhits;
+
+	gettimeofday(&start_time, NULL);
 	for(i = 0; i < cardinality; i++)
 	{
 		// pack data into rtree node
@@ -229,25 +226,26 @@ int main()
 		tree.Insert(myrect.min, myrect.max, i); // Note, all values including zero are fine in this version
 
 	}
+	gettimeofday(&end_time, NULL);
 
-	cout<<"total card: "<< cardinality<<", data insertion done"<<endl;
+	float building_tree = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
+				start_time.tv_usec) / 1000000.0f;
 
+
+	cout<<"Tree building time: "<<building_tree<<", total card: "<< cardinality<<", data insertion done"<<endl;
 	vector<float> myvector;
-
 	float recall = 0.0f;
-	timeval start_time, end_time;
+
+
 	gettimeofday(&start_time, NULL);
-
-
 	for(int i = 0; i < qn; i++)
 	{
-		printf("query index: %d...\n", i);
+		// printf("query index: %d...\n", i);
 		float* cur_query = query[i];
 		myvector.clear();
 
 		tree.BRS(top_k, myvector, cur_query);
-		// sort vector
-		// sort(myvector.begin(), myvector.end(), greater<float>());
+
 		sort(myvector.begin(), myvector.end(), less<float>());
 
 		// checkpoint(top_k, (const Result *) R[i], myvector);
@@ -262,103 +260,6 @@ int main()
 	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 
 
-//	for(i=0; i<nrects; i++)
-//	{
-//		tree.Insert(rects[i].min, rects[i].max, i); // Note, all values including zero are fine in this version
-//	}
-
-
-/*
-
-	float search_data[] = {6.0f, 4.0f, 10.0f, 6.0f};
-	TempRect search_rect(4, search_data); // search will find above rects that this one overlaps
-	nhits = tree.MySearch(search_rect.min, search_rect.max, MySearchCallback);
-
-	cout << "Search resulted in " << nhits << " hits\n";
-
-	float* boundsMin = new float[dimension];
-	float* boundsMax = new float[dimension];
-
-
-	// Iterator test
-	int itIndex = 0;
-	MyTree::Iterator it;
-	for( tree.GetFirst(it);
-			!tree.IsNull(it);
-			tree.GetNext(it) )
-	{
-		int value = tree.GetAt(it);
-
-//		int boundsMin[2] = {0,0};
-//		int boundsMax[2] = {0,0};
-		// float boundsMin[2] = {0.0f,0.0f};
-		// float boundsMax[2] = {0.0f,0.0f};
-		it.GetBounds(boundsMin, boundsMax);
-		cout << "it[" << itIndex++ << "] " << value << " = (" << boundsMin[0] << "," << boundsMin[1] << "," << boundsMax[0] << "," << boundsMax[1] << ")\n";
-	}
-
-	// Iterator test, alternate syntax
-	itIndex = 0;
-	tree.GetFirst(it);
-	while( !it.IsNull() )
-	{
-		int value = *it;
-		++it;
-		cout << "it[" << itIndex++ << "] " << value << "\n";
-	}
-
-	// test copy constructor
-	MyTree copy = tree;
-
-	// Iterator test
-	itIndex = 0;
-	for (copy.GetFirst(it);
-			!copy.IsNull(it);
-			copy.GetNext(it) )
-	{
-		int value = copy.GetAt(it);
-
-		//		int boundsMin[2] = {0,0};
-		//		int boundsMax[2] = {0,0};
-		float boundsMin[2] = {0.0f,0.0f};
-		float boundsMax[2] = {0.0f,0.0f};
-		it.GetBounds(boundsMin, boundsMax);
-		cout << "it[" << itIndex++ << "] " << value << " = (" << boundsMin[0] << "," << boundsMin[1] << "," << boundsMax[0] << "," << boundsMax[1] << ")\n";
-	}
-
-	// Iterator test, alternate syntax
-	itIndex = 0;
-	copy.GetFirst(it);
-	while( !it.IsNull() )
-	{
-		int value = *it;
-		++it;
-		cout << "it[" << itIndex++ << "] " << value << "\n";
-	}
-*/
 	return 0;
-
-	// Output:
-	//
-	// nrects = 4
-	// Hit data rect 1
-	// Hit data rect 2
-	// Search resulted in 2 hits
-	// it[0] 0 = (0,0,2,2)
-	// it[1] 1 = (5,5,7,7)
-	// it[2] 2 = (8,5,9,6)
-	// it[3] 3 = (7,1,9,2)
-	// it[0] 0
-	// it[1] 1
-	// it[2] 2
-	// it[3] 3
-	// it[0] 0 = (0,0,2,2)
-	// it[1] 1 = (5,5,7,7)
-	// it[2] 2 = (8,5,9,6)
-	// it[3] 3 = (7,1,9,2)
-	// it[0] 0
-	// it[1] 1
-	// it[2] 2
-	// it[3] 3
 }
 

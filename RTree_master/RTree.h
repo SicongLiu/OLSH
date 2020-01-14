@@ -125,25 +125,26 @@ public:
 
 	}
 
-	ELEMTYPE get_score(ELEMTYPE boundsMin[NUMDIMS], ELEMTYPE boundsMax[NUMDIMS], ELEMTYPE* query)
-	{
-		// ELEMTYPE score = 0.0f;
-		ELEMTYPE score = 0;
-		for(int i = 0; i < NUMDIMS; i++)
-		{
+//	ELEMTYPE get_score(ELEMTYPE boundsMin[NUMDIMS], ELEMTYPE boundsMax[NUMDIMS], ELEMTYPE* query)
+//	{
+//		// ELEMTYPE score = 0.0f;
+//		ELEMTYPE score = 0;
+//		for(int i = 0; i < NUMDIMS; i++)
+//		{
+//
+//			if(query[i] >= 0)
+//			{
+//				score += query[i] * boundsMax[i];
+//			}
+//			else
+//			{
+//				score += query[i] * boundsMin[i];
+//			}
+//		}
+//		return score;
+//
+//	}
 
-			if(query[i] >= 0)
-			{
-				score += query[i] * boundsMax[i];
-			}
-			else
-			{
-				score += query[i] * boundsMin[i];
-			}
-		}
-		return score;
-
-	}
 	// Added by Sicong
 	struct Compare
 	{
@@ -186,7 +187,7 @@ public:
 				{
 					Node* next_temp_node = temp_node->m_branch[j].m_child;
 					Rect temp_rect = temp_node->m_branch[j].m_rect;
-					float temp_score = get_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					float temp_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
 					vector.push_back(temp_score);
 
 				}
