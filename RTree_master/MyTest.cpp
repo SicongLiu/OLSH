@@ -16,6 +16,7 @@ using namespace std;
 
 typedef float ValueType;
 
+
 struct TempRect
 {
 	int dim;
@@ -188,13 +189,15 @@ int main()
 	char truth_set[100] = "../H2_ALSH/result/result_correlated_7D_200000.mip";
 	int top_k = 25;
 	int dimension = 7;
+	const int gloabl_dim = 7;
 	int cardinality = 200000;
 	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/correlated_7_200000.txt";
 	char querypath[100] = "../H2_ALSH/query/query_7D.txt";
-	typedef RTree<ValueType, float, 7, float> MyTree;
+
+	typedef RTree<ValueType, float, gloabl_dim, float> MyTree;
 
 
-
+	cout<<"data path: "<<filepath<<endl;
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
 	if (read_ground_truth(qn, truth_set, R, MAXK) != 0)
@@ -236,7 +239,6 @@ int main()
 
 	float building_tree = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 				start_time.tv_usec) / 1000000.0f;
-
 
 	cout<<"Tree building time: "<<building_tree<<", total card: "<< cardinality<<", data insertion done"<<endl;
 	vector<float> myvector;
