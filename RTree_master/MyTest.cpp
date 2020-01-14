@@ -70,7 +70,7 @@ float calc_recall(					// calc recall (percentage)
 {
 	int i = k - 1;
 	int last = k - 1;
-	cout<<"comparing "
+	cout<<"comparing ground truth: " << R[last].key_  << ", value: " << myvector.at(i)<<endl;
 	while (i >= 0 && R[last].key_ - myvector.at(i) > FLOATZERO) {
 		i--;
 	}
@@ -181,7 +181,7 @@ int main()
 	}
 
 
-	int top_k = 25;
+	int top_k = 2;
 	int dimension = 2;
 	int cardinality = 200000;
 	// char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
