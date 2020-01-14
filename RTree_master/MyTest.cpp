@@ -88,14 +88,6 @@ struct Rect rects[] =
 //
 
 
-bool sortbysec(const pair<float,float> &a, const pair<float,float> &b)
-{
-    if (a.second <= b.second)
-    		return true;
-    else
-    		return false;
-}
-
 float calc_recall(					// calc recall (percentage)
 	int   k,							// top-k value
 	const Result *R,					// ground truth results
@@ -103,6 +95,7 @@ float calc_recall(					// calc recall (percentage)
 {
 	int i = k - 1;
 	int last = k - 1;
+	printf("comparing: %f, %f .\n", R[last].key_, myvector.at(i) );
 	while (i >= 0 && R[last].key_ - myvector.at(i) > FLOATZERO) {
 		i--;
 	}
@@ -111,7 +104,16 @@ float calc_recall(					// calc recall (percentage)
 }
 
 
-
+void check_print(int k, const Result *R, vector<float> myvect)
+{
+	int i = k - 1;
+	int last = k - 1;
+	while(i >= 0)
+	{
+		printf("current rank: %d, ground truth: %f, my_value: %f \n", i, R[i].key_, myvect.at(i));
+		i--;
+	}
+}
 
 int nrects = sizeof(rects) / sizeof(rects[0]);
 
@@ -278,13 +280,28 @@ int main()
 		// list->reset();
 		myvector.clear();
 
-		printf("about to call BRS...\n");
+		for(int j = 0; j < dimension; j++)
+		{
+			printf("%f, ", cur_query[j]);
+		}
+
+		for(int j =0; j < cardinality; j++)
+		{
+			float check = 0.0f;
+			for(int k = 0; k < dimension; k++)
+			{
+				check += cur_query[k] * data[j][k];
+
+			}
+			printf("check: %f \n", check);
+		}
+
+		printf("\n");
 		tree.BRS(top_k, myvector, cur_query);
-		printf("first BRS done...\n");
 		// sort vector
 		sort(myvector.begin(), myvector.end(), greater<float>());
 
-		printf("about to do recall, vector size: %d \n", myvector.size());
+		check_print(top_k, (const Result *) R[i], myvector);
 		recall += calc_recall(top_k, (const Result *) R[i], myvector);
 		printf("first recall: %f .\n", recall);
 	}
