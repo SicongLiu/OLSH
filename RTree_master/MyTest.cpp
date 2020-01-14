@@ -62,6 +62,17 @@ struct Rect rects[] =
 		Rect(7, 1, 9, 2),
 };
 
+void checkpoint(int   k,	const Result *R, vector<float> myvector)
+{
+	int i = k - 1;
+	int last = k - 1;
+	cout<<"vector size: "<<myvector.size()<<", comparing ground truth: " << R[last].key_;
+	for(int i = myvector.size() - 1; i >=0 ; i--)
+	{
+		cout<<", value: "<<myvector.at(i);
+	}
+	cout<<endl;
+}
 
 float calc_recall(					// calc recall (percentage)
 	int   k,							// top-k value
@@ -70,7 +81,6 @@ float calc_recall(					// calc recall (percentage)
 {
 	int i = k - 1;
 	int last = k - 1;
-	cout<<"comparing ground truth: " << R[last].key_  << ", value: " << myvector.at(i)<<endl;
 	while (i >= 0 && R[last].key_ - myvector.at(i) > FLOATZERO) {
 		i--;
 	}
@@ -171,7 +181,7 @@ int main()
 {
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/result_anti_correlated_2D_200000.mip";
+	char truth_set[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/result_correlated_4D_200000.mip";
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
 	if (read_ground_truth(qn, truth_set, R, MAXK) != 0)
@@ -181,12 +191,12 @@ int main()
 	}
 
 
-	int top_k = 2;
-	int dimension = 2;
+	int top_k = 25;
+	int dimension = 4;
 	int cardinality = 200000;
 	// char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
-	char filepath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_2_200000.txt";
-	char querypath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/query_2D.txt";
+	char filepath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/correlated_4_200000.txt";
+	char querypath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/query_4D.txt";
 	float** data = new float*[cardinality];
 	for (int i = 0; i < cardinality; ++i)
 	{
@@ -209,7 +219,7 @@ int main()
 		return 1;
 	}
 
-	typedef RTree<ValueType, float, 2, float> MyTree;
+	typedef RTree<ValueType, float, 4, float> MyTree;
 	MyTree tree;
 	int i, nhits;
 	for(i = 0; i < cardinality; i++)
@@ -228,7 +238,6 @@ int main()
 	timeval start_time, end_time;
 	gettimeofday(&start_time, NULL);
 
-	qn = 10;
 
 	for(int i = 0; i < qn; i++)
 	{
@@ -238,8 +247,10 @@ int main()
 
 		tree.BRS(top_k, myvector, cur_query);
 		// sort vector
-		sort(myvector.begin(), myvector.end(), greater<float>());
+		// sort(myvector.begin(), myvector.end(), greater<float>());
+		sort(myvector.begin(), myvector.end(), less<float>());
 
+		// checkpoint(top_k, (const Result *) R[i], myvector);
 		recall += calc_recall(top_k, (const Result *) R[i], myvector);
 	}
 	recall        = recall / qn;

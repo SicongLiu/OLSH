@@ -173,18 +173,15 @@ public:
 
 			pq.push(m_pair);
 		}
-		std::cout<<"loading root node done" <<std::endl;
 		int count = 0;
 		while(vector.size() < top_k)
 		{
-			// std::cout<<"vector size: "<<vector.size()<<std::endl;
-			// pq.pop();
+
 			std::pair<Node, ELEMTYPE> m_pair = pq.top();
 			pq.pop();
 			Node* temp_node = &m_pair.first;
 			if(temp_node->IsLeaf())
 			{
-				// std::cout<<"leaf node: "<< temp_node->m_count << std::endl;
 				for(int j = 0; j < temp_node->m_count; j++)
 				{
 					Node* next_temp_node = temp_node->m_branch[j].m_child;
@@ -205,28 +202,9 @@ public:
 
 					Node* next_temp_node = temp_node->m_branch[i].m_child;
 					Rect temp_rect = temp_node->m_branch[i].m_rect;
-					if(next_temp_node != NULL)
-					{
-						// std::cout<<"not leaf node not null, count: "<< temp_node->m_count<<std::endl;
-						// std::cout << " " << " = (" << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")\n";
-						ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
-
-						std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
-						pq.push(m_pair);
-					}
-//					if(i == 6)
-//					{
-//						if(next_temp_node == NULL)
-//							std::coutf<<"this is nonsense"<<std::endl;
-//						ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
-//						std::cout << " " << " = (" << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")\n";
-//						// std::cout << next_temp_node->m_count << "   " << next_temp_node->m_level<<std::endl;
-//					}
-//					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
-//					// std::cout<<"not leaf node, index: "<< i<<", max score: "<< max_score <<std::endl;
-//					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
-//
-//					pq.push(m_pair);
+					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
+					pq.push(m_pair);
 				}
 			}
 			count++;
