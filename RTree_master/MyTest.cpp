@@ -241,6 +241,7 @@ int main()
 	cout<<"Tree building time: "<<building_tree<<", total card: "<< cardinality<<", data insertion done"<<endl;
 	vector<float> myvector;
 	float recall = 0.0f;
+	int data_accessed = 0;
 
 	gettimeofday(&start_time, NULL);
 	for(int i = 0; i < qn; i++)
@@ -250,7 +251,7 @@ int main()
 		if(myvector.size() != 0)
 			myvector.clear();
 
-		tree.BRS(top_k, myvector, cur_query);
+		tree.BRS(top_k, myvector, cur_query, data_accessed);
 
 		sort(myvector.begin(), myvector.end(), less<float>());
 
@@ -263,8 +264,8 @@ int main()
 	float runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 			start_time.tv_usec) / 1000000.0f;
 	runtime       = (runtime * 1000.0f) / qn;
-
-	cout<<"TopK: "<<top_k << ", runtime: "<<runtime<<", recall: "<<recall<<endl;
+	float average_data_accessed = ((float) data_accessed)/(float)qn;
+	cout<<"TopK: "<<top_k << ", runtime: "<<runtime<<", average data accessed: "<< average_data_accessed<<", recall: "<<recall<<endl;
 	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 
 

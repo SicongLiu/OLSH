@@ -158,7 +158,7 @@ public:
 	};
 
 
-	void BRS(int top_k, std::vector<ELEMTYPE>& vector, ELEMTYPE* cur_query)
+	void BRS(int top_k, std::vector<ELEMTYPE>& vector, ELEMTYPE* cur_query, int& data_accessed)
 	{
 		// define heap
 		std::priority_queue <std::pair<Node, ELEMTYPE>, std::vector<std::pair<Node, ELEMTYPE> >, Compare> pq;
@@ -173,6 +173,7 @@ public:
 			std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*temp_node, max_score);
 
 			pq.push(m_pair);
+			data_accessed++;
 		}
 		int count = 0;
 		while(vector.size() < top_k)
@@ -206,6 +207,7 @@ public:
 					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
 					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
 					pq.push(m_pair);
+					data_accessed++;
 				}
 			}
 			count++;
