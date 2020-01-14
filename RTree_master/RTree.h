@@ -112,7 +112,7 @@ public:
 		ELEMTYPE score = 0;
 		for(int i = 0; i < NUMDIMS; i++)
 		{
-			if((float)query[i] > 0)
+			if((float)query[i] >= 0)
 			{
 				score += query[i] * boundsMax[i];
 			}
@@ -140,9 +140,7 @@ public:
 			{
 				score += query[i] * boundsMin[i];
 			}
-			printf(" \n fuck lme, %f, %f, %f ", query[i], boundsMax[i], boundsMin[i]);
 		}
-		printf(" score, : %f .\n", score);
 		return score;
 
 	}
@@ -164,47 +162,36 @@ public:
 		// define heap
 		std::priority_queue <std::pair<Node, ELEMTYPE>, std::vector<std::pair<Node, ELEMTYPE> >, Compare> pq;
 		Node* first = m_root;
-		printf("lllll leved: %d %d, \n", first->m_level, first->m_count);
 		for(int i = 0; i < first->m_count; i++)
 		{
 			Node* temp_node = first->m_branch[i].m_child;
-			printf("lllll leved: %d \n", temp_node->m_level);
 			Rect temp_rect = first->m_branch[i].m_rect;
 			ELEMTYPE* boundsMin = temp_rect.m_min;
 			ELEMTYPE* boundsMax = temp_rect.m_max;
-			std::cout << "it[ ] " << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")\n";
 			ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
-			std::cout << "it[ ] " << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")"
-					"score :: " <<max_score<<"\n";
-
 			std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*temp_node, max_score);
 
-			printf("\n");
 			pq.push(m_pair);
 		}
+		std::cout<<"loading root node done" <<std::endl;
 		int count = 0;
-		while(vector.size() <= top_k)
+		while(vector.size() < top_k)
 		{
+			// std::cout<<"vector size: "<<vector.size()<<std::endl;
 			// pq.pop();
 			std::pair<Node, ELEMTYPE> m_pair = pq.top();
 			pq.pop();
 			Node* temp_node = &m_pair.first;
-			printf("first score: %f \n", m_pair.second);
 			if(temp_node->IsLeaf())
 			{
-				printf("leaf node!! pair value: %f , %d \n", m_pair.second, temp_node->m_count, temp_node->m_level);
-				// printf("9utput leaf node info: %f, %f, %f, %f \n", temp_node )
+				// std::cout<<"leaf node: "<< temp_node->m_count << std::endl;
 				for(int j = 0; j < temp_node->m_count; j++)
 				{
 					Node* next_temp_node = temp_node->m_branch[j].m_child;
 					Rect temp_rect = temp_node->m_branch[j].m_rect;
-					for(int tt = 0; tt < NUMDIMS; tt++)
-					{
-						printf("fucka;skldfna;sldkf \n");
-						printf("what? max  %f,  min %f ", (float)temp_rect.m_max[tt], (float)temp_rect.m_min[tt]);
-					}
 					float temp_score = get_score(temp_rect.m_min, temp_rect.m_max, cur_query);
 					vector.push_back(temp_score);
+
 				}
 				// vector.push_back(m_pair.second);
 				if(vector.size() >= top_k)
@@ -212,20 +199,34 @@ public:
 			}
 			else
 			{
+
 				for(int i = 0; i < temp_node->m_count; i++)
 				{
 
-					Node* next_temp_node = first->m_branch[i].m_child;
-					Rect temp_rect = first->m_branch[i].m_rect;
-					for(int tt = 0; tt < NUMDIMS; tt++)
+					Node* next_temp_node = temp_node->m_branch[i].m_child;
+					Rect temp_rect = temp_node->m_branch[i].m_rect;
+					if(next_temp_node != NULL)
 					{
-						printf("what? max  %f,  min %f  %d, ", (float)temp_rect.m_max[tt], (float)temp_rect.m_min[tt], next_temp_node->m_level);
+						// std::cout<<"not leaf node not null, count: "<< temp_node->m_count<<std::endl;
+						// std::cout << " " << " = (" << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")\n";
+						ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+
+						std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
+						pq.push(m_pair);
 					}
-					printf(" \n ");
-					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
-					printf("what? max ? \n");
-					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
-					pq.push(m_pair);
+//					if(i == 6)
+//					{
+//						if(next_temp_node == NULL)
+//							std::coutf<<"this is nonsense"<<std::endl;
+//						ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+//						std::cout << " " << " = (" << temp_rect.m_min[0] << "," << temp_rect.m_min[1] << "," << temp_rect.m_max[0] << "," << temp_rect.m_max[1] << ")\n";
+//						// std::cout << next_temp_node->m_count << "   " << next_temp_node->m_level<<std::endl;
+//					}
+//					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+//					// std::cout<<"not leaf node, index: "<< i<<", max score: "<< max_score <<std::endl;
+//					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
+//
+//					pq.push(m_pair);
 				}
 			}
 			count++;
@@ -484,12 +485,12 @@ public:
 //
 //	}
 
-	// compute child node entry based on current iterator
-	void getNextBatch(Iterator parent_it, Iterator& cur_it)
-	{
-		// need to get to the nodes using iterator
-
-	}
+//	// compute child node entry based on current iterator
+//	void getNextBatch(Iterator parent_it, Iterator& cur_it)
+//	{
+//		// need to get to the nodes using iterator
+//
+//	}
 
 
 	/// Get Next for iteration

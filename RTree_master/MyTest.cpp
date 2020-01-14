@@ -62,31 +62,6 @@ struct Rect rects[] =
 		Rect(7, 1, 9, 2),
 };
 
-//float calc_recall(					// calc recall (percentage)
-//	int   k,							// top-k value
-//	const Result *R,					// ground truth results
-//	MaxK_List *list)					// results returned by algorithms
-//{
-//	int i = k - 1;
-//	int last = k - 1;
-//	while (i >= 0 && R[last].key_ - list->ith_key(i) > FLOATZERO) {
-//		i--;
-//	}
-//	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
-//	return (i + 1) * 100.0f / k;
-//}
-
-//
-//bool operator() (MyEntry const& e1, MyEntry const& e2)
-//   {
-//   		if(e1.key <= e2.key)
-//   			return true;
-//   		else
-//   			return false;
-//   }
-//
-//
-
 
 float calc_recall(					// calc recall (percentage)
 	int   k,							// top-k value
@@ -95,25 +70,13 @@ float calc_recall(					// calc recall (percentage)
 {
 	int i = k - 1;
 	int last = k - 1;
-	printf("comparing: %f, %f .\n", R[last].key_, myvector.at(i) );
+	cout<<"comparing "
 	while (i >= 0 && R[last].key_ - myvector.at(i) > FLOATZERO) {
 		i--;
 	}
-	// printf("top-k: %d, index:%d, ground_truth: %f, ret: %f", k, i, R[last].key_, list->ith_key(i));
 	return (i + 1) * 100.0f / k;
 }
 
-
-void check_print(int k, const Result *R, vector<float> myvect)
-{
-	int i = k - 1;
-	int last = k - 1;
-	while(i >= 0)
-	{
-		printf("current rank: %d, ground truth: %f, my_value: %f \n", i, R[i].key_, myvect.at(i));
-		i--;
-	}
-}
 
 int nrects = sizeof(rects) / sizeof(rects[0]);
 
@@ -198,13 +161,7 @@ int read_data(	const char *fname, float **data, int d, int n)
 
 TempRect pack_data(float* data, int dim)
 {
-	for(int i = 0; i < dim; i++)
-	{
-		printf("%f, ", data[i]);
-	}
-	printf("\n");
 	return TempRect(dim, data);
-	// return TempRect;
 }
 
 
@@ -214,7 +171,7 @@ int main()
 {
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/result_anti_correlated_2D_10.mip";
+	char truth_set[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/result/result_anti_correlated_2D_200000.mip";
 	Result **R = new Result*[qn];
 	for (int i = 0; i < qn; ++i) R[i] = new Result[MAXK];
 	if (read_ground_truth(qn, truth_set, R, MAXK) != 0)
@@ -224,11 +181,11 @@ int main()
 	}
 
 
-	int top_k = 2;
+	int top_k = 25;
 	int dimension = 2;
-	int cardinality = 10;
+	int cardinality = 200000;
 	// char filepath[100] = "../StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_4_100000.txt";
-	char filepath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_2_10.txt";
+	char filepath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/anti_correlated_2_200000.txt";
 	char querypath[100] = "/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/query_2D.txt";
 	float** data = new float*[cardinality];
 	for (int i = 0; i < cardinality; ++i)
@@ -255,7 +212,6 @@ int main()
 	typedef RTree<ValueType, float, 2, float> MyTree;
 	MyTree tree;
 	int i, nhits;
-	cout << "nrects = " << nrects << "\n";
 	for(i = 0; i < cardinality; i++)
 	{
 		// pack data into rtree node
@@ -264,6 +220,7 @@ int main()
 
 	}
 
+	cout<<"total card: "<< cardinality<<", data insertion done"<<endl;
 
 	vector<float> myvector;
 
@@ -277,33 +234,13 @@ int main()
 	{
 		printf("query index: %d...\n", i);
 		float* cur_query = query[i];
-		// list->reset();
 		myvector.clear();
 
-		for(int j = 0; j < dimension; j++)
-		{
-			printf("%f, ", cur_query[j]);
-		}
-
-		for(int j =0; j < cardinality; j++)
-		{
-			float check = 0.0f;
-			for(int k = 0; k < dimension; k++)
-			{
-				check += cur_query[k] * data[j][k];
-
-			}
-			printf("check: %f \n", check);
-		}
-
-		printf("\n");
 		tree.BRS(top_k, myvector, cur_query);
 		// sort vector
 		sort(myvector.begin(), myvector.end(), greater<float>());
 
-		check_print(top_k, (const Result *) R[i], myvector);
 		recall += calc_recall(top_k, (const Result *) R[i], myvector);
-		printf("first recall: %f .\n", recall);
 	}
 	recall        = recall / qn;
 	gettimeofday(&end_time, NULL);
@@ -320,7 +257,7 @@ int main()
 //	}
 
 
-
+/*
 
 	float search_data[] = {6.0f, 4.0f, 10.0f, 6.0f};
 	TempRect search_rect(4, search_data); // search will find above rects that this one overlaps
@@ -387,7 +324,7 @@ int main()
 		++it;
 		cout << "it[" << itIndex++ << "] " << value << "\n";
 	}
-
+*/
 	return 0;
 
 	// Output:
