@@ -942,6 +942,105 @@ int compute_TA_list(                    		  	// find top-k mip using linear_scan
 
 	set<int> TA_seen;
 
+	vector<vector<float>> raw_prod;
+	vector<vector<float>> sorted_prod;
+	vector<vector<int>> sorted_prod_idx;
+
+
+	for(int i = 0; i < d; i++)
+	{
+		vector<float> temp_raw_prod;
+		float query_pt = query[i];
+		for(int j = 0; j < n; j++)
+		{
+			float data_pt = data[j][i];
+			float temp_prod = query_pt * data_pt;
+
+			// load into list
+			temp_raw_prod.push_back(temp_prod);
+		}
+		// do the sorting, output index and sorted value list
+		raw_prod.push_back(temp_raw_prod);
+        vector<int> idx(temp_raw_prod.size());
+        iota(idx.begin(), idx.end(), 0);
+
+        // sort indexes based on comparing values in v
+        sort(idx.begin(), idx.end(), [&temp_raw_prod](int i1, int i2) {return temp_raw_prod[i1] > temp_raw_prod[i2];});
+        sort(temp_raw_prod.begin(), temp_raw_prod.end(), greater<float>() );
+
+        sorted_prod_idx.push_back(idx);
+        sorted_prod.push_back(temp_raw_prod);
+	}
+
+
+	int ret_count = 0;
+	while(flag == false)
+	{
+		set<int> current_seen = comp_current_seen_list(sorted_prod_idx, sorted_prod, d, round, current_best);
+		set<int> newly_added;
+
+		set_difference(current_seen.begin(), current_seen.end(), TA_seen.begin(), TA_seen.end(), inserter(newly_added, newly_added.end()));
+
+		for(set<int>::iterator it = newly_added.begin(); it != newly_added.end(); ++it)
+		{
+			int obj_idx = *it;
+			// if(TA_seen.find(obj_idx) == TA_seen.end())
+			// {
+				// cout<<"this is newly added, proceed.... "<<endl;
+				float current_sim = 0.0f;
+
+				// random acess using current id obj_index
+				for(int j = 0; j < d; j++)
+				{
+					vector<float> temp_raw_prod = raw_prod[j];
+					current_sim += temp_raw_prod[obj_idx];
+				}
+
+				ret->insert(current_sim, obj_idx + 1);
+				ret_count++;
+				TA_seen.insert(obj_idx);
+			// }
+		}
+		// update worst score
+		float current_worst = ret->ith_key(top_k - 1);
+
+		// if(current_worst < current_best && cur_k == top_k)
+		if(ret_count >= top_k && current_worst >= current_best)
+		{
+
+			flag = true;
+			cout<< "Total run: " << round <<", current worst: "<< current_worst<<", current best: " <<current_best<< endl;
+		}
+		// cout<< "total run: "<< round<<", current worst: " << current_worst << ", current best: "<<current_best<< ", current sim: "<<current_sim<<", current index: "<<obj_index<< endl;
+		// cout<< "total run: "<< round<<", current worst: " << current_worst1 << ", current best: "<<current_best<< endl;
+
+		round++;
+	}
+	cout<< "total run: "<< round<<", total data access: "<<TA_seen.size()<<endl;
+
+	// delete sim_matrix
+	return 0;
+}
+
+
+
+int compute_TA_list_set_k(                    		  	// find top-k mip using linear_scan
+		int   d,                            	// number of space
+		int   n,                            	// dimension of data points
+		int 	  top_k,
+		MaxK_List* ret,
+		const float **data,                	// data set
+		const float *query,
+		int& total_run,
+		int& total_data_access)         			// output folder
+{
+	bool flag = false;
+	float current_best = 0.0f;
+	int round = 0;
+
+	set<int> TA_seen;
+	set<int> data_accessed;
+
 	vector<multimap<float, int, greater<float> >> map_vector;
 	vector<unordered_map<int, float>> invert_map_vector;
 
@@ -979,28 +1078,56 @@ int compute_TA_list(                    		  	// find top-k mip using linear_scan
 	int ret_count = 0;
 	while(flag == false)
 	{
-		set<int> current_seen = comp_current_seen_list(sorted_prod_idx, sorted_prod, d, round, current_best);
+		current_best = 0.0f;
 
-		for(set<int>::iterator it = current_seen.begin(); it != current_seen.end(); ++it)
+
+		timeval start_time, end_time;
+
+		for(int i = 0; i < d; i++)
 		{
-			int obj_idx = *it;
-			if(TA_seen.find(obj_idx) == TA_seen.end())
-			{
-				// cout<<"this is newly added, proceed.... "<<endl;
-				float current_sim = 0.0f;
+			vector<int> temp_sorted_idx_list = sorted_prod_idx[i];
+			vector<float> temp_sorted_prod = sorted_prod[i];
+			int temp_index = temp_sorted_idx_list[round];
 
+			// insert data into ret
+			// if temp_index in ret, skip
+			// else, random access across different dims and add it to ret -- update ret list if necessary
+			float current_sim = 0.0f;
+			if(TA_seen.find(temp_index) == TA_seen.end())
+			{
+				data_accessed.insert(temp_index);
 				// random acess using current id obj_index
+
 				for(int j = 0; j < d; j++)
 				{
 					vector<float> temp_raw_prod = raw_prod[j];
-					current_sim += temp_raw_prod[obj_idx];
+					current_sim += temp_raw_prod[temp_index];
+				}
+				bool flag = ret->insert_bool(current_sim, temp_index + 1);
+
+				if(flag)
+				{
+					TA_seen.insert(temp_index);
+					ret_count++;
+
+				}
+				if(TA_seen.size() > top_k)
+				{
+					set<int>::iterator it;
+					int temp_id = ret->last_id() - 1;
+					it = TA_seen.find(temp_id);
+					TA_seen.erase(it);
 				}
 
-				ret->insert(current_sim, obj_idx + 1);
-				ret_count++;
-				TA_seen.insert(obj_idx);
 			}
+			else
+			{
+				// do nothing
+			}
+
+			current_best += temp_sorted_prod[round];
 		}
+
 		// update worst score
 		float current_worst = ret->ith_key(top_k - 1);
 
@@ -1009,20 +1136,17 @@ int compute_TA_list(                    		  	// find top-k mip using linear_scan
 		{
 
 			flag = true;
-			cout<< "Total run: " << round <<", current worst: "<< current_worst<<", current best: " <<current_best<< endl;
+			// cout<< "Total run: " << round <<", current worst: "<< current_worst<<", current best: " <<current_best<< endl;
 		}
-		// cout<< "total run: "<< round<<", current worst: " << current_worst << ", current best: "<<current_best<< ", current sim: "<<current_sim<<", current index: "<<obj_index<< endl;
-		// cout<< "total run: "<< round<<", current worst: " << current_worst1 << ", current best: "<<current_best<< endl;
-
 		round++;
 	}
-	cout<< "total run: "<< round<<", total data access: "<<TA_seen.size()<<endl;
+	total_run += round;
+	total_data_access += data_accessed.size();
+	// cout<< "total run: "<< round<<", total data access: "<<data_accessed.size()<<", TA set size:"<<TA_seen.size()<<endl;
 
 	// delete sim_matrix
 	return 0;
 }
-
-
 
 // -----------------------------------------------------------------------------
 int TA_TopK_all(					// find top-k mip using linear_scan
@@ -1074,7 +1198,7 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 	float recall = -1.0f;
 
 	printf("Top-k MIP of Linear Scan:\n");
-	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\n");
+	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\t\ttotal_rounds\ttotal_data_access\n");
 	for (int num = 0; num < max_round; num++) {
 		gettimeofday(&start_time, NULL);
 		top_k = kMIPs[num];
@@ -1083,24 +1207,18 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 		overall_ratio = 0.0f;
 		recall = 0.0f;
 
-		qn = 1; // testing case
+		qn = 6; // testing case
 		// n = 10;
 
+		int total_run = 0;
+		int total_data_access = 0;
 		for (int i = 0; i < qn; ++i) {
-			printf("current query: %d. \n", i);
 			list->reset();
 
 			// compute TA_TopK here, return as list
 			// compute_TA(d, n, top_k, list, data, query[i]);
-			compute_TA_list(d, n, top_k, list, data, query[i]);
-
-
-//			for (int j = 0; j < n; ++j) {
-//				float ip = calc_inner_product(d, data[j], query[i]);
-//				list->insert(ip, j + 1);
-//			}
-
-			printf("true value: %f, list value :%f, id: %d .\n", R[i][top_k-1].key_, list->ith_key(top_k-1), list->ith_id(top_k-1));
+			// compute_TA_list(d, n, top_k, list, data, query[i]);
+			compute_TA_list_set_k(d, n, top_k, list, data, query[i], total_run, total_data_access);
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;
@@ -1118,8 +1236,11 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 		recall        = recall / qn;
 		runtime       = (runtime * 1000.0f) / qn;
 
-		printf("  %3d\t\t%.4f\t\t%.4f\t\t%.2f%%\n", top_k, overall_ratio,
-			runtime, recall);
+		float average_rounds = float(total_run)/qn;
+		float avg_data_access = float(total_data_access)/qn;
+
+		printf("  %3d\t\t%.4f\t\t%.4f\t%.2f\t\t%.3f\t\t%.3f\n", top_k, overall_ratio,
+			runtime, recall, average_rounds, avg_data_access);
 		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
 	}
 	printf("\n");

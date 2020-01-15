@@ -102,11 +102,4 @@ float calc_angle(					// calc angle of two points p1 and p2
 	const float *p1,					// 1st point
 	const float *p2);				// 2nd point
 
-// -----------------------------------------------------------------------------
-float calc_inner_product_scaled(			// calc inner product
-	int   dim,							// dimension
-	const float *data,					// 1st point
-	const float *query,					// 2nd point
-	const float M);						// largest norm to be scaled with
-
 #endif // __UTIL_H

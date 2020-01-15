@@ -40,6 +40,8 @@ public:
 		float key,						// key of item
 		int id);						// id of item
 
+
+
 protected:
 	int    k_;						// max numner of keys
 	int    num_;					// number of key current active
@@ -72,6 +74,8 @@ public:
 	// -------------------------------------------------------------------------
 	int ith_id(int i) { return i < num_ ? list_[i].id_ : MININT; }
 
+	int last_id() {return list_[num_].id_;}
+
 	// -------------------------------------------------------------------------
 	int size() { return num_; }
 
@@ -82,6 +86,10 @@ public:
 	float insert(					// insert item
 		float key,						// key of item
 		int id);						// id of item
+	// -------------------------------------------------------------------------
+	bool insert_bool(					// insert item
+			float key,						// key of item
+			int id);						// id of item
 
 private:
 	int k_;							// max numner of keys

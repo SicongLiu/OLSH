@@ -63,6 +63,7 @@ public:
 	void persistHashTable(const char *fname);		// persist HashTables on file
 	void loadHashTable(const char *fname);			// persist HashTables on file
 	float* compute_vector_mean(float** data, vector<int> data_ids);
+	float get_indexing_time();
 
 protected:
 	int   n_pts_;					// cardinality of dataset
@@ -101,7 +102,7 @@ protected:
 	vector<float> compute_vector_mean(vector<int> data_ids);
 	float compute_mean_sim(vector<float> query, vector<int> data_ids);
 	float compute_max_angle(vector<float> query, vector<int> data_ids);
-
+	float indexing_time_;
 };
 
 #endif // __SRP_LSH_H

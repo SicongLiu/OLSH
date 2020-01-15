@@ -256,6 +256,15 @@ int compute_TA_list(                    		  	// find top-k mip using linear_scan
 		const float **data,                	// data set
 		const float *query);
 
+int compute_TA_list_set_k(                    		  	// find top-k mip using linear_scan
+		int   d,                            	// number of space
+		int   n,                            	// dimension of data points
+		int 	  top_k,
+		MaxK_List* ret,
+		const float **data,                	// data set
+		const float *query,
+		int& total_run,
+		int& total_data_access);
 
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
