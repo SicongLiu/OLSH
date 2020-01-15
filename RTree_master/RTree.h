@@ -157,7 +157,6 @@ public:
 	    }
 	};
 
-
 	void BRS(int top_k, std::vector<ELEMTYPE>& vector, ELEMTYPE* cur_query, int& data_accessed)
 	{
 		// define heap
@@ -175,6 +174,13 @@ public:
 			pq.push(m_pair);
 			data_accessed++;
 		}
+//		while(pq.size() > 0)
+//		{
+//			std::pair<Node, ELEMTYPE> m_pair = pq.top();
+//			pq.pop();
+//			std::cout<<"pq element: "<<m_pair.second<<std::endl;
+//		}
+
 		int count = 0;
 		while(vector.size() < top_k)
 		{
@@ -187,8 +193,10 @@ public:
 				for(int j = 0; j < temp_node->m_count; j++)
 				{
 					Node* next_temp_node = temp_node->m_branch[j].m_child;
+					std::cout<<"leaf node id: "<<temp_node->m_branch[j].m_data<<std::endl;
 					Rect temp_rect = temp_node->m_branch[j].m_rect;
-					float temp_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					ELEMTYPE temp_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					std::cout<<"temp_socre from leaf node: "<<temp_score<<std::endl;
 					vector.push_back(temp_score);
 
 				}
@@ -201,16 +209,18 @@ public:
 
 				for(int i = 0; i < temp_node->m_count; i++)
 				{
-
 					Node* next_temp_node = temp_node->m_branch[i].m_child;
+					std::cout<<"non leaf node (into PQ) id: "<<next_temp_node->m_branch[i].m_data<<std::endl;
 					Rect temp_rect = temp_node->m_branch[i].m_rect;
 					ELEMTYPE max_score = get_max_score(temp_rect.m_min, temp_rect.m_max, cur_query);
+					std::cout<<"max_score from non leaf node: "<<max_score<<std::endl;
 					std::pair<Node, ELEMTYPE> m_pair = std::make_pair(*next_temp_node, max_score);
 					pq.push(m_pair);
 					data_accessed++;
 				}
 			}
 			count++;
+
 		}
 		pq = std::priority_queue <std::pair<Node, ELEMTYPE>, std::vector<std::pair<Node, ELEMTYPE> >, Compare>(); // reset it
 	}

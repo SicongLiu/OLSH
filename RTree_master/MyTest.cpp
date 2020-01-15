@@ -186,12 +186,12 @@ int main()
 {
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "../H2_ALSH/result/result_correlated_7D_200000.mip";
+	char truth_set[100] = "../H2_ALSH/result/result_random_7D_200000.mip";
 	int top_k = 25;
 	int dimension = 7;
 	const int gloabl_dim = 7;
 	int cardinality = 200000;
-	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/correlated_7_200000.txt";
+	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/random_7_200000.txt";
 	char querypath[100] = "../H2_ALSH/query/query_7D.txt";
 
 	typedef RTree<ValueType, float, gloabl_dim, float> MyTree;
@@ -245,6 +245,7 @@ int main()
 	float recall = 0.0f;
 	int data_accessed = 0;
 
+	qn = 3;
 	gettimeofday(&start_time, NULL);
 	for(int i = 0; i < qn; i++)
 	{
