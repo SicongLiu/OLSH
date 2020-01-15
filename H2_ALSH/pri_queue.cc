@@ -87,6 +87,34 @@ float MaxK_List::insert(			// insert item
 	return min_key();
 }
 
+// -----------------------------------------------------------------------------
+bool MaxK_List::insert_bool(			// insert item
+	float key,							// key of item
+	int id)								// id of item
+{
+	int i = 0;
+
+	// for each candidate, check potential insert location
+	for (i = num_; i > 0; i--)
+	{
+		if (list_[i-1].key_ < key)
+			list_[i] = list_[i - 1];
+		else break;
+	}
+	list_[i].key_ = key;				// store new item here
+	list_[i].id_ = id;
+	if (i == k_)
+		return false;
+	else
+		if (num_ < k_)
+			num_++;
+		return true;
+//	list_[i].key_ = key;				// store new item here
+//	list_[i].id_ = id;
+//	if (num_ < k_)
+//		num_++;			// increase the number of items
+//	return min_key();
+}
 
 
 // -----------------------------------------------------------------------------

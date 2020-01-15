@@ -288,18 +288,5 @@ float calc_angle(					// calc angle of two points p1 and p2
 	return cos_angle;
 }
 
-float calc_inner_product_scaled(			// calc inner product
-	int   dim,							// dimension
-	const float *data,					// 1st point
-	const float *query,					// 2nd point
-	const float M)						// largest norm to be scaled with
-{
-	float temp_norm = sqrt(calc_inner_product(dim, data, query));
-	float scale = temp_norm / M;
-	float ret = 0.0f;
-	for (int i = 0; i < dim; ++i) {
-		ret += (data[i] * query[i] * scale);
-	}
-	return ret;
-}
+
 
