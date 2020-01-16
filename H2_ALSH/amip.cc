@@ -1032,12 +1032,14 @@ int compute_TA_list_set_k(                    		  	// find top-k mip using linea
 		const float **data,                	// data set
 		const float *query,
 		int& total_run,
-		int& total_data_access)         			// output folder
+		int& total_data_access,
+		float& sorting_time)         			// output folder
 {
 	bool flag = false;
 	float current_best = 0.0f;
 	int round = 0;
 
+	timeval sort_start_time, sort_end_time;
 	set<int> TA_seen;
 	set<int> data_accessed;
 
@@ -1049,6 +1051,7 @@ int compute_TA_list_set_k(                    		  	// find top-k mip using linea
 	vector<vector<int>> sorted_prod_idx;
 
 
+	gettimeofday(&sort_start_time, NULL);
 	for(int i = 0; i < d; i++)
 	{
 		vector<float> temp_raw_prod;
@@ -1073,7 +1076,9 @@ int compute_TA_list_set_k(                    		  	// find top-k mip using linea
         sorted_prod_idx.push_back(idx);
         sorted_prod.push_back(temp_raw_prod);
 	}
-
+	gettimeofday(&sort_end_time, NULL);
+	sorting_time = sort_end_time.tv_sec - sort_start_time.tv_sec + (sort_end_time.tv_usec -
+			sort_start_time.tv_usec) / 1000000.0f;
 
 	int ret_count = 0;
 	while(flag == false)
@@ -1160,6 +1165,8 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 {
 	timeval start_time, end_time;
 
+
+
 	// -------------------------------------------------------------------------
 	//  read the ground truth file
 	// -------------------------------------------------------------------------
@@ -1197,10 +1204,15 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 	float overall_ratio = -1.0f;
 	float recall = -1.0f;
 
+
+
 	printf("Top-k MIP of Linear Scan:\n");
 	printf("  Top-k\t\tRatio\t\tTime (ms)\tRecall\t\ttotal_rounds\ttotal_data_access\n");
 	for (int num = 0; num < max_round; num++) {
 		gettimeofday(&start_time, NULL);
+		float TA_sort_time = 0.0f;
+
+
 		top_k = kMIPs[num];
 		MaxK_List* list = new MaxK_List(top_k);
 
@@ -1218,7 +1230,12 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 			// compute TA_TopK here, return as list
 			// compute_TA(d, n, top_k, list, data, query[i]);
 			// compute_TA_list(d, n, top_k, list, data, query[i]);
-			compute_TA_list_set_k(d, n, top_k, list, data, query[i], total_run, total_data_access);
+			float sorting_time = 0.0f;
+			compute_TA_list_set_k(d, n, top_k, list, data, query[i], total_run, total_data_access, sorting_time);
+
+
+			TA_sort_time += sorting_time;
+
 			recall += calc_recall(top_k, (const Result *) R[i], list);
 
 			float ratio = 0.0f;
@@ -1235,6 +1252,8 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 		overall_ratio = overall_ratio / qn;
 		recall        = recall / qn;
 		runtime       = (runtime * 1000.0f) / qn;
+		TA_sort_time  = (TA_sort_time * 1000.0f) / qn;
+
 
 		float average_rounds = float(total_run)/qn;
 		float avg_data_access = float(total_data_access)/qn;
@@ -1242,6 +1261,8 @@ int TA_TopK_all(					// find top-k mip using linear_scan
 		printf("  %3d\t\t%.4f\t\t%.4f\t%.2f\t\t%.3f\t\t%.3f\n", top_k, overall_ratio,
 			runtime, recall, average_rounds, avg_data_access);
 		fprintf(fp, "%d\t%f\t%f\t%f\n", top_k, overall_ratio, runtime, recall);
+
+		cout<<"sorting time: "<<TA_sort_time<<endl;
 	}
 	printf("\n");
 	fprintf(fp, "\n");

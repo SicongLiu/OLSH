@@ -264,7 +264,8 @@ int compute_TA_list_set_k(                    		  	// find top-k mip using linea
 		const float **data,                	// data set
 		const float *query,
 		int& total_run,
-		int& total_data_access);
+		int& total_data_access,
+		float& sorting_time);
 
 // -----------------------------------------------------------------------------
 // NOTE: TA_algorithm, the way we organize the column and row structure index
