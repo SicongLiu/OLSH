@@ -316,4 +316,8 @@ int linear_scan_all(					// find top-k mip using linear_scan
 
 int my_sort_col(const void *a, const void *b);
 
+
+long long output_mem_usage();
+void mem_usage(double& vm_usage, double& resident_set);
+vector<string> explode(const string& str);
 #endif // __AMIP_H

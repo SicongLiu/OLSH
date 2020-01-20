@@ -2061,6 +2061,83 @@ int sign_alsh_precision_recall(        // precision recall curve of sign_alsh
 
 	return 0;
 }
+//
+//// compute memory usage
+//long output_mem_usage()
+//{
+//   vm_size_t page_size;
+//    mach_port_t mach_port;
+//    mach_msg_type_number_t count;
+//    vm_statistics64_data_t vm_stats;
+//
+//    mach_port = mach_host_self();
+//    count = sizeof(vm_stats) / sizeof(natural_t);
+//    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+//        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+//                                        (host_info64_t)&vm_stats, &count))
+//    {
+//        long long free_memory = (int64_t)vm_stats.free_count * (int64_t)page_size;
+//
+//        long long used_memory = ((int64_t)vm_stats.active_count +
+//                                 (int64_t)vm_stats.inactive_count +
+//                                 (int64_t)vm_stats.wire_count) *  (int64_t)page_size;
+//        // printf("free memory: %lld\nused memory: %lld\n", free_memory, used_memory);
+//        // return used_memory;
+//        return used_memory;
+//    }
+//    return 0;
+//}
+//
+
+
+vector<string> explode(const string& str) {
+    string next;
+    vector<string> result;
+
+    // For each character in the string
+    for (string::const_iterator it = str.begin(); it != str.end(); it++) {
+        // If we've hit the terminal character
+        if (*it == ' ') {
+            // If we have some characters accumulated
+            if (!next.empty()) {
+                // Add them to the result vector
+                result.push_back(next);
+                next.clear();
+            }
+        } else {
+            // Accumulate the next character into the sequence
+            next += *it;
+        }
+    }
+    if (!next.empty())
+         result.push_back(next);
+    return result;
+}
+
+long long output_mem_usage() {
+	string cmd = "free | grep Mem";
+	string data;
+	FILE * stream;
+	const int max_buffer = 256;
+	char buffer[max_buffer];
+	cmd.append(" 2>&1");
+
+	stream = popen(cmd.c_str(), "r");
+	if (stream) {
+		while (!feof(stream))
+			if (fgets(buffer, max_buffer, stream) != NULL) data.append(buffer);
+		pclose(stream);
+	}
+
+	char token[] = "\t";
+	vector<string> ret = explode(data);
+	string ss = ret.at(2);
+	char cstr[ss.size() + 1];
+	strcpy(cstr, ss.c_str());    // or pass &s[0]
+	long long ll = atoll(cstr);
+	// return ret.at(2);
+	return ll;
+}
 
 // -----------------------------------------------------------------------------
 int simple_lsh_recall(    // precision recall curve of simple_lsh
@@ -2105,6 +2182,14 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	// -------------------------------------------------------------------------
 	//  indexing
 	// -------------------------------------------------------------------------
+
+	 double vm1, rss1;
+	 mem_usage(vm1, rss1);
+	 // cout << "Virtual Memory: " << vm << "\nResident set size: " << rss << endl;
+
+
+
+	long long indexing_mem_start = output_mem_usage();
 	gettimeofday(&start_time, NULL);
 	Simple_LSH *lsh = new Simple_LSH();
 	float indexing_time = lsh->build(n, d, K, L, S, nn_ratio, data, post_opt, temp_hash);
@@ -2113,19 +2198,28 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 	float indexing_time = end_time.tv_sec - start_time.tv_sec +
 			(end_time.tv_usec - start_time.tv_usec) / 1000000.0f; */
 	printf("Indexing Time: %f Seconds\n\n", indexing_time);
+	long long indexing_mem_end = output_mem_usage();
 
+	cout<<"indexing cost: "<<(long long)(indexing_mem_end - indexing_mem_start) << endl;
+
+
+	double vm2, rss2;
+	mem_usage(vm2, rss2);
+	cout << "Virtual Memory: " << (vm2 - vm1) << "\nResident set size: " << (rss2 - rss1) << endl;
 	// -------------------------------------------------------------------------
 	//  Precision Recall Curve of Simple_LSH
 	// -------------------------------------------------------------------------
 	int threshold_conditions = 2;
-     bool use_threshold_pruning[] = {true, false};
-     string str_array[] = {"with_threshold", "without_threshold"};
+    bool use_threshold_pruning[] = {false, true};
+    string str_array[] = {"without_threshold", "with_threshold"};
 
 
 	/*int threshold_conditions = 1;
 	bool use_threshold_pruning[] = {false};
 	string str_array[] = {"without_threshold"};*/
 
+    long long query_mem_start = output_mem_usage();
+    long long query_mem_cost = 0;
 	int max_round = 4;
 	vector<int> kMIPs;
 	if(top_k == 25)
@@ -2267,6 +2361,8 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 
 				file_processing_time += file_end_time.tv_sec - file_start_time.tv_sec + (file_end_time.tv_usec -
 						file_start_time.tv_usec) / 1000000.0f;
+
+
 			}
 			delete list; list = NULL;
 
@@ -2327,7 +2423,10 @@ int simple_lsh_recall(    // precision recall curve of simple_lsh
 			vector<float>().swap(temp_sim_angle_vec[jj]);
 		}
 	}
-	// -------------------------------------------------------------------------
+	long long query_mem_end = output_mem_usage();
+	query_mem_cost += (query_mem_end - query_mem_start);
+	cout<<"query mem cost: "<<query_mem_cost<<endl;
+	// ------------------------------------------------------------------------
 	//  release space
 	// -------------------------------------------------------------------------
 	delete lsh; lsh = NULL;
@@ -2752,5 +2851,28 @@ int my_sort_col(const void *pa, const void *pb )
 	const int *b = *(const int **)pb;
 	return (a[MAX_DIMENSION] < b[MAX_DIMENSION]) - (a[MAX_DIMENSION] > b[MAX_DIMENSION]);
 }
+
+void mem_usage(double& vm_usage, double& resident_set)
+{
+   vm_usage = 0.0;
+   resident_set = 0.0;
+   ifstream stat_stream("/proc/self/stat",ios_base::in); //get info from proc directory
+   //create some variables to get info
+   string pid, comm, state, ppid, pgrp, session, tty_nr;
+   string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+   string utime, stime, cutime, cstime, priority, nice;
+   string O, itrealvalue, starttime;
+   unsigned long vsize;
+   long rss;
+   stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+   >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+   >> utime >> stime >> cutime >> cstime >> priority >> nice
+   >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
+   stat_stream.close();
+   long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // for x86-64 is configured to use 2MB pages
+   vm_usage = vsize / 1024.0;
+   resident_set = rss * page_size_kb;
+}
+
 
 
