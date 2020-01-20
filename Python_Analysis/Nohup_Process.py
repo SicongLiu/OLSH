@@ -23,8 +23,9 @@ def print_dict(dict_array):
         if i % 3 == 0:
             print('\n')
         cur_dict = dict_array[i]
-        # print(cur_dict)
-        print(cur_dict[1], cur_dict[2], cur_dict[5], cur_dict[10], max(cur_dict, key=cur_dict.get))
+        # print("oops: ", max)
+        print(cur_dict[1], cur_dict[2], cur_dict[5], cur_dict[10], cur_dict[max(cur_dict.keys())])
+        # print(cur_dict[1], cur_dict[2], cur_dict[5], cur_dict[10], max(cur_dict, key=cur_dict.get))
 
 
 def print_query_time_array(query_time_list_array_):
@@ -46,7 +47,8 @@ def lines_contains_key(line_, dict_):
     return 0
 
 
-file_name = '/Users/sicongliu/Desktop/non_4D_LSH_nohup.txt'
+file_name = '/Users/sicongliu/Desktop/ICDE2019_reply/red_4_4D_non200K_nohup.txt'
+# file_name = '/Users/sicongliu/Desktop/non_4D_LSH_nohup.txt'
 # file_name = '/Users/sicongliu/Desktop/4D_LSH_nohup.txt'
 top_k = 25
 f = open(file_name, 'r')
@@ -78,18 +80,19 @@ while i < length:
         temp_line = lines[i + 4]
         print(temp_line)
         layer_index = layer_index + 1
-    elif lines[i].__contains__('Seconds') and lines[i].__contains__("Indexing Time:") and layer_index_flag == 1:
+    elif lines[i].__contains__("Indexing Time:") and lines[i].__contains__('Seconds') and layer_index_flag == 1:
         indexing_time_flag = 1
         cur_indexing_time = lines[i].split(' ')[2]
-        print(cur_indexing_time)
+        print("indexing time", cur_indexing_time)
         if layer_index == 1:
             index_time[layer_index] = float(cur_indexing_time)
         else:
             index_time[layer_index] = float(index_time[layer_index - 1]) + float(cur_indexing_time)
+            print("layer_index: ", layer_index, ", time: ", index_time[layer_index])
 
     elif lines[i].__contains__("Top-k		Time (ms)	Recall"):
         i = i + 1
-        while not lines[i].__contains__('Top-k c-AMIP of Simple_LSH: ') and indexing_time_flag == 1:
+        while not lines[i].__contains__('Top-k c-AMIP of Simple_LSH: ') and not lines[i].__contains__('Using threshold, layer index: ') and indexing_time_flag == 1:
             print(lines[i])
             flag = lines_contains_key(lines[i], query_time_match)
             if flag == 1:
@@ -118,6 +121,8 @@ while i < length:
         index_time, query_time = init_dict(top_k)
     i = i + 1
 
+print("======== indexing time ==========")
+print_dict(index_time_array)
 
-# print_dict(index_time_array)
+print("======== query time ==========")
 print_query_time_array(query_time_array)

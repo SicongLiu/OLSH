@@ -41,31 +41,64 @@ def find_sheet(sheet_names_, ending_):
     return None
 
 
+# def process_line(line_concate_):
+#     processed_line_ = []
+#     temp_arr = line_concate_[line_concate_.find("{") + 1:line_concate_.find("}")].split(',')
+#     for ii in range(len(temp_arr)):
+#         temp_num = temp_arr[ii].strip()
+#         print(temp_num)
+#         processed_line_.append(int(round(float(temp_num))))
+#     return processed_line_
+
+
 def process_line(line_concate_):
     processed_line_ = []
     temp_arr = line_concate_[line_concate_.find("{") + 1:line_concate_.find("}")].split(',')
-    for ii in range(len(temp_arr)):
-        processed_line_.append(int(temp_arr[ii].strip()))
+    for iii in range(len(temp_arr)):
+        temp_str = temp_arr[iii].strip()
+        # if temp_str[len(temp_str) - 2] == '-':
+        if '^' in temp_str:
+            temp_num = 0
+        else:
+            temp_num = round(float(temp_str))
+        processed_line_.append(temp_num)
     return processed_line_
+
+#
+# def read_file_lines(full_file_path_, read_lines_):
+#     f1 = open(full_file_path_, 'r')
+#     line_count = 0
+#     bash_count = 0
+#     file_dict_ = {}
+#     line_concate_ = ''
+#     for line in f1.readlines():
+#         line_count = line_count + 1
+#         line_concate_ = line_concate_ + line.split('\n')[0].strip()
+#         if line_count % read_lines_ == 0:
+#             line_count = 0
+#             file_dict_[bash_count] = process_line(line_concate_)
+#             bash_count = bash_count + 1
+#             # print(line_concate[line_concate.find("{")+1:line_concate.find("}")])
+#             line_concate_ = ''
+#     f1.close()
+#     return file_dict_
 
 
 def read_file_lines(full_file_path_, read_lines_):
     f1 = open(full_file_path_, 'r')
-    line_count = 0
     bash_count = 0
     file_dict_ = {}
     line_concate_ = ''
     for line in f1.readlines():
-        line_count = line_count + 1
         line_concate_ = line_concate_ + line.split('\n')[0].strip()
-        if line_count % read_lines_ == 0:
-            line_count = 0
+        line_end = line.split('\n')[0].strip()
+        if line_end.endswith('}') and not line_end.startswith('{'):
             file_dict_[bash_count] = process_line(line_concate_)
             bash_count = bash_count + 1
-            # print(line_concate[line_concate.find("{")+1:line_concate.find("}")])
             line_concate_ = ''
     f1.close()
     return file_dict_
+
 
 
 data_anti_list_10 = ['J6',  'J15', 'J21', 'J30', 'J37', 'J46', 'J51', 'J60', 'J68', 'J77']
@@ -149,12 +182,12 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 ####################################################################################
 text_file_path = '/Users/sicongliu/'
 # text_file_path = './'
-dimension = 5
+dimension = 7
 excel_file_dir = './'
 collision_probility = 0.75
 read_lines = -1
-# excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_3_all_before.xlsx'
-excel_file_name = excel_file_dir + str(dimension) + 'D_all_new.xlsx'
+excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_4_all_before.xlsx'
+# excel_file_name = excel_file_dir + str(dimension) + 'D_all_new.xlsx'
 
 top_m_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]

@@ -611,8 +611,11 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 data_type = ["anti_correlated", "correlated", "random"]
 # card_excel = ['100k', '200k', '500k', '1M', '15M', '2M']
 # cardinality = [100000, 200000, 500000, 1000000, 1500000, 2000000]
-card_excel = ['200k']
-cardinality = [200000]
+card_excel = ['500k', '1M', '15M', '2M']
+cardinality = [500000, 1000000, 1500000, 2000000]
+
+# card_excel = ['200k']
+# cardinality = [200000]
 
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
@@ -632,8 +635,11 @@ dimensions = [4]
 # excel_file_before = "./4D_075_Skyline-redundancy_2_all_before.xlsx"
 # excel_file_after = "./4D_075_Skyline-redundancy_2_all_after.xlsx"
 
-excel_file_before = "./4D_085_redundancy_2_all_before.xlsx"
-excel_file_after = "./4D_085_redundancy_2_all_after.xlsx"
+# excel_file_before = "./4D_085_redundancy_2_all_before.xlsx"
+# excel_file_after = "./4D_085_redundancy_2_all_after.xlsx"
+
+excel_file_before = "./4D_075_redundancy_4_all_before.xlsx"
+excel_file_after = "./4D_075_redundancy_4_all_after.xlsx"
 
 top_ks = [25]
 # top_ks = [25, 50]

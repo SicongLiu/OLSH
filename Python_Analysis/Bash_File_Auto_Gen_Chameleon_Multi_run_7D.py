@@ -1094,16 +1094,16 @@ data_type_for_keys = ['anti', 'corr', 'random']
 
 # card_excel = ['200k', '500k', '1M', '15M', '2M']
 # cardinality = [200000, 500000, 1000000, 1500000, 2000000]
-card_excel = ['200k', '1M', '15M', '2M']
-cardinality = [200000, 1000000, 1500000, 2000000]
+card_excel = ['200k']
+cardinality = [200000]
 types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
 dimensions = [7]
-excel_file_before = "./7D_075_redundancy_2_all_before.xlsx"
-excel_file_after = "./7D_075_redundancy_2_all_after.xlsx"
+excel_file_before = "./7D_075_redundancy_4_all_before.xlsx"
+excel_file_after = "./7D_075_redundancy_4_all_after.xlsx"
 
-top_ks = [10, 25, 50]
+top_ks = [25]
 
 save_file_path_before = '../H2_ALSH/parameters_before/'
 save_file_path_after = '../H2_ALSH/parameters_after/'

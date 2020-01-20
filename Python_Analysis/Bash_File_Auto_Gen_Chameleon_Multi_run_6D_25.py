@@ -654,8 +654,11 @@ types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
 dimensions = [6]
-excel_file_before = "./6D_075_top25_200k_before.xlsx"
-excel_file_after = "./6D_075_top25_200k_after.xlsx"
+
+excel_file_before = "./6D_075_redundancy_4_all_before.xlsx"
+excel_file_after = "./6D_075_redundancy_4_all_after.xlsx"
+
+
 
 top_ks = [25]
 
