@@ -295,8 +295,8 @@ excel_file_dir = './'
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_top25_200k_after.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_top25_red_2_200k_after.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_6_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

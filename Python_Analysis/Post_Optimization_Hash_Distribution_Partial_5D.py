@@ -223,7 +223,7 @@ hash_used_rand_opt_cells_47 = ['AP53', 'AP107', 'AP161', 'AP215', 'AP269']
 hash_used_rand_uni_cells_47 = ['AV53', 'AV107', 'AV161', 'AV215', 'AV269']
 
 
-collision_probility = 0.9
+collision_probility = 0.75
 total_error = 0
 # K_log_list_start_cell = ['E6', 'V6', 'AL6']
 # K_log_minus_list_start_cell = ['']

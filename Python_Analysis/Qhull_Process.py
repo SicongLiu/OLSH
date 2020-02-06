@@ -47,28 +47,34 @@ def save_remaining_qhull(data_cardinality, data, current_qhull_output, layer_ind
 
 
 def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name, max_layers):
+    print("computing qhull path: ", input_path)
     f = open(input_path, 'r')
     lines = f.readlines()
     first_line = lines[0]
     second_line = lines[1]
 
+    data = []
+
     cur_dimension = int(first_line.split('\n')[0])
     cur_cardinality = int(second_line.split('\n')[0])
-    data = []
+    # data = []
     for i in range(2, len(lines)):
         cur_line = lines[i]
         my_line = np.fromstring(cur_line, dtype=float, sep=' ')
         data.append(my_line)
 
-    data = np.asarray(data)
     print(type(data))
     # compute qhull till max_layer of interest
     for i in range(max_layers):
-        command_line = command_bin_folder + '/qhull p < ' + input_path
+        print("current layer: ", i)
+        # command_line = command_bin_folder + '/qhull p < ' + input_path
+        command_line = command_bin_folder + '/qhull p < ' + str(cur_dimension) + ' ' + str(cur_cardinality) + ' ' + str(data)
         output = os.popen(command_line).read()
 
+        print(output)
+        print("current layer computing done, saving to file... ")
         # flush current qhull list to file
-        save_current_qhull(output, i, output_folder, aff_name)
+        # save_current_qhull(output, i, output_folder, aff_name)
         # save remaining points to file
         input_path, data = save_remaining_qhull(cur_cardinality, data, output, i, output_folder, aff_name)
         if cur_cardinality - int(output.split('\n')[1]) >= cur_dimension + 1:
@@ -80,9 +86,9 @@ def computer_qhull_index(command_bin_folder, input_path, output_folder, aff_name
 
 if __name__ == '__main__':
     command_bin_folder = '/Users/sicongliu/Desktop/StreamingTopK/qhull/bin'
-    dimensions = [4]
+    dimensions = [2]
     # dimensions = [10, 15, 20]
-    cardinality = [100000]
+    cardinality = [10]
 
     data_type = ['anti_correlated_', 'correlated_', 'random_']
     # data_type = ['correlated_', 'random_']

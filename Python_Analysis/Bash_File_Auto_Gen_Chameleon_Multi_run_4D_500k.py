@@ -20,10 +20,10 @@ l_ranges_opt_random_10 = ['AM6', 'AM15', 'AM21', 'AM30', 'AM37', 'AM46', 'AM51',
 l_ranges_max_random_10 = ['AN6', 'AN15', 'AN21', 'AN30', 'AN37', 'AN46', 'AN51', 'AN60', 'AN68', 'AN77']
 l_ranges_uni_random_10 = ['AO6', 'AO15', 'AO21', 'AO30', 'AO37', 'AO46', 'AO51', 'AO60', 'AO68', 'AO77']
 
-k_ranges_anti_25 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
-l_ranges_opt_anti_25 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
-l_ranges_max_anti_25 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
-l_ranges_uni_anti_25 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
+k_ranges_anti_21 = ['E6', 'E26', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
+l_ranges_opt_anti_21 = ['F6', 'F26', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
+l_ranges_max_anti_21 = ['G6', 'G26', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
+l_ranges_uni_anti_21 = ['H6', 'H26', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
 
 k_ranges_corr_25 = ['V6', 'V30', 'V38', 'V62', 'V69', 'V93', 'V100', 'V124', 'V131', 'V155']
 l_ranges_opt_corr_25 = ['W6', 'W30', 'W38', 'W62', 'W69', 'W93', 'W100', 'W124', 'W131', 'W155']
@@ -77,10 +77,10 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
             l_ranges_max_random = l_ranges_max_random_10
             l_ranges_uni_random = l_ranges_uni_random_10
         elif top_k == 25:
-            k_ranges_anti = k_ranges_anti_25
-            l_ranges_opt_anti = l_ranges_opt_anti_25
-            l_ranges_max_anti = l_ranges_max_anti_25
-            l_ranges_uni_anti = l_ranges_uni_anti_25
+            k_ranges_anti = k_ranges_anti_21
+            l_ranges_opt_anti = l_ranges_opt_anti_21
+            l_ranges_max_anti = l_ranges_max_anti_21
+            l_ranges_uni_anti = l_ranges_uni_anti_21
 
             k_ranges_corr = k_ranges_corr_25
             l_ranges_opt_corr = l_ranges_opt_corr_25
@@ -307,21 +307,23 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 paramK_path = parameter_dir + "k_" + data_type_[ii] #str(cardinality[k])
                                 f1 = open(paramK_path, 'r')
                                 K_lines = f1.readlines()
-                                for k_index in range(top_k):
+                                print(K_lines)
+                                top_kk = 21
+                                for k_index in range(top_kk):
                                     K_List.append(int(K_lines[0].split(',')[k_index]))
                                 f1.close()
 
                                 paramL_opt_path = parameter_dir + "l_" + data_type_[ii] + "_opt" # str(cardinality[k])
                                 f2 = open(paramL_opt_path, 'r')
                                 L_lines = f2.readlines()
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, top_kk):
                                     L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
                                 paramL_max_path = parameter_dir + "l_" + data_type_[ii] + "_max"  # str(cardinality[k])
                                 f2 = open(paramL_max_path, 'r')
                                 L_lines = f2.readlines()
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, top_kk):
                                     L_Max_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
@@ -329,7 +331,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 f2 = open(paramL_uni_path, 'r')
                                 L_lines = f2.readlines()
 
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, top_kk):
                                     L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
 
@@ -609,8 +611,8 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 
 ################################################################
 data_type = ["anti_correlated", "correlated", "random"]
-card_excel = ['200k', '500k', '1M', '15M', '2M']
-cardinality = [200000, 500000, 1000000, 1500000, 2000000]
+# card_excel = ['200k', '500k', '1M', '15M', '2M']
+# cardinality = [200000, 500000, 1000000, 1500000, 2000000]
 
 # card_excel = ['200k', '1M', '15M', '2M']
 # cardinality = [200000, 1000000, 1500000, 2000000]
@@ -621,9 +623,9 @@ cardinality = [200000, 500000, 1000000, 1500000, 2000000]
 
 # card_excel = ['200k']
 # cardinality = [200000]
-# #
-# card_excel = ['500k']
-# cardinality = [500000]
+#
+card_excel = ['500k']
+cardinality = [500000]
 
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
@@ -632,20 +634,17 @@ types = ["log"]
 
 budgets = ["1M", "10M"]
 sim_threshold = 0.75
-# dimensions = [5]
-# excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
-
+dimensions = [4]
 # excel_file_dir = './skyline_resource_excel/'
-# excel_file_before = "./skyline_resource_excel/3D_075_200k_redundancy_4_all_before.xlsx"
-# excel_file_after = "./skyline_resource_excel/3D_075_200k_redundancy_4_all_after.xlsx"
+excel_file_before = "./skyline_resource_excel/4D_075_200k_redundancy_4_all_before.xlsx"
+excel_file_after = "./skyline_resource_excel/4D_075_200k_redundancy_4_all_after.xlsx"
 
 # dimensions = [3]
-dimensions = [4]
+# dimensions = [2]
 # excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
 # excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
-excel_file_before = "./4D_075_reverse_maths_before_03.xlsx"
-excel_file_after = "./4D_075_reverse_maths_after_03.xlsx"
+# excel_file_before = "./4D_reverse_075_redundancy_2_all_before.xlsx"
+# excel_file_after = "./4D_reverse_075_redundancy_2_all_after.xlsx"
 # excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
 # excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
 # excel_file_before = "./2D_075_redundancy_2_all_before.xlsx"

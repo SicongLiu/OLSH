@@ -17,11 +17,14 @@ def float_to_str(f):
     return format(d1, 'f')
 
 
-# data_type = ["correlated", "anti_correlated", "random"]
-data_type = ["HOUSE"]
-dimensions = [6]
-cardinality = [10717764]
-topk = 25
+# data_type = ["correlated", "random", "anti_correlated"]
+# data_type = ["HOUSE"]
+data_type = ["anti_correlated"]
+# data_type = ["correlated", "random", "anti_correlated"]
+# data_type = ["random", "anti_correlated"]
+dimensions = [7]
+cardinality = [200000]
+topk = 5
 
 function_str = "ret = queryRet" + str(topk) + "[count1, count, KList, fileName, hashTables];"
 # hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j"]
@@ -34,8 +37,8 @@ hashTables = ["a", "b", "c", "d", "e", "f", "g", "h", "q", "j", "k", "l", "m", "
 # count, hashTables KList
 PARAMETER_FILE_FOLDER = "../H2_ALSH/parameters/"
 SCRIPT_OUTPUT_FILE = "../H2_ALSH/parameters/New_Mathematica_Parameters_"
-# DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-DATA_FOLDER = "../H2_ALSH/qhull_data/Skyline_qhull/HOUSE/"
+DATA_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
+# DATA_FOLDER = "../H2_ALSH/qhull_data/Skyline_qhull/HOUSE/"
 
 
 for j in range(len(dimensions)):

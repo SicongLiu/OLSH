@@ -687,15 +687,15 @@ total_error = 0
 
 # dimensions = [2, 3, 4, 5, 6, 7]
 dimensions = [7]
-# excel_file_dir = './skyline_resource_excel/'
 excel_file_dir = './'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_2_all_after.xlsx'
-    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_200k_redundancy_4_all_after.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_2_after.xlsx'
+    # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_6_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_500k_redundancy_4_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()
@@ -747,27 +747,27 @@ for i in range(len(dimensions)):
             l_ranges_uni_random = l_ranges_uni_random_13
 
         elif top_m_anti == 18:
-            top_m_cardinality_anti_cell = 'J20'
+            top_m_cardinality_anti_cell = 'J24'
             top_m_cardinality_anti = ws[top_m_cardinality_anti_cell].value
-            hash_used_anti_opt_cells = hash_used_anti_opt_cells_14
-            hash_used_anti_uni_cells = hash_used_anti_uni_cells_14
+            hash_used_anti_opt_cells = hash_used_anti_opt_cells_18
+            hash_used_anti_uni_cells = hash_used_anti_uni_cells_18
             data_anti_list = data_anti_list_18
             k_ranges_anti = k_ranges_anti_18
             l_ranges_opt_anti = l_ranges_opt_anti_18
             l_ranges_max_anti = l_ranges_max_anti_18
             l_ranges_uni_anti = l_ranges_uni_anti_18
 
-            top_m_cardinality_corr_cell = 'AA23'
+            top_m_cardinality_corr_cell = 'AA28'
             top_m_cardinality_corr = ws[top_m_cardinality_corr_cell].value
-            hash_used_corr_opt_cells = hash_used_corr_opt_cells_17
-            hash_used_corr_uni_cells = hash_used_corr_uni_cells_17
+            hash_used_corr_opt_cells = hash_used_corr_opt_cells_22
+            hash_used_corr_uni_cells = hash_used_corr_uni_cells_22
             data_corr_list = data_corr_list_22
             k_ranges_corr = k_ranges_corr_22
             l_ranges_opt_corr = l_ranges_opt_corr_22
             l_ranges_max_corr = l_ranges_max_corr_22
             l_ranges_uni_corr = l_ranges_uni_corr_22
 
-            top_m_cardinality_random_cell = 'AQ19'
+            top_m_cardinality_random_cell = 'AQ23'
             top_m_cardinality_random = ws[top_m_cardinality_random_cell].value
             hash_used_rand_opt_cells = hash_used_rand_opt_cells_17
             hash_used_rand_uni_cells = hash_used_rand_uni_cells_17

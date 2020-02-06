@@ -33,14 +33,16 @@ def print_dict(dict_array):
 
 
 def print_query_time_array(query_time_list_array_):
-    for i in range(len(query_time_list_array_)):
-        if i % 2 == 0:
-            if i % 3 == 0:
-                print('\n \n')
-            if i % 9 == 0:
-                print('\n ************************ \n ')
-            cur_query_time_array = query_time_list_array_[i]
-            print(cur_query_time_array)
+    total_length = len(query_time_list_array_)
+    offset = int(len(query_time_list_array_) / 2)
+    for i in range(offset):
+        jj = i + offset
+        cur_query_time_array = query_time_list_array_[jj]
+        if jj % 3 == 0:
+            print("******************")
+        # print(cur_query_time_array)
+        # print(', '.join(cur_query_time_array))
+        print(", ".join(str(x) for x in cur_query_time_array))
 
 
 def lines_contains_key(line_, dict_):
@@ -48,18 +50,12 @@ def lines_contains_key(line_, dict_):
         cur_lines = str(line_).strip().split('\t')
         for key in dict_.keys():
             if int(cur_lines[0]) == key:
-                return 1
-    return 0
+                return 1, key
+    return 0, -1
 
 
-# file_name = '/Users/sicongliu/Desktop/redundacy_6_stats/4D_red_6_nohup.txt'
-# file_name = '/Users/sicongliu/Desktop/ICDE2019_reply/3D_red_4_nohup.txt'
-# file_name = '/Users/sicongliu/Desktop/non_4D_LSH_nohup.txt'
-# file_name = '/Users/sicongliu/Desktop/4D_LSH_nohup.txt'
-# file_name = '/Users/sicongliu/Desktop/redundacy_4_stats_500k/500k_7D_nohup.txt'
-# file_name = '/Users/sicongliu/Desktop/redundacy_4_stats_500k/500k_7D_nohup.txt'
 # file_name = '/Users/sicongliu/Desktop/reverse_maths_0.3/4D_reverse_03_nohup.txt'
-file_name = '/Users/sicongliu/Desktop/redundacy_4_skyline_stats/4D_skyline_correlated_random_nohup.txt'
+file_name = '/Users/sicongliu/Desktop/redundacy_2_stats/7D_reverse_03_nohup.txt'
 
 
 top_k = 25
@@ -86,6 +82,10 @@ indexing_time_flag = 0
 layer_index_flag = 0
 layer_index = 0
 round_flag = 0
+
+layer_recall = list()
+layer_recall_array = list()
+
 
 while i < length:
     if lines[i].__contains__("layer_index             = ") and layer_index_flag == 0:
@@ -118,29 +118,23 @@ while i < length:
         i = i + 1
         while not lines[i].__contains__('Top-k c-AMIP of Simple_LSH: ') and not lines[i].__contains__('Using threshold, layer index: ') and indexing_time_flag == 1:
             print(lines[i])
-            flag = lines_contains_key(lines[i], query_time_match)
-            if flag == 1:
+            flag, key_ = lines_contains_key(lines[i], query_time_match)
+            if flag == 1 and key_ == 25:
                 line_break = lines[i].split('\t')
                 temp_key = int(line_break[0])
                 temp_query_time = float(line_break[2])
-                print(temp_query_time)
-                temp_loc = query_time_match[temp_key]
-                if temp_loc > 0:
-                    query_time[temp_loc] = query_time[temp_loc] + temp_query_time
-                else:
-                    query_time[temp_loc] = temp_query_time
+                temp_recall = float(line_break[4])
+                print("oops: ", temp_recall)
+                layer_recall.append(temp_recall)
+                # print(temp_query_time)
+                # temp_loc = query_time_match[temp_key]
+                # if temp_loc > 0:
+                #     query_time[temp_loc] = query_time[temp_loc] + temp_query_time
+                # else:
+                #     query_time[temp_loc] = temp_query_time
             i = i + 1
         indexing_time_flag = 0
         layer_index_flag = 0
-
-    elif lines[i].__contains__("Query resident"):
-        cur_query_cost = lines[i].split(' ')[4]
-        print("query mem cost", cur_query_cost)
-        if layer_index == 1:
-            query_mem[layer_index] = float(cur_query_cost)
-        else:
-            query_mem[layer_index] = float(query_mem[layer_index - 1]) + float(cur_query_cost)
-            print("layer_index: ", layer_index, ", time: ", query_mem[layer_index])
     elif lines[i].__contains__('alg           = 12') and round_flag == 1:
         # aggregate
         print(index_time[layer_index])
@@ -154,19 +148,25 @@ while i < length:
         index_mem_array.append(index_mem)
         query_mem_array.append(query_mem)
 
+        layer_recall_array.append(layer_recall)
+
         # load into dict array
         index_time, query_time, index_mem, query_mem = init_dict(top_k)
+        layer_recall = list()
     i = i + 1
 
-print("======== indexing time ==========")
-print_dict(index_time_array)
+print("============= per layer recall ================")
+print_query_time_array(layer_recall_array)
 
-print("======== query time ==========")
-print_query_time_array(query_time_array)
-
-
-print("======== indexing mem cost ==========")
-print_dict(index_mem_array)
-
-print("======== query mem cost ==========")
-print_dict(query_mem_array)
+# print("======== indexing time ==========")
+# print_dict(index_time_array)
+#
+# print("======== query time ==========")
+# print_query_time_array(query_time_array)
+#
+#
+# print("======== indexing mem cost ==========")
+# print_dict(index_mem_array)
+#
+# print("======== query mem cost ==========")
+# print_dict(query_mem_array)

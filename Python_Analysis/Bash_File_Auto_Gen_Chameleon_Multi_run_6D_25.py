@@ -39,6 +39,24 @@ def computer_used_resource_index(start_, top_m_, count_):
     return cell_index_
 
 ####################################################
+cur_topm = 7
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I27'
+hash_used_uni_cells_start = 'O27'
+
+data_anti_list_7 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_7 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_7 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_7 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_7 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_7 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_7 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
 cur_topm = 21
 data_list_start = 'J6'
 k_ranges_start = 'E6'
@@ -55,6 +73,7 @@ l_ranges_max_anti_21 = compute_index(computer_used_resource_index(l_ranges_max_s
 l_ranges_uni_anti_21 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
 hash_used_anti_opt_cells_21 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
 hash_used_anti_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
 
 
 cur_topm = 25
@@ -75,6 +94,24 @@ l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_s
 hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
 hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
 
+cur_topm = 17
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP26'
+hash_used_uni_cells_13_start = 'AV26'
+
+data_random_list_17 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_17 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_17 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_17 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_17 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_17 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_17 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+
 cur_topm = 20
 data_list_start = 'AQ6'
 k_ranges_random_start = 'AL6'
@@ -91,6 +128,7 @@ l_ranges_max_random_20 = compute_index(computer_used_resource_index(l_ranges_max
 l_ranges_uni_random_20 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
 hash_used_rand_opt_cells_20 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
 hash_used_rand_uni_cells_20 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
 ####################################################
 
 
@@ -650,15 +688,20 @@ data_type_for_keys = ['anti', 'corr', 'random']
 
 card_excel = ['200k']
 cardinality = [200000]
-types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+types = ["log"]
 
 budgets = ["1M", "10M"]
 dimensions = [6]
 
-excel_file_before = "./6D_075_redundancy_4_all_before.xlsx"
-excel_file_after = "./6D_075_redundancy_4_all_after.xlsx"
+# excel_file_before = "./6D_075_top25_red_2_200k_before.xlsx"
+# excel_file_after = "./6D_075_top25_red_2_200k_after.xlsx"
 
+excel_file_before = "./6D_075_reverse_maths_before_03.xlsx"
+excel_file_after = "./6D_075_reverse_maths_after_03.xlsx"
 
+# excel_file_before = "./skyline_resource_excel/6D_075_200k_redundancy_4_all_before.xlsx"
+# excel_file_after = "./skyline_resource_excel/6D_075_200k_redundancy_4_all_after.xlsx"
 
 top_ks = [25]
 

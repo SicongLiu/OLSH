@@ -94,64 +94,6 @@ hash_used_rand_opt_cells_13 = computer_used_resource_index(hash_used_cells_start
 hash_used_rand_uni_cells_13 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
 
 ####################################################
-
-
-####################################################
-cur_topm = 5
-data_list_start = 'J6'
-k_ranges_start = 'E6'
-l_ranges_opt_start = 'F6'
-l_ranges_max_start = 'G6'
-l_ranges_uni_start = 'H6'
-hash_used_opt_cells_start = 'I20'
-hash_used_uni_cells_start = 'O20'
-
-data_anti_list_5 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
-k_ranges_anti_5 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
-l_ranges_opt_anti_5 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
-l_ranges_max_anti_5 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
-l_ranges_uni_anti_5 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
-hash_used_anti_opt_cells_5 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
-hash_used_anti_uni_cells_5 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
-
-
-cur_topm = 25
-data_list_start = 'AA6'
-k_ranges_start = 'V6'
-l_ranges_opt_start = 'W6'
-l_ranges_max_start = 'X6'
-l_ranges_uni_start = 'Y6'
-hash_used_opt_cells_start = 'Z23'
-hash_used_uni_cells_start = 'AF23'
-
-data_corr_list_25 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
-k_ranges_corr_25 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
-l_ranges_opt_corr_25 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
-l_ranges_max_corr_25 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
-l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
-hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
-hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
-
-
-cur_topm = 13
-data_list_start = 'AQ6'
-k_ranges_random_start = 'AL6'
-l_ranges_opt_random_start = 'AM6'
-l_ranges_max_random_start = 'AN6'
-l_ranges_uni_random_start = 'AO6'
-hash_used_cells_start = 'AP19'
-hash_used_uni_cells_13_start = 'AV19'
-
-data_random_list_13 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
-k_ranges_random_13 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
-l_ranges_opt_random_13 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
-l_ranges_max_random_13 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
-l_ranges_uni_random_13 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
-hash_used_rand_opt_cells_13 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
-hash_used_rand_uni_cells_13 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
-
-
-###################################################################################
 cur_topm = 21
 data_list_start = 'J6'
 k_ranges_start = 'E6'
@@ -484,6 +426,66 @@ l_ranges_max_random_16 = compute_index(computer_used_resource_index(l_ranges_max
 l_ranges_uni_random_16 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
 hash_used_rand_opt_cells_16 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
 hash_used_rand_uni_cells_16 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+###########################################################
+
+cur_topm = 18
+
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_start = 'H6'
+hash_used_opt_cells_start = 'I24'
+hash_used_uni_cells_start = 'O24'
+
+
+data_anti_list_18 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_18 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_18 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_18 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_18 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_18 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_18 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 22
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z28'
+hash_used_uni_cells_start = 'AF28'
+
+data_corr_list_22 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_22 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_22 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_22 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_22 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_22 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_22 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 17
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP23'
+hash_used_uni_cells_13_start = 'AV23'
+
+data_random_list_17 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_17 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_17 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_17 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_17 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_17 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_17 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+
+
+
 
 
 def topk_map(dimension_, cardinality_, type_, top_k_, map_, real_topk):
@@ -516,18 +518,37 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                         print("Sheetname: " + str(sheetname))
                         ws = wb[sheetname]
                         real_topk = ws['E1'].value
-                        if int(real_topk) == 5:
-                            k_ranges_anti = k_ranges_anti_5
-                            l_ranges_opt_anti = l_ranges_opt_anti_5
-                            l_ranges_max_anti = l_ranges_max_anti_5
-                            l_ranges_uni_anti = l_ranges_uni_anti_5
-                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 5)
+                        if int(real_topk) == 18:
+                            k_ranges_anti = k_ranges_anti_18
+                            l_ranges_opt_anti = l_ranges_opt_anti_18
+                            l_ranges_max_anti = l_ranges_max_anti_18
+                            l_ranges_uni_anti = l_ranges_uni_anti_18
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 18)
 
-                            k_ranges_corr = k_ranges_corr_25
-                            l_ranges_opt_corr = l_ranges_opt_corr_25
-                            l_ranges_max_corr = l_ranges_max_corr_25
-                            l_ranges_uni_corr = l_ranges_uni_corr_25
-                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 25)
+                            k_ranges_corr = k_ranges_corr_22
+                            l_ranges_opt_corr = l_ranges_opt_corr_22
+                            l_ranges_max_corr = l_ranges_max_corr_22
+                            l_ranges_uni_corr = l_ranges_uni_corr_22
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 22)
+
+                            k_ranges_random = k_ranges_random_17
+                            l_ranges_opt_random = l_ranges_opt_random_17
+                            l_ranges_max_random = l_ranges_max_random_17
+                            l_ranges_uni_random = l_ranges_uni_random_17
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 17)
+
+                        elif int(real_topk) == 14:
+                            k_ranges_anti = k_ranges_anti_14
+                            l_ranges_opt_anti = l_ranges_opt_anti_14
+                            l_ranges_max_anti = l_ranges_max_anti_14
+                            l_ranges_uni_anti = l_ranges_uni_anti_14
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 14)
+
+                            k_ranges_corr = k_ranges_corr_17
+                            l_ranges_opt_corr = l_ranges_opt_corr_17
+                            l_ranges_max_corr = l_ranges_max_corr_17
+                            l_ranges_uni_corr = l_ranges_uni_corr_17
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 17)
 
                             k_ranges_random = k_ranges_random_13
                             l_ranges_opt_random = l_ranges_opt_random_13
@@ -553,25 +574,6 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             l_ranges_max_random = l_ranges_max_random_21
                             l_ranges_uni_random = l_ranges_uni_random_21
                             map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 21)
-
-                        elif int(real_topk) == 14:
-                            k_ranges_anti = k_ranges_anti_14
-                            l_ranges_opt_anti = l_ranges_opt_anti_14
-                            l_ranges_max_anti = l_ranges_max_anti_14
-                            l_ranges_uni_anti = l_ranges_uni_anti_14
-                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 14)
-
-                            k_ranges_corr = k_ranges_corr_17
-                            l_ranges_opt_corr = l_ranges_opt_corr_17
-                            l_ranges_max_corr = l_ranges_max_corr_17
-                            l_ranges_uni_corr = l_ranges_uni_corr_17
-                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 17)
-
-                            k_ranges_random = k_ranges_random_13
-                            l_ranges_opt_random = l_ranges_opt_random_13
-                            l_ranges_max_random = l_ranges_max_random_13
-                            l_ranges_uni_random = l_ranges_uni_random_13
-                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 13)
 
                         elif int(real_topk) == 22:
                             k_ranges_anti = k_ranges_anti_21
@@ -1171,23 +1173,14 @@ data_type_for_keys = ['anti', 'corr', 'random']
 
 # card_excel = ['200k', '500k', '1M', '15M', '2M']
 # cardinality = [200000, 500000, 1000000, 1500000, 2000000]
-card_excel = ['200k']
-cardinality = [200000]
-# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-types = ["log"]
+card_excel = ['500k']
+cardinality = [500000]
+types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 
 budgets = ["1M", "10M"]
 dimensions = [7]
-
-# excel_file_before = "./skyline_resource_excel/7D_075_200k_redundancy_4_all_before.xlsx"
-# excel_file_after = "./skyline_resource_excel/7D_075_200k_redundancy_4_all_after.xlsx"
-
-excel_file_before = "./7D_075_reverse_maths_before_03.xlsx"
-excel_file_after = "./7D_075_reverse_maths_after_03.xlsx"
-
-
-# excel_file_before = "./7D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./7D_075_redundancy_2_all_after.xlsx"
+excel_file_before = "./7D_075_500k_redundancy_4_all_before.xlsx"
+excel_file_after = "./7D_075_500k_redundancy_4_all_after.xlsx"
 
 top_ks = [25]
 
