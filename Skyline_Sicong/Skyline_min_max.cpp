@@ -7,6 +7,8 @@
 #include <set>
 #include <vector>
 #include <iostream>
+#include <sys/time.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -55,11 +57,10 @@ int load_data(int cardinality, int dim, char* data_file_name, float **data)
     
     cout<< num_dim << " " <<num_element<< endl;
     
-    int projected_dim = 2;
     int i   = 0;
     while (!feof(fp) && i < cardinality)
     {
-        for (int j = 0; j < projected_dim; ++j)
+        for (int j = 0; j < num_dim; ++j)
         {
             fscanf(fp, "%f", &data[i][j]);
         }
@@ -101,7 +102,7 @@ void count_diffs(float* pointA, float* pointB, int* n_better, int* n_worse, int 
 
 int persist_on_disk(char* output_path, int dim, set<int> index_set, float** data)
 {
-    cout<<"output path: " << output_path <<endl;
+    // cout<<"output path: " << output_path <<endl;
     FILE *fp = fopen(output_path, "w");
     if (!fp)
     {
@@ -129,12 +130,15 @@ int persist_on_disk(char* output_path, int dim, set<int> index_set, float** data
 }
 
 // int find_skyline_bnl(float** input_data, int dim, int cardinality, set<int>* total_index_set, char* output_path, int* skyline_cardinality, int* remain_cardinality, int kth_skyline)
-int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& total_index_set, set<int>& skyline_index_set)
+int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& total_index_set, set<int>& skyline_index_set, float& temp_skyline_time)
 {
     cout<<"in function find_skyline_bnl"<<endl;
     // set<int> skyline_index_set;
     set<int>::iterator it = total_index_set.begin();
     skyline_index_set.insert(*it);
+    
+    timeval start_time, end_time;
+    gettimeofday(&start_time, NULL);
     
     int outer_loop = 0;
     it++;
@@ -180,6 +184,10 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
         skyline_index_set.insert(*it);
         it++;
     }
+    
+    gettimeofday(&end_time, NULL);
+    temp_skyline_time = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec - start_time.tv_usec) / 1000000.0f;
+    
     // udpate total_index_set
     cardinality = total_index_set.size() - skyline_index_set.size();
     
@@ -188,7 +196,7 @@ int find_skyline_bnl(float** input_data, int dim, int &cardinality, set<int>& to
     // free spaces
     total_index_set = temp;
     
-    cout<<"done w find_skyline_bnl : " << total_index_set.size()<<endl;
+    // cout<<"done w find_skyline_bnl : " << total_index_set.size()<<endl;
     return 0;
 }
 
@@ -259,16 +267,17 @@ int main(int nargs, char **args)
     }
     set<int> index_set (array, array + cardinality);
     
-    
+    float skyline_time = 0.0f;
     for(int i = 0; i < k; i++)
     {
         // save_data_file
         char output_set[200];
         sprintf(output_set, "%s%s_qhull_layer_%d", output_folder_name, input_file_name, i);
         set<int> skyline_index_set;
-        int ret_skyline = find_skyline_bnl(input_data, dim, cardinality, index_set, skyline_index_set);
         
-        cout<<"oop s... done w find_skyline_bnl : " << index_set.size()<<endl;
+        float temp_skyline_time = 0.0f;
+        int ret_skyline = find_skyline_bnl(input_data, dim, cardinality, index_set, skyline_index_set, temp_skyline_time);
+        skyline_time += temp_skyline_time;
         /*set<int>::iterator it = index_set.begin();
         
         while(it != index_set.end())
@@ -278,14 +287,15 @@ int main(int nargs, char **args)
         }*/
         
         
-        int projected_dim = 2;
-        int ret_persiste = persist_on_disk(output_set, projected_dim, skyline_index_set, input_data);
+        int ret_persiste = persist_on_disk(output_set, dim, skyline_index_set, input_data);
         if(ret_skyline == 1 || ret_persiste == 1)
         {
             cout<< "Something is wrong...  Program terminated"<<endl;
             return 1;
         }
     }
+    
+    printf("skyline total processing time                   = %f \n", skyline_time);
      
     
     return 0;

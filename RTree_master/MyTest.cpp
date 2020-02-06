@@ -1,4 +1,4 @@
-//
+
 // Test.cpp
 //
 // This is a direct port of the C version of the RTree test program.
@@ -8,9 +8,23 @@
 #include <algorithm>
 #include <vector>
 #include <sys/time.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <cstring>
+#include <unistd.h>
+#include <ios>
+//#include <iostream>
+#include <fstream>
+//#include <string>
+
+
 #include "max_list.h"
 #include "RTree.h"
 #include "gendef.h"
+
+
 
 using namespace std;
 
@@ -37,8 +51,8 @@ struct TempRect
 	}
 	~TempRect()
 	{
-//		free (min);
-//		free (max);
+		//		free (min);
+		//		free (max);
 		delete[] min;
 		delete[] max;
 		min = NULL;
@@ -86,9 +100,9 @@ void checkpoint(int   k,	const Result *R, vector<float> myvector)
 }
 
 float calc_recall(					// calc recall (percentage)
-	int   k,							// top-k value
-	const Result *R,					// ground truth results
-	vector<float> myvector)					// results returned by algorithms
+		int   k,							// top-k value
+		const Result *R,					// ground truth results
+		vector<float> myvector)					// results returned by algorithms
 {
 	int i = k - 1;
 	int last = k - 1;
@@ -182,17 +196,132 @@ TempRect pack_data(float* data, int dim)
 	return TempRect(dim, data);
 }
 
+//
+//long output_mem_usage()
+//{
+//   vm_size_t page_size;
+//    mach_port_t mach_port;
+//    mach_msg_type_number_t count;
+//    vm_statistics64_data_t vm_stats;
+//
+//    mach_port = mach_host_self();
+//    count = sizeof(vm_stats) / sizeof(natural_t);
+//    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
+//        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
+//                                        (host_info64_t)&vm_stats, &count))
+//    {
+//        long long free_memory = (int64_t)vm_stats.free_count * (int64_t)page_size;
+//
+//        long long used_memory = ((int64_t)vm_stats.active_count +
+//                                 (int64_t)vm_stats.inactive_count +
+//                                 (int64_t)vm_stats.wire_count) *  (int64_t)page_size;
+//        // printf("free memory: %lld\nused memory: %lld\n", free_memory, used_memory);
+//        return used_memory;
+//    }
+//    return 0;
+//}
+//
+//
+////long long output_mem_usage()
+////{
+////    long pages = sysconf(_SC_PHYS_PAGES);
+////    long page_size = sysconf(_SC_PAGE_SIZE);
+////    return pages * page_size;
+////}
+
+
+vector<string> explode(const string& str) {
+	string next;
+	vector<string> result;
+
+	// For each character in the string
+	for (string::const_iterator it = str.begin(); it != str.end(); it++) {
+		// If we've hit the terminal character
+		if (*it == ' ') {
+			// If we have some characters accumulated
+			if (!next.empty()) {
+				// Add them to the result vector
+				result.push_back(next);
+				next.clear();
+			}
+		} else {
+			// Accumulate the next character into the sequence
+			next += *it;
+		}
+	}
+	if (!next.empty())
+		result.push_back(next);
+	return result;
+}
+
+long long output_mem_usage() {
+	string cmd = "free | grep Mem";
+	string data;
+	FILE * stream;
+	const int max_buffer = 256;
+	char buffer[max_buffer];
+	cmd.append(" 2>&1");
+
+	stream = popen(cmd.c_str(), "r");
+	if (stream) {
+		while (!feof(stream))
+			if (fgets(buffer, max_buffer, stream) != NULL) data.append(buffer);
+		pclose(stream);
+	}
+
+	char token[] = "\t";
+	vector<string> ret = explode(data);
+	string ss = ret.at(2);
+	char cstr[ss.size() + 1];
+	strcpy(cstr, ss.c_str());    // or pass &s[0]
+	long long ll = atoll(cstr);
+	// return ret.at(2);
+	return ll;
+}
+void mem_usage(double& vm_usage, double& resident_set) {
+	vm_usage = 0.0;
+	resident_set = 0.0;
+	ifstream stat_stream("/proc/self/stat",ios_base::in); //get info from proc
+	//directory
+	//create some variables to get info
+	string pid, comm, state, ppid, pgrp, session, tty_nr;
+	string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+	string utime, stime, cutime, cstime, priority, nice;
+	string O, itrealvalue, starttime;
+	unsigned long vsize;
+	long rss;
+	stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+	>> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+	>> utime >> stime >> cutime >> cstime >> priority >> nice
+	>> O >> itrealvalue >> starttime >> vsize >> rss; // don't care
+	// about the rest
+	stat_stream.close();
+	long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // for x86-64 is configured
+	// to use 2MB pages
+	vm_usage = vsize / 1024.0;
+	resident_set = rss * page_size_kb;
+}
+
 int main()
 {
+
+	double vm1, rss1;
+	mem_usage(vm1, rss1);
+	// cout << "Virtual Memory: " << vm << "\nResident set size: " << rss << endl;
+
+
+
+
+
 	int qn = 1000;
 	const int MAXK = 50;
-	char truth_set[100] = "../H2_ALSH/result/result_random_7D_200000.mip";
+	char truth_set[100] = "../H2_ALSH/result/result_anti_correlated_5D_200000.mip";
 	int top_k = 25;
-	int dimension = 7;
-	const int gloabl_dim = 7;
+	int dimension = 5;
+	const int gloabl_dim = 5;
 	int cardinality = 200000;
-	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/random_7_200000.txt";
-	char querypath[100] = "../H2_ALSH/query/query_7D.txt";
+	char filepath[100] = "../H2_ALSH/raw_data/Synthetic/anti_correlated_5_200000.txt";
+	char querypath[100] = "../H2_ALSH/query/query_5D.txt";
 
 	typedef RTree<ValueType, float, gloabl_dim, float> MyTree;
 
@@ -227,6 +356,8 @@ int main()
 	int i, nhits;
 
 	timeval start_time, end_time;
+	long long indexing_mem_start = output_mem_usage();
+
 	gettimeofday(&start_time, NULL);
 	for(i = 0; i < cardinality; i++)
 	{
@@ -236,16 +367,28 @@ int main()
 	}
 
 	gettimeofday(&end_time, NULL);
+	long long indexing_mem_end = output_mem_usage();
+
+	cout<<"indexing start: "<<indexing_mem_start<<", indexing end: "<<indexing_mem_end<<endl;
+	cout<<"indexing cost: "<<(long long)((long long)indexing_mem_end - (long long)indexing_mem_start) << endl;
+
 
 	float building_tree = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
-				start_time.tv_usec) / 1000000.0f;
+			start_time.tv_usec) / 1000000.0f;
 
 	cout<<"Tree building time: "<<building_tree<<", total card: "<< cardinality<<", data insertion done"<<endl;
+
+	double vm2, rss2;
+	mem_usage(vm2, rss2);
+	cout << "Virtual Memory: " << (vm2 - vm1) << "\nResident set size: " << (rss2- rss1) << endl;
+
+
 	vector<float> myvector;
 	float recall = 0.0f;
 	int data_accessed = 0;
 
-	qn = 3;
+	long long query_mem_start = output_mem_usage();
+	qn = 18;
 	gettimeofday(&start_time, NULL);
 	for(int i = 0; i < qn; i++)
 	{
@@ -262,12 +405,19 @@ int main()
 		recall += calc_recall(top_k, (const Result *) R[i], myvector);
 	}
 
+
 	recall        = recall / qn;
 	gettimeofday(&end_time, NULL);
+
 	float runtime = end_time.tv_sec - start_time.tv_sec + (end_time.tv_usec -
 			start_time.tv_usec) / 1000000.0f;
 	runtime       = (runtime * 1000.0f) / qn;
 	float average_data_accessed = ((float) data_accessed)/(float)qn;
+
+	long long query_mem_end = output_mem_usage();
+	cout<<"average query cost: "<<(float)(query_mem_end - query_mem_start)/(float)qn<<endl;
+
+
 	cout<<"TopK: "<<top_k << ", runtime: "<<runtime<<", average data accessed: "<< average_data_accessed<<", recall: "<<recall<<endl;
 	printf("  %3d\t\t%.4f\t\t%.2f\n", top_k, runtime, recall);
 
