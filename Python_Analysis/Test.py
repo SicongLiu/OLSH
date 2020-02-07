@@ -44,27 +44,36 @@ dim_75 = []
 dim_75.append(0.9144)
 dim_75.append(0.8788)
 dim_75.append(0.880133333333)
+#
+# # print(1.0 * sum(dim_1)/dim_1.__len__())
+# # print(1.0 * sum(dim_10)/dim_10.__len__())
+# # print(1.0 * sum(dim_15)/dim_15.__len__())
+# # print(1.0 * sum(dim_20)/dim_20.__len__())
+# # print(1.0 * sum(dim_25)/dim_25.__len__())
+# # print(1.0 * sum(dim_50)/dim_50.__len__())
+# # print(1.0 * sum(dim_75)/dim_75.__len__())
+# list1 = [1, 2, 3, 4, 5]
+# list2 = [6, 7, 8, 9]
+#
+# list3 = []
+# list3.extend(list1)
+# list3.extend(list2)
+# print(list3)
+#
+# cur_min = 0
+# cur_max = 10
+#
+# cur_index = 0
+# while cur_index < cur_max:
+#     print(cur_index)
+#     cur_index = cur_index + 1
+# bin_index
 
-# print(1.0 * sum(dim_1)/dim_1.__len__())
-# print(1.0 * sum(dim_10)/dim_10.__len__())
-# print(1.0 * sum(dim_15)/dim_15.__len__())
-# print(1.0 * sum(dim_20)/dim_20.__len__())
-# print(1.0 * sum(dim_25)/dim_25.__len__())
-# print(1.0 * sum(dim_50)/dim_50.__len__())
-# print(1.0 * sum(dim_75)/dim_75.__len__())
-list1 = [1, 2, 3, 4, 5]
-list2 = [6, 7, 8, 9]
+tt = 25
+list_ = []
+for i in range(tt):
+    list_.append(i + 1)
 
-list3 = []
-list3.extend(list1)
-list3.extend(list2)
-print(list3)
+print(list_)
 
-cur_min = 0
-cur_max = 10
 
-cur_index = 0
-while cur_index < cur_max:
-    print(cur_index)
-    cur_index = cur_index + 1
-bin_index
