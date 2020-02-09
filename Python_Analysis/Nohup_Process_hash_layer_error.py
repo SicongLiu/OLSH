@@ -60,7 +60,7 @@ def lines_contains_key(line_, dict_):
 # file_name = '/Users/sicongliu/Desktop/redundacy_4_stats_500k/500k_7D_nohup.txt'
 # file_name = '/Users/sicongliu/Desktop/reverse_maths_0.3/4D_reverse_03_nohup.txt'
 # file_name = '/Users/sicongliu/Desktop/redundacy_4_skyline_stats/4D_skyline_correlated_random_nohup.txt'
-file_name = './layer_error_2D_nohup.txt'
+file_name = './updated_5D_hash_error.txt'
 
 
 top_k = 25
@@ -96,7 +96,7 @@ recall_count = 0
 dummy_count = 0
 overall_flag = 0
 while i < length:
-    if lines[i].__contains__("alg           = 10") and layer_index_flag == 0:
+    if lines[i].__contains__("alg           = 0") and layer_index_flag == 0:
         round_flag = 1
         layer_index_flag = 1
         # print(lines[i])
@@ -108,34 +108,35 @@ while i < length:
         temp_len = len(temp_line)
         temp_topk = str(temp_line[temp_len - 1])
         cur_topk = int(temp_topk)
-    elif lines[i].__contains__('alg           = 12') and round_flag == 1:
+    elif lines[i].__contains__('alg           = 7') and round_flag == 1:
         i = i + 1
         # print(cur_topk)
         # while i < length and not lines[i].startswith('Top-t c-AMIP of Simple_LSH (overall): '):
         #     overall_flag = 1
         # while i < length and not (lines[i].startswith('   ' + str(cur_topk))) and not lines[i].startswith('   ' + str(cur_topk)) and round_flag == 1:
         #     # print(lines[i])
-        while i < length and not lines[i].startswith('   ' + str(cur_topk))  and not lines[i].startswith('  ' + str(cur_topk)) and round_flag == 1:
+        # while i < length and not lines[i].startswith('   ' + str(cur_topk))  and not lines[i].startswith('  ' + str(cur_topk)) and round_flag == 1:
+        while i < length and not lines[i].startswith('   ' + str(top_k)) and round_flag == 1:
             i = i + 1
         # print(lines[i])
         round_flag = 0
         dummy_count = 0
         if i < length:
             temp_line = lines[i].strip().split('\t')
-            temp_recall = temp_line[2]
+            temp_recall = temp_line[4]
             print(temp_line)
             temp_cur_recall = float(temp_recall)
             # print(temp_line, temp_recall)
             # aggregate
-            if recall_count == 0 :
+            if recall_count < 25:
                 anti_array.append(temp_cur_recall)
                 recall_count = recall_count + 1
-            elif recall_count == 1:
+            elif 25 <= recall_count < 50:
                 corr_array.append(temp_cur_recall)
                 recall_count = recall_count + 1
             else:
                 random_array.append(temp_cur_recall)
-                recall_count = 0
+                recall_count = recall_count + 1
             indexing_time_flag = 0
             layer_index_flag = 0
             layer_index = 0
@@ -154,3 +155,5 @@ while i < length:
 
 print("======== indexing time ==========")
 print(anti_array)
+print(corr_array)
+print(random_array)

@@ -395,18 +395,24 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                     f10.write("temp_hash" + str(
                                         kk) + "=" + TEMPORAL_RESULT_FOR_BASH + "hash_proj_${datatype}_opt_" + str(kk) + "\n")
 
-                                    f10.write("./alsh -alg 10 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
-                                             "} -L ${L" + str(kk) + "} -LI " + str(
-                                        kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
-                                             + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
-                                        kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+                                    # f10.write("./alsh -alg 7 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} -K ${K" + str(kk) +
+                                    #          "} -L ${L" + str(kk) + "} -LI " + str(
+                                    #     kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                    #          + "} -qs ${qPath} -ts ${tsPath}.mip -it ${temporalResult} -sa ${sim_angle} -of ${oFolder" + str(
+                                    #     kk) + "}.simple_LSH -hr ${temp_hash" + str(kk) + "} -pot ${pot} \n")
+
+                                    f10.write("./alsh -alg 7 -n ${n" + str(kk) + "} -qn ${qn} -d ${d} " + " -LI " + str(
+                                    kk + 1) + " -tk ${top_k}" + " -S ${S} -c0 ${c0} -ds ${dPath" + str(kk)
+                                          + "} -qs ${qPath} -ts ${tsPath}.mip -of ${oFolder" + str(
+                                    kk) + "} \n")
+
                                     f10.write("\n")
 
                                 # append overall accuracy computation here
                                 f10.write("# ------------------------------------------------------------------------------ \n")
                                 f10.write("#     Overall-Performance \n")
                                 f10.write("# ------------------------------------------------------------------------------ \n")
-                                f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
+                                f10.write("# ./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n \n \n")
                                 f10.write("sleep 2 \n")
 
@@ -543,8 +549,8 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 
 ################################################################
 data_type = ["anti_correlated", "correlated", "random"]
-card_excel = ['200k', '500k', '1M', '15M', '2M']
-cardinality = [200000, 500000, 1000000, 1500000, 2000000]
+# card_excel = ['200k', '500k', '1M', '15M', '2M']
+# cardinality = [200000, 500000, 1000000, 1500000, 2000000]
 
 # card_excel = ['200k', '1M', '15M', '2M']
 # cardinality = [200000, 1000000, 1500000, 2000000]
@@ -553,8 +559,8 @@ cardinality = [200000, 500000, 1000000, 1500000, 2000000]
 # card_excel = ['500k', '1M', '15M', '2M']
 # cardinality = [500000, 1000000, 1500000, 2000000]
 
-# card_excel = ['200k']
-# cardinality = [200000]
+card_excel = ['200k']
+cardinality = [200000]
 # #
 # card_excel = ['500k']
 # cardinality = [500000]
@@ -575,11 +581,11 @@ sim_threshold = 0.75
 # excel_file_after = "./skyline_resource_excel/3D_075_200k_redundancy_4_all_after.xlsx"
 
 # dimensions = [3]
-dimensions = [4]
+dimensions = [5]
 # excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
 # excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
-excel_file_before = "./4D_075_reverse_maths_before_03.xlsx"
-excel_file_after = "./4D_075_reverse_maths_after_03.xlsx"
+excel_file_before = "./5D_075_reverse_maths_before_03.xlsx"
+excel_file_after = "./5D_075_reverse_maths_after_03.xlsx"
 # excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
 # excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
 # excel_file_before = "./2D_075_redundancy_2_all_before.xlsx"
@@ -631,43 +637,44 @@ parameter_type = ["opt"]
 
 with_without_opt = 'without_opt'
 pot = 0
-file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot)
+maxk = 25
+file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot, maxk)
+
+#
+# with_without_opt = 'with_opt'
+# pot = 1
+# file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot)
 
 
-with_without_opt = 'with_opt'
-pot = 1
-file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot)
-
-
-
-aggregated_file_name = BASH_FILE_BASE_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
-f1 = open(aggregated_file_name, 'w')
-f1.write("#!/bin/bash \n")
-for rr in range(0, repeated_run):
-    for files in file_names_without_opt:
-        f1.write('sh ' + files + '\n')
-
-    temp_str = "aggregating for non-opt round " + str(rr)
-    f1.write('echo \"' + temp_str + '\" \n')
-
-    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py without_opt ' + str(rr) + ' \n')
-    f1.write('sleep 3' + '\n')
-
-    # before starting pot = 1, clean everything except hash_table
-    f1.write('python ../Python_Analysis/Clean_Sim_Overall_run_test_' + str(dimensions[0]) + 'D.py' + '\n')
-    f1.write('sleep 5' + '\n')
-
-    for files in file_names_with_opt:
-        f1.write('sh ' + files + '\n')
-
-    temp_str = "aggregating for opt round " + str(rr)
-    f1.write('echo \"' + temp_str + '\" \n')
-
-    f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py with_opt ' + str(rr) + ' \n')
-    f1.write('sleep 3' + '\n')
-
-    # before starting pot = 1, clean everything except hash_table
-    f1.write('python ../Python_Analysis/Clean_All_' + str(dimensions[0]) + 'D.py' + '\n')
-    f1.write('sleep 5' + '\n')
-
-f1.close()
+#
+# aggregated_file_name = BASH_FILE_BASE_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
+# f1 = open(aggregated_file_name, 'w')
+# f1.write("#!/bin/bash \n")
+# for rr in range(0, repeated_run):
+#     for files in file_names_without_opt:
+#         f1.write('sh ' + files + '\n')
+#
+#     temp_str = "aggregating for non-opt round " + str(rr)
+#     f1.write('echo \"' + temp_str + '\" \n')
+#
+#     f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py without_opt ' + str(rr) + ' \n')
+#     f1.write('sleep 3' + '\n')
+#
+#     # before starting pot = 1, clean everything except hash_table
+#     f1.write('python ../Python_Analysis/Clean_Sim_Overall_run_test_' + str(dimensions[0]) + 'D.py' + '\n')
+#     f1.write('sleep 5' + '\n')
+#
+#     for files in file_names_with_opt:
+#         f1.write('sh ' + files + '\n')
+#
+#     temp_str = "aggregating for opt round " + str(rr)
+#     f1.write('echo \"' + temp_str + '\" \n')
+#
+#     f1.write('python ../Python_Analysis/LSH_Post_Process_' + str(dimensions[0]) + 'D.py with_opt ' + str(rr) + ' \n')
+#     f1.write('sleep 3' + '\n')
+#
+#     # before starting pot = 1, clean everything except hash_table
+#     f1.write('python ../Python_Analysis/Clean_All_' + str(dimensions[0]) + 'D.py' + '\n')
+#     f1.write('sleep 5' + '\n')
+#
+# f1.close()
