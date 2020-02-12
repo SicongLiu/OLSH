@@ -281,8 +281,8 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 # dimensions = [2, 3, 4, 5, 6, 7]
 collision_probility = 0.75
 total_error = 0
-dimensions = [2]
-excel_file_dir = './'
+dimensions = [2, 3, 4, 5]
+excel_file_dir = './olsh_sample/'
 # excel_file_dir = './skyline_resource_excel/'
 
 # for each excel file

@@ -134,9 +134,10 @@ raw_data_folder = '../H2_ALSH/raw_data/Synthetic/'
 is_stats_learn = 1
 # dims = [2, 3, 4, 5]
 # dims = [6, 7]
-dims = [4]
+dims = [2, 3, 5, 6, 7]
 # cards = [200000]
-cards = [500000, 1000000, 1500000, 2000000]
+# cards = [500000, 1000000, 1500000, 2000000]
+cards = [500000]
 topk = 25
 
 data_types = ['anti_correlated', 'correlated', 'random']
@@ -147,20 +148,28 @@ for dim in dims:
     query_list = load_query(query_folder, dim, is_stats_learn)
     for card in cards:
         for data_type in data_types:
-            if dim == 6:
+            if dim == 6 and card == 200000:
                 if data_type == 'anti_correlated':
                     total_qhull_layer = 21
                 elif data_type == 'correlated':
                     total_qhull_layer = 25
                 else:
                     total_qhull_layer = 20
-            elif dim == 7:
+            elif dim == 7 and card == 500000:
+                if data_type == 'anti_correlated':
+                    total_qhull_layer = 18
+                elif data_type == 'correlated':
+                    total_qhull_layer = 22
+                else:
+                    total_qhull_layer = 17
+            elif dim == 7 and card == 200000:
                 if data_type == 'anti_correlated':
                     total_qhull_layer = 14
                 elif data_type == 'correlated':
                     total_qhull_layer = 17
                 else:
                     total_qhull_layer = 13
+
 
             data_file = raw_data_folder + data_type + '_' + str(dim) + '_' + str(card) + '.txt'
             data_list = load_data(data_file, dim)

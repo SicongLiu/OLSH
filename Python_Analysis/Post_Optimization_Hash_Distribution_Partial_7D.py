@@ -688,13 +688,13 @@ total_error = 0
 # dimensions = [2, 3, 4, 5, 6, 7]
 dimensions = [7]
 # excel_file_dir = './skyline_resource_excel/'
-excel_file_dir = './'
+excel_file_dir = './olsh_sample/'
 
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
     # excel_file_name = excel_file_dir + 'Checkpoint_Result_Nov_26_' + str(cur_d) + 'D_test.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_2_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_all_after.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_200k_redundancy_4_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
