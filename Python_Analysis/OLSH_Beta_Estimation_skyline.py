@@ -87,6 +87,7 @@ def calc_layer_ratio(qhull_folder_, data_type_, dim_, card_, total_layer_, topk,
         indexed_data_.append(cur_qhull_data_.__len__())
         # layer_card_ratio = float(cur_qhull_data_.__len__())/float(card_)
         layer_recall_ratio = []
+        print(cur_qhull_file)
         for jj in range(query_count_):
             cur_query = query_[jj]
             temp_dot = calc_dot_rank(cur_query, cur_qhull_data_, topk)
@@ -116,12 +117,12 @@ def compute_alpha_beta(input_ndarray_, min_val_, max_val_):
 
 def calc_layer_weight(alpha_, beta_, data_ratio_):
     beta_weight = []
-    for ii in range(recall_ratio.__len__()):
+    for ii in range(data_ratio_.__len__()):
         if ii == 0:
-            cur_weight = beta.cdf(ii, alpha_, beta_, loc=1, scale=recall_ratio.__len__())
+            cur_weight = beta.cdf(ii, alpha_, beta_, loc=1, scale=data_ratio_.__len__())
         else:
-            t1 = beta.cdf(ii, alpha_, beta_, loc=1, scale=recall_ratio.__len__())
-            t2 = beta.cdf(ii + 1, alpha_, beta_, loc=1, scale=recall_ratio.__len__())
+            t1 = beta.cdf(ii, alpha_, beta_, loc=1, scale=data_ratio_.__len__())
+            t2 = beta.cdf(ii + 1, alpha_, beta_, loc=1, scale=data_ratio_.__len__())
             cur_weight = t2 - t1
             beta_weight.append(cur_weight)
     beta_weight.append(0)
@@ -132,41 +133,48 @@ qhull_folder = '../H2_ALSH/qhull_data/Synthetic/'
 query_folder = '../H2_ALSH/query/'
 raw_data_folder = '../H2_ALSH/raw_data/Synthetic/'
 is_stats_learn = 1
-# dims = [2, 3, 4, 5]
-# dims = [6, 7]
-dims = [2, 3, 5, 6, 7]
-cards = [200000]
-# cards = [500000, 1000000, 1500000, 2000000]
+dims = [4]
+# dims = [7]
+# dims = [2, 3, 4, 5, 6, 7]
+# cards = [200000]
+cards = [500000, 1000000, 1500000, 2000000]
 # cards = [500000]
 topk = 25
 
 data_types = ['anti_correlated', 'correlated', 'random']
-
+# data_types = ['correlated', 'random']
 # data_types = ['correlated']
 total_qhull_layer = topk
 for dim in dims:
     query_list = load_query(query_folder, dim, is_stats_learn)
     for card in cards:
         for data_type in data_types:
-            if dim == 6 and card == 200000:
+            if dim == 5 and card == 200000:
+                if data_type == 'anti_correlated':
+                    total_qhull_layer = 10
+                elif data_type == 'correlated':
+                    total_qhull_layer = 25
+                else:
+                    total_qhull_layer = 25
+            elif dim == 4 and card == 500000:
                 if data_type == 'anti_correlated':
                     total_qhull_layer = 21
                 elif data_type == 'correlated':
                     total_qhull_layer = 25
                 else:
-                    total_qhull_layer = 20
-            elif dim == 7 and card == 500000:
+                    total_qhull_layer = 25
+            elif dim == 6 and card == 200000:
                 if data_type == 'anti_correlated':
-                    total_qhull_layer = 18
+                    total_qhull_layer = 7
                 elif data_type == 'correlated':
-                    total_qhull_layer = 22
+                    total_qhull_layer = 25
                 else:
                     total_qhull_layer = 17
             elif dim == 7 and card == 200000:
                 if data_type == 'anti_correlated':
-                    total_qhull_layer = 14
+                    total_qhull_layer = 5
                 elif data_type == 'correlated':
-                    total_qhull_layer = 17
+                    total_qhull_layer = 25
                 else:
                     total_qhull_layer = 13
 

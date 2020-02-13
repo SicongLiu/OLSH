@@ -106,62 +106,64 @@ def compute_alpha_beta(input_ndarray_, min_val_, max_val_):
 
     return alpha_, beta_
 
-
-
 #
-# x = np.arange (0, 1, 0.0011)
-# y = beta.pdf(x, a, b, scale=1, loc=0)
+# ttt = [1, 2, 3, 4, 5]
+# ttt = np.asarray(ttt)
+# ttt = np.append(ttt, 10)
+# print(ttt)
+#
+# xx = [0.0000000000010544000000000001, 0.19444000000000006, 0.14076, 0.14063999999999999, 0.11916, 0.11960000000000001, 0.091200000000000017, 0.056120000000000003, 0.02724, 0.0054000000000000003, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+#
+# xx = np.asarray(xx)
+# yy = np.array2string(xx, precision=5, separator=',', suppress_small=True)
+#
+# print(yy)
+# # np.set_printoptions(suppress=True)
+# # print(xx)
+# # print(','.join(map(str, xx)))
+#
+# # xx = [0.27464, 0.30212, 0.23568000000000003, 0.13572000000000001, 0.039760000000000004, 0.01196, 0.00011999999999999999, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+# # xx = [0.47760000000000008, 0.37384000000000006, 0.13404000000000002, 0.014520000000000002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+# xx = np.asarray(xx)
+#
+# xk = np.arange(25)
+# cusm = stats.rv_discrete(name='cusm', values=(xk, xx))
+# R = cusm.rvs(size=100000)
+# tt = Counter(R)
+# mc = np.digitize(R, xk)
+# # print(mc)
+# ma,  mb = compute_alpha_beta(mc, 1, 25)
+#
+# aaa = ma
+#
+#
+# bbb = mb
+# cc = 1
+# dd = 25
+# x = np.arange(cc, dd, 0.001)
+# # fig, ax = plt.subplots(1, 1)
+# # ax.plot(x, beta.pdf(x, aaa, bbb), 'r-', lw=5, alpha=0.6, label='beta pdf')
+# y = beta.pdf(x, aaa, bbb,  loc=1, scale=25)
 # plt.plot(x, y)
 # plt.show()
-# print('done')
+#
+# for ii in range(25):
+#     if ii == 0:
+#         print(beta.cdf(ii, aaa, bbb, loc=cc, scale=25))
+#     else:
+#         t1 = beta.cdf(ii, aaa, bbb, loc=cc, scale=25)
+#         t2 = beta.cdf(ii + 1, aaa, bbb, loc=cc, scale=25)
+#         print(t2 - t1)
+#
+# print('done').
 
-ttt = [1, 2, 3, 4, 5]
-ttt = np.asarray(ttt)
-ttt = np.append(ttt, 10)
-print(ttt)
+tt = np.random.rand(5,3)
+print(tt)
+print("============")
+ss = np.delete(tt, np.s_[-1:], axis=1)
+print(ss.__len__())
+print(ss.shape[0])
 
-xx = [0.0000000000010544000000000001, 0.19444000000000006, 0.14076, 0.14063999999999999, 0.11916, 0.11960000000000001, 0.091200000000000017, 0.056120000000000003, 0.02724, 0.0054000000000000003, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+length = ss.shape[0]
 
-xx = np.asarray(xx)
-yy = np.array2string(xx, precision=5, separator=',', suppress_small=True)
-
-print(yy)
-# np.set_printoptions(suppress=True)
-# print(xx)
-# print(','.join(map(str, xx)))
-
-# xx = [0.27464, 0.30212, 0.23568000000000003, 0.13572000000000001, 0.039760000000000004, 0.01196, 0.00011999999999999999, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-# xx = [0.47760000000000008, 0.37384000000000006, 0.13404000000000002, 0.014520000000000002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
-xx = np.asarray(xx)
-
-xk = np.arange(25)
-cusm = stats.rv_discrete(name='cusm', values=(xk, xx))
-R = cusm.rvs(size=100000)
-tt = Counter(R)
-mc = np.digitize(R, xk)
-# print(mc)
-ma,  mb = compute_alpha_beta(mc, 1, 25)
-
-aaa = ma
-
-
-bbb = mb
-cc = 1
-dd = 25
-x = np.arange(cc, dd, 0.001)
-# fig, ax = plt.subplots(1, 1)
-# ax.plot(x, beta.pdf(x, aaa, bbb), 'r-', lw=5, alpha=0.6, label='beta pdf')
-y = beta.pdf(x, aaa, bbb,  loc=1, scale=25)
-plt.plot(x, y)
-plt.show()
-
-for ii in range(25):
-    if ii == 0:
-        print(beta.cdf(ii, aaa, bbb, loc=cc, scale=25))
-    else:
-        t1 = beta.cdf(ii, aaa, bbb, loc=cc, scale=25)
-        t2 = beta.cdf(ii + 1, aaa, bbb, loc=cc, scale=25)
-        print(t2 - t1)
-
-print('done')
 

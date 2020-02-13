@@ -183,7 +183,7 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 text_file_path = '/Users/sicongliu/'
 # text_file_path = './'
 dimension = 5
-excel_file_dir = './'
+excel_file_dir = './olsh_sample/'
 # excel_file_dir = './skyline_resource_excel/'
 collision_probility = 0.75
 read_lines = -1
@@ -191,7 +191,9 @@ read_lines = -1
 # excel_file_name = excel_file_dir + str(dimension) + 'D_075_reverse_maths_before.xlsx'
 # excel_file_name = excel_file_dir + str(dimension) + 'D_all_new.xlsx'
 # excel_file_name = excel_file_dir + str(dimension) + 'D_075_200k_redundancy_4_all_before.xlsx'
-excel_file_name = excel_file_dir + str(dimension) + 'D_075_reverse_maths_before_03.xlsx'
+# excel_file_name = excel_file_dir + str(dimension) + 'D_075_reverse_maths_before_03.xlsx'
+
+excel_file_name = excel_file_dir + str(dimension) + 'D_075_redundancy_6_all_before.xlsx'
 
 top_m_cell = 'E1'
 k_types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]

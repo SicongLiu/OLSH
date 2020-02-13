@@ -694,14 +694,11 @@ types = ["log"]
 budgets = ["1M", "10M"]
 dimensions = [6]
 
-# excel_file_before = "./6D_075_top25_red_2_200k_before.xlsx"
-# excel_file_after = "./6D_075_top25_red_2_200k_after.xlsx"
+excel_file_before = "./olsh_sample/6D_075_redundancy_3_all_before.xlsx"
+excel_file_after = "./olsh_sample/6D_075_redundancy_3_all_after.xlsx"
 
-# excel_file_before = "./6D_075_reverse_maths_before_03.xlsx"
-# excel_file_after = "./6D_075_reverse_maths_after_03.xlsx"
-
-excel_file_before = "./olsh_sample/6D_075_reverse_maths_before_03.xlsx"
-excel_file_after = "./olsh_sample/6D_075_reverse_maths_after_03.xlsx"
+# excel_file_before = "./olsh_sample/6D_075_reverse_maths_before_03.xlsx"
+# excel_file_after = "./olsh_sample/6D_075_reverse_maths_after_03.xlsx"
 
 top_ks = [25]
 

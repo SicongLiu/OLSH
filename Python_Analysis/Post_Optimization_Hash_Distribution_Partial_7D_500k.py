@@ -687,7 +687,7 @@ total_error = 0
 
 # dimensions = [2, 3, 4, 5, 6, 7]
 dimensions = [7]
-excel_file_dir = './'
+excel_file_dir = './olsh_sample/'
 
 # for each excel file
 for i in range(len(dimensions)):
