@@ -138,8 +138,8 @@ def dot(K, L):
 data_folder = '../H2_ALSH/raw_data/Synthetic/bak/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
 data_type = 'random_'
-dimension = 300
-cardinality = 17770
+dimension = 192
+cardinality = 53387
 
 query_num = 1000
 query_folder = '../H2_ALSH/query/'
@@ -167,91 +167,91 @@ data_list = np.asarray(data_list)
 
 data_list, data_norm_list = scale_data(data_list)
 
-save_date_folder = '../H2_ALSH/raw_data/Synthetic/'
-save_file_name = save_date_folder + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
-
-
-num_of_dimension = dimension
-num_of_points = cardinality
-data_info = []
-data_info.append(np.asarray(int(num_of_dimension)))
-data_info.append(np.asarray(int(num_of_points)))
-data_info = np.asarray(data_info)
-np.savetxt(save_file_name, data_info, delimiter=',', fmt='%i')
-
-# separate metadata and data points, appending data points to metadata text saved on file
-f_handle = open(save_file_name, 'ab')
-np.savetxt(f_handle, data_list, fmt='%.6f')
-f_handle.close()
+# save_date_folder = '../H2_ALSH/raw_data/Synthetic/'
+# save_file_name = save_date_folder + data_type + str(dimension) + '_' + str(cardinality) + '.txt'
+#
+#
+# num_of_dimension = dimension
+# num_of_points = cardinality
+# data_info = []
+# data_info.append(np.asarray(int(num_of_dimension)))
+# data_info.append(np.asarray(int(num_of_points)))
+# data_info = np.asarray(data_info)
+# np.savetxt(save_file_name, data_info, delimiter=',', fmt='%i')
+#
+# # separate metadata and data points, appending data points to metadata text saved on file
+# f_handle = open(save_file_name, 'ab')
+# np.savetxt(f_handle, data_list, fmt='%.6f')
+# f_handle.close()
 
 print('Done')
 
-#
-#
-# chunks = 40
-# top_k = 25
-# # min_norm = 0
-# # max_norm = math.sqrt(dimension)
-# min_norm = min(data_norm_list)
-# max_norm = max(data_norm_list)
-#
-# norm_range = float(max_norm) - float(min_norm)
-# bin_size = norm_range / chunks
-#
-# bin_array = []
-# cur_norm = float(min_norm)
-#
-# while float(cur_norm) <= float(max_norm):
-#     bin_array.append(cur_norm)
-#     cur_norm = cur_norm + bin_size
-#
-# # bin_array[0] = min(min_norm - 0.000001, bin_array[0] - 0.000001)
-# print(bin_array.__len__())
-# if bin_array.__len__() == chunks and bin_array[bin_array.__len__() - 1] < max_norm:
-#     bin_array.append(bin_array[bin_array.__len__() - 1] + bin_size)
-# elif bin_array[bin_array.__len__() - 1] <= max_norm:
-#     bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
-#
-# # bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
-# print(bin_array.__len__())
-#
-# # _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
-# # plt.xlabel("norm values", fontsize=14)
-# # plt.ylabel("frequency", fontsize=14)
-# # plt.xticks(fontsize=14)
-# # plt.yticks(fontsize=14)
-#
-# #create legend
-# # handles = [Rectangle((0, 0), 1, 1, ec="k")]
-# # labels = ["test"]
-# # plt.legend(handles, labels)
-# print("plot data norm done")
-#
-# # plot maxium inner product of queries
-# query_list = load_query(query_folder, dimension, 0)
-# bin_array, total_counter, top_k_prod = compute_bin_array(query_list, query_num, data_list, data_norm_list, bin_array, top_k)
-#
-#
-# # _ = plt.hist(top_k_prod, bins='auto')  # arguments are passed to np.histogram
-# # plt.xlabel("top-k inner product", fontsize=14)
-# # plt.ylabel("frequency", fontsize=14)
-# # plt.xticks(fontsize=14)
-# # plt.yticks(fontsize=14)
-#
-# # plt.bar(total_counter.keys(), total_counter.values())
-# # plt.xlabel("top-k inner product partition index", fontsize=14)
-# # plt.ylabel("frequency", fontsize=14)
-#
-#
-# min_index = 0
-# max_index = chunks
-# my_alpha_, my_beta_ = compute_alpha_beta(bin_array, min_index, max_index)
-#
-# x = np.arange(0.01, max_index, 0.01)
-# y = beta.pdf(x, my_alpha_, my_beta_, loc=min_index, scale=max_index - min_index)
-#
-# plt.plot(x, y)
-# # plt.xlabel("distribution of partition index and frequency", fontsize=14)
-# # plt.ylabel("probability", fontsize=14)
-# print('Query top-k ground truth plot Done')
+
+
+chunks = 40
+top_k = 25
+# min_norm = 0
+# max_norm = math.sqrt(dimension)
+min_norm = min(data_norm_list)
+max_norm = max(data_norm_list)
+
+norm_range = float(max_norm) - float(min_norm)
+bin_size = norm_range / chunks
+
+bin_array = []
+cur_norm = float(min_norm)
+
+while float(cur_norm) <= float(max_norm):
+    bin_array.append(cur_norm)
+    cur_norm = cur_norm + bin_size
+
+# bin_array[0] = min(min_norm - 0.000001, bin_array[0] - 0.000001)
+print(bin_array.__len__())
+if bin_array.__len__() == chunks and bin_array[bin_array.__len__() - 1] < max_norm:
+    bin_array.append(bin_array[bin_array.__len__() - 1] + bin_size)
+elif bin_array[bin_array.__len__() - 1] <= max_norm:
+    bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
+
+# bin_array[bin_array.__len__() - 1] = max(max_norm + 0.0000001, bin_array[bin_array.__len__() - 1] + 0.0000001)
+print(bin_array.__len__())
+
+# _ = plt.hist(data_norm_list, bins='auto')  # arguments are passed to np.histogram
+# plt.xlabel("norm values", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
+# plt.xticks(fontsize=14)
+# plt.yticks(fontsize=14)
+
+#create legend
+# handles = [Rectangle((0, 0), 1, 1, ec="k")]
+# labels = ["test"]
+# plt.legend(handles, labels)
+print("plot data norm done")
+
+# plot maxium inner product of queries
+query_list = load_query(query_folder, dimension, 0)
+bin_array, total_counter, top_k_prod = compute_bin_array(query_list, query_num, data_list, data_norm_list, bin_array, top_k)
+
+
+# _ = plt.hist(top_k_prod, bins='auto')  # arguments are passed to np.histogram
+# plt.xlabel("top-k inner product", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
+# plt.xticks(fontsize=14)
+# plt.yticks(fontsize=14)
+
+# plt.bar(total_counter.keys(), total_counter.values())
+# plt.xlabel("top-k inner product partition index", fontsize=14)
+# plt.ylabel("frequency", fontsize=14)
+
+
+min_index = 0
+max_index = chunks
+my_alpha_, my_beta_ = compute_alpha_beta(bin_array, min_index, max_index)
+
+x = np.arange(0.01, max_index, 0.01)
+y = beta.pdf(x, my_alpha_, my_beta_, loc=min_index, scale=max_index - min_index)
+
+plt.plot(x, y)
+# plt.xlabel("distribution of partition index and frequency", fontsize=14)
+# plt.ylabel("probability", fontsize=14)
+print('Query top-k ground truth plot Done')
 

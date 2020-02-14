@@ -146,7 +146,9 @@ def millify(n):
     return '{:.00f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
 
 
-# list1 = [1, 4, 34, 34, 6, 8, 7, 32, 54, 346, 6, 10]
+list1 = [1, 4, 34, 34, 6, 8, 7, 32, 54, 346, 6, 10]
+temp_counter = Counter(list1)
+print(list(temp_counter.keys()))
 # list1 = np.asarray(list1)
 # print(list1)
 #

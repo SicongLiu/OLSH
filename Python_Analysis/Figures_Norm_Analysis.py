@@ -36,11 +36,17 @@ def dot(K, L):
 # 300D: Netflix
 # 192D: YahooMusic
 
+
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
-data_type = 'random_'
-dimension = 192
-cardinality = 53387
+data_type = 'anti_correlated_'
+# dimension = 192
+# cardinality = 53387
+
+dimension = 50
+cardinality = 1000000
+
+
 top_k = 25
 QUERY_FOLDER = '../H2_ALSH/query/'
 
@@ -105,6 +111,8 @@ query_num = 1000
 query_list = load_query(QUERY_FOLDER, dimension, 0)
 # ==================== check top-25 how many elements in which bin ====================
 inner_prod_list_all = []
+save_bin_array = []
+total_counter = Counter()
 for ii in range(query_num):
     print("Query index: " + str(ii))
     cur_query = query_list[ii]
@@ -116,45 +124,33 @@ for ii in range(query_num):
     selected_norms = data_norm_list[list(top_k_index)]
     selected_inner_prod = inner_prod_list[list(top_k_index)]
     inner_prod_list_all.extend(selected_inner_prod)
-    # bin_count_array = np.digitize(selected_norms, chunks)
-    # save_bin_array.extend(bin_count_array)
-    # temp_counter = Counter(bin_count_array)
-    # total_counter = total_counter + temp_counter
-#
-#     for jj in range(cardinality):
-#         cur_data = data_list[jj]
-#         temp_dot_product = dot(cur_data, cur_query)
-#         inner_prod_list.append(temp_dot_product)
-# inner_prod_list = np.asarray(inner_prod_list)
-#
-#
-#
-# save_bin_array = []
-#     total_counter = Counter()
-#     data_list_ = np.asarray(data_list_)
-#     for ii in range(query_num_):
-#         print("Query index: " + str(ii))
-#         cur_query = query_list_[ii]
-#         cur_query = np.asarray(cur_query)
-#         inner_prod_list = data_list_.dot(cur_query)
-#
-#         inner_prod_list = np.asarray(inner_prod_list)
-#         reverse_sort_index = np.argsort((-inner_prod_list))
-#         top_k_index = reverse_sort_index[0: top_k]
-#
-#         selected_norms = data_norm_list_[list(top_k_index)]
-#         selected_inner_prod = inner_prod_list[list(top_k_index)]
-#         bin_count_array = np.digitize(selected_norms, bins_)
-#         save_bin_array.extend(bin_count_array)
-#         temp_counter = Counter(bin_count_array)
-#         total_counter = total_counter + temp_counter
-#     return np.asarray(save_bin_array), total_counter
+    bin_count_array = np.digitize(selected_norms, bin_array)
+    save_bin_array.extend(bin_count_array)
+    temp_counter = Counter(bin_count_array)
+    total_counter = total_counter + temp_counter
 
-# plot without bin
+print(total_counter.keys())
+plt.figure()
+
+
+# plt.title('YahooMusic Norm Bin Distribution')
+# plt.title('Netflix Norm Bin Distribution')
+# plt.title('Norm Bin Distribution')
+
+plt.xlabel('Bin Index')
+plt.ylabel('Frequency')
+plt.bar(list(total_counter.keys()), list(total_counter.values()))
+
+plt.show()
+
+
+# plot norm bin
 # _ = plt.hist(inner_prod_list_all, bins='auto')  # arguments are passed to np.histogram
 # plt.show()
-# plot with bin
-_ = plt.hist(inner_prod_list_all, bins=bin_array)  # arguments are passed to np.histogram
-plt.show()
+
+
+# plot norm bin
+# _ = plt.hist(inner_prod_list_all, bins=bin_array)  # arguments are passed to np.histogram
+# plt.show()
 print('Query top-k ground truth plot Done')
 
