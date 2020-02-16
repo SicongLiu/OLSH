@@ -282,6 +282,7 @@ hash_used_rand_uni_cells_50 = ['AV56', 'AV113', 'AV170', 'AV227', 'AV284']
 collision_probility = 0.75
 total_error = 0
 dimensions = [5]
+# excel_file_dir = './olsh_sample_skyline_resource_excel/'
 excel_file_dir = './olsh_sample/'
 # excel_file_dir = './skyline_resource_excel/'
 
@@ -297,7 +298,7 @@ for i in range(len(dimensions)):
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_4_all_after.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_reverse_maths_before_03.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_500k_redundancy_4_all_after.xlsx'
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_3_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_6_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     wss = wb.get_sheet_names()

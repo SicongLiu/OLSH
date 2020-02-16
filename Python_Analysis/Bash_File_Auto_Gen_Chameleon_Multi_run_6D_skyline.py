@@ -4,114 +4,154 @@
 import math
 import os
 from openpyxl import load_workbook
-
-k_ranges_anti_10 = ['E6',  'E15', 'E21', 'E30', 'E37', 'E46', 'E51', 'E60', 'E68', 'E77']
-l_ranges_opt_anti_10 = ['F6', 'F15', 'F21', 'F30', 'F37', 'F46', 'F51', 'F60', 'F68', 'F77']
-l_ranges_max_anti_10 = ['G6', 'G15', 'G21', 'G30', 'G37', 'G46', 'G51', 'G60', 'G68', 'G77']
-l_ranges_uni_anti_10 = ['H6', 'H15', 'H21', 'H30', 'H37', 'H46', 'H51', 'H60', 'H68', 'H77']
-
-k_ranges_corr_10 = ['V6', 'V15', 'V21', 'V30', 'V37', 'V46', 'V51', 'V60', 'V68', 'V77']
-l_ranges_opt_corr_10 = ['W6', 'W15', 'W21', 'W30', 'W37', 'W46', 'W51', 'W60', 'W68', 'W77']
-l_ranges_max_corr_10 = ['X6', 'X15', 'X21', 'X30', 'X37', 'X46', 'X51', 'X60', 'X68', 'X77']
-l_ranges_uni_corr_10 = ['Y6', 'Y15', 'Y21', 'Y30', 'Y37', 'Y46', 'Y51', 'Y60', 'Y68', 'Y77']
-
-k_ranges_random_10 = ['AL6', 'AL15', 'AL21', 'AL30', 'AL37', 'AL46', 'AL51', 'AL60', 'AL68', 'AL77']
-l_ranges_opt_random_10 = ['AM6', 'AM15', 'AM21', 'AM30', 'AM37', 'AM46', 'AM51', 'AM60', 'AM68', 'AM77']
-l_ranges_max_random_10 = ['AN6', 'AN15', 'AN21', 'AN30', 'AN37', 'AN46', 'AN51', 'AN60', 'AN68', 'AN77']
-l_ranges_uni_random_10 = ['AO6', 'AO15', 'AO21', 'AO30', 'AO37', 'AO46', 'AO51', 'AO60', 'AO68', 'AO77']
-
-k_ranges_anti_21 = ['E6', 'E26', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
-l_ranges_opt_anti_21 = ['F6', 'F26', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
-l_ranges_max_anti_21 = ['G6', 'G26', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
-l_ranges_uni_anti_21 = ['H6', 'H26', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
-
-k_ranges_anti_25 = ['E6', 'E30', 'E38', 'E62', 'E69', 'E93', 'E100', 'E124', 'E131', 'E155']
-l_ranges_opt_anti_25 = ['F6', 'F30', 'F38', 'F62', 'F69', 'F93', 'F100', 'F124', 'F131', 'F155']
-l_ranges_max_anti_25 = ['G6', 'G30', 'G38', 'G62', 'G69', 'G93', 'G100', 'G124', 'G131', 'G155']
-l_ranges_uni_anti_25 = ['H6', 'H30', 'H38', 'H62', 'H69', 'H93', 'H100', 'H124', 'H131', 'H155']
-
-k_ranges_corr_25 = ['V6', 'V30', 'V38', 'V62', 'V69', 'V93', 'V100', 'V124', 'V131', 'V155']
-l_ranges_opt_corr_25 = ['W6', 'W30', 'W38', 'W62', 'W69', 'W93', 'W100', 'W124', 'W131', 'W155']
-l_ranges_max_corr_25 = ['X6', 'X30', 'X38', 'X62', 'X69', 'X93', 'X100', 'X124', 'X131', 'X155']
-l_ranges_uni_corr_25 = ['Y6', 'Y30', 'Y38', 'Y62', 'Y69', 'Y93', 'Y100', 'Y124', 'Y131', 'Y155']
-
-k_ranges_random_25 = ['AL6', 'AL30', 'AL38', 'AL62', 'AL69', 'AL93', 'AL100', 'AL124', 'AL131', 'AL155']
-l_ranges_opt_random_25 = ['AM6', 'AM30', 'AM38', 'AM62', 'AM69', 'AM93', 'AM100', 'AM124', 'AM131', 'AM155']
-l_ranges_max_random_25 = ['AN6', 'AN30', 'AN38', 'AN62', 'AN69', 'AN93', 'AN100', 'AN124', 'AN131', 'AN155']
-l_ranges_uni_random_25 = ['AO6', 'AO30', 'AO38', 'AO62', 'AO69', 'AO93', 'AO100', 'AO124', 'AO131', 'AO155']
+import re
 
 
-k_ranges_anti_50 = ['E6', 'E55', 'E63', 'E112', 'E120', 'E169', 'E177', 'E226', 'E234', 'E283']
-l_ranges_opt_anti_50 = ['F6', 'F55', 'F63', 'F112', 'F120', 'F169', 'F177', 'F226', 'F234', 'F283']
-l_ranges_max_anti_50 = ['G6', 'G55', 'G63', 'G112', 'G120', 'G169', 'G177', 'G226', 'G234', 'G283']
-l_ranges_uni_anti_50 = ['H6', 'H55', 'H63', 'H112', 'H120', 'H169', 'H177', 'H226', 'H234', 'H283']
+def separate_string(input_string):
+    items = []
+    match = re.match(r"([a-z]+)([0-9]+)", input_string, re.I)
+    if match:
+        items = match.groups()
+    return items
 
-k_ranges_corr_50 = ['V6', 'V55', 'V63', 'V112', 'V120', 'V169', 'V177', 'V226', 'V234', 'V283']
-l_ranges_opt_corr_50 = ['W6', 'W55', 'W63', 'W112', 'W120', 'W169', 'W177', 'W226', 'W234', 'W283']
-l_ranges_max_corr_50 = ['X6', 'X55', 'X63', 'X112', 'X120', 'X169', 'X177', 'X226', 'X234', 'X283']
-l_ranges_uni_corr_50 = ['Y6', 'Y55', 'Y63', 'Y112', 'Y120', 'Y169', 'Y177', 'Y226', 'Y234', 'Y283']
 
-k_ranges_random_50 = ['AL6', 'AL55', 'AL63', 'AL112', 'AL120', 'AL169', 'AL177', 'AL226', 'AL234', 'AL283']
-l_ranges_opt_random_50 = ['AM6', 'AM55', 'AM63', 'AM112', 'AM120', 'AM169', 'AM177', 'AM226', 'AM234', 'AM283']
-l_ranges_max_random_50 = ['AN6', 'AN55', 'AN63', 'AN112', 'AN120', 'AN169', 'AN177', 'AN226', 'AN234', 'AN283']
-l_ranges_uni_random_50 = ['AO6', 'AO55', 'AO63', 'AO112', 'AO120', 'AO169', 'AO177', 'AO226', 'AO234', 'AO283']
+def compute_index(list_start_, top_m_):
+    cell_index_ = []
+    for start_ in list_start_:
+        cell_index_.append(start_)
+        ret_index = separate_string(start_)
+        ret_ = ret_index[0] + str(int(ret_index[1]) + top_m_ - 1)
+        cell_index_.append(ret_)
+    return cell_index_
+
+
+def computer_used_resource_index(start_, top_m_, count_):
+    start_index_ = separate_string(start_)
+    cell_index_ = []
+    cell_index_.append(start_)
+    first_ = start_index_[0] + str(int(start_index_[1]) + top_m_ - 1 + 8)
+    cell_index_.append(first_)
+
+    for i in range(2, count_):
+        first_index = separate_string(first_)
+        first_ = first_index[0] + str(int(first_index[1]) + top_m_ - 1 + 7)
+        cell_index_.append(first_)
+    return cell_index_
+
+####################################################
+cur_topm = 7
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I27'
+hash_used_uni_cells_start = 'O27'
+
+data_anti_list_7 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_7 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_7 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_7 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_7 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_7 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_7 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 21
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I27'
+hash_used_uni_cells_start = 'O27'
+
+data_anti_list_21 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_21 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_21 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_21 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_21 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_21 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+
+cur_topm = 25
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z31'
+hash_used_uni_cells_start = 'AF31'
+
+
+data_corr_list_25 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_25 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_25 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_25 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+cur_topm = 17
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP26'
+hash_used_uni_cells_13_start = 'AV26'
+
+data_random_list_17 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_17 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_17 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_17 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_17 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_17 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_17 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+
+cur_topm = 20
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP26'
+hash_used_uni_cells_13_start = 'AV26'
+
+data_random_list_20 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_20 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_20 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_20 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_20 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_20 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_20 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+####################################################
+
+
+def topk_map(dimension_, cardinality_, type_, top_k_, map_, real_topk):
+    temp_key_ = str(dimension_) + '_' + str(cardinality_) + '_' + str(type_) + '_' + str(top_k_)
+    map_[temp_key_] = real_topk
+    return map_
+
 
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
-# BASE_FOLDER = "/Users/sicongliu/Desktop/Skyline_computation/Skyline_qhull/"
 BASH_FILE_BASE_FOLDER = "../H2_ALSH/"
 
 
-def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, types_, card_excel_, cardinality_, save_file_path_):
-    wb = load_workbook(filename=excel_file_, data_only=True)
+def get_real_topk(dimension_, cardinality_, type_, top_k_, map_):
+    temp_key_ = str(dimension_) + '_' + str(cardinality_) + '_' + str(type_) + '_' + str(top_k_)
+    real_topk = map_[temp_key_]
+    return real_topk
 
+
+def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, types_, card_excel_, cardinality_, save_file_path_, map_):
+    wb = load_workbook(filename=excel_file_, data_only=True)
     for i in range(top_ks_.__len__()):
         top_k = top_ks[i]
-        if top_k == 10:
-            k_ranges_anti = k_ranges_anti_10
-            l_ranges_opt_anti = l_ranges_opt_anti_10
-            l_ranges_max_anti = l_ranges_max_anti_10
-            l_ranges_uni_anti = l_ranges_uni_anti_10
-
-            k_ranges_corr = k_ranges_corr_10
-            l_ranges_opt_corr = l_ranges_opt_corr_10
-            l_ranges_max_corr = l_ranges_max_corr_10
-            l_ranges_uni_corr = l_ranges_uni_corr_10
-
-            k_ranges_random = k_ranges_random_10
-            l_ranges_opt_random = l_ranges_opt_random_10
-            l_ranges_max_random = l_ranges_max_random_10
-            l_ranges_uni_random = l_ranges_uni_random_10
-        elif top_k == 25:
-            k_ranges_anti = k_ranges_anti_25
-            l_ranges_opt_anti = l_ranges_opt_anti_25
-            l_ranges_max_anti = l_ranges_max_anti_25
-            l_ranges_uni_anti = l_ranges_uni_anti_25
-
-            k_ranges_corr = k_ranges_corr_25
-            l_ranges_opt_corr = l_ranges_opt_corr_25
-            l_ranges_max_corr = l_ranges_max_corr_25
-            l_ranges_uni_corr = l_ranges_uni_corr_25
-
-            k_ranges_random = k_ranges_random_25
-            l_ranges_opt_random = l_ranges_opt_random_25
-            l_ranges_max_random = l_ranges_max_random_25
-            l_ranges_uni_random = l_ranges_uni_random_25
-        else:
-            k_ranges_anti = k_ranges_anti_50
-            l_ranges_opt_anti = l_ranges_opt_anti_50
-            l_ranges_max_anti = l_ranges_max_anti_50
-            l_ranges_uni_anti = l_ranges_uni_anti_50
-
-            k_ranges_corr = k_ranges_corr_50
-            l_ranges_opt_corr = l_ranges_opt_corr_50
-            l_ranges_max_corr = l_ranges_max_corr_50
-            l_ranges_uni_corr = l_ranges_uni_corr_50
-
-            k_ranges_random = k_ranges_random_50
-            l_ranges_opt_random = l_ranges_opt_random_50
-            l_ranges_max_random = l_ranges_max_random_50
-            l_ranges_uni_random = l_ranges_uni_random_50
-
         for j in range(budgets_.__len__()):
             budget = budgets_[j]
             for k in range(dimensions_.__len__()):
@@ -121,6 +161,26 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                     if sheetname in wb.sheetnames:
                         print("Sheetname: " + str(sheetname))
                         ws = wb[sheetname]
+                        real_topk = ws['E1'].value
+                        if int(real_topk) == 25:
+                            k_ranges_anti = k_ranges_anti_21
+                            l_ranges_opt_anti = l_ranges_opt_anti_21
+                            l_ranges_max_anti = l_ranges_max_anti_21
+                            l_ranges_uni_anti = l_ranges_uni_anti_21
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 21)
+
+                            k_ranges_corr = k_ranges_corr_25
+                            l_ranges_opt_corr = l_ranges_opt_corr_25
+                            l_ranges_max_corr = l_ranges_max_corr_25
+                            l_ranges_uni_corr = l_ranges_uni_corr_25
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 25)
+
+                            k_ranges_random = k_ranges_random_20
+                            l_ranges_opt_random = l_ranges_opt_random_20
+                            l_ranges_max_random = l_ranges_max_random_20
+                            l_ranges_uni_random = l_ranges_uni_random_20
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 20)
+
                         for m in range(types_.__len__()):
                             type_name = types[m]
                             start = 2 * m
@@ -136,6 +196,16 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                                 for cell in row:
                                     l_anti_opt.append(cell.value)
 
+                            l_anti_max = []
+                            for row in ws[l_ranges_max_anti[start]: l_ranges_max_anti[end]]:
+                                for cell in row:
+                                    l_anti_max.append(cell.value)
+
+                            l_anti_uni = []
+                            for row in ws[l_ranges_uni_anti[start]: l_ranges_uni_anti[end]]:
+                                for cell in row:
+                                    l_anti_uni.append(cell.value)
+
                             # read data type correlated
                             k_corr = []
                             for row in ws[k_ranges_corr[start]: k_ranges_corr[end]]:
@@ -146,6 +216,16 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             for row in ws[l_ranges_opt_corr[start]: l_ranges_opt_corr[end]]:
                                 for cell in row:
                                     l_corr_opt.append(cell.value)
+
+                            l_corr_max = []
+                            for row in ws[l_ranges_max_corr[start]: l_ranges_max_corr[end]]:
+                                for cell in row:
+                                    l_corr_max.append(cell.value)
+
+                            l_corr_uni = []
+                            for row in ws[l_ranges_uni_corr[start]: l_ranges_uni_corr[end]]:
+                                for cell in row:
+                                    l_corr_uni.append(cell.value)
 
                             # read data type random
                             k_random = []
@@ -158,6 +238,15 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                                 for cell in row:
                                     l_random_opt.append(cell.value)
 
+                            l_random_max = []
+                            for row in ws[l_ranges_max_random[start]: l_ranges_max_random[end]]:
+                                for cell in row:
+                                    l_random_max.append(cell.value)
+
+                            l_random_uni = []
+                            for row in ws[l_ranges_uni_random[start]: l_ranges_uni_random[end]]:
+                                for cell in row:
+                                    l_random_uni.append(cell.value)
                             # save current K and L parameters to files
                             # anti_opt
                             # anti_uni
@@ -176,6 +265,16 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             f.write(','.join(map(str, l_anti_opt)))
                             f.close()
 
+                            anti_max_name = save_file_dir + "l_anti_correlated_max"
+                            f = open(anti_max_name, 'w')
+                            f.write(','.join(map(str, l_anti_max)))
+                            f.close()
+
+                            anti_uni_name = save_file_dir + "l_anti_correlated_uni"
+                            f = open(anti_uni_name, 'w')
+                            f.write(','.join(map(str, l_anti_uni)))
+                            f.close()
+
                             # corr_opt
                             # corr_uni
                             corr_k_name = save_file_dir + "k_correlated"
@@ -186,6 +285,16 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             corr_opt_name = save_file_dir + "l_correlated_opt"
                             f = open(corr_opt_name, 'w')
                             f.write(','.join(map(str, l_corr_opt)))
+                            f.close()
+
+                            corr_max_name = save_file_dir + "l_correlated_max"
+                            f = open(corr_max_name, 'w')
+                            f.write(','.join(map(str, l_corr_max)))
+                            f.close()
+
+                            corr_uni_name = save_file_dir + "l_correlated_uni"
+                            f = open(corr_uni_name, 'w')
+                            f.write(','.join(map(str, l_corr_uni)))
                             f.close()
 
                             # random_opt
@@ -200,11 +309,22 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             f.write(','.join(map(str, l_random_opt)))
                             f.close()
 
+                            random_max_name = save_file_dir + "l_random_max"
+                            f = open(random_max_name, 'w')
+                            f.write(','.join(map(str, l_random_max)))
+                            f.close()
+
+                            random_uni_name = save_file_dir + "l_random_uni"
+                            f = open(random_uni_name, 'w')
+                            f.write(','.join(map(str, l_random_uni)))
+                            f.close()
     wb.close()
+
     print("Separate String and Save Parameter Files Done .\n")
+    return map_
 
 
-def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_, cardinality_, parameter_path_, with_without_opt_, pot_):
+def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_, cardinality_, parameter_path_, with_without_opt_, pot_, map_, data_type_for_keys_):
     file_names = []
     for k in range(dimensions_.__len__()):
         dimension = dimensions_[k]
@@ -220,13 +340,14 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                     budget = budgets_[j]
                     for i in range(top_ks_.__len__()):
                         top_k = top_ks_[i]
-                        parameter_dir = parameter_path_ + str(dimension) + "D_top" + str(
-                            top_k) + "_budget_" + str(budget) \
-                                        + "_" + type_name + "_" + card_excel_[cc] + "/"
+                        parameter_dir = parameter_path_ + str(dimension) + "D_top" + str(top_k) + "_budget_" + \
+                                        str(budget) + "_" + type_name + "_" + card_excel_[cc] + "/"
                         print(parameter_dir + ' ' + type_name)
                         if not os.path.exists(parameter_dir):
                             continue
                         else:
+
+
                             BASH_FILE_FOLDER = BASH_FILE_BASE_FOLDER + "bash_set_" + str(dimension) + "D_top" + str(
                                 top_k) + "_budget_" + str(budget) + "_" + type_name + "_" + str(
                                 cardinality_[cc]) + "/"
@@ -251,35 +372,38 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 L_Uni_List = []
                                 qhull_data_count = []
 
+                                real_topk = get_real_topk(dimension, cardinality[cc], data_type_for_keys_[ii], top_k, map_)
+                                # parameter_dir11 = parameter_path_ + str(dimension) + "D_top" + str(real_topk) + "_budget_" + \
+                                #                 str(budget) + "_" + type_name + "_" + card_excel_[cc] + "/"
                                 paramK_path = parameter_dir + "k_" + data_type_[ii] #str(cardinality[k])
                                 f1 = open(paramK_path, 'r')
                                 K_lines = f1.readlines()
-                                for k_index in range(top_k):
+                                for k_index in range(real_topk):
                                     K_List.append(int(K_lines[0].split(',')[k_index]))
                                 f1.close()
 
                                 paramL_opt_path = parameter_dir + "l_" + data_type_[ii] + "_opt" # str(cardinality[k])
                                 f2 = open(paramL_opt_path, 'r')
                                 L_lines = f2.readlines()
-                                for l_index in range(0, top_k):
+                                for l_index in range(0, real_topk):
                                     L_Opt_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
                                 f2.close()
-                                #
-                                # paramL_max_path = parameter_dir + "l_" + data_type_[ii] + "_max"  # str(cardinality[k])
-                                # f2 = open(paramL_max_path, 'r')
-                                # L_lines = f2.readlines()
-                                # for l_index in range(0, top_k):
-                                #     L_Max_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
-                                # f2.close()
-                                #
-                                # paramL_uni_path = parameter_dir + "l_" + data_type_[ii] + "_uni"  # str(cardinality[k])
-                                # f2 = open(paramL_uni_path, 'r')
-                                # L_lines = f2.readlines()
-                                #
-                                # for l_index in range(0, top_k):
-                                #     L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
-                                # f2.close()
-                                #
+
+                                paramL_max_path = parameter_dir + "l_" + data_type_[ii] + "_max"  # str(cardinality[k])
+                                f2 = open(paramL_max_path, 'r')
+                                L_lines = f2.readlines()
+                                for l_index in range(0, real_topk):
+                                    L_Max_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
+                                f2.close()
+
+                                paramL_uni_path = parameter_dir + "l_" + data_type_[ii] + "_uni"  # str(cardinality[k])
+                                f2 = open(paramL_uni_path, 'r')
+                                L_lines = f2.readlines()
+
+                                for l_index in range(0, real_topk):
+                                    L_Uni_List.append(int(math.floor(float(L_lines[0].split(',')[l_index]))))
+                                f2.close()
+
                                 for mm in range(len(K_List)):
                                     qhull_file = BASE_FOLDER + data_type_[ii] + "_" + str(dimensions[k]) + "_" + str(cardinality[cc])\
                                                  + "_" + "qhull_layer_" + str(mm)
@@ -293,8 +417,13 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 # opt cumsum_hashsize
                                 obj_cumsum = []
                                 hashsize_cumsum = []
-                                obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type_[ii] + "_" + str(
-                                    dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + str(with_without_opt_) + ".txt"
+                                # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type_[ii] + "_" + str(
+                                #     dimensions_[k]) +  "_" + str(cardinality_[cc]) + ".txt"
+
+                                obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_opt_" + data_type_[ii] + \
+                                                    "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + \
+                                                    str(with_without_opt_) + ".txt"
+
                                 f4 = open(obj_hashsize_file, 'w')
                                 for mm in range(len(L_Opt_List)):
                                     if obj_cumsum.__len__() == 0:
@@ -312,6 +441,8 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 # # max cumsum_hashsize
                                 # obj_cumsum = []
                                 # hashsize_cumsum = []
+                                # # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_max_" + data_type_[ii] + \
+                                # #                     "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + ".txt"
                                 # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_max_" + data_type_[ii] + \
                                 #                     "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + \
                                 #                     str(with_without_opt_) + ".txt"
@@ -333,8 +464,11 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 # # uni cumsum hashsize
                                 # obj_cumsum = []
                                 # hashsize_cumsum = []
-                                # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type_[ii] + "_" + str(
-                                #     dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + str(with_without_opt_) + ".txt"
+                                # # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type_[ii] + "_" + str(
+                                # #     dimensions_[k]) + "_" + str(cardinality_[cc]) + ".txt"
+                                # obj_hashsize_file = BASH_FILE_FOLDER + "cumsum_hashsize_obj_uni_" + data_type_[ii] + \
+                                #                     "_" + str(dimensions_[k]) + "_" + str(cardinality_[cc]) + '_' + \
+                                #                     str(with_without_opt_) + ".txt"
                                 # f4 = open(obj_hashsize_file, 'w')
                                 # for mm in range(len(L_Uni_List)):
                                 #     if obj_cumsum.__len__() == 0:
@@ -385,8 +519,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 f10.write("# ------------------------------------------------------------------------------ \n")
                                 f10.write("#     Layer-Performance \n")
                                 f10.write("# ------------------------------------------------------------------------------ \n")
-                                for kk in range(top_k):
-                                # for kk in range(len(K_List)):
+                                for kk in range(len(K_List)):
                                     f10.write("n" + str(kk) + "=" + str(qhull_data_count[kk]) + "\n")
                                     f10.write("K" + str(kk) + "=" + str(K_List[kk]) + "\n")
                                     f10.write("L" + str(kk) + "=" + str(L_Opt_List[kk]) + "\n")
@@ -414,7 +547,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n \n \n")
                                 f10.write("sleep 2 \n")
-
+                                #
                                 # cur_data_type = data_type_[ii]
                                 # cur_cardinality = cardinality_[cc]
                                 # cur_dimension = dimensions_[k]
@@ -424,7 +557,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 # f10.write("qn=" + str(query_count) + "\n")
                                 # f10.write("c0=" + str(ratio) + "\n")
                                 # f10.write("pot=" + str(pot_) + "\n")
-
+                                #
                                 # temporalResult = TEMPORAL_RESULT_FOR_BASH + "run_test_${datatype}_${d}_${cardinality}_max"
                                 # overallResult = TEMPORAL_RESULT_FOR_BASH + "overall_run_test_${datatype}_${d}_${cardinality}_max"
                                 # sim_angle = TEMPORAL_RESULT_FOR_BASH + "sim_angle_${datatype}_${d}_${cardinality}_max"
@@ -546,108 +679,54 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
     return file_names
 
 
-################################################################
 data_type = ["anti_correlated", "correlated", "random"]
-card_excel = ['200k', '500k', '1M', '15M', '2M']
-cardinality = [200000, 500000, 1000000, 1500000, 2000000]
+data_type_for_keys = ['anti', 'corr', 'random']
 
-# card_excel = ['200k', '1M', '15M', '2M']
-# cardinality = [200000, 1000000, 1500000, 2000000]
+# data_type = ["correlated"]
+# data_type_for_keys = ['corr']
 
 
-# card_excel = ['500k', '1M', '15M', '2M']
-# cardinality = [500000, 1000000, 1500000, 2000000]
-
-# card_excel = ['200k']
-# cardinality = [200000]
-# #
-# card_excel = ['500k']
-# cardinality = [500000]
-
+card_excel = ['200k']
+cardinality = [200000]
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-
-
 types = ["log"]
 
 budgets = ["1M", "10M"]
-sim_threshold = 0.75
-# dimensions = [5]
-# excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
+dimensions = [6]
 
-# excel_file_dir = './skyline_resource_excel/'
-# excel_file_before = "./skyline_resource_excel/3D_075_200k_redundancy_4_all_before.xlsx"
-# excel_file_after = "./skyline_resource_excel/3D_075_200k_redundancy_4_all_after.xlsx"
+excel_file_before = "./olsh_sample/6D_075_redundancy_3_all_before.xlsx"
+excel_file_after = "./olsh_sample/6D_075_redundancy_3_all_after.xlsx"
 
-# dimensions = [3]
-dimensions = [4]
-# excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
-# excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
-excel_file_before = "./olsh_sample/4D_075_redundancy_6_all_before.xlsx"
-excel_file_after = "./olsh_sample/4D_075_redundancy_6_all_after.xlsx"
-
-# excel_file_before = "./olsh_sample_skyline_resource_excel/2D_075_200k_redundancy_4_all_before.xlsx"
-# excel_file_after = "./olsh_sample_skyline_resource_excel/2D_075_200k_redundancy_4_all_after.xlsx"
-
-# excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"
-# excel_file_before = "./2D_075_redundancy_2_all_before.xlsx"
-# excel_file_after = "./2D_075_redundancy_2_all_after.xlsx"
-# excel_file_before = "./4D_075_Skyline-redundancy_2_all_before.xlsx"
-# excel_file_after = "./4D_075_Skyline-redundancy_2_all_after.xlsx"
-
-# excel_file_before = "./4D_085_redundancy_2_all_before.xlsx"
-# excel_file_after = "./4D_085_redundancy_2_all_after.xlsx"
-
-# excel_file_before = "./4D_075_redundancy_6_all_before.xlsx"
-# excel_file_after = "./4D_075_redundancy_6_all_after.xlsx"
-
-
-
+# excel_file_before = "./olsh_sample/6D_075_reverse_maths_before_03.xlsx"
+# excel_file_after = "./olsh_sample/6D_075_reverse_maths_after_03.xlsx"
 
 top_ks = [25]
-# top_ks = [25, 50]
-repeated_run = 1
-
-################################################################
-# data_type = ["anti_correlated", "correlated", "random"]
-# card_excel = ['200k']
-# cardinality = [200000]
-# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
-# budgets = ["1M", "10M"]
-# sim_threshold = 0.75
-# dimensions = [5]
-# excel_file_before = "./5D_075_redundancy_2_before.xlsx"
-# excel_file_after = "./5D_075_redundancy_2_after.xlsx"
-# top_ks = [25]
-# repeated_run = 5
-
-################################################################
 
 save_file_path_before = '../H2_ALSH/parameters_before/'
 save_file_path_after = '../H2_ALSH/parameters_after/'
 
-separate_string(data_type, budgets, dimensions, excel_file_before, top_ks, types, card_excel, cardinality, save_file_path_before)
-separate_string(data_type, budgets, dimensions, excel_file_after, top_ks, types, card_excel, cardinality, save_file_path_after)
+map_before = {}
+map_after = {}
+map_before = separate_string(data_type, budgets, dimensions, excel_file_before, top_ks, types, card_excel, cardinality, save_file_path_before, map_before)
+map_after = separate_string(data_type, budgets, dimensions, excel_file_after, top_ks, types, card_excel, cardinality, save_file_path_after, map_after)
 
 # write and complete ground truth shell
 query_count = 1000
 ratio = 2
+sim_threshold = 0.75
 parameter_path_before = '../H2_ALSH/parameters_before/'
 parameter_path_after = '../H2_ALSH/parameters_after/'
-# parameter_type = ["opt", "max", "uni"]
-parameter_type = ["opt"]
+parameter_type = ["opt", "max", "uni"]
 
 with_without_opt = 'without_opt'
 pot = 0
-file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot)
-
+file_names_without_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_before, with_without_opt, pot, map_before, data_type_for_keys)
 
 with_without_opt = 'with_opt'
 pot = 1
-file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot)
+file_names_with_opt = write_script(data_type, budgets, dimensions, top_ks, types, card_excel, cardinality, parameter_path_after, with_without_opt, pot, map_after, data_type_for_keys)
 
-
+repeated_run = 1
 
 aggregated_file_name = BASH_FILE_BASE_FOLDER + "run_bash_" + str(dimensions[0]) + "D_all.sh"
 f1 = open(aggregated_file_name, 'w')

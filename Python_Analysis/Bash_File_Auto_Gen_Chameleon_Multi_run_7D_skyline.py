@@ -38,25 +38,62 @@ def computer_used_resource_index(start_, top_m_, count_):
         cell_index_.append(first_)
     return cell_index_
 
+
 ####################################################
-cur_topm = 7
+cur_topm = 14
 data_list_start = 'J6'
 k_ranges_start = 'E6'
 l_ranges_opt_start = 'F6'
 l_ranges_max_start = 'G6'
-l_ranges_uni_astart = 'H6'
-hash_used_opt_cells_start = 'I27'
-hash_used_uni_cells_start = 'O27'
+l_ranges_uni_start = 'H6'
+hash_used_opt_cells_start = 'I20'
+hash_used_uni_cells_start = 'O20'
 
-data_anti_list_7 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
-k_ranges_anti_7 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
-l_ranges_opt_anti_7 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
-l_ranges_max_anti_7 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
-l_ranges_uni_anti_7 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
-hash_used_anti_opt_cells_7 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
-hash_used_anti_uni_cells_7 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+data_anti_list_14 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_14 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_14 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_14 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_14 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_14 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_14 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
 
 
+cur_topm = 17
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z23'
+hash_used_uni_cells_start = 'AF23'
+
+data_corr_list_17 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_17 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_17 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_17 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_17 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_17 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_17 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 13
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP19'
+hash_used_uni_cells_13_start = 'AV19'
+
+data_random_list_13 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_13 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_13 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_13 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_13 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_13 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_13 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+####################################################
 cur_topm = 21
 data_list_start = 'J6'
 k_ranges_start = 'E6'
@@ -73,7 +110,6 @@ l_ranges_max_anti_21 = compute_index(computer_used_resource_index(l_ranges_max_s
 l_ranges_uni_anti_21 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
 hash_used_anti_opt_cells_21 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
 hash_used_anti_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
-
 
 
 cur_topm = 25
@@ -94,14 +130,350 @@ l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_s
 hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
 hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
 
+cur_topm = 21
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP27'
+hash_used_uni_cells_13_start = 'AV27'
+
+data_random_list_21 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_21 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_21 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_21 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_21 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_21 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+####################################################
+
+cur_topm = 21
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I27'
+hash_used_uni_cells_start = 'O27'
+
+data_anti_list_21 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_21 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_21 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_21 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_21 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_21 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 26
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z32'
+hash_used_uni_cells_start = 'AF32'
+
+
+data_corr_list_26 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_26 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_26 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_26 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_26 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_26 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_26 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+
+cur_topm = 21
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP27'
+hash_used_uni_cells_13_start = 'AV27'
+
+data_random_list_21 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_21 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_21 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_21 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_21 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_21 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_21 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+####################################################
+
+cur_topm = 24
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I30'
+hash_used_uni_cells_start = 'O30'
+
+data_anti_list_24 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_24 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_24 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_24 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_24 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_24 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_24 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 25
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z31'
+hash_used_uni_cells_start = 'AF31'
+
+
+data_corr_list_25 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_25 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_25 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_25 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+
+cur_topm = 23
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP29'
+hash_used_uni_cells_13_start = 'AV29'
+
+data_random_list_23 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_23 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_23 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_23 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_23 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_23 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_23 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+####################################################
+
+cur_topm = 24
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I30'
+hash_used_uni_cells_start = 'O30'
+
+data_anti_list_24 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_24 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_24 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_24 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_24 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_24 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_24 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 29
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z35'
+hash_used_uni_cells_start = 'AF35'
+
+
+data_corr_list_29 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_29 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_29 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_29 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_29 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_29 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_29 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+
+cur_topm = 23
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP29'
+hash_used_uni_cells_13_start = 'AV29'
+
+data_random_list_23 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_23 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_23 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_23 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_23 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_23 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_23 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+####################################################
+
+cur_topm = 25
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I31'
+hash_used_uni_cells_start = 'O31'
+
+data_anti_list_25 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_25 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_25 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_25 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_25 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 25
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z31'
+hash_used_uni_cells_start = 'AF31'
+
+
+data_corr_list_25 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_25 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_25 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_25 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_25 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_25 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_25 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 16
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP22'
+hash_used_uni_cells_13_start = 'AV22'
+
+data_random_list_16 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_16 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_16 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_16 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_16 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_16 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_16 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+
+####################################################
+
+
+cur_topm = 26
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_astart = 'H6'
+hash_used_opt_cells_start = 'I32'
+hash_used_uni_cells_start = 'O32'
+
+data_anti_list_26 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_26 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_26 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_26 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_26 = compute_index(computer_used_resource_index(l_ranges_uni_astart, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_26 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_26 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 31
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z37'
+hash_used_uni_cells_start = 'AF37'
+
+
+data_corr_list_31 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_31 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_31 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_31 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_31 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_31 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_31 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 16
+data_list_start = 'AQ6'
+k_ranges_random_start = 'AL6'
+l_ranges_opt_random_start = 'AM6'
+l_ranges_max_random_start = 'AN6'
+l_ranges_uni_random_start = 'AO6'
+hash_used_cells_start = 'AP22'
+hash_used_uni_cells_13_start = 'AV22'
+
+data_random_list_16 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_random_16 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
+l_ranges_opt_random_16 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
+l_ranges_max_random_16 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
+l_ranges_uni_random_16 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
+hash_used_rand_opt_cells_16 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
+hash_used_rand_uni_cells_16 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
+###########################################################
+
+cur_topm = 18
+
+data_list_start = 'J6'
+k_ranges_start = 'E6'
+l_ranges_opt_start = 'F6'
+l_ranges_max_start = 'G6'
+l_ranges_uni_start = 'H6'
+hash_used_opt_cells_start = 'I24'
+hash_used_uni_cells_start = 'O24'
+
+
+data_anti_list_18 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_anti_18 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_anti_18 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_anti_18 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_anti_18 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_anti_opt_cells_18 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_anti_uni_cells_18 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
+cur_topm = 22
+data_list_start = 'AA6'
+k_ranges_start = 'V6'
+l_ranges_opt_start = 'W6'
+l_ranges_max_start = 'X6'
+l_ranges_uni_start = 'Y6'
+hash_used_opt_cells_start = 'Z28'
+hash_used_uni_cells_start = 'AF28'
+
+data_corr_list_22 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
+k_ranges_corr_22 = compute_index(computer_used_resource_index(k_ranges_start, cur_topm, 5), cur_topm)
+l_ranges_opt_corr_22 = compute_index(computer_used_resource_index(l_ranges_opt_start, cur_topm, 5), cur_topm)
+l_ranges_max_corr_22 = compute_index(computer_used_resource_index(l_ranges_max_start, cur_topm, 5), cur_topm)
+l_ranges_uni_corr_22 = compute_index(computer_used_resource_index(l_ranges_uni_start, cur_topm, 5), cur_topm)
+hash_used_corr_opt_cells_22 = computer_used_resource_index(hash_used_opt_cells_start, cur_topm, 5)
+hash_used_corr_uni_cells_22 = computer_used_resource_index(hash_used_uni_cells_start, cur_topm, 5)
+
+
 cur_topm = 17
 data_list_start = 'AQ6'
 k_ranges_random_start = 'AL6'
 l_ranges_opt_random_start = 'AM6'
 l_ranges_max_random_start = 'AN6'
 l_ranges_uni_random_start = 'AO6'
-hash_used_cells_start = 'AP26'
-hash_used_uni_cells_13_start = 'AV26'
+hash_used_cells_start = 'AP23'
+hash_used_uni_cells_13_start = 'AV23'
 
 data_random_list_17 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
 k_ranges_random_17 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
@@ -112,24 +484,8 @@ hash_used_rand_opt_cells_17 = computer_used_resource_index(hash_used_cells_start
 hash_used_rand_uni_cells_17 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
 
 
-cur_topm = 20
-data_list_start = 'AQ6'
-k_ranges_random_start = 'AL6'
-l_ranges_opt_random_start = 'AM6'
-l_ranges_max_random_start = 'AN6'
-l_ranges_uni_random_start = 'AO6'
-hash_used_cells_start = 'AP26'
-hash_used_uni_cells_13_start = 'AV26'
 
-data_random_list_20 = compute_index(computer_used_resource_index(data_list_start, cur_topm, 5), cur_topm)
-k_ranges_random_20 = compute_index(computer_used_resource_index(k_ranges_random_start, cur_topm, 5), cur_topm)
-l_ranges_opt_random_20 = compute_index(computer_used_resource_index(l_ranges_opt_random_start, cur_topm, 5), cur_topm)
-l_ranges_max_random_20 = compute_index(computer_used_resource_index(l_ranges_max_random_start, cur_topm, 5), cur_topm)
-l_ranges_uni_random_20 = compute_index(computer_used_resource_index(l_ranges_uni_random_start, cur_topm, 5), cur_topm)
-hash_used_rand_opt_cells_20 = computer_used_resource_index(hash_used_cells_start, cur_topm, 5)
-hash_used_rand_uni_cells_20 = computer_used_resource_index(hash_used_uni_cells_13_start, cur_topm, 5)
 
-####################################################
 
 
 def topk_map(dimension_, cardinality_, type_, top_k_, map_, real_topk):
@@ -162,7 +518,45 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                         print("Sheetname: " + str(sheetname))
                         ws = wb[sheetname]
                         real_topk = ws['E1'].value
-                        if int(real_topk) == 25:
+                        if int(real_topk) == 18:
+                            k_ranges_anti = k_ranges_anti_18
+                            l_ranges_opt_anti = l_ranges_opt_anti_18
+                            l_ranges_max_anti = l_ranges_max_anti_18
+                            l_ranges_uni_anti = l_ranges_uni_anti_18
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 18)
+
+                            k_ranges_corr = k_ranges_corr_22
+                            l_ranges_opt_corr = l_ranges_opt_corr_22
+                            l_ranges_max_corr = l_ranges_max_corr_22
+                            l_ranges_uni_corr = l_ranges_uni_corr_22
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 22)
+
+                            k_ranges_random = k_ranges_random_17
+                            l_ranges_opt_random = l_ranges_opt_random_17
+                            l_ranges_max_random = l_ranges_max_random_17
+                            l_ranges_uni_random = l_ranges_uni_random_17
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 17)
+
+                        elif int(real_topk) == 14:
+                            k_ranges_anti = k_ranges_anti_14
+                            l_ranges_opt_anti = l_ranges_opt_anti_14
+                            l_ranges_max_anti = l_ranges_max_anti_14
+                            l_ranges_uni_anti = l_ranges_uni_anti_14
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 14)
+
+                            k_ranges_corr = k_ranges_corr_17
+                            l_ranges_opt_corr = l_ranges_opt_corr_17
+                            l_ranges_max_corr = l_ranges_max_corr_17
+                            l_ranges_uni_corr = l_ranges_uni_corr_17
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 17)
+
+                            k_ranges_random = k_ranges_random_13
+                            l_ranges_opt_random = l_ranges_opt_random_13
+                            l_ranges_max_random = l_ranges_max_random_13
+                            l_ranges_uni_random = l_ranges_uni_random_13
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 13)
+
+                        elif int(real_topk) == 21:
                             k_ranges_anti = k_ranges_anti_21
                             l_ranges_opt_anti = l_ranges_opt_anti_21
                             l_ranges_max_anti = l_ranges_max_anti_21
@@ -175,11 +569,106 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                             l_ranges_uni_corr = l_ranges_uni_corr_25
                             map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 25)
 
-                            k_ranges_random = k_ranges_random_20
-                            l_ranges_opt_random = l_ranges_opt_random_20
-                            l_ranges_max_random = l_ranges_max_random_20
-                            l_ranges_uni_random = l_ranges_uni_random_20
-                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 20)
+                            k_ranges_random = k_ranges_random_21
+                            l_ranges_opt_random = l_ranges_opt_random_21
+                            l_ranges_max_random = l_ranges_max_random_21
+                            l_ranges_uni_random = l_ranges_uni_random_21
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 21)
+
+                        elif int(real_topk) == 22:
+                            k_ranges_anti = k_ranges_anti_21
+                            l_ranges_opt_anti = l_ranges_opt_anti_21
+                            l_ranges_max_anti = l_ranges_max_anti_21
+                            l_ranges_uni_anti = l_ranges_uni_anti_21
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 21)
+
+                            k_ranges_corr = k_ranges_corr_26
+                            l_ranges_opt_corr = l_ranges_opt_corr_26
+                            l_ranges_max_corr = l_ranges_max_corr_26
+                            l_ranges_uni_corr = l_ranges_uni_corr_26
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 26)
+
+                            k_ranges_random = k_ranges_random_21
+                            l_ranges_opt_random = l_ranges_opt_random_21
+                            l_ranges_max_random = l_ranges_max_random_21
+                            l_ranges_uni_random = l_ranges_uni_random_21
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 21)
+
+                        elif int(real_topk) == 24:
+                            k_ranges_anti = k_ranges_anti_24
+                            l_ranges_opt_anti = l_ranges_opt_anti_24
+                            l_ranges_max_anti = l_ranges_max_anti_24
+                            l_ranges_uni_anti = l_ranges_uni_anti_24
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 24)
+
+                            k_ranges_corr = k_ranges_corr_25
+                            l_ranges_opt_corr = l_ranges_opt_corr_25
+                            l_ranges_max_corr = l_ranges_max_corr_25
+                            l_ranges_uni_corr = l_ranges_uni_corr_25
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 25)
+
+                            k_ranges_random = k_ranges_random_23
+                            l_ranges_opt_random = l_ranges_opt_random_23
+                            l_ranges_max_random = l_ranges_max_random_23
+                            l_ranges_uni_random = l_ranges_uni_random_23
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 23)
+
+                        elif int(real_topk) == 23:
+                            k_ranges_anti = k_ranges_anti_24
+                            l_ranges_opt_anti = l_ranges_opt_anti_24
+                            l_ranges_max_anti = l_ranges_max_anti_24
+                            l_ranges_uni_anti = l_ranges_uni_anti_24
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 24)
+
+                            k_ranges_corr = k_ranges_corr_29
+                            l_ranges_opt_corr = l_ranges_opt_corr_29
+                            l_ranges_max_corr = l_ranges_max_corr_29
+                            l_ranges_uni_corr = l_ranges_uni_corr_29
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 29)
+
+                            k_ranges_random = k_ranges_random_23
+                            l_ranges_opt_random = l_ranges_opt_random_23
+                            l_ranges_max_random = l_ranges_max_random_23
+                            l_ranges_uni_random = l_ranges_uni_random_23
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 23)
+
+                        elif int(real_topk) == 25:
+                            k_ranges_anti = k_ranges_anti_25
+                            l_ranges_opt_anti = l_ranges_opt_anti_25
+                            l_ranges_max_anti = l_ranges_max_anti_25
+                            l_ranges_uni_anti = l_ranges_uni_anti_25
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 25)
+
+                            k_ranges_corr = k_ranges_corr_25
+                            l_ranges_opt_corr = l_ranges_opt_corr_25
+                            l_ranges_max_corr = l_ranges_max_corr_25
+                            l_ranges_uni_corr = l_ranges_uni_corr_25
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 25)
+
+                            k_ranges_random = k_ranges_random_16
+                            l_ranges_opt_random = l_ranges_opt_random_16
+                            l_ranges_max_random = l_ranges_max_random_16
+                            l_ranges_uni_random = l_ranges_uni_random_16
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 16)
+
+                        else: # 26
+                            k_ranges_anti = k_ranges_anti_26
+                            l_ranges_opt_anti = l_ranges_opt_anti_26
+                            l_ranges_max_anti = l_ranges_max_anti_26
+                            l_ranges_uni_anti = l_ranges_uni_anti_26
+                            map_ = topk_map(dimension, cardinality_[cc], 'anti', top_k, map_, 26)
+
+                            k_ranges_corr = k_ranges_corr_31
+                            l_ranges_opt_corr = l_ranges_opt_corr_31
+                            l_ranges_max_corr = l_ranges_max_corr_31
+                            l_ranges_uni_corr = l_ranges_uni_corr_31
+                            map_ = topk_map(dimension, cardinality_[cc], 'corr', top_k, map_, 31)
+
+                            k_ranges_random = k_ranges_random_16
+                            l_ranges_opt_random = l_ranges_opt_random_16
+                            l_ranges_max_random = l_ranges_max_random_16
+                            l_ranges_uni_random = l_ranges_uni_random_16
+                            map_ = topk_map(dimension, cardinality_[cc], 'random', top_k, map_, 16)
 
                         for m in range(types_.__len__()):
                             type_name = types[m]
@@ -547,7 +1036,7 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
                                 f10.write("./alsh -alg 12 -d ${d} -qn ${qn} -L1 ${num_layer} -tk ${top_k} -it ${temporalResult} -ts "
                                          "${tsPath}.mip -of ${overallResult} \n \n \n")
                                 f10.write("sleep 2 \n")
-                                #
+
                                 # cur_data_type = data_type_[ii]
                                 # cur_cardinality = cardinality_[cc]
                                 # cur_dimension = dimensions_[k]
@@ -682,23 +1171,17 @@ def write_script(data_type_, budgets_, dimensions_, top_ks_, types_, card_excel_
 data_type = ["anti_correlated", "correlated", "random"]
 data_type_for_keys = ['anti', 'corr', 'random']
 
-# data_type = ["correlated"]
-# data_type_for_keys = ['corr']
-
-
-card_excel = ['200k']
-cardinality = [200000]
+# card_excel = ['200k', '500k', '1M', '15M', '2M']
+# cardinality = [200000, 500000, 1000000, 1500000, 2000000]
+card_excel = ['500k']
+cardinality = [500000]
 # types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
 types = ["log"]
 
 budgets = ["1M", "10M"]
-dimensions = [6]
-
-excel_file_before = "./olsh_sample/6D_075_redundancy_6_all_before.xlsx"
-excel_file_after = "./olsh_sample/6D_075_redundancy_6_all_after.xlsx"
-
-# excel_file_before = "./olsh_sample/6D_075_reverse_maths_before_03.xlsx"
-# excel_file_after = "./olsh_sample/6D_075_reverse_maths_after_03.xlsx"
+dimensions = [7]
+excel_file_before = "./olsh_sample/7D_075_500k_redundancy_4_all_before.xlsx"
+excel_file_after = "./olsh_sample/7D_075_500k_redundancy_4_all_after.xlsx"
 
 top_ks = [25]
 
@@ -759,3 +1242,4 @@ for rr in range(0, repeated_run):
     f1.write('sleep 5' + '\n')
 
 f1.close()
+

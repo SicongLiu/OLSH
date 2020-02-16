@@ -295,7 +295,7 @@ excel_file_dir = './olsh_sample/'
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_3_all_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_6_all_after.xlsx'
     # excel_file_name = excel_file_dir + str(cur_d) + 'D_075_redundancy_6_all_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)

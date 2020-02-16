@@ -96,6 +96,21 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
             l_ranges_opt_random = l_ranges_opt_random_25
             l_ranges_max_random = l_ranges_max_random_25
             l_ranges_uni_random = l_ranges_uni_random_25
+        elif top_k == 25 and cardinality_ == 500000:
+            k_ranges_anti = k_ranges_anti_21
+            l_ranges_opt_anti = l_ranges_opt_anti_21
+            l_ranges_max_anti = l_ranges_max_anti_21
+            l_ranges_uni_anti = l_ranges_uni_anti_21
+
+            k_ranges_corr = k_ranges_corr_25
+            l_ranges_opt_corr = l_ranges_opt_corr_25
+            l_ranges_max_corr = l_ranges_max_corr_25
+            l_ranges_uni_corr = l_ranges_uni_corr_25
+
+            k_ranges_random = k_ranges_random_25
+            l_ranges_opt_random = l_ranges_opt_random_25
+            l_ranges_max_random = l_ranges_max_random_25
+            l_ranges_uni_random = l_ranges_uni_random_25
         else:
             k_ranges_anti = k_ranges_anti_50
             l_ranges_opt_anti = l_ranges_opt_anti_50
@@ -118,6 +133,12 @@ def separate_string(data_type_, budgets_, dimensions_, excel_file_, top_ks_, typ
                 dimension = dimensions_[k]
                 for cc in range(cardinality_.__len__()):
                     sheetname = "Budget_" + str(budget) + "_" + str(dimension) + "D_top" + str(top_k) + "_" + card_excel_[cc]
+                    if top_k == 25 and cardinality_[cc] == 500000:
+                        k_ranges_anti = k_ranges_anti_21
+                        l_ranges_opt_anti = l_ranges_opt_anti_21
+                        l_ranges_max_anti = l_ranges_max_anti_21
+                        l_ranges_uni_anti = l_ranges_uni_anti_21
+
                     if sheetname in wb.sheetnames:
                         print("Sheetname: " + str(sheetname))
                         ws = wb[sheetname]
@@ -583,11 +604,11 @@ sim_threshold = 0.75
 dimensions = [4]
 # excel_file_before = "./4D_065_redundancy_2_all_before.xlsx"
 # excel_file_after = "./4D_065_redundancy_2_all_after.xlsx"
-excel_file_before = "./olsh_sample/4D_075_redundancy_6_all_before.xlsx"
-excel_file_after = "./olsh_sample/4D_075_redundancy_6_all_after.xlsx"
+# excel_file_before = "./olsh_sample/5D_075_redundancy_4_all_before.xlsx"
+# excel_file_after = "./olsh_sample/5D_075_redundancy_4_all_after.xlsx"
 
-# excel_file_before = "./olsh_sample_skyline_resource_excel/2D_075_200k_redundancy_4_all_before.xlsx"
-# excel_file_after = "./olsh_sample_skyline_resource_excel/2D_075_200k_redundancy_4_all_after.xlsx"
+excel_file_before = "./olsh_sample_skyline_resource_excel/4D_075_200k_redundancy_6_all_before.xlsx"
+excel_file_after = "./olsh_sample_skyline_resource_excel/4D_075_200k_redundancy_6_all_after.xlsx"
 
 # excel_file_before = "./5D_075_redundancy_2_all_before.xlsx"
 # excel_file_after = "./5D_075_redundancy_2_all_after.xlsx"

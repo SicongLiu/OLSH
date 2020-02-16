@@ -1186,8 +1186,8 @@ dimensions = [7]
 # excel_file_after = "./olsh_sample/7D_075_reverse_maths_after_03.xlsx"
 
 
-excel_file_before = "./olsh_sample/7D_075_redundancy_3_all_before.xlsx"
-excel_file_after = "./olsh_sample/7D_075_redundancy_3_all_after.xlsx"
+excel_file_before = "./olsh_sample/7D_075_redundancy_6_all_before.xlsx"
+excel_file_after = "./olsh_sample/7D_075_redundancy_6_all_after.xlsx"
 
 top_ks = [25]
 
