@@ -480,7 +480,8 @@ def write_script(data_type_, dimension_, bin_count_, top_k_, type_name, budget_,
 ##########################code below working on post-opt resource allocation########
 Data_Types = ['anti_correlated', 'correlated', 'random']
 Data_Gen_Types = ['EW', 'ED_card', 'ED_prob']
-types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+# types = ["log", "log_minus", "log_plus", "log_plus_plus", "uni"]
+types = ["log"]
 
 # Data_Types = ['random']
 # Data_Gen_Types = ['EW']
@@ -536,7 +537,7 @@ QUERY_FOLDER = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/query/'
 GROUNDTRUEH_FOLDER = "../H2_ALSH/result/"
 BASE_FOLDER = "../H2_ALSH/qhull_data/Synthetic/"
 
-repeated_run = 5
+repeated_run = 1
 ####################################################################################
 
 
@@ -551,7 +552,7 @@ is_real_life = -1
 # for each excel file
 for i in range(len(dimensions)):
     cur_d = dimensions[i]
-    excel_file_name = excel_file_dir + str(cur_d) + 'D_1M_60_bins_after.xlsx'
+    excel_file_name = excel_file_dir + str(cur_d) + 'D_1M_after.xlsx'
     wb = load_workbook(filename=excel_file_name, data_only=True)
     wb1 = load_workbook(filename=excel_file_name)
     # wss = wb.get_sheet_names()

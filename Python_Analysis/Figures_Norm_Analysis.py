@@ -39,12 +39,15 @@ def dot(K, L):
 
 data_folder = '/Users/sicongliu/Desktop/StreamingTopK/H2_ALSH/raw_data/Synthetic/'
 # data_type = ['anti_correlated_', 'correlated_', 'random_']
-data_type = 'anti_correlated_'
-# dimension = 192
-# cardinality = 53387
+data_type = 'random_'
+dimension = 192
+cardinality = 53387
 
-dimension = 50
-cardinality = 1000000
+#
+# dimension = 100
+# cardinality = 500000
+# dimension = 50
+# cardinality = 1000000
 
 
 top_k = 25
@@ -133,7 +136,7 @@ print(total_counter.keys())
 plt.figure()
 
 
-# plt.title('YahooMusic Norm Bin Distribution')
+# plt.title('Yahoo!Music Norm Bin Distribution')
 # plt.title('Netflix Norm Bin Distribution')
 # plt.title('Norm Bin Distribution')
 
